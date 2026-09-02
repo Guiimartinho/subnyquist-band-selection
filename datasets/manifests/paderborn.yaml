@@ -1,0 +1,13 @@
+name: paderborn
+full_name: Paderborn University KAt-DataCenter bearing dataset
+url: https://mb.uni-paderborn.de/kat/forschung/kat-datacenter
+license: conferir termos antes de redistribuir
+fs_hz: [64000]
+channels: [vibration, motor_current, temperature]
+notes: |
+  Melhor rotulagem disponivel, com danos reais e artificiais separados.
+  Inclui corrente do motor - e o eixo magnetico da triade do projeto, permitindo
+  testar a mesma metodologia em outra modalidade sem trocar de bancada.
+undersampling:
+  method: decimacao_pura
+  factors: [2, 4, 8, 16, 32, 64]

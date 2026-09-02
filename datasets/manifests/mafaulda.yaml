@@ -1,0 +1,13 @@
+name: mafaulda
+full_name: MAFAULDA machinery fault database
+url: https://www02.smt.ufrj.br/~offshore/mfs/page_01.html
+license: conferir termos antes de redistribuir
+fs_hz: [50000]
+channels: [tachometer, accel_radial, accel_axial, accel_tangential, microphone]
+notes: |
+  Multi-sensor com tacometro. O tacometro da a rotacao medida, que e o prior
+  fisico do projeto sem precisar estima-la. Bom para isolar o efeito do erro de
+  estimacao de rotacao no erro final.
+undersampling:
+  method: decimacao_pura
+  factors: [2, 4, 8, 16, 32]

@@ -1,0 +1,52 @@
+[project]
+name = "subnyquist"
+version = "0.1.0"
+description = "Aquisicao sub-Nyquist para monitoramento de condicao embarcado"
+requires-python = ">=3.11"
+dependencies = [
+    "snq-core",
+    "snq-sim",
+    "snq-data",
+    "snq-recon",
+    "snq-eval",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11", "matplotlib>=3.9", "pyyaml>=6"]
+learn = ["torch>=2.4"]
+
+[tool.uv.workspace]
+members = ["packages/*"]
+
+[tool.uv.sources]
+snq-core  = { workspace = true }
+snq-sim   = { workspace = true }
+snq-data  = { workspace = true }
+snq-recon = { workspace = true }
+snq-learn = { workspace = true }
+snq-eval  = { workspace = true }
+snq-embed = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "NPY"]
+
+[tool.ruff.lint.per-file-ignores]
+# Nos testes, "from snq_core import sampling as S" e uma convencao deliberada:
+# deixa explicito de qual modulo vem cada identidade sob teste.
+"**/tests/*" = ["N812"]
+
+[tool.mypy]
+# 3.12 e o alvo de *parsing* do mypy, nao o runtime: os stubs do numpy >= 2.4 usam
+# a sintaxe "type X = ..." de PEP 695, que o mypy so aceita a partir de 3.12.
+# O runtime do projeto continua sendo 3.11 (ver requires-python).
+python_version = "3.12"
+strict = true
+files = ["packages/snq-core/src", "packages/snq-eval/src"]
+
+[tool.pytest.ini_options]
+testpaths = ["packages"]
+addopts = "-q --strict-markers"

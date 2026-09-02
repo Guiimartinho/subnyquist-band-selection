@@ -1,0 +1,17 @@
+[project]
+name = "snq-recon"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "scipy>=1.13", "snq-core"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/snq_recon"]
+
+[tool.uv.sources]
+snq-core = { workspace = true }
+snq-sim  = { workspace = true }
+snq-learn = { workspace = true }

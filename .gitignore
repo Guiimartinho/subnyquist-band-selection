@@ -1,0 +1,42 @@
+# dados brutos e processados — nunca versionados
+datasets/raw/
+datasets/processed/
+literature/pdf/
+bench/captures/**/*.bin
+bench/captures/**/*.csv
+!bench/captures/**/README.md
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# resultados grandes (metrics.csv e manifest.json SÃO versionados)
+experiments/**/results/figures/*.png
+experiments/**/results/*.npz
+experiments/**/results/*.h5
+
+# zephyr / ncs
+build/
+firmware/**/build/
+
+# latex
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# so
+.DS_Store
+Thumbs.db

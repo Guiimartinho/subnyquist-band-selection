@@ -1,0 +1,217 @@
+% Fonte unica de verdade bibliografica do projeto.
+%
+% Campo obrigatorio "verified":
+%   live       conferida online durante a revisao
+%   canonical  classica do campo; DOI/paginas a conferir antes da submissao
+%   unverified nao conferida - precisa aparecer assim no texto, e o CI avisa
+%
+% Nenhuma entrada entra aqui sem correspondencia a um trabalho real.
+
+@article{landau1967,
+  author  = {Landau, H. J.},
+  title   = {Necessary density conditions for sampling and interpolation of certain entire functions},
+  journal = {Acta Mathematica},
+  volume  = {117},
+  pages   = {37--52},
+  year    = {1967},
+  verified = {canonical},
+  note    = {Piso teorico do projeto. Ver docs/adr/0001.}
+}
+
+@article{vaughan1991,
+  author  = {Vaughan, R. G. and Scott, N. L. and White, D. R.},
+  title   = {The theory of bandpass sampling},
+  journal = {IEEE Transactions on Signal Processing},
+  volume  = {39},
+  number  = {9},
+  pages   = {1973--1984},
+  year    = {1991},
+  verified = {canonical},
+  note    = {Baseline oficial do projeto, custo zero.}
+}
+
+@article{vetterli2002fri,
+  author  = {Vetterli, M. and Marziliano, P. and Blu, T.},
+  title   = {Sampling signals with finite rate of innovation},
+  journal = {IEEE Transactions on Signal Processing},
+  volume  = {50},
+  number  = {6},
+  pages   = {1417--1428},
+  year    = {2002},
+  verified = {canonical},
+  note    = {Casamento teorico direto com trens de impacto de rolamento.}
+}
+
+@article{tur2011ultrasound,
+  author  = {Tur, R. and Eldar, Y. C. and Friedman, Z.},
+  title   = {Innovation rate sampling of pulse streams with application to ultrasound imaging},
+  journal = {IEEE Transactions on Signal Processing},
+  volume  = {59},
+  number  = {4},
+  pages   = {1827--1842},
+  year    = {2011},
+  verified = {live}
+}
+
+@article{mishali2010xampling,
+  author  = {Mishali, M. and Eldar, Y. C.},
+  title   = {From theory to practice: sub-Nyquist sampling of sparse wideband analog signals},
+  journal = {IEEE Journal of Selected Topics in Signal Processing},
+  volume  = {4},
+  number  = {2},
+  pages   = {375--391},
+  year    = {2010},
+  url     = {https://arxiv.org/pdf/1106.4514},
+  verified = {live}
+}
+
+@article{davenport2010compressive,
+  author  = {Davenport, M. A. and Boufounos, P. T. and Wakin, M. B. and Baraniuk, R. G.},
+  title   = {Signal processing with compressive measurements},
+  journal = {IEEE Journal of Selected Topics in Signal Processing},
+  volume  = {4},
+  number  = {2},
+  pages   = {445--460},
+  year    = {2010},
+  verified = {canonical},
+  note    = {Estimar feature sem reconstruir - rota mais barata para o MCU.}
+}
+
+@misc{bhandari2021unlimited,
+  author = {Bhandari, A. and others},
+  title  = {Unlimited sampling from theory to practice: Fourier-Prony recovery and prototype ADC},
+  url    = {https://arxiv.org/pdf/2105.05818},
+  verified = {live}
+}
+
+@misc{bhandari2023bandpass,
+  author = {Bhandari, A. and others},
+  title  = {Unlimited sampling of bandpass signals: computational demodulation via undersampling},
+  url    = {https://arxiv.org/html/2307.04917},
+  verified = {live},
+  note   = {Dobra em amplitude e em frequencia no mesmo aquisitor. Base do Paper 3.}
+}
+
+@article{monga2021unrolling,
+  author  = {Monga, V. and Li, Y. and Eldar, Y. C.},
+  title   = {Algorithm unrolling: interpretable, efficient deep learning for signal and image processing},
+  journal = {IEEE Signal Processing Magazine},
+  volume  = {38},
+  number  = {2},
+  year    = {2021},
+  url     = {https://arxiv.org/pdf/1912.10557},
+  verified = {live}
+}
+
+@article{shlezinger2023mbdl,
+  author  = {Shlezinger, N. and Whang, J. and Eldar, Y. C. and Dimakis, A. G.},
+  title   = {Model-based deep learning},
+  journal = {Proceedings of the IEEE},
+  year    = {2023},
+  url     = {https://arxiv.org/pdf/2012.08405},
+  verified = {live}
+}
+
+@article{shlezinger2022taskadc,
+  author  = {Shlezinger, N. and Amar, A. and Luijten, B. and van Sloun, R. J. G. and Eldar, Y. C.},
+  title   = {Deep task-based analog-to-digital conversion},
+  journal = {IEEE Transactions on Signal Processing},
+  year    = {2022},
+  url     = {https://arxiv.org/pdf/2201.12634},
+  verified = {live},
+  note    = {Trabalho mais proximo da tese. Outro dominio, outro regime de potencia.}
+}
+
+@article{bahadir2020loupe,
+  author  = {Bahadir, C. D. and Wang, A. Q. and Dalca, A. V. and Sabuncu, M. R.},
+  title   = {Deep-learning-based optimization of the under-sampling pattern in {MRI}},
+  journal = {IEEE Transactions on Computational Imaging},
+  volume  = {6},
+  year    = {2020},
+  url     = {https://ieeexplore.ieee.org/document/9133281/},
+  verified = {live}
+}
+
+@inproceedings{vangorp2021adps,
+  author    = {van Gorp, H. and Huijben, I. and Veeling, B. S. and Pezzotti, N. and van Sloun, R. J. G.},
+  title     = {Active deep probabilistic subsampling},
+  booktitle = {ICML (PMLR 139)},
+  year      = {2021},
+  url       = {https://proceedings.mlr.press/v139/van-gorp21a/van-gorp21a.pdf},
+  verified  = {live}
+}
+
+@misc{izacard2019deepfreq,
+  author = {Izacard, G. and Mohan, S. and Fernandez-Granda, C.},
+  title  = {Data-driven estimation of sinusoid frequencies},
+  year   = {2019},
+  url    = {https://arxiv.org/pdf/1906.00823},
+  verified = {live}
+}
+
+@article{randall2011bearing,
+  author  = {Randall, R. B. and Antoni, J.},
+  title   = {Rolling element bearing diagnostics --- a tutorial},
+  journal = {Mechanical Systems and Signal Processing},
+  volume  = {25},
+  number  = {2},
+  pages   = {485--520},
+  year    = {2011},
+  verified = {canonical}
+}
+
+@article{antoni2007kurtogram,
+  author  = {Antoni, J.},
+  title   = {Fast computation of the kurtogram for the detection of transient faults},
+  journal = {Mechanical Systems and Signal Processing},
+  volume  = {21},
+  number  = {1},
+  pages   = {108--124},
+  year    = {2007},
+  verified = {canonical},
+  note    = {Seleciona a banda ressonante que a amostragem passa-faixa deve centrar.}
+}
+
+@article{sensors2025csvibration,
+  title   = {Compressed sensing of vibration signal for fault diagnosis of bearings, gears and propellers under speed variation conditions},
+  journal = {Sensors},
+  volume  = {25},
+  number  = {10},
+  pages   = {3167},
+  year    = {2025},
+  url     = {https://www.mdpi.com/1424-8220/25/10/3167},
+  verified = {live},
+  note    = {Concorrente mais direto. Amostragem fixa, nao aprendida.}
+}
+
+@article{bearingfm2024,
+  title   = {BearingFM: towards a foundation model for bearing fault diagnosis by domain knowledge and contrastive learning},
+  journal = {International Journal of Production Economics},
+  year    = {2024},
+  url     = {https://www.sciencedirect.com/science/article/abs/pii/S0925527324001762},
+  verified = {live}
+}
+
+@misc{mcuquant2025,
+  title = {Neural network quantization for microcontrollers: a comprehensive survey of methods, platforms and applications},
+  year  = {2025},
+  url   = {https://arxiv.org/pdf/2508.15008},
+  verified = {live}
+}
+
+@misc{pdmsurvey2024,
+  title = {Low-power vibration-based predictive maintenance for Industry 4.0 using neural networks: a survey},
+  year  = {2024},
+  url   = {https://arxiv.org/pdf/2408.00516},
+  verified = {live}
+}
+
+@techreport{nordic2024nrf54l15,
+  author      = {{Nordic Semiconductor}},
+  title       = {nRF54L15 / nRF54L10 / nRF54L05 preliminary datasheet},
+  institution = {Nordic Semiconductor},
+  year        = {2024},
+  url         = {https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/NRF54L15-CAAA-R.pdf},
+  verified    = {live},
+  note        = {SAADC 12 bit @ 250 kSPS. Banda do track-and-hold nao documentada - medir.}
+}

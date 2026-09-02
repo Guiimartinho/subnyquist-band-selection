@@ -1,0 +1,12 @@
+name: xjtu-sy
+full_name: XJTU-SY rolling element bearing run-to-failure dataset
+url: https://biaowang.tech/xjtu-sy-bearing-datasets/
+license: uso academico com citacao
+fs_hz: [25600]
+notes: |
+  Degradacao continua ate a falha, com variacao de regime. E o dataset adequado
+  para testar o prior temporal e a desambiguacao da ordem do alias por variacao
+  de rotacao - o mecanismo descrito na revisao SOTA.
+undersampling:
+  method: decimacao_pura
+  factors: [2, 4, 8, 16]
