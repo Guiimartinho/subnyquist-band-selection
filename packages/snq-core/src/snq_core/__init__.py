@@ -5,6 +5,7 @@ invertem.
 """
 
 from snq_core.bearing import (
+    CWRU_6205_2RS_JEM_SKF,
     BearingGeometry,
     candidate_lines_hz,
     fault_frequencies_hz,
@@ -30,6 +31,7 @@ from snq_core.sampling import (
 )
 
 __all__ = [
+    "CWRU_6205_2RS_JEM_SKF",
     "BearingGeometry",
     "FoldedBand",
     "alias_frequency_hz",

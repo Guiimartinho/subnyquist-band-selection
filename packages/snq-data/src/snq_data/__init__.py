@@ -10,6 +10,13 @@ instantes nao-uniformes do padrao em teste.
 Ver a skill dataset-ingest para o procedimento de ingestao.
 """
 
+from snq_data.cwru import (
+    CwruCatalog,
+    CwruRecord,
+    download_record,
+    load_record,
+    parse_record_id,
+)
 from snq_data.datasets import (
     AntiAliasFilterUsedError,
     Manifest,
@@ -23,6 +30,11 @@ from snq_data.datasets import (
 
 __all__ = [
     "AntiAliasFilterUsedError",
+    "CwruCatalog",
+    "CwruRecord",
+    "download_record",
+    "load_record",
+    "parse_record_id",
     "Manifest",
     "effective_rate_hz",
     "load_all_manifests",

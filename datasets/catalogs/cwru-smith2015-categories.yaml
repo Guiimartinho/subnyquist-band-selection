@@ -1,0 +1,116 @@
+# Triagem dos registros do CWRU segundo Smith & Randall (MSSP 2015).
+#
+# Fonte: `literature/pdf/smith2015cwru.pdf`, Tabelas 5 e 6, pagina 36.
+# Extraido do texto do PDF em 2026-09-03.
+#
+# POR QUE ISTO EXISTE
+# -------------------
+# Boa parte dos registros do CWRU nao e diagnosticavel nem na taxa cheia. Medir
+# degradacao por subamostragem sobre um registro assim mede ruido, nao degradacao -
+# e produz curva plana que seria lida como falha do metodo. Ver a nota em
+# `literature/notes/smith2015cwru.md`.
+#
+# Citando os autores sobre a Tabela 5: os registros com sintomas classicos
+# "could be considered valid training sets for machine learning algorithms".
+# E sobre a Tabela 6: os nao diagnosticaveis "might provide a robust test for any
+# newly proposed diagnostic algorithms".
+#
+# CONVENCAO DE IDENTIFICADOR
+# --------------------------
+# "120DE" = registro 120, ponto de medicao drive end. Sem sufixo = vale para todos
+# os pontos de medicao daquele registro.
+#
+# MARCADORES DA TABELA 5 (nota de rodape do artigo)
+#   sem marca : diagnostico Y1 obtido com o Metodo 1 (sinal bruto)
+#   *         : Y1 obtido com o Metodo 2 (pre-branqueamento cepstral), nao com o 1
+#   +         : Y1 obtido com o Metodo 3 (benchmark), nao com o 1
+# Aqui os marcadores foram removidos dos identificadores e registrados em
+# `harder_than_method1`, porque afetam a dificuldade e podem virar uma condicao
+# experimental separada.
+
+source:
+  citekey: smith2015cwru
+  tables: [5, 6]
+  page: 36
+  extracted: 2026-09-03
+
+# A extracao de tabela multi-coluna a partir de texto de PDF e falivel. As linhas
+# de drive end sairam limpas e sem ambiguidade. A linha de fan end da Tabela 5 tem
+# atribuicao de coluna incerta no texto extraido - por isso o campo abaixo.
+verification:
+  human_checked: false
+  note: >-
+    Conferir contra a pagina 36 do PDF antes de usar em paper. As linhas de
+    drive end (12 kHz e 48 kHz) de ambas as tabelas foram lidas sem ambiguidade.
+    A linha de fan end da Tabela 5 tem separacao de coluna incerta entre "Ball",
+    "OR orthogonal" e "OR opposite"; o conteudo dos registros esta correto, a
+    atribuicao ao tipo de falha e que precisa de conferencia visual.
+  reliable_subsets: [drive_end_12k, drive_end_48k]
+
+# --------------------------------------------------------------------------
+# Tabela 6 - NAO diagnosticaveis por nenhum dos metodos (so N1 ou N2).
+# Excluir do E02. Extracao limpa e sem ambiguidade.
+# --------------------------------------------------------------------------
+undiagnosable:
+  drive_end_12k:
+    inner_race: [3001, 3002, 3003, 3004]
+    ball: [118, 119, 120DE, 120BA, 121BA, 187FE, 224DE, 224BA, 225DE, 225FE]
+    outer_race_centred: [197FE, 197BA, 198FE, 198BA, 199FE, 200]
+    outer_race_orthogonal: []
+    outer_race_opposite: []
+  drive_end_48k:
+    inner_race: [174]
+    ball: [122, 123, 124, 125, 192, 228DE, 229DE]
+    outer_race_centred: [202FE, 204FE]
+    outer_race_orthogonal: []
+    outer_race_opposite: []
+  fan_end_12k:
+    inner_race: []
+    ball: [282FE, 285FE, 290DE, 290FE, 292FE, 293DE]
+    outer_race_centred: []
+    outer_race_orthogonal: [298BA]
+    outer_race_opposite: [302, 305FE, 306, 307]
+
+# --------------------------------------------------------------------------
+# Tabela 5 - sintomas classicos de falha, diagnostico Y1 com ao menos um metodo.
+# E o conjunto preferencial do E02.
+# --------------------------------------------------------------------------
+classical:
+  drive_end_12k:
+    inner_race: [209DE, 209FE, 210DE, 211DE, 212DE]
+    ball: []
+    outer_race_centred: [130, 131, 132, 133]
+    outer_race_orthogonal:
+      [144DE, 144BA, 145DE, 145FE, 145BA, 146DE, 146FE, 146BA, 147DE, 147FE, 147BA]
+    outer_race_opposite: [156DE, 156FE, 159DE, 160DE]
+  drive_end_48k:
+    inner_race: [213, 215FE]
+    ball: []
+    outer_race_centred: [135, 136, 137, 138]
+    outer_race_orthogonal: [148, 149, 150, 151]
+    outer_race_opposite: [161DE, 162, 163DE, 163FE, 164]
+  fan_end_12k:
+    inner_race: [278DE, 278FE, 279DE, 280DE, 280BA, 281DE]
+    ball:
+      [274FE, 275FE, 276FE, 276BA, 277FE, 277BA, 271DE, 271FE, 271BA,
+       272DE, 272FE, 272BA, 273DE, 273FE, 273BA]
+    outer_race_centred: []
+    outer_race_orthogonal: [313DE, 313FE, 315DE]
+    outer_race_opposite:
+      [310DE, 310FE, 309DE, 311DE, 311FE, 312DE, 312FE, 317DE, 317FE, 317BA]
+
+# Registros cujo Y1 so foi obtido com pre-branqueamento cepstral (Metodo 2) ou com
+# o benchmark (Metodo 3), e nao com o sinal bruto (Metodo 1). Sao os casos mais
+# dificeis dentro da categoria classica, e valem como condicao experimental propria.
+harder_than_method1:
+  method2_only:
+    [209FE, 144DE, 145DE, 146DE, 147DE, 156DE, 156FE, 159DE, 160DE, 215FE, 161DE,
+     162, 163DE, 163FE, 164, 275FE, 276FE, 276BA, 277FE, 277BA, 271DE, 271FE,
+     271BA, 272DE, 272FE, 272BA, 273DE, 273BA, 313DE, 313FE, 315DE, 310DE, 310FE,
+     311DE, 311FE, 312DE, 312FE]
+  method3_only: [146FE, 146BA, 163DE, 164, 278FE, 279DE, 280DE, 280BA, 281DE,
+                 277FE, 271FE, 272DE, 273DE, 309DE, 317BA]
+
+# Registros que aparentam ceifamento em trechos (secao 6 do artigo). Conferir antes
+# de usar: ceifamento e nao-linearidade e contamina qualquer analise espectral.
+clipped_in_sections: [191DE, 214DE, 215DE, 228DE, 229DE, 236DE, 237DE]

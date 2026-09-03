@@ -29,7 +29,14 @@ class FaultScore:
     measured_hz: float
     error_hz: float
     harmonic_energy: float
-    """Soma das magnitudes nos harmônicos, normalizada pelo piso local do espectro."""
+    """Soma das magnitudes nos harmônicos, normalizada pelo piso local do espectro.
+
+    **Só comparável dentro de um mesmo registro.** A normalização é pela mediana do
+    espectro, que num sinal limpo é minúscula e faz a razão explodir: medido em dado
+    real do CWRU, o registro normal 97DE pontuou 6x mais que o registro com falha
+    130DE. Serve para ordenar hipóteses num registro, não para detectar falha entre
+    registros.
+    """
 
     n_harmonics_found: int
 

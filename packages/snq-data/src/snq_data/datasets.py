@@ -146,7 +146,11 @@ def undersampling_report(fs_original_hz: float, factor: int, band_hz: tuple[floa
 
 
 def load_all_manifests(manifest_dir: str | Path) -> dict[str, Manifest]:
-    """Carrega todos os manifests de um diretorio, indexados por nome."""
+    """Carrega todos os manifests de um diretorio, indexados por nome.
+
+    Apenas manifests de dataset. Catalogos de triagem (por exemplo a classificacao
+    de registros do CWRU) vivem em ``datasets/catalogs/`` e tem outro esquema.
+    """
     out: dict[str, Manifest] = {}
     for p in sorted(Path(manifest_dir).glob("*.yaml")):
         m = Manifest.load(p)
