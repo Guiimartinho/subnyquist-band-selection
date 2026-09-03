@@ -186,8 +186,15 @@ def impulse_train(
 
     period = 1.0 / rate_hz
     n_impacts = int(duration_s / period)
-    for i in range(n_impacts):
-        t0 = i * period * (1.0 + rng.normal(0.0, jitter_frac))
+
+    # O escorregamento perturba cada INTERVALO, nao a posicao absoluta. Somar os
+    # intervalos da um passeio aleatorio (desvio ~ sqrt(i)); escalar a posicao por
+    # (1 + eps) daria erro crescendo com i e destruiria a periodicidade em poucos
+    # segundos. Bug encontrado em 2026-09-03 ao montar o baseline de envelope.
+    intervals = period * (1.0 + rng.normal(0.0, jitter_frac, size=n_impacts))
+    starts = np.cumsum(intervals) - intervals[0]
+
+    for t0 in starts:
         if not 0.0 <= t0 < duration_s:
             continue
         idx = t >= t0
