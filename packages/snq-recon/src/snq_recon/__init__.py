@@ -11,4 +11,18 @@ A ser implementado, em ordem de prioridade:
   omp / fista         reconstrucao esparsa
 """
 
-__all__: list[str] = []
+from snq_recon.estimation import (
+    alias_candidates_hz,
+    estimate_tone_hz,
+    prior_grid_hz,
+    resolve_multirate_hz,
+    unambiguous_range_hz,
+)
+
+__all__ = [
+    "alias_candidates_hz",
+    "estimate_tone_hz",
+    "prior_grid_hz",
+    "resolve_multirate_hz",
+    "unambiguous_range_hz",
+]
