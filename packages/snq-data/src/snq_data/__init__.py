@@ -7,8 +7,27 @@ Regra de subamostragem: NAO decimar com filtro anti-aliasing. Decimacao com AAF
 destroi exatamente o efeito em estudo. Usar x[::M] puro, ou reamostrar nos
 instantes nao-uniformes do padrao em teste.
 
-A ser implementado: load_manifest, fetch, verify_checksum, undersample,
-make_split. Ver a skill dataset-ingest.
+Ver a skill dataset-ingest para o procedimento de ingestao.
 """
 
-__all__: list[str] = []
+from snq_data.datasets import (
+    AntiAliasFilterUsedError,
+    Manifest,
+    effective_rate_hz,
+    load_all_manifests,
+    sha256,
+    undersample,
+    undersample_cosets,
+    undersampling_report,
+)
+
+__all__ = [
+    "AntiAliasFilterUsedError",
+    "Manifest",
+    "effective_rate_hz",
+    "load_all_manifests",
+    "sha256",
+    "undersample",
+    "undersample_cosets",
+    "undersampling_report",
+]
