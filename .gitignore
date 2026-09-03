@@ -1,7 +1,10 @@
 # dados brutos e processados — nunca versionados
 datasets/raw/
 datasets/processed/
-literature/pdf/
+
+# literature/pdf/ É versionado: o repositório é privado e os PDFs são material
+# de leitura do doutorado. Se este repositório algum dia virar público, os PDFs
+# de editora precisam sair do histórico antes — não basta apagar o arquivo.
 bench/captures/**/*.bin
 bench/captures/**/*.csv
 !bench/captures/**/README.md
