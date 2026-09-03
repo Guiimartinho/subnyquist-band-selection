@@ -1,11 +1,52 @@
-% Fonte unica de verdade bibliografica do projeto.
+% =====================================================================
+% Fonte unica de verdade bibliografica do projeto sub-nyquist.
 %
 % Campo obrigatorio "verified":
-%   live       conferida online durante a revisao
-%   canonical  classica do campo; DOI/paginas a conferir antes da submissao
-%   unverified nao conferida - precisa aparecer assim no texto, e o CI avisa
+%   live       metadados conferidos online (API do arXiv ou pagina do editor)
+%   canonical  classica do campo, citada de conhecimento consolidado;
+%              volume/paginas/DOI a conferir contra a fonte antes da submissao
+%   unverified nao conferida - precisa aparecer assim no texto; o CI avisa
 %
-% Nenhuma entrada entra aqui sem correspondencia a um trabalho real.
+% Campo "cluster" segue a revisao SOTA (docs/revisao-sota.html):
+%   C1 fundamentos de amostragem estruturada
+%   C2 superar o conversor por outra dimensao (modulo, tempo, nivel)
+%   C3 ponte modelo -> aprendizado
+%   C4 aquisicao aprendida orientada a tarefa
+%   C5 decodificadores espectrais e representacoes continuas
+%   C6 dominio: diagnostico de maquinas e execucao embarcada
+%
+% Entradas com "eprint" tem PDF aberto e sao baixadas por fetch_pdfs.py.
+% Entradas sem eprint estao atras de paywall: usar acesso institucional.
+% =====================================================================
+
+
+% ---------------------------------------------------------------------
+% C1 - FUNDAMENTOS DE AMOSTRAGEM ESTRUTURADA
+% ---------------------------------------------------------------------
+
+@article{nyquist1928,
+  author  = {Nyquist, H.},
+  title   = {Certain topics in telegraph transmission theory},
+  journal = {Transactions of the AIEE},
+  volume  = {47},
+  number  = {2},
+  pages   = {617--644},
+  year    = {1928},
+  cluster = {C1},
+  verified = {canonical}
+}
+
+@article{shannon1949,
+  author  = {Shannon, C. E.},
+  title   = {Communication in the presence of noise},
+  journal = {Proceedings of the IRE},
+  volume  = {37},
+  number  = {1},
+  pages   = {10--21},
+  year    = {1949},
+  cluster = {C1},
+  verified = {canonical}
+}
 
 @article{landau1967,
   author  = {Landau, H. J.},
@@ -14,8 +55,43 @@
   volume  = {117},
   pages   = {37--52},
   year    = {1967},
+  cluster = {C1},
   verified = {canonical},
   note    = {Piso teorico do projeto. Ver docs/adr/0001.}
+}
+
+@article{papoulis1977,
+  author  = {Papoulis, A.},
+  title   = {Generalized sampling expansion},
+  journal = {IEEE Transactions on Circuits and Systems},
+  volume  = {24},
+  number  = {11},
+  pages   = {652--654},
+  year    = {1977},
+  cluster = {C1},
+  verified = {canonical}
+}
+
+@article{unser2000,
+  author  = {Unser, M.},
+  title   = {Sampling --- 50 years after {Shannon}},
+  journal = {Proceedings of the IEEE},
+  volume  = {88},
+  number  = {4},
+  pages   = {569--587},
+  year    = {2000},
+  cluster = {C1},
+  verified = {canonical}
+}
+
+@book{eldar2015,
+  author    = {Eldar, Y. C.},
+  title     = {Sampling Theory: Beyond Bandlimited Systems},
+  publisher = {Cambridge University Press},
+  year      = {2015},
+  cluster   = {C1},
+  verified  = {canonical},
+  note      = {Referencia unica mais util do projeto; cobre C1 inteiro.}
 }
 
 @article{vaughan1991,
@@ -26,6 +102,7 @@
   number  = {9},
   pages   = {1973--1984},
   year    = {1991},
+  cluster = {C1},
   verified = {canonical},
   note    = {Baseline oficial do projeto, custo zero.}
 }
@@ -38,6 +115,7 @@
   number  = {6},
   pages   = {1417--1428},
   year    = {2002},
+  cluster = {C1},
   verified = {canonical},
   note    = {Casamento teorico direto com trens de impacto de rolamento.}
 }
@@ -50,19 +128,118 @@
   number  = {4},
   pages   = {1827--1842},
   year    = {2011},
+  cluster = {C1},
   verified = {live}
 }
 
-@article{mishali2010xampling,
+@misc{tan2008fri,
+  author = {Tan, V. Y. F. and Goyal, V. K.},
+  title  = {Estimating signals with finite rate of innovation from noisy samples},
+  year   = {2008},
+  eprint = {0801.0275},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live}
+}
+
+@misc{benhaim2010fri,
+  author = {Ben-Haim, Z. and Michaeli, T. and Eldar, Y. C.},
+  title  = {Performance bounds and design criteria for estimating finite rate of innovation signals},
+  year   = {2010},
+  eprint = {1009.2221},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Limites de Cramer-Rao para FRI. Base para o limite de identificabilidade.}
+}
+
+@misc{mishali2007blind,
+  author = {Mishali, M. and Eldar, Y. C.},
+  title  = {Blind multi-band signal reconstruction: compressed sensing for analog signals},
+  year   = {2007},
+  eprint = {0709.1563},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Multi-coset com suporte espectral desconhecido.}
+}
+
+@misc{mishali2009xampling,
+  author = {Mishali, M. and Eldar, Y. C. and Dounaevsky, O. and Shoshan, E.},
+  title  = {Xampling: analog to digital at sub-{Nyquist} rates},
+  year   = {2009},
+  eprint = {0912.2495},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live}
+}
+
+@article{mishali2010practice,
   author  = {Mishali, M. and Eldar, Y. C.},
-  title   = {From theory to practice: sub-Nyquist sampling of sparse wideband analog signals},
+  title   = {From theory to practice: sub-{Nyquist} sampling of sparse wideband analog signals},
   journal = {IEEE Journal of Selected Topics in Signal Processing},
   volume  = {4},
   number  = {2},
   pages   = {375--391},
   year    = {2010},
-  url     = {https://arxiv.org/pdf/1106.4514},
+  eprint  = {1106.4514},
+  archivePrefix = {arXiv},
+  cluster = {C1},
   verified = {live}
+}
+
+@misc{mishali2018radar,
+  author = {Mishra, K. V. and Eldar, Y. C.},
+  title  = {Sub-{Nyquist} radar: principles and prototypes},
+  year   = {2018},
+  eprint = {1803.01819},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Precedente de hardware; o argumento de energia se apoia neste.}
+}
+
+@misc{lexa2011nonuniform,
+  author = {Lexa, M. A. and Davies, M. E. and Thompson, J. S.},
+  title  = {Compressive and noncompressive power spectral density estimation from periodic nonuniform samples},
+  year   = {2011},
+  eprint = {1110.2722},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Estimar densidade espectral sem reconstruir a forma de onda.}
+}
+
+@misc{sun2013multirate,
+  author = {Sun, H. and Nallanathan, A. and Jiang, J. and Poor, H. V.},
+  title  = {Multi-rate sub-{Nyquist} spectrum sensing in cognitive radios},
+  year   = {2013},
+  eprint = {1302.1489},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Multi-taxa. Precedente mais proximo da ideia de desambiguar alias por fs distintos.}
+}
+
+@misc{lim2016multicoset,
+  author = {Lim, C. W. and Wakin, M. B.},
+  title  = {Reconstruction of frequency hopping signals from multi-coset samples},
+  year   = {2016},
+  eprint = {1603.06886},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live}
+}
+
+@misc{zhao2018coprime,
+  author = {Zhao, Y. and Xiao, S.},
+  title  = {Sparse multiband signal acquisition receiver with co-prime sampling},
+  year   = {2018},
+  eprint = {1806.00160},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Taxas coprimas em hardware. Ler antes de implementar E01.}
 }
 
 @article{davenport2010compressive,
@@ -73,23 +250,255 @@
   number  = {2},
   pages   = {445--460},
   year    = {2010},
+  cluster = {C1},
   verified = {canonical},
   note    = {Estimar feature sem reconstruir - rota mais barata para o MCU.}
 }
 
-@misc{bhandari2021unlimited,
-  author = {Bhandari, A. and others},
-  title  = {Unlimited sampling from theory to practice: Fourier-Prony recovery and prototype ADC},
-  url    = {https://arxiv.org/pdf/2105.05818},
+@article{donoho2006cs,
+  author  = {Donoho, D. L.},
+  title   = {Compressed sensing},
+  journal = {IEEE Transactions on Information Theory},
+  volume  = {52},
+  number  = {4},
+  pages   = {1289--1306},
+  year    = {2006},
+  cluster = {C1},
+  verified = {canonical}
+}
+
+@article{candes2006robust,
+  author  = {Cand{\`e}s, E. J. and Romberg, J. and Tao, T.},
+  title   = {Robust uncertainty principles: exact signal reconstruction from highly incomplete frequency information},
+  journal = {IEEE Transactions on Information Theory},
+  volume  = {52},
+  number  = {2},
+  pages   = {489--509},
+  year    = {2006},
+  cluster = {C1},
+  verified = {canonical}
+}
+
+
+% ---------------------------------------------------------------------
+% C2 - SUPERAR O CONVERSOR POR OUTRA DIMENSAO
+% (amplitude via modulo; tempo via time encoding; nivel via LC-ADC)
+% ---------------------------------------------------------------------
+
+@misc{bhandari2017unlimited,
+  author = {Bhandari, A. and Krahmer, F. and Raskar, R.},
+  title  = {On unlimited sampling},
+  year   = {2017},
+  eprint = {1707.06340},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Artigo fundador do Unlimited Sensing Framework.}
+}
+
+@misc{bhandari2019unlimited,
+  author = {Bhandari, A. and Krahmer, F. and Raskar, R.},
+  title  = {On unlimited sampling and reconstruction},
+  year   = {2019},
+  eprint = {1905.03901},
+  archivePrefix = {arXiv},
+  cluster = {C2},
   verified = {live}
 }
 
-@misc{bhandari2023bandpass,
-  author = {Bhandari, A. and others},
-  title  = {Unlimited sampling of bandpass signals: computational demodulation via undersampling},
-  url    = {https://arxiv.org/html/2307.04917},
+@misc{bhandari2021prototype,
+  author = {Bhandari, A. and Krahmer, F. and Poskitt, T.},
+  title  = {Unlimited sampling from theory to practice: {Fourier--Prony} recovery and prototype {ADC}},
+  year   = {2021},
+  eprint = {2105.05818},
+  archivePrefix = {arXiv},
+  cluster = {C2},
   verified = {live},
-  note   = {Dobra em amplitude e em frequencia no mesmo aquisitor. Base do Paper 3.}
+  note   = {Ponte teoria-hardware. Prony e o mesmo estimador do FRI.}
+}
+
+@misc{shtendel2023bandpass,
+  author = {Shtendel, G. and Florescu, D. and Bhandari, A.},
+  title  = {Unlimited sampling of bandpass signals: computational demodulation via undersampling},
+  year   = {2023},
+  eprint = {2307.04917},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {PECA CENTRAL DO PAPER 3: dobra em amplitude e em frequencia no mesmo aquisitor.}
+}
+
+@misc{shtendel2025multiband,
+  author = {Shtendel, G. and Bhandari, A.},
+  title  = {Unlimited sampling of multiband signals: single-channel acquisition and recovery},
+  year   = {2025},
+  eprint = {2510.27110},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Canal unico - compativel com o SAR unico do nRF54L15.}
+}
+
+@misc{azar2022robustmodulo,
+  author = {Azar, E. and Mulleti, S. and Eldar, Y. C.},
+  title  = {Robust unlimited sampling beyond modulo},
+  year   = {2022},
+  eprint = {2206.14656},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{florescu2022multidim,
+  author = {Florescu, D. and Bhandari, A.},
+  title  = {Multi-dimensional unlimited sampling and robust reconstruction},
+  year   = {2022},
+  eprint = {2209.06426},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{feuillen2023usradar,
+  author = {Feuillen, T. and Shankar, B. and Bhandari, A.},
+  title  = {Unlimited sampling radar: a real-time end-to-end demonstrator},
+  year   = {2023},
+  eprint = {2306.17684},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Demonstrador em tempo real - modelo metodologico para o capitulo de bancada.}
+}
+
+@misc{zhang2022lseunlimited,
+  author = {Zhang, Q. and Zhu, J. and Qu, F. and Liu, Z.},
+  title  = {Line spectral estimation via unlimited sampling},
+  year   = {2022},
+  eprint = {2210.15811},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Une C2 e C5: estimar raias a partir de amostras dobradas em amplitude.}
+}
+
+@misc{eamaz2022uno,
+  author = {Eamaz, A. and Mishra, K. V. and Yeganegi, F. and Soltanalian, M.},
+  title  = {{UNO}: unlimited sampling meets one-bit quantization},
+  year   = {2022},
+  eprint = {2301.10155},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Limite extremo de bits - relevante para orcamento de energia no no.}
+}
+
+@misc{bhandari2024hardware,
+  author = {Bhandari, A. and others},
+  title  = {Unleashing dynamic range and resolution in the {Unlimited Sensing Framework} via novel hardware},
+  year   = {2024},
+  eprint = {2410.20193},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{gontier2011tem,
+  author = {Gontier, D. and Vetterli, M.},
+  title  = {Sampling based on timing: time encoding machines on shift-invariant subspaces},
+  year   = {2011},
+  eprint = {1108.3149},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{adam2019multichanneltem,
+  author = {Adam, K. and Scholefield, A. and Vetterli, M.},
+  title  = {Sampling and reconstruction of bandlimited signals with multi-channel time encoding},
+  year   = {2019},
+  eprint = {1907.05673},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Multi-canal em tempo - analogo temporal do multi-coset.}
+}
+
+@misc{adam2021asynchrony,
+  author = {Adam, K. and Scholefield, A. and Vetterli, M.},
+  title  = {Asynchrony increases efficiency: time encoding of videos and low-rank signals},
+  year   = {2021},
+  eprint = {2104.14511},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{naaman2021fritem,
+  author = {Naaman, H. and Mulleti, S. and Eldar, Y. C.},
+  title  = {{FRI-TEM}: time encoding sampling of finite-rate-of-innovation signals},
+  year   = {2021},
+  eprint = {2106.05564},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {FRI + codificacao temporal. Rota assincrona para trens de impacto.}
+}
+
+@misc{kamath2021tem,
+  author = {Kamath, A. J. and Rudresh, S. and Seelamantula, C. S.},
+  title  = {Time encoding of finite-rate-of-innovation signals},
+  year   = {2021},
+  eprint = {2107.03344},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@misc{liu2023tembandpass,
+  author = {Liu, Z. and Xi, F. and Chen, S.},
+  title  = {Time encoding sampling of bandpass signals},
+  year   = {2023},
+  eprint = {2301.12598},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Codificacao temporal aplicada a sinal passa-faixa - exatamente o regime do projeto.}
+}
+
+@misc{renteria2022lcadc,
+  author = {Renteria-Pinon, M. and Tang, X. and Ramirez-Angulo, J.},
+  title  = {Fully digital second-order level-crossing sampling {ADC} for data saving in sensing sparse signals},
+  year   = {2022},
+  url    = {https://arxiv.org/abs/2211.09848},
+  cluster = {C2},
+  verified = {live},
+  note   = {arXiv nao serve PDF para esta entrada (404); baixar da pagina abs.}
+}
+
+@misc{neuromorphic2022ecg,
+  author = {others},
+  title  = {An event-driven compressive neuromorphic system for cardiac arrhythmia detection},
+  year   = {2022},
+  eprint = {2205.13292},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note   = {Co-projeto LC-ADC + classificador. Transposicao para vibracao nao foi feita.}
+}
+
+
+% ---------------------------------------------------------------------
+% C3 - PONTE MODELO -> APRENDIZADO
+% ---------------------------------------------------------------------
+
+@inproceedings{gregor2010lista,
+  author    = {Gregor, K. and LeCun, Y.},
+  title     = {Learning fast approximations of sparse coding},
+  booktitle = {ICML},
+  year      = {2010},
+  cluster   = {C3},
+  verified  = {canonical},
+  note      = {LISTA - origem do desenrolamento de algoritmos.}
 }
 
 @article{monga2021unrolling,
@@ -98,9 +507,13 @@
   journal = {IEEE Signal Processing Magazine},
   volume  = {38},
   number  = {2},
+  pages   = {18--44},
   year    = {2021},
-  url     = {https://arxiv.org/pdf/1912.10557},
-  verified = {live}
+  eprint  = {1912.10557},
+  archivePrefix = {arXiv},
+  cluster = {C3},
+  verified = {live},
+  note    = {Referencia canonica de unrolling. Ponto de partida do snq-learn.}
 }
 
 @article{shlezinger2023mbdl,
@@ -108,18 +521,58 @@
   title   = {Model-based deep learning},
   journal = {Proceedings of the IEEE},
   year    = {2023},
-  url     = {https://arxiv.org/pdf/2012.08405},
+  eprint  = {2012.08405},
+  archivePrefix = {arXiv},
+  cluster = {C3},
   verified = {live}
 }
+
+@misc{shlezinger2022mbdlopt,
+  author = {Shlezinger, N. and Eldar, Y. C.},
+  title  = {Model-based deep learning: on the intersection of deep learning and optimization},
+  year   = {2022},
+  eprint = {2205.02640},
+  archivePrefix = {arXiv},
+  cluster = {C3},
+  verified = {live}
+}
+
+@misc{li2021unrollbiomedical,
+  author = {Li, Y. and Bar-Shira, O. and Monga, V. and Eldar, Y. C.},
+  title  = {Deep algorithm unrolling for biomedical imaging},
+  year   = {2021},
+  eprint = {2108.06637},
+  archivePrefix = {arXiv},
+  cluster = {C3},
+  verified = {live}
+}
+
+@misc{atchade2023unrollstats,
+  author = {Atchad{\'e}, Y. and Liu, X. and Zhu, Q.},
+  title  = {A statistical perspective on algorithm unrolling models for inverse problems},
+  year   = {2023},
+  eprint = {2311.06395},
+  archivePrefix = {arXiv},
+  cluster = {C3},
+  verified = {live},
+  note   = {Garantias estatisticas - util para o argumento de identificabilidade.}
+}
+
+
+% ---------------------------------------------------------------------
+% C4 - AQUISICAO APRENDIDA ORIENTADA A TAREFA  (a fronteira)
+% ---------------------------------------------------------------------
 
 @article{shlezinger2022taskadc,
   author  = {Shlezinger, N. and Amar, A. and Luijten, B. and van Sloun, R. J. G. and Eldar, Y. C.},
   title   = {Deep task-based analog-to-digital conversion},
   journal = {IEEE Transactions on Signal Processing},
   year    = {2022},
-  url     = {https://arxiv.org/pdf/2201.12634},
+  eprint  = {2201.12634},
+  archivePrefix = {arXiv},
+  cluster = {C4},
   verified = {live},
-  note    = {Trabalho mais proximo da tese. Outro dominio, outro regime de potencia.}
+  note    = {TRABALHO MAIS PROXIMO DA TESE. Outro dominio, outro regime de potencia.}
 }
 
 @article{bahadir2020loupe,
@@ -127,8 +580,12 @@
   title   = {Deep-learning-based optimization of the under-sampling pattern in {MRI}},
   journal = {IEEE Transactions on Computational Imaging},
   volume  = {6},
+  pages   = {1139--1152},
   year    = {2020},
   url     = {https://ieeexplore.ieee.org/document/9133281/},
+  eprint  = {1907.11374},
+  archivePrefix = {arXiv},
+  cluster = {C4},
   verified = {live}
 }
 
@@ -138,16 +595,74 @@
   booktitle = {ICML (PMLR 139)},
   year      = {2021},
   url       = {https://proceedings.mlr.press/v139/van-gorp21a/van-gorp21a.pdf},
-  verified  = {live}
+  cluster   = {C4},
+  verified  = {live},
+  note      = {Politica adaptativa - mapeia para agendamento via DPPI/TIMER.}
 }
+
+@misc{puert2022,
+  author = {Xie, J. and others},
+  title  = {{PUERT}: probabilistic under-sampling and explicable reconstruction network for {CS-MRI}},
+  year   = {2022},
+  eprint = {2204.11189},
+  archivePrefix = {arXiv},
+  cluster = {C4},
+  verified = {live}
+}
+
+
+% ---------------------------------------------------------------------
+% C5 - DECODIFICADORES ESPECTRAIS E REPRESENTACOES CONTINUAS
+% ---------------------------------------------------------------------
 
 @misc{izacard2019deepfreq,
   author = {Izacard, G. and Mohan, S. and Fernandez-Granda, C.},
   title  = {Data-driven estimation of sinusoid frequencies},
   year   = {2019},
-  url    = {https://arxiv.org/pdf/1906.00823},
+  eprint = {1906.00823},
+  archivePrefix = {arXiv},
+  cluster = {C5},
+  verified = {live},
+  note   = {DeepFreq. Substituto aprendido do bloco Prony/ESPRIT.}
+}
+
+@misc{pan2022cresfreq,
+  author = {Pan, P. and Zhang, Y. and Deng, Z. and Wu, G.},
+  title  = {Complex-valued frequency estimation network and its applications to superresolution of radar range profiles},
+  year   = {2022},
+  url    = {https://github.com/panpp-git/cResFreq},
+  cluster = {C5},
+  verified = {live},
+  note   = {Trata fase corretamente - e a fase que codifica a ordem do alias.}
+}
+
+@inproceedings{sitzmann2020siren,
+  author    = {Sitzmann, V. and Martel, J. N. P. and Bergman, A. W. and Lindell, D. B. and Wetzstein, G.},
+  title     = {Implicit neural representations with periodic activation functions},
+  booktitle = {NeurIPS},
+  year      = {2020},
+  url       = {https://www.vincentsitzmann.com/siren/},
+  eprint    = {2006.09661},
+  archivePrefix = {arXiv},
+  cluster   = {C5},
+  verified  = {live},
+  note      = {Decodificador natural para amostragem nao-uniforme, sem grade.}
+}
+
+@misc{ongie2015frimri,
+  author = {Ongie, G. and Jacob, M.},
+  title  = {Super-resolution {MRI} using finite rate of innovation curves},
+  year   = {2015},
+  eprint = {1501.01697},
+  archivePrefix = {arXiv},
+  cluster = {C5},
   verified = {live}
 }
+
+
+% ---------------------------------------------------------------------
+% C6 - DOMINIO: DIAGNOSTICO DE MAQUINAS E EXECUCAO EMBARCADA
+% ---------------------------------------------------------------------
 
 @article{randall2011bearing,
   author  = {Randall, R. B. and Antoni, J.},
@@ -157,6 +672,7 @@
   number  = {2},
   pages   = {485--520},
   year    = {2011},
+  cluster = {C6},
   verified = {canonical}
 }
 
@@ -168,8 +684,22 @@
   number  = {1},
   pages   = {108--124},
   year    = {2007},
+  cluster = {C6},
   verified = {canonical},
   note    = {Seleciona a banda ressonante que a amostragem passa-faixa deve centrar.}
+}
+
+@article{antoni2009cyclostationarity,
+  author  = {Antoni, J.},
+  title   = {Cyclostationarity by examples},
+  journal = {Mechanical Systems and Signal Processing},
+  volume  = {23},
+  number  = {4},
+  pages   = {987--1036},
+  year    = {2009},
+  cluster = {C6},
+  verified = {canonical},
+  note    = {Base do argumento de que a frequencia ciclica sobrevive a dobra.}
 }
 
 @article{sensors2025csvibration,
@@ -179,39 +709,252 @@
   number  = {10},
   pages   = {3167},
   year    = {2025},
-  url     = {https://www.mdpi.com/1424-8220/25/10/3167},
+  url     = {https://www.mdpi.com/1424-8220/25/10/3167/pdf},
+  cluster = {C6},
   verified = {live},
-  note    = {Concorrente mais direto. Amostragem fixa, nao aprendida.}
+  note    = {CONCORRENTE MAIS DIRETO. Amostragem fixa, nao aprendida.}
 }
 
 @article{bearingfm2024,
-  title   = {BearingFM: towards a foundation model for bearing fault diagnosis by domain knowledge and contrastive learning},
+  title   = {{BearingFM}: towards a foundation model for bearing fault diagnosis by domain knowledge and contrastive learning},
   journal = {International Journal of Production Economics},
   year    = {2024},
   url     = {https://www.sciencedirect.com/science/article/abs/pii/S0925527324001762},
+  cluster = {C6},
+  verified = {live}
+}
+
+@article{tsdm2024,
+  title   = {Time series diffusion method: a denoising diffusion probabilistic model for vibration signal generation},
+  journal = {Mechanical Systems and Signal Processing},
+  year    = {2024},
+  url     = {https://www.sciencedirect.com/science/article/abs/pii/S0888327024003790},
+  cluster = {C6},
+  verified = {live},
+  note    = {Usar como aumentador de dados, NAO como prior de reconstrucao.}
+}
+
+@misc{shm2024foundation,
+  author = {Benfenati, L. and others},
+  title  = {Foundation models for structural health monitoring},
+  year   = {2024},
+  eprint = {2404.02944},
+  archivePrefix = {arXiv},
+  cluster = {C6},
+  verified = {live}
+}
+
+@misc{tsfm2025motor,
+  author = {others},
+  title  = {Data-efficient motor condition monitoring with time series foundation models},
+  year   = {2025},
+  eprint = {2511.23177},
+  archivePrefix = {arXiv},
+  cluster = {C6},
+  verified = {live},
+  note   = {Ganhos com 1-5% dos rotulos. Resolve escassez de rotulos, nao aquisicao.}
+}
+
+@misc{pdmsurvey2024,
+  author = {Vasilache, D. and Nitzsche, S. and Floegel, D. and others},
+  title  = {Low-power vibration-based predictive maintenance for {Industry 4.0} using neural networks: a survey},
+  year   = {2024},
+  eprint = {2408.00516},
+  archivePrefix = {arXiv},
+  cluster = {C6},
   verified = {live}
 }
 
 @misc{mcuquant2025,
-  title = {Neural network quantization for microcontrollers: a comprehensive survey of methods, platforms and applications},
-  year  = {2025},
-  url   = {https://arxiv.org/pdf/2508.15008},
+  author = {others},
+  title  = {Neural network quantization for microcontrollers: a comprehensive survey of methods, platforms and applications},
+  year   = {2025},
+  eprint = {2508.15008},
+  archivePrefix = {arXiv},
+  cluster = {C6},
   verified = {live}
 }
 
-@misc{pdmsurvey2024,
-  title = {Low-power vibration-based predictive maintenance for Industry 4.0 using neural networks: a survey},
-  year  = {2024},
-  url   = {https://arxiv.org/pdf/2408.00516},
+@misc{li2026tinymamba,
+  author = {Li, and Nie, and Ni, },
+  title  = {Reliability-calibrated edge-{IoT} early fault warning for rotating machinery with physics-guided tiny-{Mamba} transformer},
+  year   = {2026},
+  eprint = {2601.21293},
+  archivePrefix = {arXiv},
+  cluster = {C6},
+  verified = {live},
+  note   = {Estado da arte de edge + prior fisico. Concorrente no eixo embarcado.}
+}
+
+@misc{sehri2025universaldataset,
+  author = {Sehri, M. and Varej{\~a}o, F. and Hua, },
+  title  = {Towards a universal vibration analysis dataset: a framework for transfer learning in predictive maintenance},
+  year   = {2025},
+  eprint = {2504.11581},
+  archivePrefix = {arXiv},
+  cluster = {C6},
   verified = {live}
 }
+
+@misc{nagahama2025phase,
+  author = {Nagahama, and Inoue, and Todorokihara, },
+  title  = {Empirical investigation of the impact of phase information on fault diagnosis of rotating machinery},
+  year   = {2025},
+  eprint = {2512.15344},
+  archivePrefix = {arXiv},
+  cluster = {C6},
+  verified = {live},
+  note   = {RELEVANTE: a fase e onde a ordem do alias fica codificada.}
+}
+
+
+% ---------------------------------------------------------------------
+% HARDWARE
+% ---------------------------------------------------------------------
 
 @techreport{nordic2024nrf54l15,
   author      = {{Nordic Semiconductor}},
-  title       = {nRF54L15 / nRF54L10 / nRF54L05 preliminary datasheet},
+  title       = {n{RF54L15} / n{RF54L10} / n{RF54L05} preliminary datasheet},
   institution = {Nordic Semiconductor},
   year        = {2024},
   url         = {https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/NRF54L15-CAAA-R.pdf},
+  cluster     = {C6},
   verified    = {live},
   note        = {SAADC 12 bit @ 250 kSPS. Banda do track-and-hold nao documentada - medir.}
+}
+
+
+% ---------------------------------------------------------------------
+% ADENDO - versoes abertas que cobrem parte do conteudo pago
+% ---------------------------------------------------------------------
+
+@misc{gedalyahu2010multichannel,
+  author = {Gedalyahu, K. and Tur, R. and Eldar, Y. C.},
+  title  = {Multichannel sampling of pulse streams at the rate of innovation},
+  year   = {2010},
+  eprint = {1004.5070},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Companheiro aberto de tur2011ultrasound. Multicanal + FRI: le este no lugar.}
+}
+
+@misc{mishali2009unionsubspaces,
+  author = {Mishali, M. and Eldar, Y. C. and Elron, A. J.},
+  title  = {Xampling: signal acquisition and processing in union of subspaces},
+  year   = {2009},
+  eprint = {0911.0519},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Uniao de subespacos - o enquadramento formal do prior estrutural.}
+}
+
+@misc{duarte2011structuredcs,
+  author = {Duarte, M. F. and Eldar, Y. C.},
+  title  = {Structured compressed sensing: from theory to applications},
+  year   = {2011},
+  eprint = {1106.6224},
+  archivePrefix = {arXiv},
+  cluster = {C1},
+  verified = {live},
+  note   = {Survey. Cobre boa parte do que donoho2006cs e candes2006robust dariam.}
+}
+
+
+% =====================================================================
+% VARREDURA DE CITACOES PARA FRENTE (2026-09-02)
+% Encontrados por literature/scout.py, rastreando quem citou as ancoras.
+% Busca por palavra-chave nao acha estes: sao posteriores as revisoes.
+% =====================================================================
+
+@article{vol2024poweraware,
+  author  = {Vol, T. and Danial, L. and Shlezinger, N.},
+  title   = {Learning task-based trainable neuromorphic {ADCs} via power-aware distillation},
+  journal = {IEEE Transactions on Signal Processing},
+  year    = {2024},
+  eprint  = {2409.15300},
+  archivePrefix = {arXiv},
+  cluster = {C4},
+  verified = {live},
+  note    = {CORRIGE A ALEGACAO DE ORIGINALIDADE: aquisicao aprendida orientada a tarefa JA e power-aware. Eixo deles = quantizacao/bits em ADC memristivo; o desta tese = agendamento temporal em MCU comum.}
+}
+
+@article{fishel2025artoveq,
+  author  = {Fishel, E. and Malka, M. and Ginzach, S. and Shlezinger, N.},
+  title   = {Remote inference over dynamic links via adaptive rate deep task-oriented vector quantization},
+  journal = {IEEE Transactions on Signal Processing},
+  year    = {2025},
+  eprint  = {2501.02521},
+  archivePrefix = {arXiv},
+  cluster = {C4},
+  verified = {live},
+  note    = {Taxa adaptativa contra condicao de canal. Analogo do orcamento de energia variavel do no.}
+}
+
+@article{modulo2024prototype,
+  title   = {A modulo sampling hardware prototype and reconstruction algorithms evaluation},
+  journal = {IEEE Transactions on Instrumentation and Measurement},
+  year    = {2024},
+  eprint  = {2410.19383},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note    = {Prototipo em hardware de amostragem modulo. Referencia obrigatoria do Paper 3.}
+}
+
+@article{crt2025mlcomplex,
+  title   = {Maximum likelihood estimation-based complex-valued robust {Chinese} remainder theorem},
+  journal = {IEEE Journal on Miniaturization for Air and Space Systems},
+  year    = {2025},
+  eprint  = {2503.18625},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live},
+  note    = {LIDO 2026-09-03. Nao e multi-taxa: e CRT robusto para ADC self-reset (modulo), moduli inteiros gaussianos, na taxa de Nyquist. A maquina de MLE sobre residuos com erro serve ao E01; a aplicacao pertence ao Paper 3.}
+}
+
+@misc{modulo2026bitefficient,
+  title  = {Bit-efficient quantization for two-channel modulo-sampling systems},
+  year   = {2026},
+  eprint = {2601.14220},
+  archivePrefix = {arXiv},
+  cluster = {C2},
+  verified = {live}
+}
+
+@inproceedings{multiband2025superorsub,
+  title     = {Multiband unlimited sampling: super-{Nyquist} or sub-{Nyquist}, that is the question},
+  booktitle = {IEEE ICASSP},
+  year      = {2025},
+  cluster   = {C2},
+  verified  = {live},
+  note      = {Localizado pela varredura de citacoes; sem preprint aberto. Titulo trata exatamente da distincao conceitual central desta tese.}
+}
+
+@inproceedings{spectrumblind2025unlimited,
+  title     = {Spectrum blind unlimited sampling of multi-band signals},
+  booktitle = {IEEE ICASSP},
+  year      = {2025},
+  cluster   = {C2},
+  verified  = {live},
+  note      = {Caso cego, como o E01. Sem preprint aberto.}
+}
+
+@article{gabor2026unrolling,
+  title   = {Interpretable multiscale algorithm unrolling network using learnable {Gabor} filters},
+  journal = {Mechanical Systems and Signal Processing},
+  year    = {2026},
+  cluster = {C6},
+  verified = {live},
+  note    = {INTERSECAO C3xC6: unrolling aplicado a diagnostico de maquinas. Concorrente no lado do decodificador. Sem preprint aberto.}
+}
+
+@article{incipient2026freqaware,
+  title   = {A frequency-aware residual decomposition network for extracting incipient fault features},
+  journal = {Mechanical Systems and Signal Processing},
+  year    = {2026},
+  cluster = {C6},
+  verified = {live},
+  note    = {Sem preprint aberto.}
 }
