@@ -33,11 +33,30 @@ notes: |
   falha (~700 Hz para 3 harmonicos de BPFI): cerca de 28x de operacao sub-Nyquist
   genuina. Muito melhor que o CWRU 12k, e com velocidade variavel.
 
+  CORRIGIDO PELO E07 EM 2026-09-04, com os 24 registros de falha:
+
+  - A ordem BPFI de 5,43 do dry-run se confirma nos 12 registros de pista interna
+    (5,376 a 5,431), com bandas laterais espacadas de exatamente 1,00 - a
+    assinatura de pista interna, e confirmacao independente dos 1024 ppr.
+  - A geometria de catalogo do ER16K NAO serve como verdade fundamental. Prevista
+    BPFO = 3,573; medida 3,414 nos 12 registros de pista externa, desvio de -4,4%.
+    A BPFI erra so -0,5%. A soma medida 8,82 viola a identidade BPFO + BPFI = n em
+    2%, o que descarta escorregamento puro de gaiola como explicacao unica. O
+    mecanismo nao foi determinado. USAR ORDENS CALIBRADAS, nao as de catalogo.
+  - O desvio depende do cenario: A e C (comecam acelerando) dao ordens mais altas
+    que B e D (comecam desacelerando).
+  - TETO DE BUSCA DO KURTOGRAMA: obrigatorio limitar a 25 kHz. Sem teto, 12 de 12
+    registros de pista externa escolhem 50-100 kHz - faixa com 0,1% da energia,
+    onde a curtose mede vazamento numerico - e a falha nao aparece em ordem
+    nenhuma. Com o teto, ela aparece na ordem 3,4 nos 12. O guarda min_energy_frac
+    do kurtograma tem limiar frouxo demais para este dataset.
+
 undersampling:
   method: decimacao_pura
   effective_nyquist_hz: 20000.0
   fault_floor_hz: 700.0
-  factors: [1, 2, 4, 8, 16, 32, 64, 128, 256]
+  factors: [1, 2, 4, 8, 16, 24, 32, 48, 64, 96, 128]
+  # Medido no E07: acerto nao degrada ate 64x (3,12 kSPS efetivos).
 
 access:
   programmatic: true

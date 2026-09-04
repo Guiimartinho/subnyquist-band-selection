@@ -27,6 +27,12 @@ from snq_data.datasets import (
     undersample_cosets,
     undersampling_report,
 )
+from snq_data.ottawa import (
+    FAULT_ORDERS as OTTAWA_FAULT_ORDERS,
+)
+from snq_data.ottawa import (
+    OttawaRecord,
+)
 
 __all__ = [
     "AntiAliasFilterUsedError",
@@ -35,6 +41,8 @@ __all__ = [
     "download_record",
     "load_record",
     "parse_record_id",
+    "OttawaRecord",
+    "OTTAWA_FAULT_ORDERS",
     "Manifest",
     "effective_rate_hz",
     "load_all_manifests",
