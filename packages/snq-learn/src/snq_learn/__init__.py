@@ -12,4 +12,18 @@ Restricao dura: a politica de amostragem aprendida precisa ser realizavel pelo
 DPPI/TIMER do nRF54L15. Mascara que o hardware nao agenda nao e resultado.
 """
 
-__all__: list[str] = []
+from snq_learn.distillation import (
+    DistillConfig,
+    SubNyquistStudent,
+    distill,
+    evaluate,
+    teacher_distribution,
+)
+
+__all__ = [
+    "DistillConfig",
+    "SubNyquistStudent",
+    "distill",
+    "evaluate",
+    "teacher_distribution",
+]
