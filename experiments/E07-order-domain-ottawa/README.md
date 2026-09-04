@@ -127,10 +127,49 @@ teria: calibração em unidades da mesma família, não no equipamento sob teste
 A dispersão entre registros da mesma condição é ~0,035 em ordens, e a tolerância de
 0,06 a cobre. Essa dispersão é um piso de erro irredutível deste desenho.
 
+## Controle negativo: o estimador inventa falha onde não há?
+
+Acerto medido só sobre registros que **têm** falha não diz nada sobre falso positivo,
+e um estimador restrito a um conjunto de candidatas sempre devolve uma candidata — ele
+não tem como responder "nenhuma". Sem este controle, os 88% em 32× seriam compatíveis
+com um estimador que aponta sempre a mesma ordem.
+
+Os 12 registros saudáveis (`H-*`) entram como negativo, e a separação é medida por AUC
+— a probabilidade de um segmento com falha pontuar acima de um segmento saudável na
+ordem alvo. 0,5 é ausência de separação.
+
+| fator | taxa efetiva | AUC BPFI | AUC BPFO |
+|---|---|---|---|
+| 1× | 200 kSPS | 1,000 | 0,958 |
+| 4× | 50 kSPS | 1,000 | 0,743 |
+| 8× | 25 kSPS | 0,999 | 0,902 |
+| 16× | 12,5 kSPS | 1,000 | 0,827 |
+| 32× | 6,25 kSPS | 0,988 | 0,923 |
+| 64× | 3,12 kSPS | 1,000 | 0,995 |
+
+**A separação não degrada.** Em 3,12 kSPS os registros com falha ficam com a raia da
+ordem alvo no topo da faixa em praticamente todos os segmentos, e os saudáveis não.
+O mergulho da pista externa em 4× é o mesmo sequestro de banda descrito acima.
+
+### A primeira métrica dizia o contrário, e estava errada
+
+A versão inicial normalizava a energia harmônica pela **mediana do espectro**. Com ela,
+a separação parecia colapsar a partir de 8× e chegava a **inverter** — AUC de 0,15,
+com os saudáveis pontuando acima dos defeituosos. Era artefato: sob subamostragem forte
+o espectro de um rolamento saudável fica pobre em raias e a mediana desaba, inflando o
+quociente sem que nada físico tenha mudado. O piso se movia junto com a métrica.
+
+A estatística usada agora é a **posição relativa da raia na faixa de ordens** — a
+fração de raias abaixo do pico na ordem alvo. Livre de escala e de piso. A lição vale
+além deste experimento: uma métrica normalizada por estatística do próprio sinal
+precisa ser verificada contra a subamostragem, porque é o denominador que muda
+primeiro.
+
 ## O que este experimento não sustenta
 
-- **Não é uma comparação de classificação.** Mede erro de estimação de ordem, não
-  separação entre classes. O E16 é quem faz classificação com poder estatístico.
+- **Não é uma comparação de classificação.** Mede erro de estimação de ordem e
+  separação falha/saudável, não discriminação entre tipos de falha. O E16 é quem faz
+  classificação multiclasse com poder estatístico.
 - **Não mede consumo.** A taxa efetiva está em toda linha do CSV, mas µJ por
   diagnóstico ainda não existe no código (E06).
 - **Não testa aquisição não-uniforme.** Decimação uniforme apenas. Multi-coset e
@@ -146,6 +185,8 @@ uv run python experiments/E07-order-domain-ottawa/run.py \
     --config experiments/E07-order-domain-ottawa/config/base.yaml
 uv run python papers/shared/figures/fig_e07_order_domain.py
 uv run python papers/shared/figures/fig_e07_spectra.py --record I-B-1.mat
+uv run python experiments/E07-order-domain-ottawa/control_healthy.py     --config experiments/E07-order-domain-ottawa/config/base.yaml
+uv run python papers/shared/figures/fig_e07_control.py
 ```
 
 O download é programático pela API pública do Mendeley, sem cadastro. `results/manifest.json`
