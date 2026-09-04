@@ -1,0 +1,54 @@
+# E07 - degradacao por subamostragem no dominio de ordem, com folga real.
+#
+# O E02 mediu o CWRU, cujo Nyquist efetivo satura antes do metodo. Ottawa 2018 tem
+# ~28x de folga genuina e, o que importa mais, um encoder: sob rotacao variavel a
+# frequencia de falha em hertz se move, mas a ORDEM nao.
+seed: 20260903
+
+data_dir: datasets/raw/ottawa
+conditions: [I, O]
+scenarios: [A, B, C, D]
+trials: [1, 2, 3]
+
+# 2.000.000 amostras por registro (10 s a 200 kSPS). Tres janelas disjuntas de
+# 2,5 s dao ~37 revolucoes cada - resolucao de ordem ~0,027, folgada para a
+# tolerancia abaixo, e triplica o n sem repetir montagem.
+segment_samples: 500000
+segments_per_record: 3
+min_samples: 4096
+
+pulses_per_rev: 1024
+
+kurtogram:
+  max_level: 4
+  # Abaixo de 500 Hz esta o conteudo estrutural: 97% da energia, nenhuma falha.
+  f_min_hz: 500.0
+  # Acima de 20 kHz ha 0,1% da energia. A curtose de banda quase vazia e dominada
+  # por vazamento numerico, e o kurtograma "encontra" transiente onde nao ha
+  # energia - foi o que aconteceu em 12/12 registros de pista externa, que
+  # escolhiam 50-100 kHz e nao mostravam falha alguma. Teto medido, nao arbitrado.
+  f_max_hz: 25000.0
+
+# Geometria de catalogo do ER16K: 9 esferas, esfera 0,3125", primitivo 1,516".
+# NAO e a verdade fundamental - e o prior nominal, cujo desvio o experimento mede.
+nominal:
+  n_elements: 9
+  geom_ratio: 0.206
+
+prior:
+  n_harmonics: 6
+  score_harmonics: 3
+  # Faixa de calibracao em torno da ordem nominal, para o prior calibrado.
+  calibration_span: 0.12
+
+# Acerto quando |ordem estimada - verdade| < tolerance_order. A dispersao entre
+# registros da mesma condicao e ~0,035 em ordens; 0,06 a cobre sem ficar frouxa.
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+
+sweep:
+  undersampling_factor: [1, 2, 4, 8, 16, 24, 32, 48, 64, 96, 128]
+
+output:
+  results_dir: results
