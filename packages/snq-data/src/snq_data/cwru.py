@@ -99,6 +99,47 @@ class CwruCatalog:
         """Registros de uma tabela, opcionalmente restritos a um subconjunto."""
         return sorted({(n, p) for n, p, s in self._members(table) if subset is None or s == subset})
 
+    # A chave de tipo de falha no catalogo mapeia para a frequencia caracteristica
+    # que a geometria preve. E o elo entre rotulo do dataset e prior fisico.
+    FAULT_TO_FREQUENCY = {
+        "inner_race": "BPFI",
+        "ball": "BSF",
+        "outer_race_centred": "BPFO",
+        "outer_race_orthogonal": "BPFO",
+        "outer_race_opposite": "BPFO",
+    }
+
+    def fault_of(self, record: int, point: str | None = None) -> tuple[str, str] | None:
+        """Tipo de falha do registro e a frequência característica correspondente.
+
+        Devolve ``("outer_race_centred", "BPFO")`` ou ``None`` se não catalogado.
+        """
+        for table in ("classical", "undiagnosable"):
+            for subset, faults in self.raw.get(table, {}).items():
+                if not self.human_checked and subset not in self.reliable_subsets:
+                    continue
+                for fault, ids in faults.items():
+                    for rid in ids or []:
+                        n, p = parse_record_id(rid)
+                        if n == record and (p is None or point is None or p == point):
+                            return fault, self.FAULT_TO_FREQUENCY[fault]
+        return None
+
+    def selection(self, table: str, subset: str, point: str = "DE") -> list[tuple[int, str, str]]:
+        """Registros de um subconjunto, como ``(número, ponto, frequência esperada)``.
+
+        Inclui os identificadores sem sufixo (que valem para todos os pontos) e os
+        marcados com o ponto pedido. Registros com ceifamento são excluídos.
+        """
+        out: list[tuple[int, str, str]] = []
+        for fault, ids in self.raw.get(table, {}).get(subset, {}).items():
+            freq = self.FAULT_TO_FREQUENCY[fault]
+            for rid in ids or []:
+                n, p = parse_record_id(rid)
+                if p in (None, point) and not self.is_clipped(n, point):
+                    out.append((n, point, freq))
+        return sorted(set(out))
+
     def is_clipped(self, record: int, point: str | None = None) -> bool:
         """Registro com ceifamento em trechos — não-linearidade que contamina o espectro."""
         for rid in self.raw.get("clipped_in_sections", []):
