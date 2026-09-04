@@ -13,6 +13,8 @@ por construção: `CwruRecord` carrega os dois.
 from __future__ import annotations
 
 import re
+import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -170,19 +172,41 @@ class CwruRecord:
         return f"CWRU {self.number}{self.point} ({self.fs_hz / 1e3:.0f} kHz{rpm}) [{self.category}]"
 
 
-def download_record(number: int, dest_dir: str | Path, *, overwrite: bool = False) -> Path:
-    """Baixa ``<number>.mat`` do CWRU Bearing Data Center."""
+def download_record(
+    number: int, dest_dir: str | Path, *, overwrite: bool = False, tries: int = 4
+) -> Path:
+    """Baixa ``<number>.mat`` do CWRU Bearing Data Center, com retentativa.
+
+    O servidor corta a conexão no meio de arquivos grandes com alguma frequência
+    (``IncompleteRead``). Sem retentativa, um único registro problemático aborta o
+    experimento inteiro; sem conferir ``Content-Length``, um arquivo truncado seria
+    gravado e só apareceria como erro estranho muito depois.
+    """
     dest = Path(dest_dir) / f"{number}.mat"
-    if dest.exists() and not overwrite:
+    if dest.exists() and not overwrite and dest.stat().st_size > 0:
         return dest
     dest.parent.mkdir(parents=True, exist_ok=True)
-    req = urllib.request.Request(f"{BASE_URL}/{number}.mat", headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310
-        data = r.read()
-    if not data.startswith(b"MATLAB"):
-        raise OSError(f"resposta não é um arquivo MAT para o registro {number}")
-    dest.write_bytes(data)
-    return dest
+
+    last: Exception | None = None
+    for attempt in range(tries):
+        try:
+            req = urllib.request.Request(
+                f"{BASE_URL}/{number}.mat", headers={"User-Agent": USER_AGENT}
+            )
+            with urllib.request.urlopen(req, timeout=180) as r:  # noqa: S310
+                expected = r.headers.get("Content-Length")
+                data = r.read()
+            if expected and len(data) != int(expected):
+                raise OSError(f"truncado: {len(data)} de {expected} bytes")
+            if not data.startswith(b"MATLAB"):
+                raise OSError("resposta não é um arquivo MAT")
+            dest.write_bytes(data)
+            return dest
+        except (urllib.error.URLError, OSError, TimeoutError) as exc:
+            last = exc
+            if attempt < tries - 1:
+                time.sleep(2.0 * (attempt + 1))
+    raise OSError(f"registro {number}: falhou em {tries} tentativas ({last})")
 
 
 def load_record(

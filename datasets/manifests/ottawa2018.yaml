@@ -1,0 +1,45 @@
+name: ottawa2018
+full_name: University of Ottawa constant/variable speed rolling-element bearing vibration dataset (2018)
+url: https://data.mendeley.com/datasets/v43hmbwxpm/1
+license: CC BY 4.0 - redistribuivel com atribuicao
+fs_hz: [200000.0]
+channels: [Channel_1 (acelerometro), Channel_2 (encoder)]
+notes: |
+  VERIFICADO POR DRY-RUN EM 2026-09-03, nao apenas lido da pagina.
+
+  36 arquivos .mat, ~12-15 MB cada, 481 MB no total. Nomenclatura
+  <condicao>-<cenario>-<tentativa>.mat com condicao em {H, I, O} (healthy, inner,
+  outer), cenario em {A, B, C, D} e tentativa em {1, 2, 3}.
+  Cada registro tem 2.000.000 amostras = 10 s a 200 kSPS, duas colunas.
+
+  ENCODER: 1024 pulsos por revolucao. Isto NAO esta obvio na pagina e foi
+  determinado empiricamente: e o unico valor candidato que faz a ordem 1 (eixo)
+  aparecer no espectro de ordem junto com a BPFI. Com 1024 ppr a rotacao fica em
+  torno de 1172 rpm com variacao ampla ao longo dos 10 s.
+
+  VALIDACAO PONTA A PONTA: o registro I-A-1 (inner race) reamostrado em angulo
+  produz ordem dominante 5,43, que e a BPFI teorica para 9 esferas e razao ~0,2,
+  mais a ordem 1 (eixo) e a ordem 10,87 (segundo harmonico). O rotulo do dataset,
+  a resolucao do encoder e o codigo de analise de ordem se confirmam mutuamente.
+
+  BANDA INFORMATIVA: 97% da energia esta em 0-50 Hz (conteudo estrutural, nao
+  falha). A banda ressonante da falha, achada pelo kurtograma ignorando abaixo de
+  500 Hz, esta em 6,8-10 kHz com curtose 34,4 - contra 3,88 do melhor registro do
+  CWRU. E muito mais impulsivo.
+
+  FOLGA REAL DE SUBAMOSTRAGEM: a taxa de 200 kSPS e sobreamostragem; so 0,1% da
+  energia esta acima de 20 kHz. O que importa e a folga a partir do Nyquist
+  EFETIVO da banda informativa (2 x 10 kHz = 20 kSPS) ate o piso da frequencia de
+  falha (~700 Hz para 3 harmonicos de BPFI): cerca de 28x de operacao sub-Nyquist
+  genuina. Muito melhor que o CWRU 12k, e com velocidade variavel.
+
+undersampling:
+  method: decimacao_pura
+  effective_nyquist_hz: 20000.0
+  fault_floor_hz: 700.0
+  factors: [1, 2, 4, 8, 16, 32, 64, 128, 256]
+
+access:
+  programmatic: true
+  api: https://data.mendeley.com/public-api/datasets/v43hmbwxpm/files?folder_id=root&version=1
+  note: unico dos candidatos, junto com o CWRU, com download por script sem cadastro
