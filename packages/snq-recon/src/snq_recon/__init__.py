@@ -34,6 +34,13 @@ from snq_recon.estimation import (
     resolve_multirate_hz,
     unambiguous_range_hz,
 )
+from snq_recon.highres import (
+    angular_resample,
+    esprit,
+    estimate_tone_esprit,
+    fault_orders,
+    order_spectrum,
+)
 from snq_recon.kurtogram import (
     KurtogramResult,
     band_from_kurtogram,
@@ -47,6 +54,11 @@ __all__ = [
     "FaultScore",
     "KurtogramResult",
     "alias_candidates_hz",
+    "angular_resample",
+    "esprit",
+    "estimate_tone_esprit",
+    "fault_orders",
+    "order_spectrum",
     "band_from_kurtogram",
     "bandpass_analytic",
     "diagnose",
