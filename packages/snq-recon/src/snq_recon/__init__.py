@@ -36,6 +36,7 @@ from snq_recon.estimation import (
 )
 from snq_recon.highres import (
     angular_resample,
+    envelope_order_spectrum,
     esprit,
     estimate_tone_esprit,
     fault_orders,
@@ -55,6 +56,7 @@ __all__ = [
     "KurtogramResult",
     "alias_candidates_hz",
     "angular_resample",
+    "envelope_order_spectrum",
     "esprit",
     "estimate_tone_esprit",
     "fault_orders",

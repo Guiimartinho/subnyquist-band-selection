@@ -19,6 +19,8 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
+from snq_recon.envelope import EnvelopeSpectrum, envelope
+
 
 def esprit(x: ArrayLike, n_sources: int, fs_hz: float, subspace: int | None = None) -> NDArray:
     """Frequências por ESPRIT — resolução acima do limite da FFT.
@@ -137,3 +139,30 @@ def fault_orders(geom_ratio: float, n_elements: int) -> dict[str, float]:
         "BSF": (1.0 / (2.0 * geom_ratio)) * (1.0 - geom_ratio**2) if geom_ratio > 0 else np.inf,
         "FTF": 0.5 * (1.0 - geom_ratio),
     }
+
+
+def envelope_order_spectrum(
+    x: ArrayLike,
+    fs_hz: float,
+    shaft_hz: ArrayLike | float,
+    band_hz: tuple[float, float] | None = None,
+    samples_per_rev: int = 64,
+) -> EnvelopeSpectrum:
+    """Envelope reamostrado em ângulo, devolvido como espectro **em ordens**.
+
+    Ordem das operações, e ela não é permutável: filtrar na banda de ressonância e
+    tomar o envelope **em tempo**, e só então reamostrar em ângulo. A ressonância da
+    estrutura é fixa em hertz — não acompanha a rotação — então reamostrar antes
+    borraria a própria banda que carrega a modulação.
+
+    O objeto devolvido é um `EnvelopeSpectrum` cujos campos estão em **ordens da
+    rotação**, não em hertz: ``freqs_hz`` são ordens e ``fs_hz`` é ``samples_per_rev``.
+    A reutilização é deliberada — `score_fault` e `estimate_from_candidates` são
+    indiferentes à unidade, e sob rotação variável o prior geométrico é um conjunto
+    de ordens, não de frequências.
+    """
+    env = envelope(x, fs_hz, band_hz)
+    env = env - float(np.mean(env))
+    ang, spr = angular_resample(env, fs_hz, shaft_hz, samples_per_rev=samples_per_rev)
+    orders, mag = order_spectrum(ang, spr)
+    return EnvelopeSpectrum(freqs_hz=orders, magnitude=mag, fs_hz=spr, band_hz=band_hz)
