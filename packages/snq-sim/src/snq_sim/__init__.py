@@ -13,9 +13,17 @@ from snq_sim.chain import (
     Transducer,
     impulse_train,
 )
+from snq_sim.timeencoding import (
+    IntegrateFireTEM,
+    crossing_times,
+    multichannel_tem,
+)
 
 __all__ = [
     "AcquisitionChain",
+    "IntegrateFireTEM",
+    "crossing_times",
+    "multichannel_tem",
     "AntiAliasFilter",
     "Quantizer",
     "Sampler",
