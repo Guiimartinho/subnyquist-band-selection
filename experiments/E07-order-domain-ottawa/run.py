@@ -58,6 +58,35 @@ from snq_recon import (
 
 PACKAGES = ("snq-core", "snq-sim", "snq-data", "snq-recon", "snq-eval")
 FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+SOURCE_SHA256_SCHEME = (
+    "sha256 sobre a concatenacao, em ordem de caminho POSIX, de "
+    "'<caminho relativo ao repositorio>\\n<sha256 do conteudo do arquivo>\\n' "
+    "para cada packages/*/src/**/*.py"
+)
+
+
+def guard_verdict(n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: dict) -> str | None:
+    """Nome do guarda que descarta este segmento, ou ``None`` se ele passa nos três.
+
+    Os três guardas em um só lugar, para que a contagem de medições admitidas por
+    fator seja verificável sem rodar a varredura (``tests/test_guards.py``). A ordem
+    é a de aplicação e importa: o primeiro guarda a disparar é o reportado.
+
+    - ``min_samples``: comprimento do vetor decimado;
+    - ``f_min_hz``: a janela de busca do kurtograma ``[f_min_hz, fs_eff/2]`` precisa
+      existir;
+    - ``samples_per_rev``: a reamostragem angular exige pelo menos dois pontos por
+      incremento angular, na rotação de pior caso do segmento.
+    """
+    if n_samples < int(cfg["min_samples"]):
+        return "min_samples"
+    if fs_eff_hz / 2.0 <= float(cfg["kurtogram"]["f_min_hz"]):
+        return "f_min_hz"
+    if points_per_rev < 2.0 * int(cfg["samples_per_rev"]):
+        return "samples_per_rev"
+    return None
 
 
 def harmonics(fundamentals: dict[str, float], n: int) -> np.ndarray:
@@ -93,19 +122,53 @@ def analyse(x, fs_hz, speed, cfg) -> tuple[object, object]:
     return k, spec
 
 
-def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> None:
+def sha256_file(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _git(*args: str) -> str | None:
+    try:
+        return subprocess.run(
+            ["git", *args], capture_output=True, text=True, check=True, cwd=REPO_ROOT
+        ).stdout
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def source_sha256(root: Path = REPO_ROOT) -> tuple[str | None, int]:
+    """Hash do conteúdo dos fontes que este experimento importa.
+
+    O ``git_sha`` sozinho não identifica o código que rodou: a árvore pode estar suja,
+    e a versão de pacote (``0.1.0``) não muda quando o fonte muda. Este hash muda.
+    O esquema está declarado em ``SOURCE_SHA256_SCHEME`` e gravado no manifest junto
+    com o valor, para que o hash seja recomputável sem ler este arquivo.
+    """
+    files = sorted((root / "packages").glob("*/src/**/*.py"))
+    if not files:
+        return None, 0
+    h = hashlib.sha256()
+    for p in files:
+        h.update(f"{p.relative_to(root).as_posix()}\n{sha256_file(p)}\n".encode())
+    return h.hexdigest(), len(files)
+
+
+def write_manifest(
+    config_path: Path, results: Path, cfg: dict, extra: dict, inputs: list[Path]
+) -> None:
     versions = {}
     for pkg in PACKAGES:
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
             versions[pkg] = "nao instalado"
-    try:
-        sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
-        ).stdout.strip()
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        sha = None
+    head = _git("rev-parse", "HEAD")
+    porcelain = _git("status", "--porcelain")
+    dirty = [line[3:] for line in porcelain.splitlines()] if porcelain else []
+    src_sha, src_n = source_sha256()
     results.mkdir(parents=True, exist_ok=True)
     (results / "manifest.json").write_text(
         json.dumps(
@@ -113,13 +176,26 @@ def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> 
                 "experiment": "E07-order-domain-ottawa",
                 "timestamp_utc": datetime.now(UTC).isoformat(),
                 "seed": cfg["seed"],
+                "config_path": str(config_path),
                 "config_sha256": hashlib.sha256(config_path.read_bytes()).hexdigest(),
+                "input_sha256": {p.name: sha256_file(p) for p in inputs if p.exists()},
                 "dataset": "University of Ottawa 2018 (Mendeley v43hmbwxpm), CC BY 4.0",
                 "pulses_per_rev": cfg["pulses_per_rev"],
                 "ppr_provenance": "determinado empiricamente; nao documentado pelos autores",
                 "packages": versions,
                 "python": platform.python_version(),
-                "git_sha": sha,
+                "platform": platform.platform(),
+                "git_sha": head.strip() if head else None,
+                # git_sha aponta para o commit, nao para a arvore que rodou. Os tres
+                # campos abaixo cobrem a diferenca: se git_dirty e verdadeiro, o
+                # commit NAO descreve o codigo executado, e source_sha256 e o unico
+                # identificador do que de fato rodou.
+                "git_dirty": bool(dirty),
+                "git_dirty_paths": dirty,
+                "source_sha256": src_sha,
+                "source_sha256_files": src_n,
+                "runner_sha256": sha256_file(Path(__file__).resolve()),
+                "source_sha256_scheme": SOURCE_SHA256_SCHEME,
                 **extra,
             },
             indent=2,
@@ -159,9 +235,10 @@ def main() -> int:
     # ------------------------------------------------------------------
     records: dict[str, object] = {}
     calib: dict[str, float] = {}
+    inputs: list[Path] = []
     for name in names:
         try:
-            download(name, raw)
+            path = download(name, raw)
             rec = load(name, raw)
         except (OSError, KeyError, ValueError) as exc:
             print(f"  {name}: pulado ({type(exc).__name__}: {str(exc)[:70]})")
@@ -171,6 +248,7 @@ def main() -> int:
         fault = FAULT_OF[rec.condition]
         calib[rec.name] = refine(spec, nominal[fault], span, nh_score, tol)
         records[rec.name] = (rec, speed)
+        inputs.append(path)
         print(
             f"  {rec.name}: {fault} calibrado = {calib[rec.name]:.3f}"
             f" (nominal {nominal[fault]:.3f})"
@@ -216,12 +294,8 @@ def main() -> int:
                 factor = int(factor)
                 x, v = undersample(vib_seg, factor), undersample(spd_seg, factor)
                 fs_eff = effective_rate_hz(FS_HZ, factor)
-                if x.size < int(cfg["min_samples"]):
-                    continue
-                if fs_eff / 2.0 <= float(cfg["kurtogram"]["f_min_hz"]):
-                    continue
                 pts_per_rev = fs_eff / float(np.max(v))
-                if pts_per_rev < 2.0 * int(cfg["samples_per_rev"]):
+                if guard_verdict(x.size, fs_eff, pts_per_rev, cfg) is not None:
                     continue
 
                 try:
@@ -280,7 +354,13 @@ def main() -> int:
             "nominal_orders": {k: round(v, 4) for k, v in nominal.items()},
             "calibrated_per_record": {k: round(v, 4) for k, v in calib.items()},
             "records": sorted(records),
+            # A verdade fundamental depende de samples_per_rev: as ordens acima sao
+            # medidas na reamostragem angular deste config. Comparar duas rodadas com
+            # spr diferente e comparar duas referencias distintas.
+            "samples_per_rev": int(cfg["samples_per_rev"]),
+            "min_samples": int(cfg["min_samples"]),
         },
+        inputs=sorted(inputs),
     )
     out = results / "metrics.csv"
     with out.open("w", newline="", encoding="utf-8") as f:

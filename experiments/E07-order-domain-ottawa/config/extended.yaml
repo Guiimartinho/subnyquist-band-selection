@@ -1,0 +1,201 @@
+# E07 estendido - achar o joelho real da curva, e separa-lo do efeito do guarda.
+#
+# A varredura de `base.yaml` parou por criterio de ANALISE, nao por queda de
+# desempenho: os fatores 96 e 128 produziram zero medicoes e o 64 produziu 45 de 72
+# (contagem conferida em results/metrics.csv nesta sessao: 216 linhas por fator ate
+# 48, 135 no fator 64, e 216 = 72 medicoes x 3 modos).
+#
+# Este config relaxa DOIS dos tres guardas e re-roda a lista INTEIRA de fatores,
+# inclusive os ja avaliados. Sem esse controle a rodada mede subamostragem somada a
+# relaxamento de guarda, e as duas causas ficam indistinguiveis. Ver a secao
+# "Extensao" do README.
+#
+# ----------------------------------------------------------------------------
+# Os tres guardas que decidem se um segmento vira medicao
+# ----------------------------------------------------------------------------
+# Os tres estao em run.py, na funcao guard_verdict, e sao aplicados nesta ordem - o
+# primeiro a disparar e o que conta:
+#   1  n_samples < int(cfg["min_samples"])
+#   2  fs_eff_hz / 2.0 <= float(cfg["kurtogram"]["f_min_hz"])
+#   3  points_per_rev < 2.0 * int(cfg["samples_per_rev"]),
+#      com points_per_rev = fs_eff / float(np.max(v)) calculado no laco
+#
+# Conta, com FS_HZ = 200000,0 (snq_data.ottawa.FS_HZ) e segment_samples = 500000.
+#
+# A rotacao que entra na conta e a de PIOR CASO, e ela tem dois valores distintos que
+# nao podem ser confundidos:
+#   - 1953,1 rpm = 32,5517 Hz e o maximo do REGISTRO (coluna rpm_hi de
+#     results/metrics.csv, registro I-A-3). E um limite superior conservador.
+#   - 1674,1 rpm = 27,9017 Hz e o maximo dentro de um SEGMENTO ANALISADO, medido
+#     nesta sessao varrendo os 24 registros x 3 janelas. E o valor que o guarda de
+#     fato ve, porque o laco de run.py usa np.max sobre o perfil DECIMADO do segmento.
+#     O pico de 1953,1 rpm de I-A-3 cai nas ultimas 500000 amostras, que
+#     segments_per_record = 3 nunca alcanca (3 x 500000 = 1500000 de 2000000).
+#
+#   fator   fs_eff Hz   n=ceil(500000/f)   fs_eff/2 Hz   pts/rev @1953,1   @1674,1
+#      64      3125,00               7813        1562,50            96,00    112,00
+#      96      2083,33               5209        1041,67            64,00     74,67
+#     128      1562,50               3907         781,25            48,00     56,00
+#     160      1250,00               3125         625,00            38,40     44,80
+#     192      1041,67               2605         520,83            32,00     37,33
+#     256       781,25               1954         390,62            24,00     28,00
+#
+# A coluna @1674,1 e medida, nao extrapolada: e o minimo de fs_eff/max(v) sobre as
+# 72 janelas. O modelo destes tres guardas reproduz exatamente a rodada base -
+# 72 medicoes por fator ate 48, 45 no fator 64, zero em 96 e 128 - e isso e verificado
+# por tests/test_guards.py contra results/metrics.csv, nao conferido a mao.
+#
+# HIPOTESE E CRITERIO DE REFUTACAO desta rodada: secoes "Hipotese" e "O que refutaria
+# esta hipotese" da parte "Extensao" do README. Em uma linha: depois de subtraido fator
+# a fator o degrau de guarda medido nos nove fatores repetidos, o acerto com prior
+# calibrado em 96, 128 e 160 fica dentro de 13 pontos percentuais do de 64x. Queda alem
+# disso, ou captura da estimativa por uma ordem fixa (1,985, o 5o harmonico da FTF),
+# refuta.
+#
+# Leitura da conta, guarda por guarda:
+#
+# 1. min_samples = 4096 e o que zera o fator 128: ceil(500000/128) = 3907 < 4096.
+#    Nao afeta o 96 (5209) nem o 64 (7813).
+# 2. f_min_hz = 500 NAO bloqueia 96 nem 128: o guarda exige fs_eff/2 > 500, e
+#    781,25 > 500. Ele so passa a ser o guarda vinculante a partir do fator 200
+#    (fs_eff/2 = 500,0). A leitura de que o piso de 500 Hz zerava 96 e 128 nao se
+#    sustenta no codigo. Por isso f_min_hz fica INALTERADO aqui - ver README.
+# 3. samples_per_rev = 64 exige pts/rev >= 128, e no fator 64 o pior segmento da
+#    112,00. E este o guarda que descartou 27 das 72 medicoes do fator 64 e que zera
+#    o 96 (74,67) e o 128 (56,00). E o unico guarda estritamente necessario relaxar.
+seed: 20260903 # igual ao base: run.py nao usa RNG, e seed igual mantem a comparacao exata
+
+data_dir: datasets/raw/ottawa
+conditions: [I, O]
+scenarios: [A, B, C, D]
+trials: [1, 2, 3]
+
+# Identicos ao base, de proposito: mudar a janela mudaria o numero de revolucoes por
+# segmento e seria um terceiro confundidor sobre a comparacao base x estendido.
+segment_samples: 500000
+segments_per_record: 3
+
+# RELAXADO: 4096 -> 2048. Precisa ficar <= 3907 para o fator 128 produzir medicao.
+# 2048 e a maior potencia de dois que deixa o guarda INERTE em toda a varredura
+# abaixo: ele so voltaria a vincular no fator 245 (ceil(500000/245) = 2041). Assim a
+# fronteira da curva estendida e fisica (pontos por revolucao), nao de tamanho de
+# vetor. O que o guarda protege - comprimento suficiente para o kurtograma filtrar em
+# banda - continua satisfeito: no fator 160 sao 3125 amostras a 1250 Hz, os mesmos
+# 2,5 s de janela de todos os outros fatores; decimar nao encurta o tempo.
+min_samples: 2048
+
+pulses_per_rev: 1024
+
+kurtogram:
+  max_level: 4
+  # INALTERADO em 500,0 Hz, e a escolha e deliberada. Baixar este piso deixaria o
+  # kurtograma buscar perto de DC, onde esta o conteudo estrutural, e isso e um
+  # confundidor que esta rodada nao quer carregar. O valor real dessa energia:
+  # mediana de 14,86 % abaixo de 500 Hz (min 1,14 %, max 22,06 %), sobre os n = 24
+  # registros de falha, FFT do registro inteiro - docs/lab-notebook/2026-09-07.md,
+  # secao "Duas premissas do E07 foram medidas num registro e generalizadas para 24".
+  # NAO sao os 97 % que o comentario de base.yaml (97 % abaixo de 500 Hz) e o docstring
+  # de snq_data/ottawa.py (97 % abaixo de 50 Hz) afirmam; a faixa <50 Hz esta contida
+  # na <500 Hz, entao a mediana de 14,86 % limita as duas.
+  f_min_hz: 500.0
+  # CORRECAO do comentario de base.yaml, que sob o rotulo "Teto medido, nao
+  # arbitrado" afirma 0,1 % da energia acima de 20 kHz. Recomputado sobre os n = 24
+  # registros de falha: mediana 5,02 % (min 2,97 %, max 6,83 %) - cerca de 50x o
+  # valor citado, mesma fonte acima.
+  #
+  # O TETO CONTINUA EM 25 kHz e o efeito relatado continua medido: sem ele, 12 de 12
+  # registros de pista externa escolhiam 50-100 kHz e a falha nao aparecia; com ele,
+  # aparece na ordem ~3,4. O que cai e a justificativa. A faixa acima de 20 kHz nao
+  # e numericamente vazia, entao a frase "ali a curtose mede vazamento numerico" fica
+  # sem base e o teto passa a ser o que sempre foi na pratica: um prior de banda do
+  # transdutor, declarado como tal e nao como consequencia de energia nula.
+  f_max_hz: 25000.0
+
+# Geometria de catalogo do ER16K: 9 esferas, esfera 0,3125", primitivo 1,516".
+# NAO e a verdade fundamental - e o prior nominal, cujo desvio o experimento mede.
+nominal:
+  n_elements: 9
+  geom_ratio: 0.206
+
+prior:
+  n_harmonics: 6
+  score_harmonics: 3
+  calibration_span: 0.12
+
+tolerance_order: 0.06
+
+# RELAXADO: 64 -> 16. E o unico guarda que precisa ceder para 96 e 128 existirem.
+# Conta: o guarda exige pts/rev >= 2*spr. No fator 128, o limite superior conservador
+# (1953,1 rpm) da 48,00 pontos por revolucao, logo spr <= 24; o pior segmento medido
+# (1674,1 rpm) da 56,00, logo spr <= 28. Escolher 24 ou 28 e ficar sobre o limiar da
+# coluna conservadora, e ai basta um deslocamento de rotacao para um registro sair da
+# amostra em silencio - exatamente o vies de selecao que esta rodada existe para
+# remover. 16 deixa folga nas duas colunas: 48/32 = 1,5x e 56/32 = 1,75x no fator
+# 128, 38,40/32 = 1,2x e 44,80/32 = 1,4x no 160.
+#
+# EXECUTADO em tests/test_guards.py, sobre os 24 registros x 3 janelas reais (nao e
+# previsao): com spr = 16 os tres guardas deixam passar as 72 medicoes em TODOS os doze
+# fatores da lista abaixo, inclusive 96, 128 e 160. O mesmo teste confere que, sob
+# base.yaml, o modelo devolve 72 ate o fator 48, 45 no 64 e zero em 96 e 128 - que e o
+# que results/metrics.csv contem. Nenhum fator entra com n reduzido, entao nenhuma
+# diferenca na curva sera troca de denominador - o defeito encontrado no E02 48k.
+# O que esta executado e a ADMISSAO de segmento; o acerto nesses fatores nao esta.
+#
+# O preco esta declarado e nao e pequeno: spr = 16 poe o Nyquist do espectro de ORDEM
+# em 8, contra 32 no base. Tres consequencias, todas confundidoras da comparacao:
+#   (a) score_fault dobra os harmonicos acima desse Nyquist em vez de descarta-los
+#       (diagnosis.py:114-119), entao o escore muda de composicao;
+#   (b) estimate_from_candidates descarta candidatas acima do Nyquist do espectro
+#       (diagnosis.py:185), entao o conjunto de candidatas ENCOLHE - das 24 candidatas
+#       do prior nominal sobrevivem 23 sob spr = 64 e apenas 12 sob spr = 16;
+#   (c) a PROPRIA VERDADE se move: a ordem de referencia sai da mesma reamostragem
+#       angular, no passe 1 de run.py, que usa este spr. Medido nos 24 registros: por
+#       registro o deslocamento tem mediana 0,005 ordens e maximo 0,095, e 1 dos 24
+#       passa da tolerancia de 0,06; na mediana deixa-um-de-fora que entra na
+#       comparacao o efeito cai para <= 0,0025 ordens.
+#
+# O SINAL do efeito de guarda foi MEDIDO, e nao e o que uma versao anterior deste
+# comentario supunha. Reprocessando os mesmos segmentos sob os dois spr, modo com prior
+# calibrado, comparacao pareada: 1x -6,9 / 8x -4,2 / 16x -8,3 / 32x -11,1 / 48x -1,4 /
+# 64x -2,2 pontos percentuais. O relaxamento PIORA o acerto nos seis fatores medidos, e
+# o degrau NAO e constante - varia de -1,4 a -11,1. Logo a subtracao do degrau tem de
+# ser feita fator a fator; um valor unico nao serve.
+# Por isso a varredura abaixo repete os fatores ja medidos: e a unica forma de ler o
+# efeito do guarda separado do efeito da taxa.
+#
+# A resolucao de ordem NAO e afetada: order_spectrum devolve rfftfreq(n, 1/spr) com
+# n = revolucoes*spr, logo o passo e 1/revolucoes, independente de spr.
+samples_per_rev: 16
+
+order_min: 2.0
+
+sweep:
+  # A lista do base INTEIRA, mais 96, 128 e 160. Os nove primeiros sao o controle do
+  # guarda: rodados aqui sob spr = 16 e min_samples = 2048, comparam-se linha a linha
+  # com results/metrics.csv, que os mediu sob spr = 64 e min_samples = 4096.
+  #
+  # Para em 160, e o motivo NAO e o guarda de pontos por revolucao - e a largura da
+  # janela de busca do kurtograma, [f_min_hz, fs_eff/2], que colapsa contra o piso:
+  #
+  #     fator   janela de busca   largura Hz   sub-banda Hz   bins de FFT por banda
+  #        64     500-1562,50 Hz      1062,50         66,406                  166,0
+  #        96     500-1041,67 Hz       541,67         33,854                   84,7
+  #       128      500-781,25 Hz       281,25         17,578                   44,0
+  #       160      500-625,00 Hz       125,00          7,812                   19,5
+  #       192      500-520,83 Hz        20,83          1,302                    3,3
+  #
+  # (o nivel mais fino de max_level = 4 parte a janela em 2**4 = 16 sub-bandas;
+  #  bins = largura da sub-banda / (fs_eff/n), com n = ceil(500000/fator).)
+  # No fator 192 cada sub-banda do nivel mais fino tem 3 bins: a selecao de banda
+  # deixa de ser medicao. O sinal disso ja aparece na descida da curtose escolhida em
+  # I-A-3 seg 0, medida nesta sessao: 3,6 no fator 64, 1,9 no 96, 2,1 no 128, 0,5 no
+  # 160. E no fator 256 dois guardas zeram o fator: min_samples dispara primeiro
+  # (ceil(500000/256) = 1954 < 2048) e, se nao disparasse, fs_eff/2 = 390,62 Hz <= 500 Hz
+  # tambem zeraria. Passar de 160 exige mexer em f_min_hz - o que esta rodada
+  # recusa fazer, para nao somar um terceiro confundidor.
+  undersampling_factor: [1, 2, 4, 8, 16, 24, 32, 48, 64, 96, 128, 160]
+
+output:
+  # Subpasta nova, no padrao de E02-bandpass-envelope-cwru/config/cwru48k.yaml, que
+  # grava em results/48k/. results/metrics.csv (a rodada base) fica intacto.
+  results_dir: results/extended
