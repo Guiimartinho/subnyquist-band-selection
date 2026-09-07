@@ -70,6 +70,35 @@ def estimate_tone_esprit(x: ArrayLike, fs_hz: float) -> float:
 # ----------------------------------------------------------------------
 # análise de ordem
 # ----------------------------------------------------------------------
+def phase_revolutions(
+    shaft_hz: ArrayLike | float, fs_hz: float, n_samples: int
+) -> NDArray[np.float64]:
+    """Fase acumulada em **revoluções**, amostra a amostra, pela integral da rotação.
+
+    ``shaft_hz`` é escalar (rotação constante) ou um perfil com ``n_samples`` pontos.
+    A integração é trapezoidal, e o primeiro ponto é zero por construção.
+
+    Existe como função própria porque duas coisas precisam da mesma fase e não podem
+    divergir: a reamostragem angular do braço clássico e a base de ordem do braço de
+    reconstrução esparsa (`snq_recon.sparse`).
+
+    >>> phase_revolutions(10.0, 1000.0, 5).round(3).tolist()
+    [0.0, 0.01, 0.02, 0.03, 0.04]
+    """
+    n = int(n_samples)
+    speed = (
+        np.full(n, float(shaft_hz))
+        if np.isscalar(shaft_hz)
+        else np.asarray(shaft_hz, dtype=float).ravel()
+    )
+    if speed.size != n:
+        raise ValueError(f"perfil de rotação tem {speed.size} pontos, sinal tem {n}")
+    if np.any(speed <= 0):
+        raise ValueError("rotação precisa ser positiva em todo o registro")
+    dt = 1.0 / float(fs_hz)
+    return np.concatenate([[0.0], np.cumsum(0.5 * (speed[:-1] + speed[1:]) * dt)])
+
+
 def angular_resample(
     x: ArrayLike,
     fs_hz: float,
@@ -90,20 +119,9 @@ def angular_resample(
     """
     x = np.asarray(x, dtype=float).ravel()
     n = x.size
-    t = np.arange(n) / fs_hz
-
-    speed = (
-        np.full(n, float(shaft_hz))
-        if np.isscalar(shaft_hz)
-        else np.asarray(shaft_hz, dtype=float).ravel()
-    )
-    if speed.size != n:
-        raise ValueError(f"perfil de rotação tem {speed.size} pontos, sinal tem {n}")
-    if np.any(speed <= 0):
-        raise ValueError("rotação precisa ser positiva em todo o registro")
 
     # Angulo acumulado em revolucoes: integral da rotacao.
-    revs = np.concatenate([[0.0], np.cumsum(0.5 * (speed[:-1] + speed[1:]) * np.diff(t))])
+    revs = phase_revolutions(shaft_hz, fs_hz, n)
     total = float(revs[-1])
     if total < 1.0:
         raise ValueError(f"registro cobre só {total:.2f} revolução; insuficiente")
