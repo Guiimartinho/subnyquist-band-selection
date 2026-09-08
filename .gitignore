@@ -21,9 +21,10 @@ __pycache__/
 .ipynb_checkpoints/
 
 # resultados grandes (metrics.csv e manifest.json SÃO versionados)
-# Padrao sem o diretorio literal `results`: o E13 grava em `results-extended/` e
-# escapava do padrao anterior. Mesma classe de defeito do `datasets/raw/` ancorado.
-experiments/**/figures/*.png
+# As figuras PNG SAO versionadas: o relatorio em Markdown as embute, e imagem
+# ignorada vira imagem quebrada no GitHub. Sao ~1,3 MB no total. O PDF vetorial
+# continua sendo o que vai para o paper.
+!experiments/**/figures/*.png
 experiments/**/results*/*.npz
 experiments/**/results*/*.h5
 
