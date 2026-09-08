@@ -21,9 +21,11 @@ __pycache__/
 .ipynb_checkpoints/
 
 # resultados grandes (metrics.csv e manifest.json SÃO versionados)
-experiments/**/results/figures/*.png
-experiments/**/results/*.npz
-experiments/**/results/*.h5
+# Padrao sem o diretorio literal `results`: o E13 grava em `results-extended/` e
+# escapava do padrao anterior. Mesma classe de defeito do `datasets/raw/` ancorado.
+experiments/**/figures/*.png
+experiments/**/results*/*.npz
+experiments/**/results*/*.h5
 
 # zephyr / ncs
 build/
