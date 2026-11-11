@@ -1,0 +1,948 @@
+{
+  "experiment": "E15-learned-sampling-mask",
+  "timestamp_utc": "2026-11-11T13:55:07.488744+00:00",
+  "seed": 20261113,
+  "config_path": "experiments\\E15-learned-sampling-mask\\config\\smoke.yaml",
+  "config_sha256": "858059bbea7383bd944a04ef8e2fd2dcf53eaea4821752a1b18d3bb69b132602",
+  "entrypoint_sha256": "b93c92f86a0c864c59acd97f1994269d1beec7f7274dd9b0508c53b92fae181d",
+  "readme_sha256": "d70e56cf4273682fdfb21b1f1dc2ab845f602786f68a029214f8118fc070ea3a",
+  "preregistration": {
+    "dataset": "ottawa",
+    "variant": "bruto",
+    "rulers": [
+      "local",
+      "nested"
+    ],
+    "metric": "acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)",
+    "alpha": 0.05,
+    "correction": "holm",
+    "min_budgets": 2,
+    "min_clusters_per_group": 3,
+    "min_splits": 2,
+    "h1": {
+      "arm": "dec_aprendida_sel",
+      "baselines": [
+        "uniforme_treino",
+        "dec_uniforme_treino",
+        "dec_aleatoria"
+      ]
+    },
+    "h2": {
+      "arm": "dec_aprendida",
+      "baseline": "dec_livre_projetada"
+    }
+  },
+  "packages": {
+    "snq-core": "0.1.0",
+    "snq-sim": "0.1.0",
+    "snq-data": "0.1.0",
+    "snq-recon": "0.1.0",
+    "snq-eval": "0.1.0",
+    "snq-learn": "0.1.0"
+  },
+  "torch": "2.14.0+cpu",
+  "cuda_available": false,
+  "python": "3.14.6",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "git_sha": "3af9c39584fa54f7800e59bb37bffc85da3259b8",
+  "git_dirty": [
+    "github/workflows/ci.yml",
+    ".gitignore",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "README.md",
+    "datasets/manifests/mafaulda.yaml",
+    "docs/00-prompt-inicial.md",
+    "docs/adr/0001-landau-como-piso-teorico.md",
+    "docs/adr/0005-estrategia-de-publicacao.md",
+    "docs/plano-de-experimentos.md",
+    "docs/resultados-subnyquist.md",
+    "docs/revisao-sota.html",
+    "experiments/E01-alias-identifiability-1d/results/figures/e01_frontier.pdf",
+    "experiments/E01-alias-identifiability-1d/results/figures/e01_frontier.png",
+    "experiments/E02-bandpass-envelope-cwru/results/48k/manifest.json",
+    "experiments/E02-bandpass-envelope-cwru/results/48k/metrics.csv",
+    "experiments/E02-bandpass-envelope-cwru/results/figures/e02_undersampling_12k.pdf",
+    "experiments/E02-bandpass-envelope-cwru/results/figures/e02_undersampling_12k.png",
+    "experiments/E02-bandpass-envelope-cwru/results/figures/e02_undersampling_48k.pdf",
+    "experiments/E02-bandpass-envelope-cwru/results/figures/e02_undersampling_48k.png",
+    "experiments/E02-bandpass-envelope-cwru/results/manifest.json",
+    "experiments/E02-bandpass-envelope-cwru/results/metrics.csv",
+    "experiments/E02-bandpass-envelope-cwru/run.py",
+    "experiments/E04-distillation/run.py",
+    "experiments/E05-split-framework/README.md",
+    "experiments/E05-split-framework/results/ablacao-sem-estratificacao/manifest.json",
+    "experiments/E05-split-framework/results/ablacao-sem-estratificacao/metrics.csv",
+    "experiments/E05-split-framework/results/ablacao-sem-estratificacao/summary.csv",
+    "experiments/E05-split-framework/results/figures/e05_split_framework.pdf",
+    "experiments/E05-split-framework/results/figures/e05_split_framework.png",
+    "experiments/E05-split-framework/results/manifest.json",
+    "experiments/E05-split-framework/results/metrics.csv",
+    "experiments/E05-split-framework/results/summary.csv",
+    "experiments/E07-order-domain-ottawa/README.md",
+    "experiments/E07-order-domain-ottawa/control_healthy.py",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-A-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-A-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-A-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-B-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-B-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-B-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-C-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-C-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-C-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-D-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-D-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/H-D-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-A-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-A-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-A-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-B-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-B-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-B-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-C-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-C-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-C-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-D-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-D-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/I-D-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-A-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-A-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-A-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-B-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-B-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-B-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-C-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-C-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-C-3.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-D-1.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-D-2.mat",
+    "experiments/E07-order-domain-ottawa/datasets/raw/ottawa/O-D-3.mat",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_control.pdf",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_control.png",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_order_domain.pdf",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_order_domain.png",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_spectra.pdf",
+    "experiments/E07-order-domain-ottawa/results/figures/e07_spectra.png",
+    "experiments/E07-order-domain-ottawa/results/healthy_control.csv",
+    "experiments/E07-order-domain-ottawa/results/manifest.json",
+    "experiments/E07-order-domain-ottawa/results/metrics.csv",
+    "experiments/E07-order-domain-ottawa/run.py",
+    "experiments/E13-cs-vs-classic/results-extended/figures/e13_factorial.pdf",
+    "experiments/E13-cs-vs-classic/results-extended/figures/e13_factorial.png",
+    "experiments/E13-cs-vs-classic/results-extended/manifest.json",
+    "experiments/E13-cs-vs-classic/results-extended/metrics.csv",
+    "experiments/E13-cs-vs-classic/run.py",
+    "literature/assess.py",
+    "literature/matrix.csv",
+    "literature/notes/li2026tinymamba.md",
+    "literature/notes/shlezinger2022taskadc.md",
+    "literature/refs.bib",
+    "literature/scout.py",
+    "packages/snq-data/src/snq_data/cwru.py",
+    "packages/snq-data/src/snq_data/ottawa.py",
+    "packages/snq-data/tests/test_datasets.py",
+    "packages/snq-learn/src/snq_learn/__init__.py",
+    "packages/snq-recon/src/snq_recon/__init__.py",
+    "packages/snq-recon/src/snq_recon/diagnosis.py",
+    "packages/snq-recon/src/snq_recon/envelope.py",
+    "packages/snq-recon/src/snq_recon/highres.py",
+    "packages/snq-recon/src/snq_recon/kurtogram.py",
+    "packages/snq-recon/src/snq_recon/sparse.py",
+    "papers/shared/figures/fig_e01_frontier.py",
+    "papers/shared/figures/fig_e02_undersampling.py",
+    "papers/shared/figures/fig_e07_control.py",
+    "papers/shared/figures/fig_e07_order_domain.py",
+    "papers/shared/figures/fig_e07_spectra.py",
+    ".github/scripts/",
+    ".vscode/",
+    "datasets/catalogs/mafaulda-tachometer-screen.yaml",
+    "docs/adr/0006-artigo-unico-computacional.md",
+    "docs/lab-notebook/2026-11-10.md",
+    "docs/lab-notebook/2026-11-11.md",
+    "experiments/E07-order-domain-ottawa/config/smoke-regua.yaml",
+    "experiments/E07-order-domain-ottawa/results-smoke-regua/",
+    "experiments/E07-order-domain-ottawa/results/extended/",
+    "experiments/E15-learned-sampling-mask/",
+    "experiments/E20-fold-zone-rejection/",
+    "experiments/E21-mafaulda-capture-prediction/",
+    "experiments/E22-equal-rate-baselines/",
+    "experiments/E23-injected-interferer-cwru/",
+    "literature/notes/ahmed2018compressedbearing.md",
+    "literature/notes/antoni2016infogram.md",
+    "literature/notes/bhadra2021hallucinations.md",
+    "literature/notes/daga2021envelopecwru.md",
+    "literature/notes/elbouharrouti2023multirate.md",
+    "literature/notes/han2024undersampledcnn.md",
+    "literature/notes/hilton2021hyperbolic.md",
+    "literature/notes/lu2018undersampled.md",
+    "literature/notes/mauricio2020iesfogram.md",
+    "literature/notes/romanov2019above.md",
+    "literature/notes/rudresh2020timebased.md",
+    "literature/notes/smith2016emi.md",
+    "literature/notes/tounsi2026cs.md",
+    "literature/notes/vaerenberg2025cyclicemi.md",
+    "literature/notes/weiss2021pilot.md",
+    "literature/notes/yashaswini2027adaptive.md",
+    "literature/notes/zhang2017wdcnn.md",
+    "literature/notes/zhao2026adaptive.md",
+    "literature/notes/zhu2024subnyquistunlimited.md",
+    "packages/snq-data/src/snq_data/mafaulda.py",
+    "packages/snq-data/tests/test_download_retry.py",
+    "packages/snq-data/tests/test_mafaulda.py",
+    "packages/snq-learn/src/snq_learn/masks.py",
+    "packages/snq-learn/src/snq_learn/order_decoder.py",
+    "packages/snq-learn/src/snq_learn/training.py",
+    "packages/snq-learn/src/snq_learn/wdcnn.py",
+    "packages/snq-learn/tests/test_masks.py",
+    "packages/snq-learn/tests/test_order_decoder.py",
+    "packages/snq-learn/tests/test_training.py",
+    "packages/snq-learn/tests/test_wdcnn.py",
+    "packages/snq-recon/tests/test_diagnosis_reference.py",
+    "packages/snq-recon/tests/test_envelope_reference.py",
+    "packages/snq-recon/tests/test_kurtogram_reference.py",
+    "packages/snq-recon/tests/test_refine_order.py",
+    "packages/snq-recon/tests/test_sparse_folding.py"
+  ],
+  "source_sha256": "2c68ef577f63c52b239d1d9151ab89192635634eaaadce62571eac6703a8dcb6",
+  "source_n_files": 30,
+  "cli": {
+    "config": "experiments\\E15-learned-sampling-mask\\config\\smoke.yaml",
+    "datasets": [
+      "ottawa"
+    ],
+    "limit": null,
+    "methods": null,
+    "budgets": null,
+    "max_epochs": null,
+    "device": null,
+    "workers": null,
+    "no_resume": false
+  },
+  "device": "cpu",
+  "rulers": {
+    "local": "raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao",
+    "nested": "mediana das calibracoes do segmento 0 dos registros fora do teste do grupo"
+  },
+  "input_sha256": {
+    "ottawa:I-A-1.mat": "496a14c3caf62d28169ff2567e9aaf5c7913c03c648ad73651b410cd09316ea7",
+    "ottawa:I-A-2.mat": "38ab920d5c92fd085949b877b9d1aac2251bf0ddc247ce1afac7df6b62df1c44",
+    "ottawa:I-A-3.mat": "22ffb437f4d491df11abad868c998385f8c86a4ed5ad82c3e8755675d20b0a74",
+    "ottawa:O-A-1.mat": "f07716f39f8fb93ea73465e40dc415b0252eefcf5797591b079139ce66ff1040",
+    "ottawa:O-A-2.mat": "b44dd1494f344841799d9988fbae7e59c3eb263c64547f48643552edac8aec84",
+    "ottawa:O-A-3.mat": "e569af9fe9c7acfa9ba072841b365ca33e8db4b7eb875ba07fa5a8b3c4aa1f6c",
+    "ottawa:H-A-1.mat": "a113089dac7969eaf3e2adc563aa724a523f5d7ef4b3dd957bdf111ac1d84257"
+  },
+  "calibrated_order": {
+    "ottawa:I-A-1.mat": {
+      "center": 5.443259999999986,
+      "first_point": 5.425759999999986,
+      "at_edge": false,
+      "band_hz": [
+        12750.0,
+        25000.0
+      ]
+    },
+    "ottawa:I-A-2.mat": {
+      "center": 5.443259999999986,
+      "first_point": 5.425759999999986,
+      "at_edge": false,
+      "band_hz": [
+        21937.5,
+        25000.0
+      ]
+    },
+    "ottawa:I-A-3.mat": {
+      "center": 5.448259999999985,
+      "first_point": 5.430759999999986,
+      "at_edge": false,
+      "band_hz": [
+        21937.5,
+        25000.0
+      ]
+    },
+    "ottawa:O-A-1.mat": {
+      "center": 3.5192399999999924,
+      "first_point": 3.5092399999999926,
+      "at_edge": false,
+      "band_hz": [
+        21937.5,
+        23468.75
+      ]
+    },
+    "ottawa:O-A-2.mat": {
+      "center": 3.541739999999992,
+      "first_point": 3.539239999999992,
+      "at_edge": false,
+      "band_hz": [
+        6625.0,
+        12750.0
+      ]
+    },
+    "ottawa:O-A-3.mat": {
+      "center": 3.4567399999999937,
+      "first_point": 3.439239999999994,
+      "at_edge": false,
+      "band_hz": [
+        2031.25,
+        3562.5
+      ]
+    }
+  },
+  "local_grid": {
+    "ottawa:I-A-1.mat": [
+      [
+        0,
+        5.4557599999999855,
+        false
+      ],
+      [
+        131072,
+        5.458259999999985,
+        false
+      ],
+      [
+        262144,
+        5.448259999999985,
+        false
+      ],
+      [
+        393216,
+        5.440759999999986,
+        false
+      ],
+      [
+        524288,
+        5.440759999999986,
+        false
+      ],
+      [
+        655360,
+        5.448259999999985,
+        false
+      ],
+      [
+        786432,
+        5.435759999999986,
+        false
+      ],
+      [
+        917504,
+        5.448259999999985,
+        false
+      ],
+      [
+        1048576,
+        5.430759999999986,
+        false
+      ],
+      [
+        1179648,
+        5.433259999999986,
+        false
+      ],
+      [
+        1310720,
+        5.428259999999986,
+        false
+      ],
+      [
+        1441792,
+        5.438259999999985,
+        false
+      ],
+      [
+        1572864,
+        5.438259999999985,
+        false
+      ],
+      [
+        1703936,
+        5.428259999999986,
+        false
+      ],
+      [
+        1835008,
+        5.423259999999987,
+        false
+      ]
+    ],
+    "ottawa:I-A-2.mat": [
+      [
+        0,
+        5.458259999999985,
+        false
+      ],
+      [
+        131072,
+        5.403259999999987,
+        false
+      ],
+      [
+        262144,
+        5.458259999999985,
+        false
+      ],
+      [
+        393216,
+        5.435759999999986,
+        false
+      ],
+      [
+        524288,
+        5.448259999999985,
+        false
+      ],
+      [
+        655360,
+        5.430759999999986,
+        false
+      ],
+      [
+        786432,
+        5.443259999999986,
+        false
+      ],
+      [
+        917504,
+        5.428259999999986,
+        false
+      ],
+      [
+        1048576,
+        5.448259999999985,
+        false
+      ],
+      [
+        1179648,
+        5.438259999999985,
+        false
+      ],
+      [
+        1310720,
+        5.428259999999986,
+        false
+      ],
+      [
+        1441792,
+        5.433259999999986,
+        false
+      ],
+      [
+        1572864,
+        5.418259999999986,
+        false
+      ],
+      [
+        1703936,
+        5.435759999999986,
+        false
+      ],
+      [
+        1835008,
+        5.418259999999986,
+        false
+      ]
+    ],
+    "ottawa:I-A-3.mat": [
+      [
+        0,
+        5.458259999999985,
+        false
+      ],
+      [
+        131072,
+        5.448259999999985,
+        false
+      ],
+      [
+        262144,
+        5.453259999999986,
+        false
+      ],
+      [
+        393216,
+        5.440759999999986,
+        false
+      ],
+      [
+        524288,
+        5.448259999999985,
+        false
+      ],
+      [
+        655360,
+        5.430759999999986,
+        false
+      ],
+      [
+        786432,
+        5.443259999999986,
+        false
+      ],
+      [
+        917504,
+        5.430759999999986,
+        false
+      ],
+      [
+        1048576,
+        5.443259999999986,
+        false
+      ],
+      [
+        1179648,
+        5.423259999999987,
+        false
+      ],
+      [
+        1310720,
+        5.438259999999985,
+        false
+      ],
+      [
+        1441792,
+        5.430759999999986,
+        false
+      ],
+      [
+        1572864,
+        5.428259999999986,
+        false
+      ],
+      [
+        1703936,
+        5.423259999999987,
+        false
+      ],
+      [
+        1835008,
+        5.443259999999986,
+        false
+      ]
+    ],
+    "ottawa:O-A-1.mat": [
+      [
+        0,
+        3.529239999999992,
+        false
+      ],
+      [
+        131072,
+        3.5142399999999925,
+        false
+      ],
+      [
+        262144,
+        3.441739999999994,
+        false
+      ],
+      [
+        393216,
+        3.4217399999999945,
+        false
+      ],
+      [
+        524288,
+        3.3792399999999954,
+        false
+      ],
+      [
+        655360,
+        3.386739999999995,
+        false
+      ],
+      [
+        786432,
+        3.3717399999999955,
+        false
+      ],
+      [
+        917504,
+        3.3367399999999963,
+        false
+      ],
+      [
+        1048576,
+        3.304239999999997,
+        false
+      ],
+      [
+        1179648,
+        3.3267399999999965,
+        false
+      ],
+      [
+        1310720,
+        3.351739999999996,
+        false
+      ],
+      [
+        1441792,
+        3.3317399999999964,
+        false
+      ],
+      [
+        1572864,
+        3.311739999999997,
+        false
+      ],
+      [
+        1703936,
+        3.3167399999999967,
+        false
+      ],
+      [
+        1835008,
+        3.296739999999997,
+        false
+      ]
+    ],
+    "ottawa:O-A-2.mat": [
+      [
+        0,
+        3.3317399999999964,
+        false
+      ],
+      [
+        131072,
+        3.5067399999999926,
+        false
+      ],
+      [
+        262144,
+        3.2442399999999982,
+        false
+      ],
+      [
+        393216,
+        3.1767399999999997,
+        false
+      ],
+      [
+        524288,
+        3.4742399999999933,
+        false
+      ],
+      [
+        655360,
+        3.951739999999983,
+        true
+      ],
+      [
+        786432,
+        3.4092399999999947,
+        false
+      ],
+      [
+        917504,
+        3.3817399999999953,
+        false
+      ],
+      [
+        1048576,
+        3.3817399999999953,
+        false
+      ],
+      [
+        1179648,
+        3.809239999999986,
+        false
+      ],
+      [
+        1310720,
+        3.339239999999996,
+        false
+      ],
+      [
+        1441792,
+        3.389239999999995,
+        false
+      ],
+      [
+        1572864,
+        3.6517399999999895,
+        false
+      ],
+      [
+        1703936,
+        3.3742399999999955,
+        false
+      ],
+      [
+        1835008,
+        3.3267399999999965,
+        false
+      ]
+    ],
+    "ottawa:O-A-3.mat": [
+      [
+        0,
+        3.15424,
+        true
+      ],
+      [
+        131072,
+        3.4717399999999934,
+        false
+      ],
+      [
+        262144,
+        3.526739999999992,
+        false
+      ],
+      [
+        393216,
+        3.439239999999994,
+        false
+      ],
+      [
+        524288,
+        3.4192399999999945,
+        false
+      ],
+      [
+        655360,
+        3.399239999999995,
+        false
+      ],
+      [
+        786432,
+        3.3642399999999957,
+        false
+      ],
+      [
+        917504,
+        3.3792399999999954,
+        false
+      ],
+      [
+        1048576,
+        3.3667399999999956,
+        false
+      ],
+      [
+        1179648,
+        3.3167399999999967,
+        false
+      ],
+      [
+        1310720,
+        3.3317399999999964,
+        false
+      ],
+      [
+        1441792,
+        3.341739999999996,
+        false
+      ],
+      [
+        1572864,
+        3.341739999999996,
+        false
+      ],
+      [
+        1703936,
+        3.3267399999999965,
+        false
+      ],
+      [
+        1835008,
+        3.311739999999997,
+        false
+      ]
+    ]
+  },
+  "segment_truth": {
+    "ottawa:I-A-1.mat": {
+      "1": [
+        5.438259999999985,
+        false
+      ],
+      "2": [
+        5.433259999999986,
+        false
+      ]
+    },
+    "ottawa:I-A-2.mat": {
+      "1": [
+        5.438259999999985,
+        false
+      ],
+      "2": [
+        5.435759999999986,
+        false
+      ]
+    },
+    "ottawa:I-A-3.mat": {
+      "1": [
+        5.438259999999985,
+        false
+      ],
+      "2": [
+        5.433259999999986,
+        false
+      ]
+    },
+    "ottawa:O-A-1.mat": {
+      "1": [
+        3.3767399999999954,
+        false
+      ],
+      "2": [
+        3.3317399999999964,
+        false
+      ]
+    },
+    "ottawa:O-A-2.mat": {
+      "1": [
+        3.999239999999982,
+        true
+      ],
+      "2": [
+        3.7867399999999867,
+        false
+      ]
+    },
+    "ottawa:O-A-3.mat": {
+      "1": [
+        3.3717399999999955,
+        false
+      ],
+      "2": [
+        3.3292399999999964,
+        false
+      ]
+    }
+  },
+  "despiked_samples": {
+    "ottawa:I-A-1.mat": {
+      "bruto": 0,
+      "sem_picos": 3932
+    },
+    "ottawa:I-A-2.mat": {
+      "bruto": 0,
+      "sem_picos": 3413
+    },
+    "ottawa:I-A-3.mat": {
+      "bruto": 0,
+      "sem_picos": 3100
+    },
+    "ottawa:O-A-1.mat": {
+      "bruto": 0,
+      "sem_picos": 12886
+    },
+    "ottawa:O-A-2.mat": {
+      "bruto": 0,
+      "sem_picos": 12827
+    },
+    "ottawa:O-A-3.mat": {
+      "bruto": 0,
+      "sem_picos": 12962
+    },
+    "ottawa:H-A-1.mat": {
+      "bruto": 0,
+      "sem_picos": 13033
+    }
+  },
+  "splits": {
+    "ottawa": [
+      {
+        "index": 0,
+        "seed": 1261930638,
+        "train": [
+          "I-A-2.mat",
+          "O-A-2.mat"
+        ],
+        "val": [
+          "I-A-3.mat",
+          "O-A-3.mat"
+        ],
+        "test": [
+          "I-A-1.mat",
+          "O-A-1.mat"
+        ],
+        "never_tested": []
+      }
+    ]
+  },
+  "feasible_sets": {
+    "ottawa:1/16": {
+      "period_ticks": 64,
+      "active_per_period": 4,
+      "min_gap_ticks": 2,
+      "rate_fraction": 0.0625
+    },
+    "ottawa:1/32": {
+      "period_ticks": 128,
+      "active_per_period": 4,
+      "min_gap_ticks": 2,
+      "rate_fraction": 0.03125
+    }
+  },
+  "known_band": {
+    "ottawa:split0": [
+      21937.5,
+      25000.0
+    ]
+  },
+  "chosen_uniform_factor": {
+    "ottawa:bruto:split0": {
+      "16": 16,
+      "32": 32
+    },
+    "ottawa:sem_picos:split0": {
+      "16": 16,
+      "32": 32
+    }
+  },
+  "groups": {
+    "ottawa": [
+      "inner_race",
+      "outer_race"
+    ]
+  },
+  "runs": {
+    "ottawa/bruto/b16/split0/seed0/dec_uniforme.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_aleatoria.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_multicoset.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_multicoset_vb.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_uniforme_treino.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_aprendida.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_livre.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_loupe.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/dec_adaptativa.json": "retomado",
+    "ottawa/bruto/b16/split0/seed0/wdcnn.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_uniforme.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_aleatoria.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_multicoset.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_multicoset_vb.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_uniforme_treino.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_aprendida.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_livre.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_loupe.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/dec_adaptativa.json": "retomado",
+    "ottawa/bruto/b32/split0/seed0/wdcnn.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_uniforme.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_aleatoria.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_multicoset.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_multicoset_vb.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_uniforme_treino.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_aprendida.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_livre.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_loupe.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/dec_adaptativa.json": "retomado",
+    "ottawa/sem_picos/b16/split0/seed0/wdcnn.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_uniforme.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_aleatoria.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_multicoset.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_multicoset_vb.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_uniforme_treino.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_aprendida.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_livre.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_loupe.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/dec_adaptativa.json": "retomado",
+    "ottawa/sem_picos/b32/split0/seed0/wdcnn.json": "retomado"
+  },
+  "n_rows": 480,
+  "device_name": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"
+}
