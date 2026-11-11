@@ -1,6 +1,7 @@
-# dados brutos e processados — nunca versionados
-datasets/raw/
-datasets/processed/
+# dados brutos e processados — nunca versionados, em qualquer profundidade (T0.1:
+# "datasets/raw/" sem "**/" ficava ancorado na raiz e deixou passar 459 MB do E07)
+**/datasets/raw/
+**/datasets/processed/
 
 # literature/pdf/ É versionado: o repositório é privado e os PDFs são material
 # de leitura do doutorado. Se este repositório algum dia virar público, os PDFs
