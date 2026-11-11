@@ -55,6 +55,37 @@ A figura `e07_spectra` mostra por quê: a paisagem espectral é irreconhecível 
 exatamente onde estava. A falha vive na modulação do envelope, não na portadora, e a
 dobra move a portadora sem mover a modulação.
 
+## Re-execução de 2026-11-11, com o DSP corrigido
+
+A auditoria de 2026-11-10 corrigiu o kurtograma (sem emenda circular), o envelope e a
+reamostragem angular (com anti-alias). Com o núcleo corrigido, `run.py --config
+config/base.yaml` foi re-executado no servidor. `results/metrics.csv` e
+`results/manifest.json` são dessa rodada, e a tabela de 2026-09-04 acima fica como registro.
+
+| fator | taxa efetiva | sem prior | prior nominal | prior calibrado | n |
+|---|---|---|---|---|---|
+| 1× | 200 kSPS | 79,2 % | 50,0 % | 84,7 % | 72 |
+| 2× | 100 kSPS | 73,6 % | 50,0 % | 77,8 % | 72 |
+| 4× | 50 kSPS | **52,8 %** | 48,6 % | 55,6 % | 72 |
+| 8× | 25 kSPS | 79,2 % | 50,0 % | 83,3 % | 72 |
+| 16× | 12,5 kSPS | 75,0 % | 50,0 % | 81,9 % | 72 |
+| 24× | 8,33 kSPS | 76,4 % | 50,0 % | 86,1 % | 72 |
+| 32× | 6,25 kSPS | 77,8 % | 50,0 % | 90,3 % | 72 |
+| 48× | 4,17 kSPS | 72,2 % | 50,0 % | 80,6 % | 72 |
+| 64× | 3,12 kSPS | 64,4 % | 51,1 % | 73,3 % | 45 |
+
+- **Só `sem_prior` mede estimação** (T0.2). As duas colunas com prior escolhem dentro de um
+  conjunto que contém o gabarito.
+- **A coluna `sem_prior` muda no máximo 5,6 pontos contra 2026-09-04** (16×: 68,1 → 75,0 %). O
+  vale de 4× fica: a pista externa tem 25, 21, **6** e 24 acertos de 36 em 1×, 2×, 4× e 8×, e a
+  pista interna 32, 32, 32 e 33.
+- **"Em 32× o acerto é maior que na taxa cheia" deixa de valer.** Agora são 77,8 % contra
+  79,2 %, dentro do intervalo de Wilson. A leitura "ausência de degradação até 32×" se mantém.
+- **O captor do vale foi isolado (E20 e revisão adversarial).** É um trem de picos de uma amostra
+  no registro bruto, presente também nos registros saudáveis. O filtro anti-alias ideal ou a remoção
+  dos picos antes de decimar devolvem a pista externa em 4× a 25–26 de 36. Ver
+  `experiments/E20-fold-zone-rejection/README.md`.
+
 ## O prior de catálogo erra, e erra em silêncio
 
 A geometria do ER16K (9 esferas, esfera 0,3125", primitivo 1,516") prevê
@@ -150,16 +181,19 @@ ordem alvo. 0,5 é ausência de separação.
 
 | fator | taxa efetiva | AUC BPFI | AUC BPFO |
 |---|---|---|---|
-| 1× | 200 kSPS | 1,000 | 0,958 |
-| 4× | 50 kSPS | 1,000 | 0,743 |
-| 8× | 25 kSPS | 0,999 | 0,902 |
-| 16× | 12,5 kSPS | 1,000 | 0,827 |
-| 32× | 6,25 kSPS | 0,988 | 0,923 |
-| 64× | 3,12 kSPS | 1,000 | 0,995 |
+| 1× | 200 kSPS | 0,999 | 0,965 |
+| 4× | 50 kSPS | 1,000 | 0,757 |
+| 8× | 25 kSPS | 1,000 | 0,915 |
+| 16× | 12,5 kSPS | 1,000 | 0,834 |
+| 32× | 6,25 kSPS | 0,974 | 0,924 |
+| 64× | 3,12 kSPS | 1,000 | 0,922 |
 
-**A separação não degrada.** Em 3,12 kSPS os registros com falha ficam com a raia da
-ordem alvo no topo da faixa em praticamente todos os segmentos, e os saudáveis não.
-O mergulho da pista externa em 4× é o mesmo sequestro de banda descrito acima.
+Valores da re-execução de 2026-11-11, com o DSP corrigido. A maior mudança contra 2026-09-04 é
+BPFO em 64×, que caiu de 0,995 para 0,922.
+
+**A separação não degrada.** Na pista interna o AUC fica entre 0,97 e 1,00 em todos os
+fatores. Na pista externa ele oscila entre 0,76 e 0,97 sem tendência com a taxa, e o mínimo é
+o de 4×. O mergulho da pista externa em 4× é o mesmo sequestro de banda descrito acima.
 
 ### A primeira métrica dizia o contrário, e estava errada
 
@@ -514,3 +548,122 @@ Acrescentados:
 reescrito: ele é a procedência do que foi medido, e regravá-lo sem repetir a medição
 inventaria procedência. O mesmo vale para `config/base.yaml`, cujo SHA-256 está
 gravado ali.
+
+## Resultado da extensão (2026-11-11)
+
+Rodada com o DSP corrigido, `results/extended/`. As 72 medições entram em todos os doze fatores,
+o que mantém a rota 4 fechada.
+
+### A análise pré-registrada: rota 1 disparada, mas a régua se moveu
+
+Cada rodada foi avaliada contra a sua própria verdade, como registrado.
+- **Degrau de guarda pareado, `prior_calibrado`:** −30,2 pontos em média (de −36,1 a −20,8), com
+  inclinação de −0,8 ± 1,6 pontos por oitava (IC 95 %). Pela rota 3 é aditivo.
+- **Valores corrigidos:** 73,3 % em 64×, 57,9 % em 96×, 38,5 % em 128× e 30,2 % em 160×. A queda
+  em 96× é de 15,4 pontos, acima do limiar de 13, e **a rota 1 dispara**.
+- **Rota 2 (captura por ordem fixa):** não dispara, por pouco. A ordem mais frequente do
+  `prior_calibrado` é ≈0,39 (FTF) em 24 %, 38 % e 49 % dos segmentos em 96×, 128× e 160×.
+
+**O degrau de −30 pontos não é do estimador. É a verdade que se move.** Sob `spr = 16` a
+calibração desloca a ordem de referência em mediana −0,0425 ordens (de −0,065 a −0,015), e 18 dos
+24 registros se movem mais de 0,03. A tolerância é 0,06.
+- Nos 23 segmentos que a base acerta e o estendido erra em 1× (`sem_prior`), a estimativa e a
+  banda são praticamente iguais nas duas rodadas, por exemplo 5,429 contra 5,429. O que muda é a
+  verdade: 5,3808 → 5,3458 na pista interna e 3,4392 → 3,3742 em O-B.
+- **A causa é o desempate do `refine` (revisão de 2026-11-11, conferida).**
+  - O escore é constante por partes: `score_fault` toma a maior raia a ±tol de cada harmônico.
+  - O `max()` do `refine` devolve o **primeiro** ponto do platô de máximo.
+  - Com `spr = 64`, o platô tem 0,035 ordem em 22 de 24 registros. Com `spr = 16`, só cabem os
+    harmônicos abaixo da ordem 8, e o platô alarga para 0,115 (interna) e 0,055 (externa).
+  - **Pelo centro do platô, o deslocamento entre as duas réguas é +0,0000 na mediana**, e só O-A-1
+    e O-A-2 passam de 0,03. Pelo primeiro ponto, é −0,0325.
+  - Medido por `e07_refine.py`, que reproduz exatamente as calibrações dos dois manifests.
+- **A régua da rodada base também está enviesada.** Ela fica 0,0175 ordem abaixo do centro do platô
+  em 22 de 24 registros, quase um terço da tolerância. As estimativas em 1× (cerca de 5,43 na
+  interna) batem com o centro (5,443), não com o primeiro ponto (5,426). É a mesma régua do E20 e
+  do E22, e a correção pede re-execução dos três.
+
+### Análise com a régua fixa (decidida depois de ver o deslocamento)
+
+O estendido foi reavaliado contra a verdade da rodada base (`spr = 64`). Ela é por registro e
+não depende do fator, então vale também para 96–160×.
+
+| | 1× | 4× | 8× | 32× | 64× | 96× | 128× | 160× |
+|---|---|---|---|---|---|---|---|---|
+| `sem_prior`, estendido, régua fixa | 77,8 | 51,4 | 76,4 | 70,8 | 61,1 | 52,8 | **19,4** | **0,0** |
+
+- **Degrau de guarda pareado, `sem_prior`:** −3,5 pontos em média (de −8,9 a 0,0). É pequeno, mas
+  cresce com o fator: −1,0 ± 0,8 pontos por oitava, com IC que exclui 0. **Pela rota 3, a
+  subtração de um degrau único não se sustenta.**
+- **Ainda assim, há joelho entre 96× e 128×.** De 96× para 128× o acerto bruto cai 33 pontos (52,8
+  → 19,4 %). Um degrau de guarda que é −8,9 em 64× e cresce cerca de 1 ponto por oitava não
+  explica isso. Em 96× (2,08 kSPS) a queda corrigida contra 64× é de 8,2 pontos, abaixo do
+  limiar; em 128× (1,56 kSPS) é de 41,5.
+- **Mecanismo (corrigido pela revisão de 2026-11-11, conferido):**
+  - O piso `f_min_hz` = 500 Hz encolhe a faixa de busca para [500; fs_eff/2]: [500; 781] Hz em
+    128× e [500; 625] Hz em 160×.
+  - A partição do kurtograma passa a gerar bandas **mais estreitas que a frequência de falha em
+    Hz**. A largura mediana é 271 Hz em 96×, 141 Hz em 128× e 10,4 Hz em 160×. Em 128×, 12 % das
+    bandas são mais estreitas que a frequência de falha, todas com erro. Em 160×, 100 %.
+  - O envelope de uma banda de largura W só tem conteúdo até W. A raia de falha some, e a
+    estimativa cai junto de `order_min` = 2,0: 47 % das estimativas em [2,0; 2,2) em 128× e 83 % em
+    160×.
+  - É a captura por ordem fixa da rota 2, que valia também para `sem_prior`.
+  - A frase anterior ("a faixa de busca deixa de conter a ressonância") estava errada: sob
+    decimação pura a ressonância dobra para a banda base.
+  - É uma parede do pipeline (o piso e a partição do seletor), não da taxa.
+- **`prior_calibrado` com régua fixa** piora (degrau médio de −38,2). É o esperado para uma escolha
+  entre candidatas em torno de uma calibração que se moveu, e confirma a invalidação da T0.2.
+
+**Conclusão para T1.1.** O fator publicável do E07 continua sendo 64× (3,12 kSPS) em `sem_prior`.
+A curva estendida mostra um joelho entre 2,08 e 1,56 kSPS. Ele é do pipeline: a faixa de busca
+estreita e as bandas mais estreitas que a frequência de falha. Um ganho de método nesses fatores
+seria contra um espantalho.
+
+A rodada "com `spr = 64` e só o piso variando", proposta antes, é **inviável** em 128×: o guarda
+exige 128 pontos por revolução, e o fator 128 dá 56. O controle que falta é outro: régua pelo
+centro do platô, e piso ou largura mínima de banda do kurtograma variando, com `spr = 16`.
+
+## Re-execução com a régua corrigida (2026-11-11, tarde)
+
+Rodada às 12:43 UTC no servidor, com duas mudanças:
+- verdade pelo **centro do platô** (`snq_recon.refine_order`), e não mais pelo primeiro ponto
+  (viés de −0,0175 ordem);
+- **régua local** gravada ao lado: `truth_local_order` e `hit_local`, a raia em taxa cheia do
+  próprio segmento, só para pontuar.
+
+A régua local vem da revisão do protocolo do E15, conferida: a ordem de BPFO da pista externa cai
+cerca de 0,3 a cada 10 Hz de rotação dentro do registro (O-A-1: 3,519 a 16,7 Hz → 3,322 a 25,8 Hz),
+e uma verdade constante por registro erra a raia nos segmentos de rotação diferente.
+
+`sem_prior`, acerto (%):
+
+| fator | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
+|---|---|---|---|---|---|---|---|---|---|
+| régua pelo centro do platô, deixa-um-de-fora (n = 72) | 86,1 | 76,4 | **56,9** | 84,7 | 76,4 | 84,7 | 86,1 | 83,3 | 80,0 |
+| régua local (n = 71) | 93,0 | 80,3 | **57,7** | 90,1 | 83,1 | 87,3 | 90,1 | 85,9 | 81,8 |
+
+- **Por pista, régua local:** a externa tem 31, 22, **6** e 28 de 35 em 1×, 2×, 4× e 8×; a interna
+  35, 35, 35 e 36 de 36. O vale de 4× fica nas duas réguas.
+- **A coluna `prior_calibrado`** fica igual ou abaixo da `sem_prior` (1×: 84,7 %).
+- **Controle negativo (AUC BPFI / BPFO):**
+
+  | fator | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
+  |---|---|---|---|---|---|---|---|---|---|
+  | BPFI | 0,999 | 0,865 | 1,000 | 1,000 | 1,000 | 1,000 | 0,974 | 0,985 | 1,000 |
+  | BPFO | 0,943 | 0,804 | 0,765 | 0,899 | 0,784 | 0,931 | 0,912 | 0,940 | 0,927 |
+
+**Extensão (`spr = 16`), com a régua corrigida.**
+- **O degrau de guarda pareado cai a −2,9 pontos em média pela régua do centro, e a −0,2 pela régua
+  local** (de +1,4 a −4,8; inclinação de −0,73 ± 0,43 por oitava). Os −30 pontos de antes vinham do
+  desempate do `refine`, como a revisão previu.
+- **Acerto pela régua local:**
+
+  | fator | 64× | 96× | 128× | 160× |
+  |---|---|---|---|---|
+  | acerto | 78,6 % | 64,3 % | **22,9 %** | 0,0 % |
+
+- **Joelho.** A queda corrigida de 64× para 96× fica perto do limiar pré-registrado de 13 pontos:
+  cerca de 17 pelo degrau médio, cerca de 12 extrapolando a inclinação. 128× é um colapso.
+- **Mecanismo** (seção anterior): bandas mais estreitas que a frequência de falha contra o piso de
+  500 Hz.

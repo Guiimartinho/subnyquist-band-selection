@@ -43,7 +43,9 @@ def main() -> int:
 
     root = args.config.parent.parent
     results = root / cfg["output"]["results_dir"]
+    # T0.1: data_dir relativo vale a partir da raiz do repositorio, nao do cwd.
     raw = Path(cfg["data_dir"])
+    raw = raw if raw.is_absolute() else Path(__file__).resolve().parents[2] / raw
     manifest = json.loads((results / "manifest.json").read_text(encoding="utf-8"))
     calib: dict[str, float] = manifest["calibrated_per_record"]
 

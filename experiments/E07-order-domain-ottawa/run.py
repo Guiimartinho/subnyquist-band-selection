@@ -53,7 +53,8 @@ from snq_recon import (
     estimate_without_prior,
     fast_kurtogram,
     fault_orders,
-    score_fault,
+    refine_order,
+    refine_order_detail,
 )
 
 PACKAGES = ("snq-core", "snq-sim", "snq-data", "snq-recon", "snq-eval")
@@ -101,9 +102,9 @@ def refine(spec, nominal: float, span: float, n_harmonics: int, tol: float) -> f
     Refinar numa faixa em vez de pegar o pico global evita cair no 2º harmônico do
     eixo, que domina o envelope de vários registros de pista externa e não é falha.
     """
-    grid = np.arange(nominal * (1 - span), nominal * (1 + span), 0.005)
-    scores = [score_fault(spec, float(f), n_harmonics=n_harmonics, tol_hz=tol) for f in grid]
-    return float(max(scores, key=lambda s: s.harmonic_energy).expected_hz)
+    # Centro do platô de escore, não o primeiro ponto: o max() antigo enviesava a verdade
+    # em meia largura do platô (0,0175 ordem com spr = 64; revisão de 2026-11-11).
+    return refine_order(spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol)
 
 
 def analyse(x, fs_hz, speed, cfg) -> tuple[object, object]:
@@ -212,7 +213,9 @@ def main() -> int:
 
     root = args.config.parent.parent
     results = root / cfg["output"]["results_dir"]
+    # T0.1: data_dir relativo vale a partir da raiz do repositorio, nao do cwd.
     raw = Path(cfg["data_dir"])
+    raw = raw if raw.is_absolute() else REPO_ROOT / raw
     tol = float(cfg["tolerance_order"])
     seg_n = int(cfg["segment_samples"])
     n_seg = int(cfg["segments_per_record"])
@@ -289,6 +292,13 @@ def main() -> int:
             if b > rec.vibration.size:
                 break
             vib_seg, spd_seg = rec.vibration[a:b], speed[a:b]
+            # regua local: a raia em taxa cheia deste segmento (so para pontuar)
+            _, spec_full = analyse(vib_seg, FS_HZ, spd_seg, cfg)
+            loc = refine_order_detail(
+                spec_full, nominal[fault], span=span, n_harmonics=nh_score, tol=tol
+            )
+            truth_local = float("nan") if loc.at_edge else loc.center
+            speed_seg = float(np.mean(spd_seg))
 
             for factor in cfg["sweep"]["undersampling_factor"]:
                 factor = int(factor)
@@ -333,6 +343,13 @@ def main() -> int:
                             "estimate_order": round(float(value), 4) if np.isfinite(value) else "",
                             "error_order": round(err, 4) if np.isfinite(err) else "",
                             "hit": int(err < tol),
+                            "truth_local_order": round(truth_local, 4)
+                            if np.isfinite(truth_local)
+                            else "",
+                            "hit_local": int(abs(value - truth_local) < tol)
+                            if np.isfinite(truth_local) and np.isfinite(value)
+                            else "",
+                            "speed_seg_hz": round(speed_seg, 3),
                             "band_lo_hz": round(k.f_lo_hz, 1),
                             "band_hi_hz": round(k.f_hi_hz, 1),
                             "kurtosis": round(k.kurtosis, 3),
