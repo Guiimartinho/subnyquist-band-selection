@@ -23,9 +23,12 @@ Nao existe, e nao deve ser citado como se existisse:
 from snq_recon.diagnosis import (
     Diagnosis,
     FaultScore,
+    RefinedOrder,
     diagnose,
     estimate_from_candidates,
     estimate_without_prior,
+    refine_order,
+    refine_order_detail,
     score_fault,
 )
 from snq_recon.envelope import (
@@ -101,6 +104,9 @@ __all__ = [
     "phase_revolutions",
     "random_time_indices",
     "reconstruct_from_orders",
+    "RefinedOrder",
+    "refine_order",
+    "refine_order_detail",
     "score_fault",
     "sparse_order_spectrum",
     "spectral_kurtosis",

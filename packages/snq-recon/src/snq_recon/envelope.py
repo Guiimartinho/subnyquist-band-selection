@@ -24,22 +24,41 @@ from numpy.typing import ArrayLike, NDArray
 from scipy import signal
 
 
+def _band_analytic_from_spectrum(
+    spec: NDArray[np.complex128], freqs: NDArray[np.float64], f_lo_hz: float, f_hi_hz: float
+) -> NDArray[np.complex128]:
+    """Sinal analítico da banda a partir da FFT já calculada: ``2·X`` nas positivas, ``X`` no DC.
+
+    O DC entra com peso 1, não 2: o sinal analítico é ``x + j·H{x}`` e ``H`` anula o DC,
+    então ``X_a(0) = X(0)``. Com peso 2 a parte real ganhava a média de novo (corrigido em
+    2026-11-11; só afeta bandas com ``f_lo_hz <= 0``). O bin de ``fs/2`` cai nas negativas de
+    ``fftfreq`` e fica fora, como antes.
+    """
+    keep = (freqs >= f_lo_hz) & (freqs < f_hi_hz)  # só positivas => analítico
+    out = np.zeros(spec.size, dtype=complex)
+    out[keep] = 2.0 * spec[keep]
+    if keep[0]:
+        out[0] = spec[0]
+    return np.fft.ifft(out)
+
+
 def bandpass_analytic(x: ArrayLike, fs_hz: float, f_lo_hz: float, f_hi_hz: float) -> NDArray:
-    """Sinal analítico da banda ``[f_lo, f_hi]``, por filtragem no domínio da FFT.
+    """Sinal analítico da banda ``[f_lo, f_hi)``, por filtragem no domínio da FFT.
 
     Zera tudo fora da banda e as frequências negativas de uma vez — o que produz o
-    sinal analítico da banda sem precisar filtrar e depois aplicar Hilbert. Evita o
-    transitório de filtro IIR e é exato para registro finito.
+    sinal analítico da banda sem precisar filtrar e depois aplicar Hilbert. Com a banda
+    inteira ``[0, fs/2)`` coincide com ``scipy.signal.hilbert`` (salvo o bin de ``fs/2``).
+
+    **A filtragem é circular.** Ela é exata para a extensão periódica do registro, e
+    essa extensão tem um salto na emenda ``x[-1] -> x[0]``: o salto aparece como um
+    transiente nas duas bordas de ``z``. Nos espectros de envelope deste módulo a janela
+    de Hann o apaga. Numa estatística sem janela, como a curtose, ele vira um falso
+    transiente — por isso `fast_kurtogram` não usa esta função diretamente.
     """
     x = np.asarray(x, dtype=float).ravel()
-    n = x.size
     spec = np.fft.fft(x)
-    freqs = np.fft.fftfreq(n, d=1.0 / fs_hz)
-
-    keep = (freqs >= f_lo_hz) & (freqs < f_hi_hz)  # só positivas => analítico
-    out = np.zeros(n, dtype=complex)
-    out[keep] = 2.0 * spec[keep]
-    return np.fft.ifft(out)
+    freqs = np.fft.fftfreq(x.size, d=1.0 / fs_hz)
+    return _band_analytic_from_spectrum(spec, freqs, f_lo_hz, f_hi_hz)
 
 
 def envelope(x: ArrayLike, fs_hz: float, band_hz: tuple[float, float] | None = None) -> NDArray:
@@ -54,10 +73,25 @@ def envelope(x: ArrayLike, fs_hz: float, band_hz: tuple[float, float] | None = N
 
 @dataclass(frozen=True)
 class EnvelopeSpectrum:
+    """Espectro de envelope em hertz, ou em ordens (ver `envelope_order_spectrum`).
+
+    ``magnitude`` é ``|rfft(env·hann)|·2/n``: uma raia de amplitude ``A`` sai com ``A/2``,
+    porque o ganho coerente da Hann não é compensado. Serve para argmax e razões, que é
+    como o pacote a usa, e não como amplitude calibrada.
+    """
+
     freqs_hz: NDArray[np.float64]
     magnitude: NDArray[np.float64]
     fs_hz: float
     band_hz: tuple[float, float] | None
+    folds_above_nyquist: bool = True
+    """O conteúdo acima de ``fs_hz/2`` reaparece dobrado no espectro?
+
+    Verdadeiro para envelope calculado sobre amostras uniformes (`envelope_spectrum`):
+    os harmônicos acima de Nyquist estão lá, na posição do mapa de alias. Falso quando
+    esse conteúdo foi removido antes, como no espectro de ordem com anti-alias angular.
+    `score_fault` só procura harmônico dobrado quando este campo é verdadeiro.
+    """
 
     def peak_near(self, f_hz: float, tol_hz: float) -> tuple[float, float]:
         """Maior raia dentro de ``f_hz ± tol_hz``. Devolve ``(frequência, magnitude)``."""

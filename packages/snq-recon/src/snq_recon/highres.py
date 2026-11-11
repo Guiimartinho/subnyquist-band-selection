@@ -99,11 +99,17 @@ def phase_revolutions(
     return np.concatenate([[0.0], np.cumsum(0.5 * (speed[:-1] + speed[1:]) * dt)])
 
 
+_MAX_ANGULAR_OVERSAMPLING = 64
+"""Teto da grade angular fina, em múltiplos do comprimento do registro (ver abaixo)."""
+
+
 def angular_resample(
     x: ArrayLike,
     fs_hz: float,
     shaft_hz: ArrayLike | float,
     samples_per_rev: int = 64,
+    *,
+    anti_alias: bool = True,
 ) -> tuple[NDArray[np.float64], float]:
     """Reamostra o sinal em incrementos angulares constantes.
 
@@ -113,6 +119,19 @@ def angular_resample(
     Devolve ``(sinal_em_angulo, samples_per_rev)``. Depois disso, uma frequência de
     falha que variava com a rotação vira uma **ordem fixa**: BPFO a 3,58× a rotação
     aparece sempre no mesmo lugar do espectro de ordem, independentemente do regime.
+
+    **Reamostrar em ângulo é decimar em ângulo.** Quando o registro tem mais de
+    ``samples_per_rev`` amostras por revolução, ordens acima de ``samples_per_rev/2``
+    dobram: a ordem ``o`` reaparece em ``|o - spr·round(o/spr)|``. Com ``anti_alias=True``
+    (padrão desde 2026-11-11) o sinal é interpolado numa grade angular fina, com pelo menos
+    tantas amostras por revolução quanto o registro na rotação mínima, passa por um
+    passa-baixas ideal na ordem ``spr/2`` sobre a extensão par e só então é decimado. A grade
+    de saída é a mesma nos dois modos. ``anti_alias=False`` reproduz o comportamento antigo,
+    de interpolação linear direta, que dobra; existe para reprodução e para estudar a dobra.
+
+    A grade fina tem cerca de ``n·(rotação média / rotação mínima)`` pontos; acima de
+    ``64·n`` (rotação variando mais de ~64:1 no registro) a função recusa, em vez de
+    estourar memória em silêncio.
 
     É o mecanismo que `sensors2025csvibration` usa para devolver esparsidade sob
     rotação variável — e sem ele o E02 não se aplica a XJTU-SY nem a FEMTO.
@@ -127,7 +146,27 @@ def angular_resample(
         raise ValueError(f"registro cobre só {total:.2f} revolução; insuficiente")
 
     grid = np.arange(0.0, total, 1.0 / samples_per_rev)
-    return np.interp(grid, revs, x), float(samples_per_rev)
+    # Amostras de origem por revolucao no pior caso (rotacao minima). Ate spr, a
+    # interpolacao so sobe a taxa e nao ha o que dobrar.
+    source_per_rev = 1.0 / float(np.min(np.diff(revs))) if n > 1 else 0.0
+    ratio = int(np.ceil(source_per_rev / samples_per_rev))
+    if not anti_alias or ratio <= 1:
+        return np.interp(grid, revs, x), float(samples_per_rev)
+
+    m = grid.size
+    if m * ratio > _MAX_ANGULAR_OVERSAMPLING * n:
+        raise ValueError(
+            f"grade angular fina de {m * ratio} pontos para um registro de {n}: a rotação "
+            "varia demais no registro; segmente-o ou use anti_alias=False"
+        )
+    fine_rate = float(samples_per_rev) * ratio
+    fine = np.interp(np.arange(m * ratio) / fine_rate, revs, x)
+    # Passa-baixas ideal na ordem spr/2. A extensao par evita o salto na emenda, que
+    # num filtro circular viraria oscilacao de Gibbs nas bordas.
+    ext = np.concatenate([fine, fine[::-1]])
+    spec = np.fft.rfft(ext)
+    spec[np.fft.rfftfreq(ext.size, d=1.0 / fine_rate) > samples_per_rev / 2.0] = 0.0
+    return np.fft.irfft(spec, n=ext.size)[: m * ratio : ratio], float(samples_per_rev)
 
 
 def order_spectrum(
@@ -165,6 +204,8 @@ def envelope_order_spectrum(
     shaft_hz: ArrayLike | float,
     band_hz: tuple[float, float] | None = None,
     samples_per_rev: int = 64,
+    *,
+    anti_alias: bool = True,
 ) -> EnvelopeSpectrum:
     """Envelope reamostrado em ângulo, devolvido como espectro **em ordens**.
 
@@ -178,9 +219,22 @@ def envelope_order_spectrum(
     A reutilização é deliberada — `score_fault` e `estimate_from_candidates` são
     indiferentes à unidade, e sob rotação variável o prior geométrico é um conjunto
     de ordens, não de frequências.
+
+    O envelope tem conteúdo até a largura da banda, muito acima da ordem ``spr/2`` em
+    tempo; sem anti-alias angular ele dobrava sobre ``[0, spr/2]`` (ver `angular_resample`),
+    e uma modulação na ordem 70 aparecia na 6. Com ``anti_alias=True`` o espectro devolvido
+    declara ``folds_above_nyquist=False``, e `score_fault` não procura harmônico dobrado.
     """
     env = envelope(x, fs_hz, band_hz)
     env = env - float(np.mean(env))
-    ang, spr = angular_resample(env, fs_hz, shaft_hz, samples_per_rev=samples_per_rev)
+    ang, spr = angular_resample(
+        env, fs_hz, shaft_hz, samples_per_rev=samples_per_rev, anti_alias=anti_alias
+    )
     orders, mag = order_spectrum(ang, spr)
-    return EnvelopeSpectrum(freqs_hz=orders, magnitude=mag, fs_hz=spr, band_hz=band_hz)
+    return EnvelopeSpectrum(
+        freqs_hz=orders,
+        magnitude=mag,
+        fs_hz=spr,
+        band_hz=band_hz,
+        folds_above_nyquist=not anti_alias,
+    )

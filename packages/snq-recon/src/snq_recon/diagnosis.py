@@ -101,6 +101,10 @@ def score_fault(
     dobradas** em vez de descartá-los. É o mecanismo central do projeto aplicado
     aqui: sob subamostragem o quinto harmônico de BPFI não some, ele reaparece
     numa posição previsível — e essa posição é informação, não perda.
+
+    Isso só vale se o espectro de fato dobra. Quando ``spec.folds_above_nyquist`` é falso
+    (espectro de ordem com anti-alias angular), não há harmônico dobrado a procurar, e
+    procurá-lo seria somar o que quer que esteja naquela posição: a busca para no Nyquist.
     """
     floor = _noise_floor(spec.magnitude)
     total = 0.0
@@ -108,11 +112,13 @@ def score_fault(
     measured = float("nan")
     nyquist = spec.freqs_hz[-1]
     per_harmonic: list[float] = []
+    # getattr: objeto com a mesma forma, mas sem o campo, mantem o comportamento antigo
+    folds = fold_harmonics and bool(getattr(spec, "folds_above_nyquist", True))
 
     for h in range(1, n_harmonics + 1):
         target = h * expected_hz
         if target > nyquist:
-            if not fold_harmonics:
+            if not folds:
                 break
             target = float(alias_frequency_hz(target, 2.0 * nyquist))
             if target < tol_hz:  # dobrou em cima do DC, onde nao ha informacao
@@ -188,6 +194,80 @@ def estimate_from_candidates(
     scores = [score_fault(spec, float(f), n_harmonics=n_harmonics, tol_hz=tol_hz) for f in cands]
     best = max(scores, key=lambda s: s.harmonic_energy)
     return best.expected_hz, best.harmonic_energy
+
+
+@dataclass(frozen=True)
+class RefinedOrder:
+    """Resultado de `refine_order_detail`: centro do platô, largura e se ele toca a borda."""
+
+    center: float
+    plateau_width: float
+    at_edge: bool
+
+
+def refine_order_detail(
+    spec: EnvelopeSpectrum,
+    nominal: float,
+    *,
+    span: float,
+    n_harmonics: int,
+    tol: float,
+    step: float = 0.005,
+) -> RefinedOrder:
+    """Como `refine_order`, mas diz também a largura do platô e se ele encosta na borda.
+
+    Um platô que encosta em ``nominal·(1 ± span)`` não identifica raia nenhuma: o máximo pode
+    estar fora da grade. Quem usa o resultado como verdade deve descartá-lo (revisão de
+    2026-11-11: O-A-2 calibrava exatamente no limite inferior com ``samples_per_rev = 16``).
+    """
+    grid = np.arange(nominal * (1 - span), nominal * (1 + span), step)
+    if grid.size == 0:
+        raise ValueError("grade de refinamento vazia: span ou step invalidos")
+    scores = np.array(
+        [
+            score_fault(spec, float(f), n_harmonics=n_harmonics, tol_hz=tol).harmonic_energy
+            for f in grid
+        ]
+    )
+    top = float(np.max(scores))
+    eps = 1e-12 * max(abs(top), 1.0)
+    i0 = int(np.argmax(scores))
+    j = i0
+    while j + 1 < scores.size and scores[j + 1] >= top - eps:
+        j += 1
+    return RefinedOrder(
+        center=float(0.5 * (grid[i0] + grid[j])),
+        plateau_width=float(grid[j] - grid[i0]),
+        at_edge=bool(i0 == 0 or j == grid.size - 1),
+    )
+
+
+def refine_order(
+    spec: EnvelopeSpectrum,
+    nominal: float,
+    *,
+    span: float,
+    n_harmonics: int,
+    tol: float,
+    step: float = 0.005,
+) -> float:
+    """Candidata de maior energia harmônica numa vizinhança relativa de ``nominal``.
+
+    Varre ``nominal·(1 ± span)`` em passos de ``step`` e pontua cada candidata com
+    `score_fault`. O escore é constante por partes: ``peak_near`` toma a maior raia a ±tol
+    de cada harmônico, então há um **platô** de candidatas com o mesmo escore. A função
+    devolve o **centro** do platô contíguo que contém o primeiro máximo.
+
+    Tomar o primeiro ponto do platô (o que ``max`` do Python faz) enviesa para baixo em meia
+    largura do platô. Medido no Ottawa (revisão adversarial de 2026-11-11): platô de 0,035
+    ordem com ``samples_per_rev = 64`` e de 0,055–0,115 com 16, ou seja, viés de 0,0175 a
+    0,0575 ordem contra uma tolerância de 0,06. Pelo centro, as duas réguas coincidem em mediana.
+
+    Um platô que encosta na borda da grade é truncado; use `refine_order_detail` para saber.
+    """
+    return refine_order_detail(
+        spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol, step=step
+    ).center
 
 
 def estimate_without_prior(spec: EnvelopeSpectrum, f_min_hz: float = 5.0) -> float:

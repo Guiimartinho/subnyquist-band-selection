@@ -344,7 +344,15 @@ def sparse_order_spectrum(coefficients: ArrayLike, orders: ArrayLike) -> Envelop
     if coef.size != 2 * ords.size:
         raise ValueError(f"{coef.size} coeficientes nao formam pares sobre {ords.size} ordens")
     mag = np.hypot(coef[0::2], coef[1::2])
-    return EnvelopeSpectrum(freqs_hz=ords, magnitude=mag, fs_hz=2.0 * float(ords[-1]), band_hz=None)
+    # O dicionario so contem ordens ate order_max: nada acima "dobra" para dentro do eixo,
+    # entao score_fault nao deve procurar harmonico dobrado (auditoria de 2026-11-11).
+    return EnvelopeSpectrum(
+        freqs_hz=ords,
+        magnitude=mag,
+        fs_hz=2.0 * float(ords[-1]),
+        band_hz=None,
+        folds_above_nyquist=False,
+    )
 
 
 def reconstruct_from_orders(
