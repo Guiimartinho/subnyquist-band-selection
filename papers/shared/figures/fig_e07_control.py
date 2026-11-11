@@ -20,6 +20,9 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+# Type 3 e o default do matplotlib e costuma reprovar no PDF eXpress do IEEE (T0.8).
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 

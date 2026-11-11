@@ -20,6 +20,9 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+# Type 3 e o default do matplotlib e costuma reprovar no PDF eXpress do IEEE (T0.8).
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import yaml  # noqa: E402
@@ -108,12 +111,13 @@ def main() -> None:
     axes[-1, 1].set_xlabel("ordem da rotação", fontsize=8)
     fig.suptitle(
         f"{rec.cite()} — a banda muda de lugar a cada taxa; a ordem, não",
-        fontsize=8.5,
-        y=1.02,
+        fontsize=8.5,  # sem y explicito: o constrained_layout reserva o espaco
     )
 
     for ext in ("pdf", "png"):
-        fig.savefig(OUT / f"e07_spectra.{ext}", dpi=200, bbox_inches="tight")
+        fig.savefig(
+            OUT / f"e07_spectra.{ext}", dpi=200
+        )  # sem bbox tight: a largura fica nos 7,16 in
     print(f"escrito: {OUT / 'e07_spectra.pdf'}")
 
 

@@ -13,6 +13,9 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
+# Type 3 e o default do matplotlib e costuma reprovar no PDF eXpress do IEEE (T0.8).
+matplotlib.rcParams["pdf.fonttype"] = 42
+matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
@@ -65,7 +68,7 @@ def main() -> None:
         )
     ax1.axhline(50, color="0.85", lw=0.8, zorder=0)
     ax1.set_ylabel("acerto da ordem de falha [%]")
-    ax1.set_title("(a) a variável é o prior", fontsize=9, loc="left")
+    ax1.set_title("(a) só sem prior mede estimação", fontsize=9, loc="left")
     ax1.legend(fontsize=6.6, frameon=False, loc="lower left")
 
     # --- (b) por condicao, com o prior calibrado ------------------------
@@ -75,7 +78,7 @@ def main() -> None:
             s = [
                 r
                 for r in rows
-                if r["factor"] == f and r["mode"] == "prior_calibrado" and r["condition"] == cond
+                if r["factor"] == f and r["mode"] == "sem_prior" and r["condition"] == cond
             ]
             p = float(np.mean([r["hit"] for r in s])) if s else np.nan
             y.append(100 * p)
@@ -84,7 +87,7 @@ def main() -> None:
             factors, y, yerr=e, marker=mk, color=color, lw=1.4, ms=4, capsize=2, label=label
         )
     ax2.set_ylabel("acerto [%]")
-    ax2.set_title("(b) por tipo de falha", fontsize=9, loc="left")
+    ax2.set_title("(b) por tipo de falha, sem prior", fontsize=9, loc="left")
     ax2.legend(fontsize=6.6, frameon=False, loc="lower left")
 
     # --- (c) o mecanismo do mergulho em 4x ------------------------------
@@ -96,15 +99,16 @@ def main() -> None:
     # dado real, e o argumento de que a taxa precisa ser ESCOLHIDA, nao so reduzida.
     high, acc = [], []
     for f in factors:
-        s_ = [r for r in rows if r["factor"] == f and r["mode"] == "prior_calibrado"]
+        # T0.2: so sem_prior mede estimacao; as colunas com prior contem o gabarito
+        s_ = [r for r in rows if r["factor"] == f and r["mode"] == "sem_prior"]
         high.append(100 * float(np.mean([float(r["band_lo_hz"]) >= 12000 for r in s_])))
         acc.append(100 * float(np.mean([r["hit"] for r in s_])))
     ax3.plot(factors, high, marker="o", color=WARM, lw=1.4, ms=4, label="banda escolhida > 12 kHz")
-    ax3.plot(factors, acc, marker="D", color=ACCENT, lw=1.4, ms=4, label="acerto")
+    ax3.plot(factors, acc, marker="D", color=ACCENT, lw=1.4, ms=4, label="acerto (sem prior)")
     worst = factors[int(np.argmin(acc))]
     ax3.axvline(worst, color="0.7", lw=0.8, ls=":", zorder=0)
     ax3.annotate(
-        "dobra de 75–87 kHz\nsobre 12,8–25 kHz",
+        "picos de 1 amostra\ndobrados sobre 12,75–25 kHz",
         xy=(worst, 95),
         xytext=(5, 0),
         textcoords="offset points",
@@ -119,7 +123,9 @@ def main() -> None:
     for ax in (ax1, ax2, ax3):
         ax.set_xscale("log", base=2)
         ax.set_xticks(factors)
-        ax.set_xticklabels([str(f) for f in factors], fontsize=6.2)
+        ax.set_xticklabels(
+            [str(f) if f in (1, 2, 4, 8, 16, 32, 64) else "" for f in factors], fontsize=6.2
+        )
         ax.minorticks_off()
         ax.set_xlabel("fator de subamostragem")
         ax.grid(alpha=0.25, lw=0.5)
