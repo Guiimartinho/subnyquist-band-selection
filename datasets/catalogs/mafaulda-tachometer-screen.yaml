@@ -1,0 +1,73 @@
+# MAFAULDA: sequencias com tacometro inconsistente (gerado em 2026-11-11 no servidor).
+#
+# Criterio: |rotacao pelo tacometro / rotacao do nome - 1| > 1 %, com fs = 51,2 kHz e o
+# detector com histerese e bloqueio de snq_data.mafaulda. Todas desviam PARA CIMA (pulsos
+# espurios). Para analise de ordem pelo tacometro, estas sequencias ficam de fora.
+# Conferido por packages/snq-data/tests/test_mafaulda.py (SNQ_FULL_DATA_CHECK=1).
+# 65 de 1120.
+excluded:
+  overhang/ball_fault/0g/44.032.csv: 1.0433
+  overhang/ball_fault/0g/45.2608.csv: 1.1577
+  overhang/ball_fault/0g/61.44.csv: 1.0545
+  overhang/ball_fault/20g/35.2256.csv: 1.0112
+  overhang/ball_fault/20g/36.0448.csv: 1.4091
+  overhang/ball_fault/6g/38.7072.csv: 1.0120
+  overhang/ball_fault/6g/43.4176.csv: 1.0529
+  overhang/ball_fault/6g/44.4416.csv: 1.3075
+  overhang/ball_fault/6g/45.4656.csv: 1.2081
+  overhang/ball_fault/6g/46.08.csv: 1.0287
+  overhang/ball_fault/6g/48.5376.csv: 1.0268
+  overhang/ball_fault/6g/49.5616.csv: 1.0314
+  overhang/ball_fault/6g/50.7904.csv: 1.5019
+  overhang/ball_fault/6g/50.9952.csv: 1.3387
+  overhang/ball_fault/6g/52.6336.csv: 1.2665
+  overhang/ball_fault/6g/53.248.csv: 1.2163
+  overhang/ball_fault/6g/54.0672.csv: 1.2502
+  overhang/ball_fault/6g/55.296.csv: 1.1542
+  underhang/ball_fault/0g/40.3456.csv: 1.1153
+  underhang/ball_fault/0g/41.3696.csv: 1.2219
+  underhang/ball_fault/0g/42.1888.csv: 1.0817
+  underhang/ball_fault/0g/43.2128.csv: 1.2309
+  underhang/ball_fault/0g/44.032.csv: 1.1968
+  underhang/ball_fault/0g/45.6704.csv: 2.0163
+  underhang/ball_fault/0g/46.08.csv: 1.9836
+  underhang/ball_fault/0g/47.3088.csv: 1.8915
+  underhang/ball_fault/0g/48.128.csv: 1.9580
+  underhang/ball_fault/0g/49.5616.csv: 1.4939
+  underhang/ball_fault/0g/50.5856.csv: 1.2073
+  underhang/ball_fault/0g/51.2.csv: 1.1308
+  underhang/ball_fault/0g/52.8384.csv: 1.5266
+  underhang/ball_fault/0g/53.0432.csv: 1.5658
+  underhang/ball_fault/0g/54.0672.csv: 1.7775
+  underhang/ball_fault/0g/55.0912.csv: 1.9792
+  underhang/ball_fault/0g/56.5248.csv: 1.3893
+  underhang/ball_fault/20g/41.1648.csv: 1.0214
+  underhang/ball_fault/20g/43.6224.csv: 1.1261
+  underhang/ball_fault/20g/44.4416.csv: 2.1962
+  underhang/ball_fault/20g/45.4656.csv: 1.1480
+  underhang/ball_fault/20g/46.6944.csv: 1.1419
+  underhang/ball_fault/20g/47.7184.csv: 1.2676
+  underhang/ball_fault/20g/48.3328.csv: 1.2776
+  underhang/ball_fault/20g/49.3568.csv: 1.1487
+  underhang/ball_fault/20g/50.5856.csv: 1.0294
+  underhang/ball_fault/20g/52.0192.csv: 1.0196
+  underhang/ball_fault/20g/52.6336.csv: 1.4293
+  underhang/ball_fault/20g/53.0432.csv: 1.5000
+  underhang/ball_fault/6g/39.7312.csv: 1.0203
+  underhang/ball_fault/6g/40.3456.csv: 1.0513
+  underhang/ball_fault/6g/41.3696.csv: 1.2098
+  underhang/ball_fault/6g/41.984.csv: 1.0748
+  underhang/ball_fault/6g/43.2128.csv: 1.0544
+  underhang/ball_fault/6g/44.6464.csv: 2.2565
+  underhang/ball_fault/6g/45.4656.csv: 2.0454
+  underhang/ball_fault/6g/46.4896.csv: 1.7148
+  underhang/ball_fault/6g/47.5136.csv: 1.6463
+  underhang/ball_fault/6g/47.9232.csv: 1.6091
+  underhang/ball_fault/6g/49.152.csv: 1.2275
+  underhang/ball_fault/6g/50.176.csv: 1.1157
+  underhang/ball_fault/6g/51.4048.csv: 1.1481
+  underhang/ball_fault/6g/52.4288.csv: 1.4691
+  underhang/ball_fault/6g/53.0432.csv: 1.7146
+  underhang/ball_fault/6g/54.8864.csv: 1.9769
+  underhang/ball_fault/6g/55.5008.csv: 1.4975
+  underhang/cage_fault/35g/32.5632.csv: 1.0323

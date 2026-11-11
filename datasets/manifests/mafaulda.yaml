@@ -1,13 +1,53 @@
 name: mafaulda
-full_name: MAFAULDA machinery fault database
+full_name: MAFAULDA machinery fault database (UFRJ)
 url: https://www02.smt.ufrj.br/~offshore/mfs/page_01.html
-license: conferir termos antes de redistribuir
-fs_hz: [50000]
-channels: [tachometer, accel_radial, accel_axial, accel_tangential, microphone]
+license: NAO DECLARADA na pagina oficial (conferido em 2026-11-11) - pedir termos ao contato antes de redistribuir
+fs_hz: [51200]  # inferida; a pagina declara 50000 (ver notes)
+channels:
+  - tachometer
+  - underhang_axial
+  - underhang_radial
+  - underhang_tangential
+  - overhang_axial
+  - overhang_radial
+  - overhang_tangential
+  - microphone
+bearing:
+  underhang: modelo nao declarado
+  overhang: modelo nao declarado
 notes: |
-  Multi-sensor com tacometro. O tacometro da a rotacao medida, que e o prior
-  fisico do projeto sem precisar estima-la. Bom para isolar o efeito do erro de
-  estimacao de rotacao no erro final.
+  INGERIDO EM 2026-11-11 no servidor remoto (snq_data.mafaulda), para o E21 (ADR 0006).
+  TAXA REAL = 51,2 kHz, NAO os 50 kHz declarados: inferida nas 1120 sequencias por duas
+  evidencias independentes - tacometro x nome do arquivo (razao mediana 1,0004 a 51,2 kHz
+  contra 0,9769 a 50 kHz) e linha de rede de 120 Hz no microfone (863/1120 a +-0,15 Hz de
+  117,19 Hz no eixo de 50 kHz, contra 3/1120 perto de 120 Hz). Cada sequencia dura 4,883 s.
+  Fatos da pagina oficial, conferidos nesta data:
+  - CSV, 8 colunas, 50 kHz, 5 s, 250.000 amostras por sequencia. Os modulos NI 9234
+    amostram a 51,2 kHz, mas a pagina declara 50 kHz; o loader confere pela rotacao do
+    tacometro contra a do nome do arquivo (a 51,2 kHz o desvio seria de 2,4 %).
+  - Sensores: tacometro Monarch MT-190; acelerometros IMI 601A01 (tres) e IMI 604B31
+    (triaxial), sem mapeamento explicito para as colunas; microfone Shure SM81. A banda
+    dos acelerometros NAO esta na pagina: conferir o datasheet antes de argumentar sobre
+    conteudo acima de ~10 kHz.
+  - Rotacao: 737 a 3686 rpm nas sequencias normais; cada sequencia tem rotacao ~constante
+    e o nome do arquivo e a rotacao nominal em Hz.
+  - Falhas de rolamento: outer_race, ball_fault, cage_fault, nos mancais underhang e
+    overhang, com massa adicional de 0, 6, 20 ou 35 g. NAO ha falha de pista interna.
+  Estrutura: normal/<rot>.csv; <mancal>/<falha>/<massa>g/<rot>.csv.
+geometry:
+  n_elements: 8
+  ball_diameter_cm: 0.7145
+  pitch_diameter_cm: 2.8519
+  contact_angle_deg: nao declarado (assumido 0)
+  documented_orders: {FTF: 0.3750, BPFO: 2.9980, BPFI: 5.0020, BSF: 1.8710}
+  # Conferido em packages/snq-data/tests/test_mafaulda.py: angulo zero reproduz as quatro
+  # (FTF 0,3747; BPFO 2,9978; BPFI 5,0022; BSF 1,8705).
+archives:
+  base_url: https://www02.smt.ufrj.br/~offshore/mfs/database/mafaulda
+  # A pagina nao publica checksum; estes sao os sha256 dos arquivos baixados em 2026-11-11.
+  normal.tgz: {bytes: 325273545, sha256: 58482537c3d31ddb5508adee7001d2ada1ecf6adfa7995d708c5954c7578e43d}
+  underhang.tgz: {bytes: 3679220896, sha256: 4399ddf9a895cf2ef4d26ae56e8702ea50c4833d623c7f60c77ae8582ccc7338}
+  overhang.tgz: {bytes: 3374774113, sha256: e694372d0a6a08c7b8afa919295f27842ba25efdb159a6e8be1f195c67f6f8b2}
 undersampling:
   method: decimacao_pura
-  factors: [2, 4, 8, 16, 32]
+  factors: [1, 2, 3, 4, 6, 8, 12, 16]

@@ -21,6 +21,7 @@ Licença CC BY 4.0. Acesso programático pela API pública do Mendeley, sem cada
 
 from __future__ import annotations
 
+import http.client
 import io
 import json
 import time
@@ -127,7 +128,8 @@ def download(name: str, dest_dir: str | Path, *, tries: int = 4) -> Path:
                 raise OSError("resposta não é um arquivo MAT")
             dest.write_bytes(blob)
             return dest
-        except (urllib.error.URLError, OSError, TimeoutError) as exc:
+        # IncompleteRead herda de HTTPException, nao de OSError (ver snq_data.cwru).
+        except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
             last = exc
             if attempt < tries - 1:
                 time.sleep(3.0 * (attempt + 1))

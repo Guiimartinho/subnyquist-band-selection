@@ -12,6 +12,7 @@ por construção: `CwruRecord` carrega os dois.
 
 from __future__ import annotations
 
+import http.client
 import re
 import time
 import urllib.error
@@ -202,7 +203,9 @@ def download_record(
                 raise OSError("resposta não é um arquivo MAT")
             dest.write_bytes(data)
             return dest
-        except (urllib.error.URLError, OSError, TimeoutError) as exc:
+        # IncompleteRead herda de HTTPException, nao de OSError: sem ela na tupla, o corte
+        # no meio do arquivo escapava da retentativa (servidor remoto, 2026-11-11).
+        except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
             last = exc
             if attempt < tries - 1:
                 time.sleep(2.0 * (attempt + 1))
