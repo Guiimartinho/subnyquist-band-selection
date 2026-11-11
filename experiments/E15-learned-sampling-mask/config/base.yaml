@@ -141,7 +141,9 @@ mask:
   # A mascara tem taxa de aprendizado propria: com a do decodificador (0,003) e 8 passos por
   # epoca, os logits nao saem do ruido de Gumbel (desvio ~1,28). Os diagnosticos de saida
   # estao em masks.json (margem do top-K, posicoes iniciais e finais).
-  lr_multiplier: 10.0
+  # Regra B5 aplicada em 2026-11-11: na rodada com 10, mask_converged_frac de dec_aprendida
+  # (bruto) foi 0,6 / 0,4 / 0,4 / 0,2 em 1/4 a 1/32 -> refazer com 30 (ver README).
+  lr_multiplier: 30.0
 livre: {period_multiple: 4}          # horizonte da mascara sem restricao: 4 periodos, 4K posicoes
 loupe: {slope: 5.0, sample_slope: 12.0, period_multiple: 1}
 adps: {n_blocks: 4, n_features: 16, hidden: 32}

@@ -232,6 +232,10 @@ bloco depois de ver um número invalida o pré-registro.
     orçamento, a rodada é refeita com `mask.lr_multiplier` = 30 **antes** de abrir
     `hypotheses.csv`.
   - A troca é registrada aqui. É uma decisão de otimização tomada pelo treino, não pelo teste.
+  - **Aplicada em 2026-11-11.** Na rodada com `lr_multiplier = 10` (14:35–21:05 UTC), a
+    `mask_converged_frac` de `dec_aprendida`, bruto, foi 0,6, 0,4, 0,4 e 0,2 de 1/4 a 1/32.
+    A rodada ficou selada em `results-lr10/`, sem abrir `hypotheses.csv` nem `comparisons.csv`,
+    e o config passou a `lr_multiplier = 30`.
 
   Verificação no recorte da fumaça (1/32, 120 passos, sem parada antecipada; não é resultado):
   - com multiplicador 1, o desvio dos logits foi de 0,01 a 0,047, dentro do ruído;
