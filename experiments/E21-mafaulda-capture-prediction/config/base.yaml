@@ -1,0 +1,48 @@
+# E21 - captura do seletor no MAFAULDA e teste de admissibilidade da taxa (ADR 0006).
+seed: 20261111
+
+data_dir: datasets/raw/mafaulda
+cache_dir: datasets/processed/mafaulda
+screen_catalog: datasets/catalogs/mafaulda-tachometer-screen.yaml
+bearings: [underhang, overhang]
+fault: outer_race
+fault_family: BPFO
+axis: radial
+
+# Mesmo pipeline do E07/E20.
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+prior:
+  score_harmonics: 3
+  calibration_span: 0.12
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+
+sweep:
+  undersampling_factor: [1, 2, 3, 4, 5, 6, 8, 10, 12, 16]
+  # null = sem teto alem do Nyquist efetivo; os demais em Hz.
+  search_ceiling_hz: [null, 12800.0, 6400.0]
+  interventions: [none, aaf_ideal]
+
+tat:
+  # Fator inadmissivel quando a banda escolhida tem mais desta fracao de energia dobrada.
+  folded_share_threshold: 0.5
+
+analysis:
+  # H1: vale de pelo menos este numero de pontos abaixo de um fator maior.
+  valley_points: 15
+  monotone_tolerance_points: 5
+  # H2: diferenca minima de acerto (pontos) entre admissivel e inadmissivel, e acuracia
+  # balanceada minima do TAT.
+  tat_min_gap_points: 10
+  tat_min_balanced_accuracy: 0.65
+  bootstrap_resamples: 2000
+
+compute:
+  workers: 30
+
+output:
+  results_dir: results

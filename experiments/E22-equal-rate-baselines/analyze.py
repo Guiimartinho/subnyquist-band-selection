@@ -1,0 +1,369 @@
+"""E22 - teste das hipoteses H1 e H2 a partir de results/metrics.csv.
+
+    uv run python experiments/E22-equal-rate-baselines/analyze.py
+
+H1: aleatorio_cs nao supera uniforme_teto em nenhum orcamento (refutada se a diferenca tiver IC
+bootstrap por registro acima de zero). H2: taxa_tat fica a no maximo 5 pontos do oraculo
+uniforme em todos os orcamentos. Os dois sao pre-registrados no README.
+
+O oraculo escolhe, entre os fatores da grade >= orcamento, o de maior acerto NO PROPRIO TESTE,
+por grupo (pista interna / externa). E um limite superior otimista; no bootstrap ele e
+re-escolhido em cada reamostra.
+
+Acrescentado depois de ver que o oraculo da pista externa cai num pico isolado (fator 46 entre
+45 fatores ruidosos): ``uniforme_varredura_cv``, a melhor uniforme escolhida FORA do teste
+(escolhe no segmento 1 e avalia no 2, e vice-versa; empate vai para a maior taxa). E post hoc e
+esta rotulado assim no README.
+"""
+
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+import math
+from dataclasses import dataclass
+from pathlib import Path
+
+import numpy as np
+
+E = Path(__file__).resolve().parent
+N_BOOT = 4000
+SEED = 20261111
+GAP_POINTS = 5.0
+ARMS = ("uniforme", "despike", "uniforme_teto", "taxa_tat", "aleatorio_cs", "passa_faixa_lu")
+TOL_ORDER = 0.06  # tolerancia de acerto do E22 (config: tolerance_order)
+PAIRS = (
+    ("taxa_tat", "uniforme"),
+    ("uniforme_teto", "uniforme"),
+    ("passa_faixa_lu", "uniforme"),
+    ("aleatorio_cs", "uniforme"),
+)
+
+
+def mcnemar_exact(b: int, c: int) -> float:
+    """p bilateral exato para os pares discordantes (b: so o 1o acerta; c: so o 2o)."""
+    n = b + c
+    if n == 0:
+        return 1.0
+    tail = sum(math.comb(n, i) for i in range(min(b, c) + 1)) / 2.0**n
+    return min(1.0, 2.0 * tail)
+
+
+def ci95(d: list[float]) -> list[float]:
+    return [round(float(np.percentile(d, 2.5)), 1), round(float(np.percentile(d, 97.5)), 1)]
+
+
+@dataclass
+class Cells:
+    """Acertos de um conjunto de dados, por (registro, segmento, braco, orcamento) e por fator."""
+
+    hit: dict
+    grid: dict
+    group_of: dict
+    segs: list
+    groups: list
+    factors: list
+    est: dict  # (registro, segmento, fator) -> estimativa de ordem (braco uniforme_grid)
+    calib: dict  # registro -> ordem calibrada no segmento 0 (manifest)
+    local: bool = False  # regua local: os acertos da grade ja sao sem vazamento
+
+    def nested_truth(self, rec: str, pool: list[str]) -> float:
+        """Mediana das calibracoes dos OUTROS registros do grupo, restrita a ``pool``."""
+        peers = [self.calib[q] for q in pool if q != rec and self.group_of[q] == self.group_of[rec]]
+        return float(np.median(peers)) if peers else float("nan")
+
+    def grid_acc_nested(self, f: int, recs: list[str], pool: list[str]) -> tuple[int, int]:
+        h = n = 0
+        for rec in recs:
+            t = self.nested_truth(rec, pool)
+            for s in self.segs:
+                e = self.est.get((rec, s, f))
+                if e is None or not np.isfinite(t):
+                    continue
+                h += int(abs(e - t) < TOL_ORDER)
+                n += 1
+        return h, n
+
+    def cv_by_record_nested(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
+        """Melhor uniforme escolhida em outros registros, com verdade ANINHADA.
+
+        3 dobras por ensaio. A verdade dos registros de treino usa so registros de treino, e a
+        dos registros de teste tambem: nenhum rotulo do teste entra na escolha. Corrige o
+        vazamento da versao com verdade global (revisao de 2026-11-11). Empate vai para a maior
+        taxa.
+        """
+        h_tot = n_tot = 0
+        chosen: dict = {}
+        for g in self.groups:
+            sub = [rec for rec in sample if self.group_of[rec] == g]
+            for t in sorted({rec.rsplit("-", 1)[-1] for rec in sub}):
+                train = [rec for rec in sub if rec.rsplit("-", 1)[-1] != t]
+                test = [rec for rec in sub if rec.rsplit("-", 1)[-1] == t]
+                best = (-1.0, None)
+                for f in self.factors:
+                    if f < b:
+                        continue
+                    h, n = self.grid_acc_nested(f, train, train)
+                    if n and h / n > best[0]:
+                        best = (h / n, f)
+                if best[1] is None:
+                    continue
+                h, n = self.grid_acc_nested(best[1], test, train)
+                chosen.setdefault(g, []).append(best[1])
+                h_tot, n_tot = h_tot + h, n_tot + n
+        return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
+
+    def acc_arm(self, arm: str, b: int, sample: list[str]) -> tuple[int, int]:
+        vals = [self.hit.get((rec, s, arm, b)) for rec in sample for s in self.segs]
+        vals = [v for v in vals if v is not None]
+        return sum(vals), len(vals)
+
+    def grid_acc(self, f: int, recs: list[str], segs: list) -> tuple[int, int]:
+        vals = [self.grid.get((rec, s, f)) for rec in recs for s in segs]
+        vals = [v for v in vals if v is not None]
+        return sum(vals), len(vals)
+
+    def oracle(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
+        """Acerto (pontos) somando os grupos, cada um com o fator de maior acerto no teste."""
+        h_tot = n_tot = 0
+        chosen = {}
+        for g in self.groups:
+            sub = [rec for rec in sample if self.group_of[rec] == g]
+            best = (-1.0, None, 0, 0)
+            for f in self.factors:
+                if f < b:
+                    continue
+                h, n = self.grid_acc(f, sub, self.segs)
+                if n and h / n > best[0]:
+                    best = (h / n, f, h, n)
+            chosen[g] = best[1]
+            h_tot, n_tot = h_tot + best[2], n_tot + best[3]
+        return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
+
+    def cv_uniform(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
+        """Melhor uniforme escolhida num segmento de teste e avaliada no outro (2 dobras)."""
+        h_tot = n_tot = 0
+        chosen: dict = {}
+        for g in self.groups:
+            sub = [rec for rec in sample if self.group_of[rec] == g]
+            for pick, ev in ((self.segs[0], self.segs[1]), (self.segs[1], self.segs[0])):
+                best = (-1.0, None)
+                for f in self.factors:  # crescente: empate fica com a maior taxa
+                    if f < b:
+                        continue
+                    h, n = self.grid_acc(f, sub, [pick])
+                    if n and h / n > best[0]:
+                        best = (h / n, f)
+                h, n = self.grid_acc(best[1], sub, [ev])
+                chosen.setdefault(g, []).append(best[1])
+                h_tot, n_tot = h_tot + h, n_tot + n
+        return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
+
+    def cv_by_record(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
+        """Melhor uniforme escolhida em outros registros: 3 dobras por ensaio (sufixo -1/-2/-3).
+
+        E a forma de escolha que o E15 tera de enfrentar, porque o E15 separa por registro.
+        Empate vai para a maior taxa. Registros repetidos pelo bootstrap contam com o peso deles.
+        """
+        h_tot = n_tot = 0
+        chosen: dict = {}
+        for g in self.groups:
+            sub = [rec for rec in sample if self.group_of[rec] == g]
+            trials = sorted({rec.rsplit("-", 1)[-1] for rec in sub})
+            for t in trials:
+                train = [rec for rec in sub if rec.rsplit("-", 1)[-1] != t]
+                test = [rec for rec in sub if rec.rsplit("-", 1)[-1] == t]
+                best = (-1.0, None)
+                for f in self.factors:
+                    if f < b:
+                        continue
+                    h, n = self.grid_acc(f, train, self.segs)
+                    if n and h / n > best[0]:
+                        best = (h / n, f)
+                if best[1] is None:
+                    continue
+                h, n = self.grid_acc(best[1], test, self.segs)
+                chosen.setdefault(g, []).append(best[1])
+                h_tot, n_tot = h_tot + h, n_tot + n
+        return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
+
+
+def load(path: Path, hit_col: str = "hit") -> dict[str, Cells]:
+    """``hit_col``: ``hit`` (verdade deixa-um-de-fora) ou ``hit_local`` (a raia em taxa cheia do
+    proprio segmento; revisao de 2026-11-11). Com a regua local, a escolha fora do teste nao tem
+    vazamento por construcao, porque o rotulo de um segmento so depende dele mesmo."""
+    raw: dict[str, dict] = {}
+    manifest = json.loads((path.parent / "manifest.json").read_text(encoding="utf-8"))
+    calib_all = manifest.get("calibrated_order", {})
+    for r in csv.DictReader(path.open(encoding="utf-8")):
+        if r.get(hit_col, "") == "":
+            continue
+        d = raw.setdefault(r["dataset"], {"hit": {}, "grid": {}, "group_of": {}, "est": {}})
+        d["group_of"][r["record"]] = r["group"]
+        b, h = int(r["budget"]), int(r[hit_col])
+        if r["arm"] == "uniforme_grid":
+            d["grid"][(r["record"], r["segment"], int(r["chosen_factor"]))] = h
+            if r["estimate"] != "":
+                d["est"][(r["record"], r["segment"], int(r["chosen_factor"]))] = float(
+                    r["estimate"]
+                )
+        else:
+            d["hit"][(r["record"], r["segment"], r["arm"], b)] = h
+    out = {}
+    for ds, d in raw.items():
+        out[ds] = Cells(
+            local=hit_col == "hit_local",
+            hit=d["hit"],
+            grid=d["grid"],
+            group_of=d["group_of"],
+            segs=sorted({k[1] for k in d["hit"]}),
+            groups=sorted(set(d["group_of"].values())),
+            factors=sorted({k[2] for k in d["grid"]}),
+            est=d["est"],
+            calib={
+                k.split(":", 1)[1]: float(v) for k, v in calib_all.items() if k.startswith(ds + ":")
+            },
+        )
+    return out
+
+
+def analyze(c: Cells, rng: np.random.Generator) -> dict:
+    recs = sorted(c.group_of)
+    by_g = {g: [rec for rec in recs if c.group_of[rec] == g] for g in c.groups}
+    budgets = sorted({k[3] for k in c.hit})
+    out: dict = {"records": len(recs), "groups": c.groups, "budgets": {}}
+    for b in budgets:
+        cell: dict = {}
+        for arm in ARMS:
+            h, n = c.acc_arm(arm, b, recs)
+            cell[arm] = {"hits": h, "n": n, "acc": round(100.0 * h / max(n, 1), 1)}
+        o_acc, o_n, o_f = c.oracle(b, recs)
+        cell["oraculo_uniforme"] = {"acc": round(o_acc, 1), "n": o_n, "factor": o_f}
+        v_acc, v_n, v_f = c.cv_uniform(b, recs)
+        cell["uniforme_varredura_cv"] = {"acc": round(v_acc, 1), "n": v_n, "factor": v_f}
+        if c.local:
+            # regua local: o rotulo de um segmento so depende dele, entao escolher nos acertos da
+            # grade dos registros de treino nao vaza nada do teste
+            r_acc, r_n, r_f = c.cv_by_record(b, recs)
+        else:
+            r_acc, r_n, r_f = c.cv_by_record(b, recs)
+            # verdade global: tem vazamento; fica so como referencia (revisao de 2026-11-11)
+            cell["uniforme_varredura_registro_vazamento"] = {
+                "acc": round(r_acc, 1),
+                "n": r_n,
+                "factor": r_f,
+            }
+            r_acc, r_n, r_f = c.cv_by_record_nested(b, recs)
+        cell["uniforme_varredura_registro"] = {"acc": round(r_acc, 1), "n": r_n, "factor": r_f}
+
+        d_h1, d_h2, d_cv, d_rec = [], [], [], []
+        for _ in range(N_BOOT):
+            sample = [rec for g in c.groups for rec in rng.choice(by_g[g], size=len(by_g[g]))]
+            hc, nc = c.acc_arm("aleatorio_cs", b, sample)
+            ht, nt = c.acc_arm("uniforme_teto", b, sample)
+            hq, nq = c.acc_arm("taxa_tat", b, sample)
+            tat = 100.0 * hq / max(nq, 1)
+            d_h1.append(100.0 * (hc / max(nc, 1) - ht / max(nt, 1)))
+            d_h2.append(tat - c.oracle(b, sample)[0])
+            d_cv.append(tat - c.cv_uniform(b, sample)[0])
+            cv = c.cv_by_record if c.local else c.cv_by_record_nested
+            d_rec.append(tat - cv(b, sample)[0])
+        cell["H1_cs_minus_teto"] = {
+            "points": round(cell["aleatorio_cs"]["acc"] - cell["uniforme_teto"]["acc"], 1),
+            "ci95": ci95(d_h1),
+        }
+        cell["H2_tat_minus_oracle"] = {
+            "points": round(cell["taxa_tat"]["acc"] - cell["oraculo_uniforme"]["acc"], 1),
+            "ci95": ci95(d_h2),
+        }
+        cell["posthoc_tat_minus_registro"] = {
+            "points": round(
+                cell["taxa_tat"]["acc"] - cell["uniforme_varredura_registro"]["acc"], 1
+            ),
+            "ci95": ci95(d_rec),
+        }
+        cell["posthoc_tat_minus_cv"] = {
+            "points": round(cell["taxa_tat"]["acc"] - cell["uniforme_varredura_cv"]["acc"], 1),
+            "ci95": ci95(d_cv),
+        }
+        pairs = {}
+        for a, z in PAIRS:
+            only_a = only_z = 0
+            for rec in recs:
+                for s in c.segs:
+                    x, y = c.hit.get((rec, s, a, b)), c.hit.get((rec, s, z, b))
+                    if x is None or y is None:
+                        continue
+                    only_a += int(x == 1 and y == 0)
+                    only_z += int(x == 0 and y == 1)
+            pairs[f"{a}_vs_{z}"] = {
+                "only_first": only_a,
+                "only_second": only_z,
+                "p": mcnemar_exact(only_a, only_z),
+            }
+        cell["mcnemar"] = pairs
+        out["budgets"][str(b)] = cell
+    cells = out["budgets"].values()
+    out["verdict"] = {
+        "H1": "refutada"
+        if any(x["H1_cs_minus_teto"]["ci95"][0] > 0 for x in cells)
+        else "nao refutada",
+        "H2": "refutada"
+        if any(x["H2_tat_minus_oracle"]["points"] < -GAP_POINTS for x in cells)
+        else "nao refutada",
+    }
+    return out
+
+
+def main() -> int:
+    import argparse
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ruler", choices=("global", "local"), default="global")
+    args = ap.parse_args()
+    rng = np.random.default_rng(SEED)
+    data = load(E / "results" / "metrics.csv", "hit_local" if args.ruler == "local" else "hit")
+    report = {
+        "n_boot": N_BOOT,
+        "seed": SEED,
+        # procedencia da analise (revisao de 2026-11-11): o que leu e com que codigo
+        "analyze_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "metrics_sha256": hashlib.sha256((E / "results" / "metrics.csv").read_bytes()).hexdigest(),
+        "ruler": args.ruler,
+        "datasets": {},
+    }
+    for ds, c in sorted(data.items()):
+        report["datasets"][ds] = analyze(c, rng)
+    dst = E / "results" / ("analysis.json" if args.ruler == "global" else "analysis-local.json")
+    dst.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+    for ds, out in report["datasets"].items():
+        v = out["verdict"]
+        print(f"== {ds} ({out['records']} registros) -> H1 {v['H1']}, H2 {v['H2']}")
+        for b, x in out["budgets"].items():
+            arms = "  ".join(
+                f"{a} {x[a]['acc'] if x[a]['n'] else '—'}" for a in ARMS
+            )  # '—': braco ausente desta rodada
+            print(f"  1/{b}: {arms}")
+            print(
+                f"        oraculo {x['oraculo_uniforme']['acc']} {x['oraculo_uniforme']['factor']}"
+                f" | varredura_cv {x['uniforme_varredura_cv']['acc']}"
+                f" | varredura_registro {x['uniforme_varredura_registro']['acc']}"
+                f" {x['uniforme_varredura_registro']['factor']}"
+                f" {x['uniforme_varredura_cv']['factor']}"
+            )
+            for k in (
+                "H1_cs_minus_teto",
+                "H2_tat_minus_oracle",
+                "posthoc_tat_minus_cv",
+                "posthoc_tat_minus_registro",
+            ):
+                print(f"        {k}: {x[k]['points']} {x[k]['ci95']}")
+            for k, m in x["mcnemar"].items():
+                print(f"        {k}: {m['only_first']} x {m['only_second']}, p = {m['p']:.2g}")
+    print(f"-> {dst}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

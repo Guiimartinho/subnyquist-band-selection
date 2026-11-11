@@ -1,0 +1,5 @@
+condition,factor,ceiling_hz,intervention,n,hits,gain_vs_none,loss_vs_none,mcnemar_p
+outer_race,1,25000.0,despike,6,0,0,0,1.0
+outer_race,1,25000.0,none,6,0,0,0,1.0
+outer_race,4,25000.0,despike,6,0,0,0,1.0
+outer_race,4,25000.0,none,6,0,0,0,1.0

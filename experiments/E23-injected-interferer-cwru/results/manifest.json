@@ -1,0 +1,40 @@
+{
+  "experiment": "E23-injected-interferer-cwru",
+  "timestamp_utc": "2026-11-11T10:58:38.348609+00:00",
+  "seed": 20261113,
+  "config_path": "experiments/E23-injected-interferer-cwru/config/base.yaml",
+  "config_sha256": "8b48cbed722578cf35b0d507678291454ff6a6c3ab2969165f5c5fa45a9e40cc",
+  "entrypoint_sha256": "8f912a8a1666a9568bf50997e6fc0107b9ad487f7025d436dea0ae27571869ed",
+  "packages": {
+    "snq-core": "0.1.0",
+    "snq-sim": "0.1.0",
+    "snq-data": "0.1.0",
+    "snq-recon": "0.1.0",
+    "snq-eval": "0.1.0"
+  },
+  "python": "3.14.10",
+  "platform": "Linux-5.15.0-181-generic-x86_64-with-glibc2.35",
+  "git_sha": null,
+  "git_dirty": null,
+  "source_sha256": "867f9078e364528a1bc8ee745c05b02a72afffa17fdd45ed07c6ea4a1b0cd43e",
+  "source_n_files": 26,
+  "n_records": 13,
+  "n_tasks": 429,
+  "failed_tasks": [],
+  "input_sha256": {
+    "135DE": "5a1c3ceec1f2b58af9e01051e425aa9d31dd018f58a8d31cda25bbdb1ac6dca9",
+    "136DE": "37f259eebbc92afa8bd1b445d02af14e83608a48cd7a3cf5c323515ddc2d0f24",
+    "137DE": "a81b621153e426aa32848be8157c42bcd81065a28ac7655a9a6597f3889fa3ef",
+    "138DE": "b43eeb67badeb129047ddd3658bf673815dc4bd445facb4217eb04653bb2e11d",
+    "148DE": "917d93670a6de924298c8e393d079495bfb2f8d6dd3ade60871b1aede9f9bef4",
+    "149DE": "6b94cdfeedfbd21c58e201c33f6d9af9f2eb9692445dbf6910b3755efc6e15c9",
+    "150DE": "7dcfad2d179ad9272704e0cdf9f118452ebdf4e6ba73c571f9ffd7ae71272bc2",
+    "151DE": "e0339d60f58930fe419981f412965b8bd597aabe7a7b03dac0aa2f0459235496",
+    "161DE": "bd426b6fb9501b5d29de17dd85a1e31b06031c4b018b5bb6ce1ec87895d60ce2",
+    "162DE": "c61dfb2600ac9cbadea425d45c72025ed7432a1b99f1989c6870b714d8fd92c9",
+    "163DE": "77e38a8b8e67d82012700607d47e79718dd039f230853e8652a21778b1d2e374",
+    "164DE": "baf59b7f7052bde9c64af8e83a8453ae3f207029f790efd45556e112c673be7a",
+    "213DE": "6afb81f36a9efcdd370a52166d71c13cb42278c7de22752c81d4b2a22fa133f0"
+  },
+  "limit": null
+}

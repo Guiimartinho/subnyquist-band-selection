@@ -1,0 +1,502 @@
+{
+  "n_boot": 4000,
+  "seed": 20261111,
+  "analyze_sha256": "a934636898a16c0b6f249279241de325f9de954a3bf8d8aca6fc971939a3a756",
+  "metrics_sha256": "c4e53881df30f64d421fac097ef41dc6514009c1f931e779ba9478c04b8c29dc",
+  "ruler": "local",
+  "datasets": {
+    "ottawa": {
+      "records": 24,
+      "groups": [
+        "inner_race",
+        "outer_race"
+      ],
+      "budgets": {
+        "4": {
+          "uniforme": {
+            "hits": 27,
+            "n": 47,
+            "acc": 57.4
+          },
+          "despike": {
+            "hits": 46,
+            "n": 47,
+            "acc": 97.9
+          },
+          "uniforme_teto": {
+            "hits": 42,
+            "n": 47,
+            "acc": 89.4
+          },
+          "taxa_tat": {
+            "hits": 37,
+            "n": 47,
+            "acc": 78.7
+          },
+          "aleatorio_cs": {
+            "hits": 1,
+            "n": 34,
+            "acc": 2.9
+          },
+          "passa_faixa_lu": {
+            "hits": 39,
+            "n": 47,
+            "acc": 83.0
+          },
+          "oraculo_uniforme": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": 4,
+              "outer_race": 12
+            }
+          },
+          "uniforme_varredura_cv": {
+            "acc": 89.4,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                4,
+                4
+              ],
+              "outer_race": [
+                7,
+                12
+              ]
+            }
+          },
+          "uniforme_varredura_registro": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                4,
+                4,
+                4
+              ],
+              "outer_race": [
+                12,
+                12,
+                12
+              ]
+            }
+          },
+          "H1_cs_minus_teto": {
+            "points": -86.5,
+            "ci95": [
+              -95.8,
+              -74.4
+            ]
+          },
+          "H2_tat_minus_oracle": {
+            "points": -19.2,
+            "ci95": [
+              -29.2,
+              -9.1
+            ]
+          },
+          "posthoc_tat_minus_registro": {
+            "points": -19.2,
+            "ci95": [
+              -29.2,
+              -4.3
+            ]
+          },
+          "posthoc_tat_minus_cv": {
+            "points": -10.7,
+            "ci95": [
+              -17.0,
+              -4.2
+            ]
+          },
+          "mcnemar": {
+            "taxa_tat_vs_uniforme": {
+              "only_first": 10,
+              "only_second": 0,
+              "p": 0.001953125
+            },
+            "uniforme_teto_vs_uniforme": {
+              "only_first": 15,
+              "only_second": 0,
+              "p": 6.103515625e-05
+            },
+            "passa_faixa_lu_vs_uniforme": {
+              "only_first": 12,
+              "only_second": 0,
+              "p": 0.00048828125
+            },
+            "aleatorio_cs_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 17,
+              "p": 1.52587890625e-05
+            }
+          }
+        },
+        "8": {
+          "uniforme": {
+            "hits": 43,
+            "n": 47,
+            "acc": 91.5
+          },
+          "despike": {
+            "hits": 46,
+            "n": 47,
+            "acc": 97.9
+          },
+          "uniforme_teto": {
+            "hits": 43,
+            "n": 47,
+            "acc": 91.5
+          },
+          "taxa_tat": {
+            "hits": 42,
+            "n": 47,
+            "acc": 89.4
+          },
+          "aleatorio_cs": {
+            "hits": 2,
+            "n": 47,
+            "acc": 4.3
+          },
+          "passa_faixa_lu": {
+            "hits": 39,
+            "n": 47,
+            "acc": 83.0
+          },
+          "oraculo_uniforme": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": 8,
+              "outer_race": 12
+            }
+          },
+          "uniforme_varredura_cv": {
+            "acc": 91.5,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                8,
+                8
+              ],
+              "outer_race": [
+                8,
+                12
+              ]
+            }
+          },
+          "uniforme_varredura_registro": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                8,
+                8,
+                8
+              ],
+              "outer_race": [
+                12,
+                12,
+                12
+              ]
+            }
+          },
+          "H1_cs_minus_teto": {
+            "points": -87.2,
+            "ci95": [
+              -95.8,
+              -78.3
+            ]
+          },
+          "H2_tat_minus_oracle": {
+            "points": -8.5,
+            "ci95": [
+              -14.9,
+              -2.1
+            ]
+          },
+          "posthoc_tat_minus_registro": {
+            "points": -8.5,
+            "ci95": [
+              -14.9,
+              2.1
+            ]
+          },
+          "posthoc_tat_minus_cv": {
+            "points": -2.1,
+            "ci95": [
+              -6.5,
+              0.0
+            ]
+          },
+          "mcnemar": {
+            "taxa_tat_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 1,
+              "p": 1.0
+            },
+            "uniforme_teto_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 0,
+              "p": 1.0
+            },
+            "passa_faixa_lu_vs_uniforme": {
+              "only_first": 1,
+              "only_second": 5,
+              "p": 0.21875
+            },
+            "aleatorio_cs_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 41,
+              "p": 9.094947017729282e-13
+            }
+          }
+        },
+        "16": {
+          "uniforme": {
+            "hits": 41,
+            "n": 47,
+            "acc": 87.2
+          },
+          "despike": {
+            "hits": 44,
+            "n": 47,
+            "acc": 93.6
+          },
+          "uniforme_teto": {
+            "hits": 26,
+            "n": 47,
+            "acc": 55.3
+          },
+          "taxa_tat": {
+            "hits": 41,
+            "n": 47,
+            "acc": 87.2
+          },
+          "aleatorio_cs": {
+            "hits": 3,
+            "n": 47,
+            "acc": 6.4
+          },
+          "passa_faixa_lu": {
+            "hits": 39,
+            "n": 47,
+            "acc": 83.0
+          },
+          "oraculo_uniforme": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": 16,
+              "outer_race": 46
+            }
+          },
+          "uniforme_varredura_cv": {
+            "acc": 89.4,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                16,
+                16
+              ],
+              "outer_race": [
+                20,
+                46
+              ]
+            }
+          },
+          "uniforme_varredura_registro": {
+            "acc": 95.7,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                16,
+                16,
+                16
+              ],
+              "outer_race": [
+                46,
+                30,
+                46
+              ]
+            }
+          },
+          "H1_cs_minus_teto": {
+            "points": -48.9,
+            "ci95": [
+              -63.1,
+              -33.3
+            ]
+          },
+          "H2_tat_minus_oracle": {
+            "points": -10.7,
+            "ci95": [
+              -17.4,
+              -4.2
+            ]
+          },
+          "posthoc_tat_minus_registro": {
+            "points": -8.5,
+            "ci95": [
+              -13.0,
+              8.5
+            ]
+          },
+          "posthoc_tat_minus_cv": {
+            "points": -2.2,
+            "ci95": [
+              -8.5,
+              4.3
+            ]
+          },
+          "mcnemar": {
+            "taxa_tat_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 0,
+              "p": 1.0
+            },
+            "uniforme_teto_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 15,
+              "p": 6.103515625e-05
+            },
+            "passa_faixa_lu_vs_uniforme": {
+              "only_first": 2,
+              "only_second": 4,
+              "p": 0.6875
+            },
+            "aleatorio_cs_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 38,
+              "p": 7.275957614183426e-12
+            }
+          }
+        },
+        "32": {
+          "uniforme": {
+            "hits": 43,
+            "n": 47,
+            "acc": 91.5
+          },
+          "despike": {
+            "hits": 44,
+            "n": 47,
+            "acc": 93.6
+          },
+          "uniforme_teto": {
+            "hits": 14,
+            "n": 47,
+            "acc": 29.8
+          },
+          "taxa_tat": {
+            "hits": 43,
+            "n": 47,
+            "acc": 91.5
+          },
+          "aleatorio_cs": {
+            "hits": 2,
+            "n": 47,
+            "acc": 4.3
+          },
+          "passa_faixa_lu": {
+            "hits": 38,
+            "n": 47,
+            "acc": 80.9
+          },
+          "oraculo_uniforme": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": 32,
+              "outer_race": 46
+            }
+          },
+          "uniforme_varredura_cv": {
+            "acc": 93.6,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                32,
+                32
+              ],
+              "outer_race": [
+                33,
+                46
+              ]
+            }
+          },
+          "uniforme_varredura_registro": {
+            "acc": 97.9,
+            "n": 47,
+            "factor": {
+              "inner_race": [
+                32,
+                32,
+                32
+              ],
+              "outer_race": [
+                46,
+                46,
+                46
+              ]
+            }
+          },
+          "H1_cs_minus_teto": {
+            "points": -25.5,
+            "ci95": [
+              -38.3,
+              -12.5
+            ]
+          },
+          "H2_tat_minus_oracle": {
+            "points": -6.4,
+            "ci95": [
+              -12.8,
+              0.0
+            ]
+          },
+          "posthoc_tat_minus_registro": {
+            "points": -6.4,
+            "ci95": [
+              -8.5,
+              10.4
+            ]
+          },
+          "posthoc_tat_minus_cv": {
+            "points": -2.1,
+            "ci95": [
+              -8.5,
+              6.4
+            ]
+          },
+          "mcnemar": {
+            "taxa_tat_vs_uniforme": {
+              "only_first": 1,
+              "only_second": 1,
+              "p": 1.0
+            },
+            "uniforme_teto_vs_uniforme": {
+              "only_first": 2,
+              "only_second": 31,
+              "p": 1.3085082173347473e-07
+            },
+            "passa_faixa_lu_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 5,
+              "p": 0.0625
+            },
+            "aleatorio_cs_vs_uniforme": {
+              "only_first": 0,
+              "only_second": 41,
+              "p": 9.094947017729282e-13
+            }
+          }
+        }
+      },
+      "verdict": {
+        "H1": "nao refutada",
+        "H2": "refutada"
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "n_records": 2,
+  "cells_by_predicted_class": {
+    "0": 5,
+    "1": 3,
+    "-1": 1
+  },
+  "H1": {
+    "per_power": {
+      "0.0": {
+        "n_pred_cells": 3,
+        "n_clear_folded_cells": 2,
+        "frac_pred_dropping": 0.0,
+        "frac_clear_dropping": 0.0,
+        "mean_drop_impulsive_pred": 0.0,
+        "mean_drop_surrogate_pred": 0.0,
+        "mean_drop_impulsive_clear": 0.0
+      }
+    },
+    "sensitivity_at_pmax": 0.0,
+    "max_false_alarm": 0.0,
+    "p_star_db": null,
+    "surrogate_ratio_at_p_star": null
+  },
+  "H2": {
+    "tat_balanced_accuracy": NaN,
+    "tat_tpr": 1.0,
+    "tat_tnr": NaN,
+    "mean_gap_tat_minus_oracle_points": 0.0,
+    "worst_gap_points": 0.0
+  },
+  "ci95_bootstrap_by_record": {
+    "sensitivity_at_pmax": [
+      0.0,
+      0.0
+    ],
+    "max_false_alarm": [
+      0.0,
+      0.0
+    ],
+    "mean_gap_tat_minus_oracle_points": [
+      0.0,
+      0.0
+    ]
+  },
+  "verdict": {
+    "H1a_sensibilidade": "refutada",
+    "H1b_especificidade": "apoiada",
+    "H1_linha_impulsividade": "nao avaliavel (sem P*)",
+    "H2_tat_ba": "nao avaliavel (sem acerto ou sem erro)",
+    "H2_tat_vs_oraculo": "apoiada"
+  },
+  "descriptive": {
+    "interferer_line_rate": {
+      "impulsive|0.0|pred=0": 0.0,
+      "impulsive|0.0|pred=1": 0.0,
+      "surrogate|0.0|pred=0": 0.0,
+      "surrogate|0.0|pred=1": 0.0
+    },
+    "aaf_ideal_acc": {
+      "impulsive|0.0": 1.0,
+      "none|": 1.0,
+      "surrogate|0.0": 1.0
+    }
+  }
+}

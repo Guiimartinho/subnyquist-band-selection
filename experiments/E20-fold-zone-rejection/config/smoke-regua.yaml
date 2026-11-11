@@ -1,0 +1,52 @@
+# Fumaca da regua local: 2 registros, fatores 1 e 4.
+seed: 20261110
+data_dir: datasets/raw/ottawa
+conditions:
+- O
+scenarios:
+- A
+trials:
+- 1
+- 2
+segment_samples: 500000
+segments_per_record: 3
+min_samples: 4096
+pulses_per_rev: 1024
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+nominal:
+  n_elements: 9
+  geom_ratio: 0.206
+prior:
+  score_harmonics: 3
+  calibration_span: 0.12
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+calibration_ceiling_hz: 25000.0
+sweep:
+  undersampling_factor:
+  - 1
+  - 4
+  search_ceiling_hz:
+  - 25000.0
+interventions:
+  none:
+    kind: none
+  despike:
+    kind: despike
+    k_mad: 10.0
+analysis:
+  recovery_hits: 20
+  no_recovery_hits: 10
+  alpha: 0.01
+  e07_control_hits:
+    1: 57
+    2: 53
+    4: 38
+    8: 57
+compute:
+  workers: 30
+output:
+  results_dir: results-smoke-regua

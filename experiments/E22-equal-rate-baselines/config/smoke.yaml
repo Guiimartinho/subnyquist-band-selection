@@ -1,0 +1,64 @@
+# E22 - FUMACA: subconjunto do base.yaml (orcamentos 16 e 32, grade ate 34, resultados em results-smoke).
+seed: 20261112
+
+datasets:
+  ottawa:
+    data_dir: datasets/raw/ottawa
+    conditions: [I, O]
+    scenarios: [A, B, C, D]
+    trials: [1, 2, 3]
+    pulses_per_rev: 1024
+    segment_samples: 500000
+    # segmento 0 = calibracao; 1 e 2 = teste
+    calibration_segment: 0
+    test_segments: [1, 2]
+    ceiling0_hz: 25000.0          # teto do E07
+    nominal: {n_elements: 9, geom_ratio: 0.206}
+    budgets: [16, 32]
+    factor_grid_max: 34
+  mafaulda:
+    data_dir: datasets/raw/mafaulda
+    cache_dir: datasets/processed/mafaulda
+    screen_catalog: datasets/catalogs/mafaulda-tachometer-screen.yaml
+    bearings: [underhang, overhang]
+    fault: outer_race
+    fault_family: BPFO
+    axis: radial
+    # 1a metade = calibracao; 2a metade = teste
+    ceiling0_hz: null             # sem teto alem do Nyquist efetivo
+    budgets: [4, 8, 16]
+    factor_grid_max: 16
+
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+prior:
+  score_harmonics: 3
+  calibration_span: 0.12
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+
+tat:
+  folded_share_threshold: 0.5
+  # uniforme_teto: tetos candidatos como fracao de ceiling0 (o maior admissivel vence)
+  ceiling_fractions: [1.0, 0.5, 0.25]
+
+cs:   # braco aleatorio_cs: identico ao E13 (sensors2025csvibration), envelope apos reconstruir
+  order_min: 0.5
+  order_max: 24.0
+  order_step_per_rev: 1.0
+  n_atoms: 40
+  residual_tol: 0.0
+  min_gap_samples: 1
+  cs_samples_per_rev: 48
+  max_dictionary_elements: 3.0e+8
+
+arms: [uniforme, uniforme_teto, taxa_tat, aleatorio_cs, passa_faixa_lu]
+
+compute:
+  workers: 30
+
+output:
+  results_dir: results-smoke
