@@ -88,6 +88,43 @@ efetivo dobra sobre a banda da falha?
   dividido pela mediana em ±20 %.
 - **Referência:** o resultado do kurtograma cego do E23 em 4×, nas mesmas condições.
 
-## Resultado do piloto
+## Resultado do piloto (2026-11-12): negativo para o co-arranjo coprimo
 
-Preenchido depois de rodar.
+Os dados estão em `results-pilot/metrics.csv` e `summary.json`: 13 registros, 5 condições e 3
+padrões.
+
+| condição | taxa cheia | uniforme por 4 (0,25) | coprimo (8, 9) (0,222) | kurtograma cego do E23 em 4× |
+|---|---|---|---|---|
+| sem injeção | 23 % (proeminência 47) | **92 %** (64) | 0 % (2,9) | 92 % |
+| rajadas em 13, 16, 19 e 22 kHz | 0–23 % (28–43) | **92 %** (59–63) | 0 % (2,8–3,0) | 23–38 % |
+
+**Leitura:**
+- **O coprimo não é viável com estes registros** (5 s a 48 kS/s).
+  - A raia de falha fica com proeminência de cerca de 2,9 vezes a mediana local, contra cerca de
+    60 da uniforme. Com cerca de 1550 bins na busca, o máximo do ruído passa de 10 vezes a mediana,
+    então a raia some no ruído.
+  - **A causa é estrutural.** Cada atraso recebe só cerca de T/72 pares, e cada produto
+    x[n]x[n−τ] carrega a potência do sinal inteiro, e não só a da banda.
+  - A banda calibrada (de 5,3–10 kHz a 8,4–10 kHz) tem uma fração pequena da energia, e a
+    variância do co-arranjo engole a assinatura. É o risco de variância que a literatura aponta.
+  - No teste sintético (`test_coarray.py`), a banda modulada concentrava quase toda a potência,
+    por isso funcionou.
+  - Na mesma contagem de amostras por diagnóstico, o coprimo perde: o eixo da portadora sem dobra
+    não compensa a variância.
+- **A taxa cheia "erra" por escolher a segunda harmônica.** As estimativas erradas ficam em
+  207–216 Hz, que é 2 × BPFO. O estimador do piloto é um argmax simples, sem conferência de
+  harmônicas, e o do pipeline clássico (`estimate_without_prior`) trata isso. A proeminência na
+  frequência certa é alta.
+- **A uniforme por 4 com a banda fixada no comissionamento acerta 92 %, com ou sem o interferente**,
+  contra 23–38 % do kurtograma cego do E23 no mesmo sinal.
+  - Isso indica que a captura é um problema de escolha da banda, e que uma banda fixa a evita.
+  - **Ressalva séria:** aqui a banda foi calibrada com a falha já presente (primeira metade do mesmo
+    registro de falha). Num comissionamento real a máquina está sã, e o kurtograma não acha a banda
+    da falha sem impactos.
+
+**Decisão:** o co-arranjo coprimo, como desenhado, não vai a pré-registro. Ficam em aberto:
+- estimadores de menor variância, como ponderar os atrasos pelo número de pares ou usar só os
+  atrasos bem estimados;
+- registros muito mais longos;
+- um pré-filtro analógico passa-faixa, que reduziria a variância. Esse pressupõe conhecer a banda,
+  e aí a amostragem passa-faixa clássica (`vaughan1991`) já resolve.
