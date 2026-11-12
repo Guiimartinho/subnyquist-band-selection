@@ -109,14 +109,59 @@ removal, spectral Gini. Pre-registered recovery criterion at 4$\times$.}
 local ruler as secondary, and the selected bands.}
 
 \subsection{Can a benchmark detect a learned improvement?}
-\todo[inline]{Power gate. Ottawa: power 0.00--0.07 for +5, +10 points and a perfect arm in every
-valid design (\texttt{E15/results/power\_gate}); the classical baseline misses only 3--9 of about 60
-test segments. Paderborn: power 1.00 at +5 points with three seeds per fold
-(\texttt{E15/results-paderborn-gate}).}
+\label{sec:res-power}
+
+Table~\ref{tab:power} gives the power of the H1 decision rule to detect a planted arm, under the
+optimistic rule (\texttt{E15/results/power\_gate} and \texttt{E15/results-paderborn-gate}).
+
+\paragraph{Ottawa} The classical baseline, the best uniform rate at or below the budget chosen on
+training records, misses only 3 to 9 of the 59 or 60 test segments, depending on budget and ruler,
+and all of them on the outer race. A gain of +5 points has power 0.00 in the design as run and with
+three or five seeds. When every record is tested once, in four folds stratified by race, the power
+is 0.03.
+
+Even a perfect arm does not pass in the designs as run. Holm's correction puts the threshold of the
+test against the baseline at $0.05/4 = 0.0125$, and a perfect arm reaches about 0.02. More seeds do
+not help, because the baseline is deterministic. Ottawa therefore cannot decide whether a learned
+mask helps, and its decisive run (Section~\ref{sec:res-masks}) is read as absence of evidence.
+
+\paragraph{Paderborn} The same baseline leaves room for gains on 23 bearings: from budget 1/4 to
+1/32, it reaches 41.5, 44.8, 49.7 and 26.7\% balanced accuracy under the local ruler, and 16.8,
+17.4, 18.6 and 13.2\% under the nested ruler. The power for +5 points is 0.74 with one seed per fold
+and 1.00 with three or five. The Paderborn run of the learned masks therefore uses three seeds per
+fold.
+
+\begin{table}[t]
+  \centering
+  \caption{Power of the H1 decision rule to detect a planted arm that is truly better than the
+  classical baseline, under the optimistic rule, for 200 simulated replications per cell (20 for
+  the perfect arm). On Ottawa the row ``each record once'' uses four folds stratified by race and a
+  synthetic baseline that spreads its misses over all clusters, the most favourable case for the
+  test. The pre-registered criterion is a power of at least 0.80 at +5 points.}
+  \label{tab:power}
+  \small
+  \input{tables/tab_power_gate.tex}
+\end{table}
 
 \subsection{Learned sampling masks}
-\todo[inline]{Ottawa decisive run: no detectable gain in an underpowered design (state it as
-absence of evidence; O-C-2 dependence). Paderborn run: pending (\texttt{E15/results-paderborn}).}
+\label{sec:res-masks}
+
+\paragraph{Ottawa} In the decisive run, the masks converged in every split at budgets 1/4 to 1/16
+and in four of five splits at 1/32, so H1 was evaluable at all four budgets. The mask learned
+without the constraint and projected onto it converged in enough splits only at 1/4, so H2 was
+evaluable only there.
+
+The learned mask did not outperform the best uniform rate chosen on the training records at any
+budget from 1/4 to 1/32. That rate stayed below the budget, between 1/13 and 1/46. The differences
+in balanced order accuracy ranged from $-1.7$ to $-15$ points, with 95\% cluster-bootstrap intervals
+between $-46$ and $+14$ points, and none of the 24 pre-registered tests was significant. The
+smallest one-sided $p$ before correction was 0.20. The projection gap of H2, at 1/4, was 0.0 points
+($[-14.3, +11.4]$ under the local ruler). Given the power analysis above, this is absence of
+evidence, not evidence of absence.
+
+\paragraph{Paderborn}
+\todo[inline]{Pending: \texttt{E15/results-paderborn}, with three seeds per fold; convergence rule
+first, then H1 and H2.}
 
 \subsection{Where the method fails}
 \todo[inline]{Mandatory failure case: bearings whose fault line is invisible at full rate on
