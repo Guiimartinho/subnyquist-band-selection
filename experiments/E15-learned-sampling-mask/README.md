@@ -370,3 +370,152 @@ duas variantes, com uma divisão e no máximo 6 épocas. O que ela prova é mec�
 - **Comando.** `run.py --config config/base.yaml --workers 6`, com os 7 métodos, os 2 conjuntos e
   até 500 épocas com paciência de 40. Na GPU, a reprodutibilidade bit a bit não é garantida (ver a
   fumaça em CPU).
+
+## Resultado da rodada decisiva (2026-11-12)
+
+Rodada de 2026-11-12, de 01:35 a 05:48 UTC, no commit `314b0c3`.
+- Os quatro hashes do manifest (fonte, config, `run.py` e README) batem com o commit.
+- O `git_sha` sai nulo porque a árvore do servidor não é um checkout do git. Os hashes cobrem
+  isso.
+- Este README ganhou esta seção depois da rodada. O `readme_sha256` do manifest é o do commit
+  `314b0c3`.
+
+### Avaliabilidade (B5), conferida antes de abrir as hipóteses
+
+| orçamento | `dec_aprendida` | `dec_aprendida_sel` | `dec_livre_projetada` |
+|---|---|---|---|
+| 1/4 | 1,0 | 1,0 | 0,6 |
+| 1/8 | 1,0 | 1,0 | 0,2 |
+| 1/16 | 1,0 | 1,0 | 0,2 |
+| 1/32 | 0,8 | 0,8 | 0,0 |
+
+A H1 é avaliável nos quatro orçamentos; a H2, só em 1/4.
+
+### Veredito pré-registrado
+
+- **A H1 não passou em nenhuma das réguas.** Nenhum dos 24 testes é significativo, nem antes da
+  correção: o menor p unilateral é 0,20.
+- **A H2 não se sustenta.** Só pôde ser avaliada em 1/4, onde a diferença foi de 0,0 ponto:
+  [−14,3; +11,4] pela régua local e [−6,25; +6,25] pela aninhada.
+
+Acurácia balanceada de ordem (%), variante `bruto` (`summary.csv`):
+
+| braço | régua | 1/4 | 1/8 | 1/16 | 1/32 |
+|---|---|---|---|---|---|
+| `uniforme_treino` (clássico, fator escolhido no treino) | local | 94,8 | 94,8 | 89,7 | 89,7 |
+| `dec_aprendida_sel` | local | 93,1 | 89,7 | 79,3 | 74,2 |
+| `dec_uniforme_treino` | local | 91,4 | 86,3 | 79,3 | 75,9 |
+| `dec_aleatoria` | local | 86,2 | 93,1 | 75,9 | 69,1 |
+| `oraculo_uniforme` (escolhe com o teste) | local | 98,3 | 98,3 | 98,3 | 98,3 |
+| `uniforme_treino` | aninhada | 88,3 | 88,3 | 86,7 | 85,0 |
+| `dec_aprendida_sel` | aninhada | 86,7 | 85,0 | 76,7 | 70,0 |
+| `dec_uniforme_treino` | aninhada | 90,0 | 86,7 | 78,3 | 75,0 |
+| `dec_aleatoria` | aninhada | 81,7 | 90,0 | 73,3 | 68,3 |
+| `oraculo_uniforme` | aninhada | 90,0 | 90,0 | 90,0 | 90,0 |
+
+### Revisão adversarial (`reviewer-2`, 2026-11-12)
+
+O veredito pré-registrado fica, mas o enunciado muda. O resultado é **ausência de evidência de
+ganho num desenho sem poder**. Não é evidência de que aprender a máscara não ajude.
+
+1. **O teste não podia passar.** Com um braço perfeito no lugar de `dec_aprendida_sel`, a mesma
+   regra dá veredito 0 nas duas réguas.
+
+   | contra `uniforme_treino`, braço perfeito | 1/4 | 1/8 | 1/16 | 1/32 |
+   |---|---|---|---|---|
+   | p sem correção, régua local | 0,17 | 0,16 | 0,05 | 0,07 |
+   | p sem correção, régua aninhada | 0,025 | 0,022 | 0,018 | 0,024 |
+
+   Depois do Holm, os p ficam em ≥ 0,43 (local) e ≥ 0,14 (aninhada). Os motivos:
+   - O clássico já acerta 56 de 59 segmentos em 1/4 e 1/8 pela régua local, e o oráculo, 58.
+   - A pista interna fica no teto em quase todos os braços. Só os 29 segmentos da pista externa
+     discriminam.
+   - Há 4 aglomerados por pista, de tamanhos desiguais: na externa, 1, 5, 6 e 3 pares.
+   - A diferença detectável contra `uniforme_treino` fica entre 18 e 40 pontos pela régua local e
+     entre 11 e 39 pela aninhada, acima da folga até o oráculo.
+2. **O déficit contra o clássico vem em boa parte de um registro, O-C-2.**
+   - O-C-2 está no teste em 4 das 5 divisões e soma 8 dos 29 segmentos da pista externa.
+   - Nele, todos os braços com o decodificador aprendido devolvem a ordem 2,0, que é a borda
+     inferior da busca (`order_min`).
+   - Sem O-C-2 (exploratório), `dec_aprendida_sel − uniforme_treino` passa a +4,6 / +2,3 / 0,0 /
+     −3,9 pontos.
+   - O mecanismo provável, não provado: com o envelope |y|² do decodificador, a raia de ordem 2
+     compete com a BPFO nesse registro.
+   - As divisões são de Monte Carlo, e 6 dos 24 registros nunca vão a teste.
+3. **Com o mesmo decodificador, a máscara quase não muda a decisão.**
+   - Entre `dec_aprendida_sel` e `dec_uniforme_treino`, 12 de 236 segmentos discordam (régua
+     local).
+   - Fora de 1/4, as máscaras aprendidas não concordam entre divisões mais do que máscaras viáveis
+     sorteadas.
+   - Duas réplicas que só diferem pela semente (`dec_uniforme_treino` em 1/4 e em 1/8, com o mesmo
+     fator) diferem em cerca de 5 pontos.
+4. **Não há vazamento, mas o baseline tem um grau de liberdade que a máscara não tem.**
+   - `uniforme_treino` escolhe o fator em [b, 48] só com treino e validação. Saiu 13 ou 14 em 1/4
+     e 1/8, e de 30 a 46 em 1/16 e 1/32, isto é, de 2 a 3,5 vezes menos amostras que o
+     orçamento.
+   - A máscara tem L = 4b e K = 4 fixos.
+   - Por isso a comparação é "até o orçamento", e não "na mesma taxa".
+5. **`stop_after_anneal` não piorou o braço decisivo.**
+   - O estágio B para cedo, e a validação tem 8 janelas.
+   - Os braços `_sem_ajuste` ficam iguais aos ajustados ou acima deles, e nenhum passa de
+     `uniforme_treino`.
+6. **A seleção entre orçamentos não explica o negativo.**
+7. **H2:** o termo certo é "não sustentada", e não "refutada". Com 3 de 4 orçamentos não
+   avaliáveis, "o conjunto viável não é contribuição" é forte demais.
+8. **`dec_adaptativa_blocos` é ruído até prova em contrário.**
+   - Tem os maiores números pontuais em 1/4 a 1/16.
+   - Mas é o máximo entre 12 braços, está fora do pré-registro e treinou mais que os outros.
+9. **Não há bug** em `per_record`, `cluster_bootstrap`, `holm` nem `hypotheses`. O
+   `hypotheses.csv` se reproduz exatamente a partir do `metrics.csv`.
+10. **Anterioridade e escopo.**
+    - Em MRI, `bakker2022adaptive` acha políticas aprendidas empatadas com a equidistante a 4×.
+    - O resultado aqui vale para decimação de registros a 200 kSPS, com amostrador ideal, sem
+      track-and-hold e sem jitter.
+
+### Enunciado para o artigo
+
+Parte (b):
+
+> No conjunto Ottawa (variante bruta), em simulação por decimação de registros a 200 kSPS, sem
+> modelo de track-and-hold nem de jitter, a máscara aprendida sob o conjunto viável não superou a
+> melhor taxa uniforme escolhida nos registros de treino (que ficou abaixo do orçamento, entre
+> 1/13 e 1/46) em nenhum dos quatro orçamentos, de 1/4 a 1/32. As diferenças de acurácia
+> balanceada de ordem foram de −1,7 a −15 pontos, com intervalos de 95 % por bootstrap de
+> aglomerado entre −46 e +14 pontos, e nenhum dos 24 testes pré-registrados foi significativo. O
+> desenho não tinha poder: em simulação, nem um método que acertasse todos os segmentos de teste
+> passaria no critério.
+
+H2:
+
+> O gap de projeção só pôde ser avaliado em 1/4, onde foi de 0,0 ponto [−14,3; +11,4]. Nos demais
+> orçamentos, a regra pré-registrada o declarou não avaliável.
+
+### Exploratório: estabilidade da máscara usada
+
+Medida com `explore_mask_stability.py`, só sobre diagnósticos de treino
+(`results/exploratory/mask_stability.csv`). É a fração das posições usadas que sobrevive ao ruído
+de Gumbel do treino, em mediana entre as divisões.
+
+| orçamento | aprendida | livre projetada |
+|---|---|---|
+| 1/4 | 0,999 | 0,986 |
+| 1/8 | 0,998 | 0,974 |
+| 1/16 | 0,995 | 0,909 |
+| 1/32 | 0,969 | 0,832 |
+
+As máscaras estão firmes, então o resultado não vem de máscara presa no ruído. A livre projetada é
+mais estável do que o critério de margem sugeria. Isso não muda a avaliabilidade, que foi
+pré-registrada.
+
+### O que destrava o quê
+
+1. **Porta de poder.** Roda em CPU, sobre o `metrics.csv` atual: simular a regra com o braço
+   perfeito e com efeitos plantados (+5 e +10 pontos) em desenhos candidatos. Se nada passar no
+   Ottawa, a H1 não é testável nele.
+2. **Divisões:** cada registro testado uma vez e `seeds_per_split` ≥ 3. Depende de 1.
+3. **Depois de 2, em paralelo:**
+   - a ablação da falha em O-C-2 (`envelope_power` 1 contra 2, e a borda `order_min`);
+   - o decodificador clássico sobre a máscara aprendida;
+   - um braço que parte da melhor uniforme (`init: uniform`, com L = 4 × o fator escolhido);
+   - o mesmo orçamento de treino para todos os braços.
+4. **Braço adaptativo como primário pré-registrado,** com controle pareado. Depende de 2 e 3.
