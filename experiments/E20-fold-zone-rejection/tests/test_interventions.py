@@ -78,3 +78,23 @@ def test_despike_and_median3_remove_an_isolated_spike_without_a_band_mask():
         lo, hi = sorted((x[4_999], x[5_001]))
         assert lo - 1e-9 <= z[5_000] <= hi + 1e-9, kind
         assert np.max(np.abs(np.delete(z - x, [4_999, 5_000, 5_001]))) < 0.05, kind
+
+
+def test_analyse_selector_default_is_the_plain_kurtogram_and_robust_ones_run():
+    """Seletor por braço (2026-11-12): o padrão é o kurtograma; os robustos rodam na mesma busca."""
+    import yaml
+
+    cfg = yaml.safe_load(
+        (Path(__file__).resolve().parents[1] / "config" / "base.yaml").read_text(encoding="utf-8")
+    )
+    rng = np.random.default_rng(0)
+    fs, n = 50_000.0, 50_000
+    x = rng.normal(size=n)
+    x[::997] += 30.0  # picos isolados
+    spd = np.full(n, 20.0)
+    k0, _ = e20.analyse(x, fs, spd, cfg, 25_000.0)
+    k1, _ = e20.analyse(x, fs, spd, cfg, 25_000.0, "sk")
+    assert (k0.f_lo_hz, k0.f_hi_hz) == (k1.f_lo_hz, k1.f_hi_hz)
+    for sel in ("ses_negentropy", "gini"):
+        k, spec = e20.analyse(x, fs, spd, cfg, 25_000.0, sel)
+        assert k.f_hi_hz <= 25_000.0 and spec.magnitude.size > 0

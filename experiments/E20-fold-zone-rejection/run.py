@@ -41,6 +41,7 @@ from snq_recon import (
     refine_order,
     refine_order_detail,
 )
+from snq_recon.selectors import fast_band_selector
 
 PACKAGES = ("snq-core", "snq-sim", "snq-data", "snq-recon", "snq-eval")
 FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
@@ -129,16 +130,23 @@ def refine(spec, nominal: float, span: float, n_harmonics: int, tol: float) -> f
     return refine_order(spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol)
 
 
-def analyse(x, fs_hz: float, speed, cfg: dict, ceiling_hz: float):
-    """Kurtograma com teto ``min(ceiling_hz, fs/2)`` e espectro de envelope em ordens."""
+def analyse(x, fs_hz: float, speed, cfg: dict, ceiling_hz: float, selector: str = "sk"):
+    """Seletor de banda com teto ``min(ceiling_hz, fs/2)`` e espectro de envelope em ordens.
+
+    ``selector="sk"`` é o kurtograma de sempre. Os outros (``ses_negentropy``, ``gini``, ...) são
+    os seletores robustos de `snq_recon.selectors`, na mesma partição, pré-registrados em
+    2026-11-12 (README, "Seletores robustos").
+    """
     kg = cfg["kurtogram"]
-    k = fast_kurtogram(
-        x,
-        fs_hz,
-        max_level=int(kg["max_level"]),
-        f_min_hz=float(kg["f_min_hz"]),
-        f_max_hz=min(float(ceiling_hz), fs_hz / 2.0),
-    )
+    common = {
+        "max_level": int(kg["max_level"]),
+        "f_min_hz": float(kg["f_min_hz"]),
+        "f_max_hz": min(float(ceiling_hz), fs_hz / 2.0),
+    }
+    if selector == "sk":
+        k = fast_kurtogram(x, fs_hz, **common)
+    else:
+        k = fast_band_selector(x, fs_hz, statistic=selector, **common)
     spec = envelope_order_spectrum(
         x, fs_hz, speed, k.band_hz, samples_per_rev=int(cfg["samples_per_rev"])
     )
@@ -194,7 +202,7 @@ def run_segment(task: dict) -> list[dict]:
                 }
                 if guard is None:
                     try:
-                        k, spec = analyse(x, fs_eff, v, cfg, ceiling)
+                        k, spec = analyse(x, fs_eff, v, cfg, ceiling, ispec.get("selector", "sk"))
                         value = estimate_without_prior(spec, float(cfg["order_min"]))
                         err = abs(value - meta["truth_order"]) if np.isfinite(value) else math.inf
                         row.update(

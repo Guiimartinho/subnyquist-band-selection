@@ -260,3 +260,26 @@ eram 31–33.
   os picos.
 - A régua local sobe o patamar da pista externa em taxa cheia (27/36 → 31/35), o que mostra que
   parte dos erros de antes era da régua, não do método.
+
+## Seletores robustos (pré-registro, 2026-11-12)
+
+Escrito antes de rodar. A pergunta é a primeira que um revisor faz: um seletor de banda robusto a
+impulsos evita o vale de 4× **sem** remover os picos?
+
+- **Seletores:** de `snq_recon.selectors`, testados contra os valores do próprio artigo.
+  - `infograma_ses`: a negentropia do espectro do envelope ao quadrado (Antoni 2016, eq. 12). Pela
+    seção 5.1.1 do artigo, ele é insensível a ruído impulsivo.
+  - `gini`: o índice de Gini do envelope da banda (Hebda-Sobkowicz et al. 2020, eq. 3).
+  - Os dois rodam na mesma partição do kurtograma.
+- **Braços** (`config/selectors.yaml`): `none` e `despike` repetem os do E20; os novos são
+  `infograma_ses`, `infograma_ses_despike` e `gini`. Fatores, tetos, régua e controle do E07 ficam
+  iguais.
+- **Critério:** o mesmo da recuperação do E20, na pista externa, em 4× e com teto de 25 kHz.
+  - Recupera: pelo menos 20 de 36 acertos e McNemar exato pareado contra `none` com p < 0,01.
+  - Não recupera: até 10 de 36.
+  - Vale para as duas réguas (a do E07 e a local).
+- **Leitura:**
+  - Se `infograma_ses` recuperar, um seletor robusto basta, e a correção não exige a taxa cheia.
+  - Se não recuperar, a remoção dos picos antes de decimar continua necessária, e os seletores
+    robustos da literatura não resolvem a captura sob decimação pura.
+
