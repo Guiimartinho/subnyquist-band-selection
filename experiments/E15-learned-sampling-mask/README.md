@@ -719,3 +719,44 @@ avaliabilidade (B5) e o bootstrap por aglomerado da seção "Pré-registro", com
 - **O que refuta:** o mesmo da seção "O que refutaria". Com a porta passando, um negativo aqui é
   evidência de ausência de ganho de pelo menos 5 pontos nesta tarefa, e não falta de poder.
 
+### Execução paralela no Paderborn (2026-11-12)
+
+O desenho, as dobras, as sementes, os métodos e os critérios ficam os do pré-registro acima. Muda só
+quantos processos calculam as células.
+
+- **Por que.** A rodada principal começou o estágio de GPU às 15:27 UTC.
+  - Pelo NVML, a GPU ficou em cerca de 6 % de uso, com 3,2 GiB e 76 W.
+  - O processo principal ocupa um núcleo de CPU (87 %), então o treino é limitado pelo Python, e
+    não pela GPU.
+  - A primeira execução no Paderborn (`dec_uniforme`, 1/4, dobra 1, semente 1) levou 181 s. No
+    Ottawa, a média desse método foi de 55 s. A rodada tem 48 células (4 dobras × 3 sementes × 4
+    orçamentos) de 7 métodos.
+- **Como.** `shard.py` roda as células que recebe em outros processos, na mesma GPU.
+  - Ele usa o mesmo `run.py`, sem alteração, e grava cada execução em `runs/` com o mesmo `run_key`.
+  - O `run_key` cobre o config, o `run.py`, o código dos pacotes e a CLI que muda o resultado.
+    `--budgets` e `--workers` não entram nele.
+  - O processo principal, ao chegar numa célula já gravada, a retoma, e o manifest dele a marca
+    como `"retomado"`.
+- **O que garante que o resultado é o mesmo.**
+  - Os pedaços chamam `run.run_method` com o mesmo contexto. A semente de dados sai de
+    `derive_seed` por célula, e o cudnn é determinístico.
+  - Os pedaços saem antes de `summarize`. Por isso não escrevem `metrics.csv`, `summary.csv`,
+    `hypotheses.csv`, `masks.json` nem o manifest. Quem os escreve é o processo principal, que
+    passa por todas as células.
+  - Cada execução de pedaço é gravada de forma atômica (temporário + `os.replace`), e o processo
+    principal nunca lê um JSON pela metade.
+  - O estágio clássico dos pedaços vem de um cache. A chave dele é o hash do config, do `run.py` e
+    dos pacotes, e um cache de outra chave é recusado.
+- **Validação antes de usar** (local, CPU, config de fumaça do Ottawa, 4 métodos, 3 épocas):
+  - `metrics.csv`, `summary.csv`, `hypotheses.csv` e `comparisons.csv` saíram **idênticos** aos de
+    uma rodada sem pedaços.
+  - As execuções gravadas diferem só no tempo de relógio (`info/.../seconds`). Isso vale também
+    para as que o próprio processo principal calculou, então não vem do pedaço.
+  - O manifest do principal marca como `"retomado"` as 4 execuções calculadas pelo pedaço.
+  - Nenhum arquivo temporário ficou para trás.
+- **Proveniência.**
+  - O processo principal roda no checkout do servidor criado no commit `4e3bf37`. O
+    `readme_sha256` do manifest será o desse commit, porque este README só muda no repositório
+    local.
+  - `shard.py` entrou no checkout do servidor como arquivo novo, e não muda nenhum hash do
+    `run_key`.
