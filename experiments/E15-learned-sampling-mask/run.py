@@ -47,6 +47,7 @@ from __future__ import annotations
 import argparse
 import copy
 import csv
+import dataclasses
 import hashlib
 import json
 import math
@@ -1132,12 +1133,16 @@ def train_one(
             tau = float(t["tau_start"]) * (float(t["tau_end"]) / float(t["tau_start"])) ** frac
             model.sampler.set_temperature(tau)
 
+    fc = fit_cfg(ctx, lr)
+    if anneal and bool(t.get("stop_after_anneal", False)):
+        # regra B5, 2a aplicacao (2026-11-11): parada e checkpoint so depois do recozimento
+        fc = dataclasses.replace(fc, min_epochs=int(t["tau_anneal_epochs"]))
     return fit(
         model,
         train_batches=task.batches,
         batch_loss=task.loss,
         val_loss=task.val_loss,
-        cfg=fit_cfg(ctx, lr),
+        cfg=fc,
         on_epoch_start=on_epoch,
         param_groups=groups,
     )

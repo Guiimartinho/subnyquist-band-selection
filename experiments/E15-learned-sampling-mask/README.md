@@ -236,6 +236,24 @@ bloco depois de ver um número invalida o pré-registro.
     `mask_converged_frac` de `dec_aprendida`, bruto, foi 0,6, 0,4, 0,4 e 0,2 de 1/4 a 1/32.
     A rodada ficou selada em `results-lr10/`, sem abrir `hypotheses.csv` nem `comparisons.csv`,
     e o config passou a `lr_multiplier = 30`.
+  - **Rodada com `lr_multiplier = 30`** (iniciada às 21:07 UTC de 2026-11-11). Na variante bruta,
+    a `mask_converged_frac` de `dec_aprendida` foi 1,0 / 1,0 / **0,4** / 0,6 de 1/4 a 1/32.
+    - O pré-registro previa uma única refação, e ela não resolveu 1/16.
+    - **Desvio declarado antes de abrir `hypotheses.csv`:** nesta rodada, a H1 de 1/16 fica
+      **não avaliável** (a máscara não saiu do ruído). 1/4, 1/8 e 1/32 são avaliados como
+      pré-registrado.
+    - A pedido do usuário, a rodada vai até o fim; a variante sem picos é descritiva.
+  - **Diagnóstico de treino** (só treino, nunca teste): as 8 divisões da variante bruta que não
+    convergiram têm a melhor época em 22–84 e pararam por paciência antes do fim do recozimento
+    da temperatura (`tau_anneal_epochs = 100`). As que convergiram, com uma exceção, treinaram
+    além dele.
+  - **Pré-registro da rodada seguinte (B5, 2ª aplicação):** `training.stop_after_anneal: true`.
+    - Nos braços com máscara aprendida e recozimento, a parada antecipada só conta e o melhor
+      checkpoint só é escolhido a partir de `tau_anneal_epochs` (`FitConfig.min_epochs`).
+    - O critério de convergência (margem > π/√6), `lr_multiplier = 30` e todo o resto ficam
+      iguais.
+    - Se mesmo assim a fração ficar abaixo de 0,5 em algum orçamento da variante bruta, esse
+      orçamento é declarado não avaliável, sem nova refação.
 
   Verificação no recorte da fumaça (1/32, 120 passos, sem parada antecipada; não é resultado):
   - com multiplicador 1, o desvio dos logits foi de 0,01 a 0,047, dentro do ruído;

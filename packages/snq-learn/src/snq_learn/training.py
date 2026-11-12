@@ -32,6 +32,14 @@ class FitConfig:
     grad_clip: float | None = 5.0
     min_delta: float = 0.0
     """Melhora mínima da perda de validação para zerar a contagem de paciência."""
+    min_epochs: int = 0
+    """Épocas antes das quais a parada antecipada não conta e nenhum checkpoint é escolhido.
+
+    Para máscaras com recozimento de temperatura, vale o fim do recozimento. Antes disso a
+    máscara ainda está mole, e um checkpoint dessa fase devolve uma máscara que não saiu do
+    ruído (E15, 2026-11-11: todas as divisões que não convergiram pararam antes do fim do
+    recozimento).
+    """
 
 
 @dataclass
@@ -82,6 +90,7 @@ def fit(
     opt = torch.optim.Adam(groups, lr=cfg.lr, weight_decay=cfg.weight_decay)
     best_state = copy.deepcopy(model.state_dict())
     best_loss, best_epoch = math.inf, -1
+    best_state = copy.deepcopy(model.state_dict())
     since = 0
     history: list[dict[str, float]] = []
     diverged = stopped = False
@@ -112,6 +121,10 @@ def fit(
         if not math.isfinite(v):
             diverged = True
             break
+        if epoch < int(cfg.min_epochs):
+            # fase de recozimento: nem checkpoint nem contagem de paciencia
+            best_state = copy.deepcopy(model.state_dict())
+            continue
         if v < best_loss - cfg.min_delta:
             best_loss, best_epoch, since = v, epoch, 0
             best_state = copy.deepcopy(model.state_dict())

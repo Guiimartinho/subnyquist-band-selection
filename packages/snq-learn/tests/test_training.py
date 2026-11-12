@@ -85,3 +85,24 @@ def test_grupos_de_parametros_com_taxas_proprias():
     )
     # um passo de Adam move cada parametro de ~lr: b anda 100 vezes mais que a
     assert float(model.b.detach()) == pytest.approx(100 * float(model.a.detach()), rel=1e-3)
+
+
+def test_min_epochs_blocks_early_stop_and_checkpoint_during_annealing():
+    """Com min_epochs, a parada nao dispara antes e o melhor checkpoint vem depois dele."""
+    import torch
+    from snq_learn.training import FitConfig, fit
+
+    torch.manual_seed(0)
+    model = torch.nn.Linear(1, 1)
+    # perda de validacao que so piora: sem min_epochs, pararia em patience + 1 epocas
+    losses = iter([float(i) for i in range(1000)])
+
+    res = fit(
+        model,
+        train_batches=lambda epoch: [torch.zeros(1)],
+        batch_loss=lambda m, b: (m(b.view(1, 1)) ** 2).sum(),
+        val_loss=lambda m: next(losses),
+        cfg=FitConfig(max_epochs=200, patience=5, lr=1e-3, min_epochs=50),
+    )
+    assert res.epochs_run >= 50 + 5
+    assert res.best_epoch >= 50

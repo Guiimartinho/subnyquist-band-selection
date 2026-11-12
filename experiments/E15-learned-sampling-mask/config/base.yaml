@@ -111,6 +111,10 @@ training:
   tau_start: 2.0
   tau_end: 0.3
   tau_anneal_epochs: 100
+  # Regra B5, 2a aplicacao (2026-11-11): com lr x30, 1/16 ficou em 2/5; as 8 divisoes que nao
+  # convergiram pararam antes do fim do recozimento (melhor epoca 22-84 < 100). Parada antecipada e
+  # escolha de checkpoint so contam depois do recozimento, nos bracos com mascara aprendida.
+  stop_after_anneal: true
 
 decoder:
   init_levels: [1, 1.585, 2]         # bandas do kurtograma: 2 + 3 + 4 = 9 canais
