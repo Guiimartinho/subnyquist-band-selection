@@ -86,9 +86,24 @@ harmonic as a hit. Accuracy is balanced: the mean over races of the per-unit hit
 A sample is an isolated spike when its deviation from the mean of its two neighbours,
 $\delta[n] = x[n] - \tfrac12(x[n-1] + x[n+1])$, exceeds ten times
 $1.4826\,\mathrm{median}|\delta|$, and both neighbours deviate in the opposite direction by less
-than 0.8 of it. Spikes are replaced by the mean of their neighbours. The procedure needs the full
-rate and is not realizable on a decimating node; it is a diagnostic intervention that attributes
-the loss to the spikes.
+than 0.8 of it. Spikes are replaced by the mean of their neighbours. Applied at full rate, before
+decimation, the procedure is not realizable on a decimating node; it is a diagnostic intervention
+that attributes the loss to the spikes. A single-sample spike that survives decimation lands on a
+kept sample and stays isolated in the decimated stream, so the same criterion can also be applied
+after decimation, at the effective rate, where it is realizable. This variant is tested as a
+separate arm.
+
+\subsection{Attribution by folding zone}
+\label{sec:zones}
+
+At $4\times$ on Ottawa the effective Nyquist frequency is 25~kHz, equal to the search ceiling. The
+upper half of the search range at the first kurtogram level, $[12.75, 25]$~kHz, then receives the
+folded content of three zones of the original frequency axis: $Z_1 = [25, 37.25]$,
+$Z_2 = [62.75, 75]$ and $Z_3 = [75, 87.25]$~kHz. To attribute the loss, each zone, and their
+union, is rejected at full rate before decimation by an ideal zero-phase FFT mask. An ideal
+anti-alias filter, which zeroes everything above the effective Nyquist frequency, and a
+three-point running median complete the interventions. None of these masks is realizable; their
+purpose is causal attribution.
 
 \subsection{Robust band selectors}
 
