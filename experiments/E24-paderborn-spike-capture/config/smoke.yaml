@@ -1,0 +1,75 @@
+# FUMACA do E24: so confere o caminho do codigo; nao e resultado.
+seed: 20261112
+data_dir: datasets/raw/paderborn
+settings:
+- N15_M07_F10
+outer:
+- KA01
+- KA04
+- KA06
+inner:
+- KI01
+- KI04
+- KI18
+calibration_measurement: 1
+test_measurements:
+- 2
+- 3
+segment_samples: 255936
+factors:
+- 1
+- 4
+- 8
+- 16
+- 32
+guard_points_per_rev_factor: 1.0
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+samples_per_rev: 64
+order_min: 2.0
+tolerance_order: 0.025
+prior:
+  score_harmonics: 3
+  calibration_span: 0.01
+min_line_prominence: 5.0
+prominence_window: 0.07
+despike:
+  k_mad: 10.0
+arms:
+  kurtograma:
+    selector: sk
+    despike: false
+  kurtograma_sem_picos:
+    selector: sk
+    despike: true
+  infograma_ses:
+    selector: ses_negentropy
+    despike: false
+  infograma_ses_sem_picos:
+    selector: ses_negentropy
+    despike: true
+  gini:
+    selector: gini
+    despike: false
+tests:
+  H1:
+    arm: kurtograma_sem_picos
+    baseline: kurtograma
+  H2:
+    arm: infograma_ses
+    baseline: kurtograma
+analysis:
+  bootstrap_resamples: 200
+  alpha: 0.05
+  decisive_factors:
+  - 4
+  - 8
+  - 16
+  - 32
+  primary_ruler: nested
+compute:
+  workers: 6
+output:
+  results_dir: results-smoke
