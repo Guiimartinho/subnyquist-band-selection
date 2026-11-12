@@ -181,8 +181,10 @@ def run_segment(task: dict) -> list[dict]:
         for factor in (int(f) for f in cfg["sweep"]["undersampling_factor"]):
             xi = filtered if filtered is not None else apply_intervention(vib, FS_HZ, ispec, factor)
             x, v = undersample(xi, factor), undersample(spd, factor)
-            if ispec.get("post") == "despike":  # no fluxo já decimado: realizável no nó
+            if ispec.get("post") == "despike":  # no fluxo já decimado: não exige a taxa cheia
                 x = despike(x, float(ispec.get("k_mad", 10.0)))
+            elif ispec.get("post") == "median3":  # mediana de 3 no fluxo já decimado
+                x = apply_intervention(x, FS_HZ / factor, {"kind": "median3"}, 1)
             fs_eff = effective_rate_hz(FS_HZ, factor)
             pts_per_rev = fs_eff / float(np.max(v))
             guard = guard_verdict(x.size, fs_eff, pts_per_rev, cfg)

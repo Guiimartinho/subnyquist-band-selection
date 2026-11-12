@@ -434,3 +434,19 @@ O efeito pré-registrado é real, mas a leitura acima exagerava.
 - p por segmento como força da evidência; o teste por registro é o que vale;
 - "método novo" ou "primeira vez".
 
+## Mediana de 3 no fluxo decimado (rodada de confirmação, 2026-11-12)
+
+Escrito antes de rodar, mas **não é cega**: o `reviewer-2` já calculou esse braço de forma
+exploratória, com 29/36 em 4×. A rodada serve para que o número que vai ao artigo saia de código
+commitado e de um `metrics.csv` no formato do E20.
+
+- **Braços** (`config/post_median.yaml`): `none`, `despike_decimado` (repete) e o novo
+  `mediana3_decimado`, que aplica a mediana de 3 amostras ao fluxo já decimado.
+  - A mediana é a mesma do braço `median3` em taxa cheia (`apply_intervention`), aplicada depois de
+    `undersample`.
+- **Critério:** o mesmo da recuperação, em 4×, nas duas réguas.
+- **Comparação pareada, descritiva:** `mediana3_decimado` contra `despike_decimado`, e os dois contra
+  `none` com teto de 12,5 kHz, por McNemar bilateral e pelo teste do sinal por registro.
+- **Leitura que este README já assume:** se a mediana empatar, o critério de "amostra isolada" não
+  é necessário, e a correção é uma limpeza simples do fluxo decimado, sem método novo.
+
