@@ -314,6 +314,8 @@ Os números da lista "O que o artigo pode afirmar" que vieram do recálculo do r
   referência, em fatores ≥ 2, com o impulsivo na maior dose. Confere com o revisor.
 - **Razão substituto/impulsivo em P\*:** 0,14, com IC de 95 % [0,03; 0,21] por bootstrap dos 4
   aglomerados de falha (2000 reamostras, 1954 com P\* definido). O revisor deu [0,02; 0,22].
+- **Fração dobrada contra o tamanho da queda:** ρ de Spearman 0,08 (p = 0,61) nas 48 células de
+  captura prevista avaliáveis, na maior dose. O revisor deu ≈ 0,00, e a conclusão é a mesma.
 - **Custo do anti-alias ideal sem injeção:** 8,5 pontos nos fatores ≥ 2 e 27 pontos em 10× e 12×.
   O README atribuía os 8,5 pontos a 10× e 12×, e foi corrigido acima.
 - **Picos, queda máxima do uniforme em fatores ≥ 2:**
@@ -322,4 +324,7 @@ Os números da lista "O que o artigo pode afirmar" que vieram do recálculo do r
   - 46 a 62 pontos a 32 MAD.
   São as três taxas, e cada registro vale 7,7 pontos. Confere com a correção do revisor (23, 31 e
   23 a 16 MAD).
+- **Dose real:** a injeção normaliza o interferente para potência 1 (`run.py`, linha 114) e o escala
+  por `band_power` (linhas 314 e 333). Essa função devolve metade da potência (conferido: um seno de
+  potência 0,5 dá 0,25), e por isso a dose real é o rótulo menos 3 dB.
 

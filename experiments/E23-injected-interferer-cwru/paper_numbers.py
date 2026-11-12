@@ -15,7 +15,10 @@ antes de rodá-lo. Se o valor diferir do README, vale o daqui, e o README é cor
 3. **Razão substituto/impulsivo em P\*.** É a estatística pré-registrada da H1', de `analyze.py`.
    O IC sai do bootstrap dos 4 aglomerados de falha independentes (`CLUSTERS`), no lugar do
    bootstrap por registro.
-4. **Dose-resposta dos picos.** É a queda máxima do uniforme em fatores ≥ 2, por taxa e amplitude,
+4. **Fração dobrada contra o tamanho da queda.** É o Spearman, entre as células de captura
+   prevista avaliáveis, na maior dose, entre a fração dobrada média da célula e a queda do
+   impulsivo (`Data.drop`).
+5. **Dose-resposta dos picos.** É a queda máxima do uniforme em fatores ≥ 2, por taxa e amplitude,
    de `results-spikes/metrics.csv`.
 
     uv run python experiments/E23-injected-interferer-cwru/paper_numbers.py
@@ -121,6 +124,26 @@ def surrogate_ratio_cluster_ci(data, cfg: dict) -> dict:
     }
 
 
+def folded_share_vs_drop(data) -> dict:
+    from scipy.stats import spearmanr
+
+    db = max(data.powers)
+    share: dict = defaultdict(list)
+    for (kind, fc, d, _rec, f, c), r in data.inj.items():
+        if kind == "impulsive" and d == db and r["folded_share"] not in ("", None):
+            share[(fc, f, c)].append(float(r["folded_share"]))
+    xs, ys = [], []
+    for cell in data.cells:
+        if data.pred.get(cell) != 1 or not data.evaluable(cell, data.records) or not share[cell]:
+            continue
+        dr = data.drop("impulsive", cell[0], db, cell[1], cell[2], data.records)
+        if dr is not None:
+            xs.append(float(np.mean(share[cell])))
+            ys.append(dr)
+    rho, p = spearmanr(xs, ys)
+    return {"n_cells": len(xs), "spearman_rho": round(float(rho), 3), "p": round(float(p), 3)}
+
+
 def spike_dose_response(path: Path, cfg: dict) -> dict:
     hit: dict = defaultdict(dict)
     for r in csv.DictReader(path.open(encoding="utf-8")):
@@ -158,6 +181,7 @@ def main() -> int:
             rows, cfg, tuple(sorted({r["factor"] for r in rows if r["factor"] >= 2}))
         ),
         "surrogate_ratio_at_p_star": surrogate_ratio_cluster_ci(data, cfg),
+        "folded_share_vs_drop": folded_share_vs_drop(data),
         "spike_max_drop_points_factor_ge2": spike_dose_response(
             E / "results-spikes" / "metrics.csv", spikes_cfg
         ),

@@ -65,6 +65,11 @@
       ]
     }
   },
+  "folded_share_vs_drop": {
+    "n_cells": 48,
+    "spearman_rho": 0.076,
+    "p": 0.607
+  },
   "spike_max_drop_points_factor_ge2": {
     "rate=1300.0|amp=16.0": 30.8,
     "rate=1300.0|amp=32.0": 61.5,
