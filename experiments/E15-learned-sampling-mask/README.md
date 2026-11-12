@@ -686,3 +686,36 @@ por dobra.** No Ottawa, nem o braço perfeito passava.
   - Isso não muda o veredito, com poder de 1,00.
 - **Consequência:** a parte (b) volta ao artigo, condicionada ao E15 no Paderborn. Ele terá
   pré-registro próprio, as correções da revisão adversarial e 3 sementes por dobra.
+
+## E15 no Paderborn (pré-registro, 2026-11-12)
+
+Escrito antes de rodar, depois de a porta de poder passar. O config é `config/paderborn.yaml`,
+derivado de `config/base.yaml`. Valem as hipóteses H1 e H2, a regra de decisão, o Holm, a regra de
+avaliabilidade (B5) e o bootstrap por aglomerado da seção "Pré-registro", com as mudanças abaixo.
+
+- **Dados:** os da porta.
+  - 23 rolamentos (12 de pista externa e 11 de pista interna) nos três ajustes de 1500 rpm.
+  - A medição 1 calibra; as medições 2 a 20 são os segmentos, cortados em 255936 amostras.
+  - A medição que não abre ou que é mais curta que isso fica de fora.
+- **Divisões:** K-fold por rolamento, com as 4 dobras da porta (há teste que confere).
+  - A validação sai dos rolamentos fora do teste, com 25 % por pista e pelo menos 1.
+  - O aglomerado do bootstrap é o rolamento.
+- **Sementes:** 3 por dobra. A porta deu poder de 1,00 para +5 pontos com 3 sementes, e de 0,74
+  com 1.
+- **Réguas:** as da porta.
+  - A local só vale onde a raia é visível em taxa cheia (pico de pelo menos 5× a mediana).
+  - A aninhada vale em todos os segmentos.
+  - Tolerância de 0,025 ordem, busca da régua em ±1 % da nominal.
+- **Rótulos de treino e validação:** a régua aninhada, porque a local só existe em 6 dos 23
+  rolamentos.
+  - O decodificador não tem termo aprendido por ordem, então não consegue devolver a ordem da
+    pista sem uma raia no espectro.
+- **Métodos:** os do Ottawa, menos `dec_adaptativa` e `wdcnn`, que não decidem nada.
+- **Guarda:** 1,0 × 64 pontos por volta, como na porta.
+- **Correções da revisão adversarial:**
+  - adotadas: K-fold por rolamento e 3 sementes;
+  - não adotadas nesta rodada: o decodificador clássico sobre a máscara aprendida, o braço que
+    parte da melhor uniforme e o orçamento de treino igual. Ficam como limitação declarada.
+- **O que refuta:** o mesmo da seção "O que refutaria". Com a porta passando, um negativo aqui é
+  evidência de ausência de ganho de pelo menos 5 pontos nesta tarefa, e não falta de poder.
+

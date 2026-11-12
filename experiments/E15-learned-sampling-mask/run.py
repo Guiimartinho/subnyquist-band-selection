@@ -262,13 +262,49 @@ def calibrate(spec, nominal: float, cfg: dict) -> dict:
     }
 
 
+def dataset_cfg(cfg: dict, d: dict) -> dict:
+    """Config efetivo de um conjunto: o global com os ``overrides`` do conjunto por cima.
+
+    Sem ``overrides`` (Ottawa, CWRU, MAFAULDA) devolve uma cópia igual ao global.
+    """
+    out = copy.deepcopy(cfg)
+
+    def merge(a: dict, b: dict) -> None:
+        for k, v in b.items():
+            if isinstance(v, dict) and isinstance(a.get(k), dict):
+                merge(a[k], v)
+            else:
+                a[k] = copy.deepcopy(v)
+
+    merge(out, d.get("overrides") or {})
+    return out
+
+
+def line_prominence(spec, nominal: float, center: float, cfg: dict) -> float:
+    """Pico em ±0,015 ordem do centro sobre a mediana da janela de ±``prominence_window``."""
+    o, a = np.asarray(spec.freqs_hz), np.asarray(spec.magnitude)
+    w = float(cfg.get("prominence_window", 0.07))
+    win = (o >= nominal * (1 - w)) & (o <= nominal * (1 + w))
+    near = np.abs(o - center) <= 0.015
+    if not win.any() or not near.any():
+        return math.nan
+    med = float(np.median(a[win]))
+    return float(a[near].max() / med) if med > 0 else math.nan
+
+
 def full_rate_calibration(x, v, fs_hz: float, nominal: float, cfg: dict, c0) -> dict:
     """Raia de um trecho em taxa cheia: kurtograma (teto ``c0``), envelope, ordem e refino."""
     try:
         k = kurtogram(x, fs_hz, ceiling_at(c0, fs_hz), cfg)
         spr = int(cfg["samples_per_rev"])
         spec = envelope_order_spectrum(x, fs_hz, v, k.band_hz, samples_per_rev=spr)
-        return {**calibrate(spec, nominal, cfg), "band_hz": [k.f_lo_hz, k.f_hi_hz]}
+        out = {**calibrate(spec, nominal, cfg), "band_hz": [k.f_lo_hz, k.f_hi_hz]}
+        thr = cfg.get("min_line_prominence")
+        if thr is not None:  # raia que não se destaca não vale como régua (Paderborn)
+            prom = line_prominence(spec, nominal, out["center"], cfg)
+            out["prominence"] = prom
+            out["at_edge"] = bool(out["at_edge"] or not (np.isfinite(prom) and prom >= float(thr)))
+        return out
     except ValueError as exc:
         return {"center": math.nan, "first_point": math.nan, "at_edge": True, "error": str(exc)}
 
@@ -289,6 +325,7 @@ class Record:
     tests: list[tuple[int, int, int]]
     nominal: float | None
     path: Path
+    files: tuple[Path, ...] = ()
 
 
 def _cwru_number(rid: str) -> tuple[int, str]:
@@ -312,6 +349,13 @@ def list_ids(d: dict, healthy: bool = False) -> list[str]:
         return ottawa.record_names(
             tuple(d["conditions"]), tuple(d["scenarios"]), tuple(int(t) for t in d["trials"])
         )
+    if kind == "paderborn":
+        if healthy:
+            h = d.get("healthy_control") or {}
+            if not h.get("enabled", False):
+                return []
+            return [f"{c}_{s}" for c in h["bearings"] for s in d["settings"]]
+        return [f"{c}_{s}" for c in [*d["outer"], *d["inner"]] for s in d["settings"]]
     if healthy:
         return []
     if kind == "cwru":
@@ -405,7 +449,64 @@ def load_record(ds: str, d: dict, rid: str) -> Record:
             nominal=float(maf.DOCUMENTED_ORDERS[d["fault_family"]]),
             path=root / rid,
         )
+    if kind == "paderborn":
+        return paderborn_record(ds, d, rid)
     raise ValueError(f"tipo de conjunto desconhecido: {kind}")
+
+
+def paderborn_record(ds: str, d: dict, rid: str) -> Record:
+    """Rolamento x ajuste: as medições concatenadas, cada uma um segmento de ``segment_samples``.
+
+    Medição ilegível ou curta (`snq_data.paderborn`) fica de fora. A janela de treino e a régua
+    local usam ``window_samples = segment_samples`` e passo igual, alinhados às medições.
+    """
+    from snq_data import paderborn as pb
+
+    root = at_repo(d["data_dir"])
+    code, setting = rid.split("_", 1)
+    n_seg = int(d["segment_samples"])
+    xs, vs, spans, files, start = [], [], {}, [], 0
+    for n in [int(d["calibration_measurement"]), *[int(t) for t in d["test_measurements"]]]:
+        try:
+            m = pb.load_measurement(root, code, setting, n, n_samples=n_seg, min_samples=n_seg)
+        except ValueError:
+            continue
+        xs.append(m.vibration)
+        vs.append(m.speed_profile_hz())
+        spans[n] = (start, start + n_seg)
+        files.append(pb.measurement_path(root, code, setting, n))
+        start += n_seg
+    c = int(d["calibration_measurement"])
+    if c not in spans:
+        raise ValueError(f"{rid}: medição de calibração ilegível")
+    race = pb.BEARINGS[code][1]
+    orders = pb.computed_orders()
+    nominal = None if race == "none" else float(orders["BPFO" if race == "OR" else "BPFI"])
+    return Record(
+        dataset=ds,
+        rid=rid,
+        group="H" if race == "none" else race,
+        cluster=code,  # o rolamento: o aglomerado do bootstrap
+        fs_hz=pb.FS_HZ,
+        x=np.concatenate(xs),
+        speed_hz=np.concatenate(vs),
+        cal=spans[c],
+        tests=[(n, a, b) for n, (a, b) in spans.items() if n != c],
+        nominal=nominal,
+        path=root / code,
+        files=tuple(files),
+    )
+
+
+def record_sha256(rec: Record) -> str:
+    """sha256 do arquivo do registro, ou dos arquivos que o compõem (Paderborn)."""
+    if not rec.files:
+        return hashlib.sha256(rec.path.read_bytes()).hexdigest()
+    h = hashlib.sha256()
+    for p in rec.files:
+        h.update(p.name.encode())
+        h.update(hashlib.sha256(p.read_bytes()).digest())
+    return h.hexdigest()
 
 
 # ----------------------------------------------------------------------
@@ -422,7 +523,7 @@ def classical_task(task: dict) -> dict:
         "rid": rid,
         "group": rec.group,
         "cluster": rec.cluster,
-        "sha256": hashlib.sha256(rec.path.read_bytes()).hexdigest(),
+        "sha256": record_sha256(rec),
         "grid": {},
         "despiked_samples": {},
     }
@@ -726,6 +827,46 @@ class Bank:
     x: dict[str, torch.Tensor]
     phase: dict[str, np.ndarray]
     device: torch.device
+
+
+def kfold_by_cluster(
+    d: dict, recs: list[str], cluster_of: dict[str, str], pcfg: dict, seed: int
+) -> list[dict]:
+    """K-fold por aglomerado (rolamento), estratificado por pista: cada um vai a teste uma vez.
+
+    As dobras repetem as da porta de poder do Paderborn (`paderborn_gate.kfold_by_bearing`), com
+    a mesma semente e a mesma ordem de ``outer`` e ``inner``. A validação sai dos aglomerados fora
+    do teste: ``val_fraction`` por pista, pelo menos 1.
+    """
+    sp = d["splits"]
+    k = int(sp["n_folds"])
+    rng = np.random.default_rng(derive_seed(int(sp["split_seed"]), "paderborn", "splits"))
+    folds: list[list[str]] = [[] for _ in range(k)]
+    for codes in (d["outer"], d["inner"]):
+        for i, c in enumerate(rng.permutation(codes)):
+            folds[i % k].append(str(c))
+    out = []
+    for f in range(k):
+        test_c = set(folds[f])
+        rng_v = np.random.default_rng(derive_seed(seed, "val", f))
+        val_c: set[str] = set()
+        for codes in (d["outer"], d["inner"]):
+            rest = [c for c in codes if c not in test_c]
+            n_val = max(1, int(round(float(pcfg["val_fraction"]) * len(rest))))
+            val_c.update(str(c) for c in rng_v.choice(rest, size=n_val, replace=False))
+        out.append(
+            {
+                "index": f,
+                "seed": derive_seed(seed, "fold", f),
+                "train": [r for r in recs if cluster_of[r] not in test_c | val_c],
+                "val": [r for r in recs if cluster_of[r] in val_c],
+                "test": [r for r in recs if cluster_of[r] in test_c],
+                "test_clusters": sorted(test_c),
+                "val_clusters": sorted(val_c),
+                "never_tested": [],
+            }
+        )
+    return out
 
 
 def make_bank(recs: dict[str, Record], despiked: bool, k_mad: float, device: torch.device) -> Bank:
@@ -1897,6 +2038,9 @@ def main() -> int:
     cluster_all: dict[str, str] = {}
     for ds in datasets:
         d = cfg["datasets"][ds]
+        cfg_ds = dataset_cfg(cfg, d)  # igual ao global sem ``overrides``
+        tol = float(cfg_ds["tolerance_order"])
+        span = float(cfg_ds["prior"]["calibration_span"])
         ids = list_ids(d)
         ids = ids[: args.limit] if args.limit else ids
         healthy_ids = list_ids(d, healthy=True)
@@ -1912,7 +2056,8 @@ def main() -> int:
         )
         t0 = time.time()
         tasks = [
-            {"cfg": cfg, "dataset": ds, "rid": r, "variants": variants} for r in ids + healthy_ids
+            {"cfg": cfg_ds, "dataset": ds, "rid": r, "variants": variants}
+            for r in ids + healthy_ids
         ]
         with ProcessPoolExecutor(max_workers=workers) as pool:
             cls = list(pool.map(classical_task, tasks))
@@ -1947,7 +2092,14 @@ def main() -> int:
         groups = sorted({group_of[r] for r in ids})
         groups_of_ds[ds] = groups
         manifest["groups"][ds] = groups
-        splits = make_splits(ids, group_of, cfg["protocol"], derive_seed(cfg["seed"], ds, "splits"))
+        if (d.get("splits") or {}).get("kind") == "kfold_cluster":
+            splits = kfold_by_cluster(
+                d, ids, cluster_of, cfg["protocol"], derive_seed(cfg["seed"], ds, "splits")
+            )
+        else:
+            splits = make_splits(
+                ids, group_of, cfg["protocol"], derive_seed(cfg["seed"], ds, "splits")
+            )
         manifest["splits"][ds] = splits
         factors = list(range(min(allowed), int(d["factor_grid_max"]) + 1))
         recs = {r: load_record(ds, d, r) for r in ids + healthy_ids}
@@ -1985,15 +2137,31 @@ def main() -> int:
                 known = mode_band([band0[r] for r in nontest if ok0[r]])
                 manifest["known_band"][f"{ds}:split{split['index']}"] = known
                 pool: dict[str, dict[str, list[tuple[int, float]]]] = defaultdict(dict)
-                for r in split["train"]:
-                    if grid_labels[r]:
-                        pool[group_of[r]][r] = grid_labels[r]
-                val_labels = {
-                    (r, s): seg_truth[(r, s)]
-                    for r in split["val"]
-                    for s in segs[r]
-                    if np.isfinite(seg_truth[(r, s)])
-                }
+                if d.get("train_labels") == "nested":
+                    # Paderborn: a régua local só existe em 6 dos 23 rolamentos; os rótulos de
+                    # treino e validação são a régua aninhada, definida em todos
+                    for r in split["train"]:
+                        t_r = nested[r]["truth"]
+                        if np.isfinite(t_r):
+                            pool[group_of[r]][r] = [
+                                (int(st), float(t_r)) for st, _c, _e in by_id[r]["local_grid"]
+                            ]
+                    val_labels = {
+                        (r, s): float(nested[r]["truth"])
+                        for r in split["val"]
+                        for s in segs[r]
+                        if np.isfinite(nested[r]["truth"])
+                    }
+                else:
+                    for r in split["train"]:
+                        if grid_labels[r]:
+                            pool[group_of[r]][r] = grid_labels[r]
+                    val_labels = {
+                        (r, s): seg_truth[(r, s)]
+                        for r in split["val"]
+                        for s in segs[r]
+                        if np.isfinite(seg_truth[(r, s)])
+                    }
                 for seed_i in range(seeds_per_split):
                     learned: dict[int, dict] = {}
                     for b in budgets:
@@ -2001,7 +2169,7 @@ def main() -> int:
                             ds, var, split, b, seed_i, nested, seg_truth, centers, tol, span
                         )
                         ctx = Ctx(
-                            cfg=cfg,
+                            cfg=cfg_ds,
                             d=d,
                             rc=rc,
                             fs_set=fs_sets[b],

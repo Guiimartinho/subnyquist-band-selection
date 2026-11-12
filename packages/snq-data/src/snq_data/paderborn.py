@@ -140,7 +140,14 @@ class Measurement:
 N_VIB = 256_001  # 4 s a 64 kHz, alinhados com as 16001 amostras de rotação a 4 kHz
 
 
-def load_measurement(root: str | Path, code: str, setting: str, n: int) -> Measurement:
+def load_measurement(
+    root: str | Path,
+    code: str,
+    setting: str,
+    n: int,
+    n_samples: int = N_VIB,
+    min_samples: int | None = None,
+) -> Measurement:
     """Lê uma medição, com a vibração cortada em 4 s a 64 kHz fixos (ver o docstring do módulo).
 
     Confere o nome da variável, os rasters, a duração do canal de rotação e o comprimento mínimo
@@ -168,6 +175,7 @@ def load_measurement(root: str | Path, code: str, setting: str, n: int) -> Measu
     dur_s = (spd.size - 1) / SPEED_FS_HZ
     if not 3.99 < dur_s < 4.01:
         raise ValueError(f"{path.name}: rotação com {dur_s:.4f} s, esperado 4 s")
-    if vib.size < N_VIB - 2:
-        raise ValueError(f"{path.name}: vibração com {vib.size} amostras, menos de 4 s a 64 kHz")
-    return Measurement(code, setting, n, vib[:N_VIB], spd)
+    lo = N_VIB - 2 if min_samples is None else int(min_samples)
+    if vib.size < lo:
+        raise ValueError(f"{path.name}: vibração com {vib.size} amostras, menos de {lo}")
+    return Measurement(code, setting, n, vib[:n_samples], spd)

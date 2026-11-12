@@ -416,3 +416,49 @@ def test_hipotese_em_orcamento_nao_avaliavel_tem_p_1_e_nao_vence():
     per_ruler = [r for r in out if "verdict_ruler" in r]
     assert all(r["verdict_ruler"] == 0 and r["budgets_not_evaluable"] == "16" for r in per_ruler)
     assert all(r["verdict"] == 0 for r in out if "verdict" in r)
+
+
+def test_dataset_cfg_merges_overrides_without_touching_the_global():
+    cfg = {"tolerance_order": 0.06, "prior": {"score_harmonics": 3, "calibration_span": 0.12}}
+    d = {"overrides": {"tolerance_order": 0.025, "prior": {"calibration_span": 0.01}}}
+    out = e15.dataset_cfg(cfg, d)
+    assert out["tolerance_order"] == 0.025
+    assert out["prior"] == {"score_harmonics": 3, "calibration_span": 0.01}
+    assert cfg["prior"]["calibration_span"] == 0.12  # o global fica intacto
+    assert e15.dataset_cfg(cfg, {}) == cfg
+
+
+def test_kfold_by_cluster_tests_each_bearing_once_and_never_leaks():
+    d = {
+        "outer": ["A1", "A2", "A3", "A4", "A5"],
+        "inner": ["B1", "B2", "B3", "B4"],
+        "splits": {"n_folds": 4, "split_seed": 7},
+    }
+    recs = [f"{c}_{s}" for c in d["outer"] + d["inner"] for s in ("S1", "S2")]
+    cluster_of = {r: r.split("_")[0] for r in recs}
+    folds = e15.kfold_by_cluster(d, recs, cluster_of, {"val_fraction": 0.25}, seed=3)
+    tested = [c for f in folds for c in f["test_clusters"]]
+    assert sorted(tested) == sorted(d["outer"] + d["inner"])  # cada rolamento uma vez
+    for f in folds:
+        tr = {cluster_of[r] for r in f["train"]}
+        va = {cluster_of[r] for r in f["val"]}
+        te = {cluster_of[r] for r in f["test"]}
+        assert not (tr & va or tr & te or va & te)
+        assert va & set(d["outer"]) and va & set(d["inner"])
+
+
+def test_kfold_by_cluster_repeats_the_gate_folds():
+    import yaml
+
+    exp = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(exp))
+    import paderborn_gate as pg_gate
+
+    cfg = yaml.safe_load((exp / "config" / "paderborn.yaml").read_text(encoding="utf-8"))
+    d = cfg["datasets"]["paderborn"]
+    ids = [f"{c}_{s}" for c in d["outer"] + d["inner"] for s in d["settings"]]
+    gate_cfg = {"outer": d["outer"], "inner": d["inner"], "splits": {"n_folds": 4}}
+    gate = pg_gate.kfold_by_bearing(gate_cfg, ids, int(d["splits"]["split_seed"]))
+    cluster_of = {r: r.split("_")[0] for r in ids}
+    mine = e15.kfold_by_cluster(d, ids, cluster_of, cfg["protocol"], seed=1)
+    assert [g["test_bearings"] for g in gate] == [m["test_clusters"] for m in mine]

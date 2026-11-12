@@ -1,0 +1,315 @@
+# E15 no Paderborn (pre-registro no README, 'E15 no Paderborn'). Derivado de config/base.yaml
+# (commit 6729f59) com: so o Paderborn; K-fold por rolamento com as dobras da porta; 3 sementes
+# por dobra; rotulos de treino pela regua aninhada; tolerancia 0,025, busca de 1 % e raia visivel
+# (overrides); sem dec_adaptativa e wdcnn, que nao decidem nada. Comentarios do base nao vem.
+seed: 20261113
+datasets:
+  ottawa:
+    enabled: false
+    kind: ottawa
+    data_dir: datasets/raw/ottawa
+    conditions:
+    - I
+    - O
+    scenarios:
+    - A
+    - B
+    - C
+    - D
+    trials:
+    - 1
+    - 2
+    - 3
+    pulses_per_rev: 1024
+    segment_samples: 500000
+    calibration_segment: 0
+    test_segments:
+    - 1
+    - 2
+    ceiling0_hz: 25000.0
+    nominal:
+      n_elements: 9
+      geom_ratio: 0.206
+    budgets:
+    - 4
+    - 8
+    - 16
+    - 32
+    factor_grid_max: 48
+    guard_points_per_rev_factor: 2.0
+    min_gap_ticks: 2
+    despike_variants:
+    - false
+    healthy_control:
+      enabled: true
+      conditions:
+      - H
+    window_samples: 500000
+    local_calibration:
+      hop_samples: 50000
+    decoder:
+      fs_env_hz: 2048.0
+      spr_ang: 256
+      n_fft: 32768
+  cwru48k:
+    enabled: false
+    kind: cwru
+    data_dir: datasets/raw/cwru
+    catalog: datasets/catalogs/cwru-smith2015-categories.yaml
+    table: classical
+    subset: drive_end_48k
+    point: DE
+    fs_hz: 48000.0
+    ceiling0_hz: null
+    budgets:
+    - 2
+    - 4
+    - 8
+    - 16
+    factor_grid_max: 24
+    guard_points_per_rev_factor: 1.0
+    min_samples: 2048
+    min_gap_ticks: 1
+    despike_variants:
+    - false
+    window_samples: 61440
+    local_calibration:
+      hop_samples: 24000
+    decoder:
+      fs_env_hz: 2048.0
+      spr_ang: 128
+      n_fft: 32768
+  mafaulda:
+    enabled: false
+    kind: mafaulda
+    data_dir: datasets/raw/mafaulda
+    cache_dir: datasets/processed/mafaulda
+    screen_catalog: datasets/catalogs/mafaulda-tachometer-screen.yaml
+    bearings:
+    - underhang
+    - overhang
+    fault: outer_race
+    fault_family: BPFO
+    axis: radial
+    ceiling0_hz: null
+    budgets:
+    - 4
+    - 8
+    - 16
+    factor_grid_max: 16
+    guard_points_per_rev_factor: 2.0
+    min_gap_ticks: 1
+    despike_variants:
+    - false
+    window_samples: 102400
+    local_calibration:
+      hop_samples: 51200
+    decoder:
+      fs_env_hz: 4096.0
+      spr_ang: 512
+      n_fft: 131072
+  paderborn:
+    enabled: true
+    kind: paderborn
+    data_dir: datasets/raw/paderborn
+    settings:
+    - N15_M07_F10
+    - N15_M01_F10
+    - N15_M07_F04
+    outer:
+    - KA01
+    - KA03
+    - KA05
+    - KA06
+    - KA07
+    - KA08
+    - KA09
+    - KA04
+    - KA15
+    - KA16
+    - KA22
+    - KA30
+    inner:
+    - KI01
+    - KI03
+    - KI05
+    - KI07
+    - KI08
+    - KI04
+    - KI14
+    - KI16
+    - KI17
+    - KI18
+    - KI21
+    calibration_measurement: 1
+    test_measurements:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    segment_samples: 255936
+    window_samples: 255936
+    local_calibration:
+      hop_samples: 255936
+    ceiling0_hz: null
+    budgets:
+    - 4
+    - 8
+    - 16
+    - 32
+    factor_grid_max: 48
+    guard_points_per_rev_factor: 1.0
+    min_gap_ticks: 2
+    despike_variants:
+    - false
+    healthy_control:
+      enabled: false
+    splits:
+      kind: kfold_cluster
+      n_folds: 4
+      split_seed: 20261112
+    train_labels: nested
+    decoder:
+      fs_env_hz: 2048.0
+      spr_ang: 256
+      n_fft: 32768
+    overrides:
+      tolerance_order: 0.025
+      prior:
+        calibration_span: 0.01
+      min_line_prominence: 5.0
+      prominence_window: 0.07
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+prior:
+  score_harmonics: 3
+  calibration_span: 0.12
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+order_max: 32.0
+despike:
+  k_mad: 10.0
+feasible:
+  active_per_period: 4
+  timer_clock_hz: 16000000.0
+protocol:
+  n_splits: 5
+  seeds_per_split: 3
+  test_fraction: 0.25
+  val_fraction: 0.25
+training:
+  max_epochs: 500
+  patience: 40
+  windows_per_epoch: 64
+  batch_size: 8
+  lr_grid:
+  - 0.003
+  weight_decay: 0.0
+  grad_clip: 5.0
+  spacing_penalty: 1.0
+  tau_start: 2.0
+  tau_end: 0.3
+  tau_anneal_epochs: 100
+  stop_after_anneal: true
+decoder:
+  init_levels:
+  - 1
+  - 1.585
+  - 2
+  shifts:
+  - -2
+  - -1
+  - 0
+  - 1
+  - 2
+  n_control: 1024
+  transition_frac: 0.1
+  envelope_power: 2
+  selection: sk
+  sk_guard_frac: 0.05
+  beta_init: 2.0
+methods:
+- dec_uniforme
+- dec_aleatoria
+- dec_multicoset
+- dec_multicoset_vb
+- dec_uniforme_treino
+- dec_aprendida
+- dec_livre
+mask:
+  init: flat
+  init_scale: 0.01
+  relaxation: topk_st
+  lr_multiplier: 30.0
+livre:
+  period_multiple: 4
+loupe:
+  slope: 5.0
+  sample_slope: 12.0
+  period_multiple: 1
+adps:
+  n_blocks: 4
+  n_features: 16
+  hidden: 32
+multicoset:
+  criterion: min_peak_alias
+  max_enumeration: 3000000
+wdcnn:
+  input_length: 2048
+  batch_size: 64
+  windows_per_epoch: 512
+  max_val_windows_per_segment: 16
+preregistration:
+  dataset: paderborn
+  variant: bruto
+  rulers:
+  - local
+  - nested
+  metric: acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua|
+    < 0,06)
+  alpha: 0.05
+  correction: holm
+  min_budgets: 2
+  min_clusters_per_group: 3
+  min_splits: 2
+  min_mask_converged_frac: 0.5
+  h1:
+    arm: dec_aprendida_sel
+    baselines:
+    - uniforme_treino
+    - dec_uniforme_treino
+    - dec_aleatoria
+    convergence_arms:
+    - dec_aprendida
+    - dec_aprendida_sel
+  h2:
+    arm: dec_aprendida
+    baseline: dec_livre_projetada
+    convergence_arms:
+    - dec_aprendida
+    - dec_livre_projetada
+analysis:
+  bootstrap_resamples: 4000
+compute:
+  workers: 28
+  device: auto
+output:
+  results_dir: results-paderborn
