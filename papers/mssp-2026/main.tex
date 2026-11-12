@@ -1,0 +1,50 @@
+% Artigo unico do ADR 0006 (MSSP). Esqueleto de 2026-11-12: introducao, trabalhos relacionados e
+% metodos escritos; resultados, discussao e conclusao esperam o E20 (seletores), o E24 e o E15 no
+% Paderborn. Referencias so do literature/refs.bib (fonte unica, campo verified).
+\documentclass[preprint,12pt,authoryear]{elsarticle}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{hyperref}
+
+\journal{Mechanical Systems and Signal Processing}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Folded impulses capture blind band selection when bearing vibration is decimated below
+the Nyquist rate}
+% Titulo de trabalho: muda depois dos resultados da Parte (b).
+
+\author{\todo[inline]{Author list and affiliations: decided by the student and the advisor.}}
+
+\begin{abstract}
+\todo[inline]{Write after E20 (robust selectors), E24 (Paderborn replication) and E15 on
+Paderborn. Keep the contribution sentence: capture of the band selector by non-fault impulses is
+known at full rate; what is new is the folding of out-of-band impulsive content under pure
+decimation.}
+\end{abstract}
+
+\begin{keyword}
+bandpass sampling \sep Landau rate \sep spectral kurtosis \sep kurtogram \sep impulsive noise
+\sep learned sampling \sep rolling element bearings
+\end{keyword}
+
+\end{frontmatter}
+
+\listoftodos
+
+\input{sections/introduction}
+\input{sections/related}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\bibliographystyle{elsarticle-harv}
+\bibliography{../../literature/refs}
+
+\end{document}

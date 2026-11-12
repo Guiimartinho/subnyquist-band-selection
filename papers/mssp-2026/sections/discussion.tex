@@ -1,0 +1,18 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\todo[inline]{Write after the results. Points to cover:
+(i) why the anti-alias filter that confines EMI in conventional acquisition is absent by design
+below the Nyquist rate;
+(ii) what the robust selectors do and do not fix;
+(iii) the origin of the Ottawa spikes is unknown, while Paderborn has a known 16~kHz inverter;
+(iv) benchmark power as a precondition for claims about learned acquisition;
+(v) relation to MRI, where learned masks match equidistant ones at moderate acceleration
+\citep{bakker2022adaptive}.}
+
+\paragraph{Limitations}
+The study simulates sub-Nyquist acquisition by decimating records acquired at 200 and 64~kS/s. It
+models an ideal sampler: no track-and-hold bandwidth, jitter or quantization. The tolerance and the
+refinement span are dataset-specific and were fixed before the runs from the geometry and the
+record resolution. The Paderborn local ruler exists only where the fault line is visible at full
+rate. Energy is reported as converted samples per second, not measured.

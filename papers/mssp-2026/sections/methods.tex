@@ -1,0 +1,159 @@
+\section{Data and methods}
+\label{sec:methods}
+
+Every hypothesis, decision rule and test below was written and committed before the corresponding
+run; the commit history of the repository records the order. Values given here are those of the
+experiment configurations.
+\todo[inline]{Cite the code and data release (repository link) before submission.}
+
+\subsection{Datasets}
+\label{sec:data}
+
+\paragraph{Ottawa}
+The University of Ottawa benchmark \citep{huang2018ottawa} records bearing vibration under
+time-varying speed at 200~kS/s, with an accelerometer and a shaft encoder; we count 1024 encoder
+pulses per revolution, a value inferred from the data because it is not documented. It contains
+healthy, inner-race and outer-race conditions under four speed scenarios, with three trials each.
+The bearing has nine rolling elements and a diameter ratio $d/D = 0.2067$, so the fault orders are
+$\mathrm{BPFO} = 3.570$ and $\mathrm{BPFI} = 5.430$. Records are cut into 2.5~s segments.
+
+\paragraph{CWRU}
+The drive-end 48~kS/s records of the Case Western Reserve University benchmark, with the
+categorization of \citet{smith2015cwru}, host the injected-interference experiment.
+
+\paragraph{Paderborn}
+The Paderborn benchmark \citep{lessmeier2016paderborn} records 6203 bearings at 64~kS/s in a drive
+fed by a PWM inverter with 16~kHz switching. We use the three settings at 1500~rpm, whose 4~s
+measurements resolve 0.010 order, and the 23 bearings with single-race damage: 12 outer-race (7
+artificial, 5 from accelerated lifetime tests) and 11 inner-race (5 artificial, 6 real). The
+geometry of the FAG bearing (8 balls, $d = 6.75$~mm, $D = 28.55$~mm, contact angle $0^\circ$) gives
+$\mathrm{BPFO} = 3.054$ and $\mathrm{BPFI} = 4.946$ orders; the manufacturers used vary by up to
+1--2\% in characteristic frequencies \citep{lessmeier2016paderborn}.
+
+The 64~kS/s record length varies between files while the stored time axis always spans 4~s. We
+checked the time base with the motor current: the drive is a synchronous machine with four pole
+pairs, so its electrical frequency is exactly four times the shaft speed, which is recorded on a
+separate 4~kHz channel. With a fixed 64~kS/s, the ratio between the two has a median of 0.99998
+over 2559 readable files, and only one file deviates by more than 0.5\%; the alternative reading,
+in which the stored time axis is correct, puts 185 files beyond 0.5\%. We therefore use 64~kS/s
+throughout, cut every measurement to 255\,936 samples (4~s minus 1~ms) aligned with the speed
+channel, and exclude shorter or unreadable measurements.
+
+\subsection{Acquisition model}
+
+Sub-Nyquist acquisition is modelled by pure decimation, $x_M[n] = x[nM]$, of the full-rate record,
+which is an ideal sampler at $f_s/M$ with no anti-alias filter. No track-and-hold bandwidth,
+aperture jitter or quantization is modelled; the cost metric is the number of converted samples
+per second. Because the records were acquired with the anti-alias filter of the original
+instrument, content above the original Nyquist frequency is absent, and the folding studied here
+is that of content between the effective and the original Nyquist frequencies.
+
+\subsection{Classical pipeline}
+\label{sec:pipeline}
+
+The baseline is the classical envelope pipeline. The band is chosen by a fast kurtogram
+\citep{antoni2007kurtogram} with ideal FFT band masks, dyadic and one-third-dyadic levels up to
+level 4, and a search range from 500~Hz to a ceiling. The ceiling is 25~kHz for Ottawa, below
+which lies more than 99.9\% of the record energy, and the effective Nyquist frequency for
+Paderborn. The squared envelope of the
+band is resampled in angle at 64 samples per revolution with an angular anti-alias filter, and the
+order estimate is the maximum of the order spectrum above order 2, with no prior on the fault
+order. A run is discarded, and counted as a miss, when the decimated record has fewer than 4096
+samples, when the effective Nyquist frequency falls below the search floor, or when fewer than
+$g \times 64$ samples per revolution remain, with $g = 2$ for Ottawa and $g = 1$ for Paderborn.
+
+\subsection{Ground truth}
+\label{sec:truth}
+
+The fault order is known from geometry only up to slip and manufacturing spread, so the truth is
+calibrated from the full-rate data, never from the arm under test.
+\begin{itemize}
+  \item \emph{Local ruler}: the order of the full-rate line in the same segment, refined around
+  the geometric order by harmonic-energy score and taken at the centre of the score plateau. The
+  search spans $\pm12\%$ for Ottawa and $\pm1\%$ for Paderborn. For Paderborn the line must also
+  stand out: its peak must reach at least five times the median of the order spectrum within
+  $\pm7\%$ of the geometric order. A segment without a valid line has no local truth.
+  \item \emph{Nested ruler}: the median of the valid calibrations of other records of the same
+  race, outside the test set. In E24, which has no training, the bearing under test is left out.
+\end{itemize}
+An estimate is a hit when it falls within 0.06 order of the truth for Ottawa and 0.025 order for
+Paderborn. The tighter tolerance is forced by geometry: the Paderborn BPFO and BPFI lie 0.054 order
+from the third and fifth shaft harmonics, and a looser tolerance would score a line locked on the
+harmonic as a hit. Accuracy is balanced: the mean over races of the per-unit hit rate.
+
+\subsection{Spike removal}
+
+A sample is an isolated spike when its deviation from the mean of its two neighbours,
+$\delta[n] = x[n] - \tfrac12(x[n-1] + x[n+1])$, exceeds ten times
+$1.4826\,\mathrm{median}|\delta|$, and both neighbours deviate in the opposite direction by less
+than 0.8 of it. Spikes are replaced by the mean of their neighbours. The procedure needs the full
+rate and is not realizable on a decimating node; it is a diagnostic intervention that attributes
+the loss to the spikes.
+
+\subsection{Robust band selectors}
+
+Two selectors replace spectral kurtosis on the same band partition. The SES infogram
+\citep{antoni2016infogram} computes, for each band, the energy flow $\varepsilon[n] = |c[n]|^2$ of
+the analytic band signal sampled at its critical rate, and the negentropy of the squared-envelope
+spectrum without its zero-frequency term,
+\begin{equation}
+  \Delta I_E = \left\langle \frac{|E(\alpha)|^2}{\langle |E|^2\rangle}
+  \ln\frac{|E(\alpha)|^2}{\langle |E|^2\rangle} \right\rangle_{\alpha \neq 0},
+\end{equation}
+where $E$ is the discrete Fourier transform of $\varepsilon$. Our implementation reproduces the
+values that \citet{antoni2016infogram} gives for stationary Gaussian noise (1.1525 for the
+time-domain and 0.4228 for the spectral negentropy). The spectral Gini index
+\citep{hebdasobkowicz2020nongaussian} replaces the kurtosis by the Gini index of the band envelope.
+
+\subsection{Statistical protocol}
+\label{sec:stats}
+
+Accuracy differences are tested with a cluster bootstrap whose unit is the independent source of
+variation. For Ottawa, that is the condition-by-scenario cluster, four per race. For Paderborn, it
+is the bearing. Units are resampled with replacement within each race, together with the
+cross-validation folds when there are any, and the one-sided p-value is
+$(1 + \#\{\Delta^* \le 0\})/(1 + B)$ with $B = 4000$. A zero difference therefore counts against the
+hypothesis. Holm's correction is applied within each family of tests. Paired segment-level
+comparisons in the Ottawa intervention study use the exact McNemar test.
+
+\paragraph{Power gate}
+Before training any learned method, we asked whether a benchmark can detect an improvement at all.
+A planted arm is derived from the baseline by turning each of its misses into a hit with
+probability $q$, using the same draw for both rulers, with $q$ chosen for gains of +5 and +10
+points or for a perfect arm. The pre-registered decision rule is then applied with all other
+comparisons assumed significant, which is deliberately optimistic, so that a negative answer is
+conclusive. A benchmark passes if the power at +5 points reaches 0.80 in some admissible design.
+
+\subsection{Learned sampling masks}
+\label{sec:masks}
+
+For a budget of one sample in $b$, the feasible set allows $K = 4$ active ticks in each period of
+$L = 4b$ ticks, with a minimum gap of two ticks between them. This is the class of periodic
+nonuniform patterns that a timer-triggered converter can schedule. Masks are learned by a top-$K$
+Gumbel relaxation with a straight-through estimator and an annealed temperature. The mask is
+trained jointly with an unrolled decoder \citep{monga2021unrolling} that mirrors the classical
+pipeline:
+\begin{itemize}
+  \item a learnable complex filter bank;
+  \item the squared envelope;
+  \item angular resampling;
+  \item order-spectrum logits.
+\end{itemize}
+The decoder has no learned term per order bin, so it cannot place a peak where the data have none.
+Early stopping and checkpoint selection start only after the annealing ends. A budget is evaluable
+only if the masks left the Gumbel noise, that is, if the margin between the $K$-th and
+$(K{+}1)$-th logits exceeds the noise standard deviation, in at least half of the splits.
+
+The learned masks are compared with:
+\begin{itemize}
+  \item the best uniform rate at or below the budget, chosen on training data;
+  \item the same decoder with that uniform mask;
+  \item a fixed random feasible mask;
+  \item multicoset designs, including that of \citet{venkataramani2001optimal};
+  \item a mask learned without the constraint and projected onto it afterwards
+  \citep{huijben2020dps,weiss2021pilot}.
+\end{itemize}
+
+On Paderborn, cross-validation is by bearing, in four folds stratified by race, with three seeds
+per fold. Training labels come from the nested ruler, because the local ruler exists for only 6 of
+the 23 bearings.

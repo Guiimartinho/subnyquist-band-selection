@@ -1,0 +1,58 @@
+\section{Introduction}
+\label{sec:intro}
+
+The diagnostic content of rolling-element bearing vibration sits far above its modulation rate.
+A localized defect excites structural resonances, and the fault frequency only appears as the
+repetition rate of the excited transients. In the Paderborn benchmark
+\citep{lessmeier2016paderborn}, the resonance that carries an electrical-discharge outer-race
+defect occupies roughly 2.5--4.4~kHz, and the one that carries inner-race defects 8.4--11~kHz,
+while the fault orders are 3.05 and 4.95, that is, about 76~Hz and 124~Hz at 1500~rpm
+(Section~\ref{sec:data}). Sampling such signals at twice their highest frequency is costly in
+energy and in data, and it is not what the information requires.
+
+The rate that the information requires is set by the occupied bandwidth, not by the highest
+frequency. This is the content of Landau's theorem \citep{landau1967}: the minimal average
+sampling density of a signal is the measure of its spectral support. Bandpass sampling realizes
+it for a single band with uniform sampling at suitable rates \citep{vaughan1991}, and multicoset
+sampling realizes it for unions of bands at any position
+\citep{venkataramani2001optimal,mishali2009xampling}. Operating below the Nyquist rate is therefore
+not a departure from sampling theory; it is the regime that sampling theory prescribes for
+structured signals. Envelope analysis of bandpass-sampled vibration has been shown to keep bearing
+fault signatures well below the Nyquist rate \citep{lu2018undersampled}.
+
+Blind envelope analysis, however, needs a band selector, and the standard one is spectral kurtosis
+through the fast kurtogram \citep{antoni2007kurtogram}. Spectral kurtosis measures impulsiveness,
+not periodicity, and it is known to be captured by impulsive interference that is not related to
+the fault: electromagnetic interference from variable-frequency drives \citep{smith2016emi,
+vaerenberg2025cyclicemi} and non-cyclic impulsive noise in general
+\citep{hebdasobkowicz2020nongaussian,hebdasobkowicz2025robustcorr}. All of these studies assume a
+conventional acquisition, with an anti-alias filter in front of the converter. In that setting the
+filter confines the interference to the acquisition band; \citet{vaerenberg2025cyclicemi} even
+note that the anti-alias filter acts as the carrier band of the EMI impulses.
+
+Pure decimation below the Nyquist rate removes that filter by design, because bandpass sampling
+needs the resonance band to fold into baseband. Whatever impulsive content lies outside the band
+of interest folds as well, and it may land on the range that the selector searches. Whether, when
+and how strongly this happens has not been studied, as far as our searches show: keyword searches
+and forward-citation tracking of \citet{smith2016emi} and \citet{vaerenberg2025cyclicemi} found no
+work on band selection under decimation or folding (Section~\ref{sec:related}).
+
+This paper studies that interaction and its consequence for learned acquisition.
+\todo[inline]{Contributions: confirm each against the final results before submission.}
+\begin{enumerate}
+  \item We show, on the public Ottawa benchmark \citep{huang2018ottawa}, that single-sample spikes
+  present in the raw records, healthy ones included, capture kurtogram band selection under pure
+  decimation and produce a non-monotonic loss of order-estimation accuracy with the decimation
+  factor. Removing the spikes before decimation restores the accuracy, in a pre-registered test.
+  \item We reproduce the capture causally by injecting impulsive interference into the CWRU
+  benchmark \citep{smith2015cwru}, against a phase-randomized surrogate with the same spectrum.
+  \item \todo{E24:} We replicate the mechanism on the Paderborn benchmark, whose drive is fed by a
+  16~kHz PWM inverter, and compare spike removal with robust selectors (the SES infogram of
+  \citet{antoni2016infogram} and the spectral Gini index).
+  \item We show with a pre-registered power gate that a widely used benchmark cannot detect any
+  improvement over a training-selected uniform rate, not even from a perfect estimator, while
+  another can. We argue that such a gate should precede the training of learned acquisition on
+  condition-monitoring data.
+  \item \todo{E15 on Paderborn:} We test learned sampling masks under a hardware-feasible set
+  against the best uniform rate, at equal or lower average rate.
+\end{enumerate}

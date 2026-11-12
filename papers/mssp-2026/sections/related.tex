@@ -1,0 +1,45 @@
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Sampling below the Nyquist rate}
+Landau's density theorem gives the minimal average rate for signals with a known spectral support
+\citep{landau1967}. For a single band, uniform bandpass sampling reaches it at rates that place the
+band within one Nyquist zone \citep{vaughan1991}. Multicoset sampling reaches it for unions of bands
+in arbitrary positions \citep{venkataramani2001optimal}, and the modulated wideband converter and
+the Xampling framework extend it to unknown supports \citep{mishali2009xampling,mishali2010practice,
+eldar2015}. In all of these, aliasing is not an artefact to be avoided but the mechanism that makes
+the rate reduction possible. What folds along with the band of interest is the subject of this
+paper.
+
+\paragraph{Band selection for bearing diagnostics under impulsive interference}
+The fast kurtogram selects the demodulation band by spectral kurtosis \citep{antoni2007kurtogram}.
+Its sensitivity to impulsive noise motivated the infogram, which measures the negentropy of the
+squared envelope and of its spectrum; the latter responds to repetitive transients and is
+insensitive to isolated impulses \citep{antoni2016infogram}. \citet{smith2016emi} showed that
+inverter EMI defeats spectral-kurtosis band selection and proposed restricting the bandwidth.
+\citet{vaerenberg2025cyclicemi} removed periodic EMI with cyclic Wiener (FRESH) filters before a
+higher-resolution kurtogram. \citet{hebdasobkowicz2020nongaussian} compared seven selectors under
+cyclic and non-cyclic impulses and found that, with large non-cyclic impulses, only a selector based
+on conditional variance identified the cyclic band \citep{hebdasobkowicz2020condvar}; robust
+correlation maps were proposed for heavy-tailed signals \citep{hebdasobkowicz2025robustcorr}. These
+works establish that non-fault impulses capture blind selectors at full rate, with an anti-alias
+filter in place. None considers decimation.
+
+\paragraph{Bearing diagnostics below the Nyquist rate}
+Bandpass sampling followed by envelope analysis keeps bearing signatures at rates well below the
+Nyquist rate \citep{lu2018undersampled}. Multirate and adaptive schemes have been proposed
+\citep{elbouharrouti2023multirate,zhao2026adaptive}, as have compressive approaches with random
+sampling \citep{ahmed2018compressedbearing,tounsi2026cs}. These studies evaluate diagnostic
+accuracy under reduced sampling. None of them, to our knowledge, examines where a blind band
+selector goes when interference folds.
+
+\paragraph{Learned acquisition}
+In magnetic resonance imaging, sampling masks are learned jointly with the reconstruction
+\citep{bahadir2020loupe,huijben2020dps}, under physical trajectory constraints
+\citep{weiss2021pilot}, and adaptively per measurement \citep{vangorp2021adps}. At moderate
+acceleration, learned policies have been found on par with handcrafted equidistant masks, and the
+best ones learned to be non-adaptive \citep{bakker2022adaptive}. Task-based acquisition learns the
+converter for the downstream task \citep{shlezinger2022taskadc}, and its power-aware version learns
+the quantization regions of a memristive converter \citep{vol2024poweraware}, that is, the bits
+rather than the sampling times. Algorithm unrolling gives interpretable decoders built from the
+classical pipeline \citep{monga2021unrolling}.
