@@ -100,9 +100,53 @@ Three limits narrow these results.
 \end{itemize}
 We therefore report the mechanism and its dependence on impulsiveness, not a predictive rule.
 
-\subsection{Robust selectors against the valley}
-\todo[inline]{From E20 with \texttt{config/selectors.yaml}: SES infogram, SES infogram after spike
-removal, spectral Gini. Pre-registered recovery criterion at 4$\times$.}
+\subsection{Mitigations without the full rate, and robust selectors}
+\label{sec:res-mitig}
+
+\paragraph{Three mitigations that tie at $4\times$} Three changes avoid the valley on Ottawa without
+access to the full-rate record (\texttt{E20/results-post-despike}, \texttt{results-post-median}).
+\begin{itemize}
+  \item \emph{Cleaning the decimated stream.} Replacing the isolated samples that deviate by more
+  than 10~MAD in the decimated stream raises the outer-race hits at $4\times$ from 6 to 29 of 36
+  segments under the nested ruler, and to 32 of 35 under the local ruler, with all 23 discordant
+  pairs in favour. All 12 records improve (exact sign test, $p = 5\times10^{-4}$), which meets the
+  pre-registered recovery criterion.
+  \item \emph{A three-point median on the decimated stream.} \todo{Confirmation run
+  \texttt{config/post\_median.yaml}; the adversarial reanalysis found 29 of 36.}
+  \item \emph{A lower search ceiling.} With the ceiling at 12.5~kHz, the raw records hit 29 of 36
+  segments at $4\times$, with no discordant pair against the cleaning, and 29 against 23 at
+  $5\times$.
+\end{itemize}
+
+\paragraph{What the mitigations rely on} The lower ceiling works on Ottawa because the informative
+band, between 2.0 and 4.6~kHz, lies below it, and it would fail on a fault whose band lies above.
+The cleaning does not rely on the band, but it is not selective for the artefact.
+\begin{itemize}
+  \item On the inner race it replaces between 170 and 252 samples per segment, almost none of them
+  full-rate spikes.
+  \item These samples are phase-locked to the fault order. The Rayleigh statistic is 0.89--0.91,
+  against a 95th percentile of 0.18--0.39 over 400 random orders, in 36 of 36 segments at $2\times$,
+  $4\times$, $6\times$ and $8\times$.
+  \item The full-rate spikes give 0.04. The replaced samples are therefore fault impacts. The
+  selected band changes in 18 to 33 of the 36 inner-race segments, depending on the factor, but the
+  estimate changes in at most one and no hit changes.
+\end{itemize}
+This analysis is exploratory (\texttt{E20/exploratory/phaselock\_inner.py}).
+
+\paragraph{Robust selectors} The two selectors tested in place of the kurtogram do not answer
+whether a robust selector avoids the valley, because both fail already at full rate on Ottawa
+(\texttt{E20/results-selectors}).
+\begin{itemize}
+  \item The spectral Gini index of the band envelope hits 15 of 36 outer-race segments at full rate
+  and none from $2\times$ to $6\times$. At $4\times$ it selects 18.9--20.9~kHz in 23 of 36
+  segments, the band the spikes occupy: it is captured.
+  \item The SES infogram is not captured, since it selects the same bands at full rate and at
+  $4\times$, but it hits only 7 of 36 segments at full rate, against 27 for the kurtogram.
+  \item Our infogram follows equations 10--12 of \citet{antoni2016infogram} and reproduces their
+  reference values for Gaussian noise. It omits the pre-whitening and the deterministic/random
+  separation that the authors recommend for bearings. The records also have a time-varying speed,
+  which an infogram in hertz does not compensate. Neither cause was tested.
+\end{itemize}
 
 \subsection{Replication on Paderborn}
 \todo[inline]{From E24: H1 (spike removal) and H2 (SES infogram) under the nested ruler, with the

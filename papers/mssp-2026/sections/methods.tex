@@ -90,8 +90,10 @@ than 0.8 of it. Spikes are replaced by the mean of their neighbours. Applied at 
 decimation, the procedure is not realizable on a decimating node; it is a diagnostic intervention
 that attributes the loss to the spikes. A single-sample spike that survives decimation lands on a
 kept sample and stays isolated in the decimated stream, so the same criterion can also be applied
-after decimation, at the effective rate, where it is realizable. This variant is tested as a
-separate arm.
+after decimation, at the effective rate, without access to the full-rate record. This variant is
+tested as a separate arm, and so is a three-point running median applied to the decimated stream.
+Both assume an ideal sampler: a track-and-hold of finite bandwidth would not record a
+microsecond-scale event as an isolated sample at full amplitude.
 
 \subsection{Attribution by folding zone}
 \label{sec:zones}

@@ -91,13 +91,111 @@ def rate_wall() -> dict:
     return out
 
 
+E20R = ROOT / "experiments/E20-fold-zone-rejection"
+
+
+def _rows(name: str) -> list[dict]:
+    with (E20R / name / "metrics.csv").open(encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def mitigations() -> dict:
+    """Bandas dos seletores, teto de 12,5 kHz contra a limpeza e a limpeza na pista interna."""
+    base, sel, post = _rows("results"), _rows("results-selectors"), _rows("results-post-despike")
+    out: dict = {"selector_bands": {}, "ceiling_vs_cleaning": {}, "inner_cleaning": {}}
+    for arm in ("infograma_ses", "gini"):
+        for m in (1, 4):
+            cell = [
+                r
+                for r in sel
+                if r["condition"] == "outer_race"
+                and r["intervention"] == arm
+                and int(r["factor"]) == m
+                and float(r["ceiling_hz"]) == 25000.0
+            ]
+            bands: dict = defaultdict(int)
+            for r in cell:
+                bands[f"{float(r['band_lo_hz']):.0f}-{float(r['band_hi_hz']):.0f}"] += 1
+            top = sorted(bands.items(), key=lambda kv: -kv[1])[:3]
+            out["selector_bands"][f"{arm}|{m}x"] = {
+                "hits": sum(int(r["hit"]) for r in cell),
+                "n": len(cell),
+                "top_bands": top,
+            }
+
+    def hits(rows, arm, ceil, m, col, cond="outer_race"):
+        return {
+            (r["record"], r["segment"]): int(r[col])
+            for r in rows
+            if r["condition"] == cond
+            and r["intervention"] == arm
+            and int(r["factor"]) == m
+            and float(r["ceiling_hz"]) == ceil
+            and r[col] != ""
+        }
+
+    for col in ("hit", "hit_local"):
+        for m in (4, 5, 6):
+            a = hits(post, "despike_decimado", 25000.0, m, col)
+            t = hits(base, "none", 12500.0, m, col)
+            k = sorted(set(a) & set(t))
+            out["ceiling_vs_cleaning"][f"{col}|{m}x"] = {
+                "cleaning_hits": sum(a.values()),
+                "ceiling_hits": sum(t.values()),
+                "n": len(k),
+                "cleaning_only": sum(1 for x in k if a[x] == 1 and t[x] == 0),
+                "ceiling_only": sum(1 for x in k if a[x] == 0 and t[x] == 1),
+            }
+    for m in (2, 4, 6, 8):
+
+        def key(r):
+            return (r["record"], r["segment"])
+
+        cl = {
+            key(r): r
+            for r in post
+            if r["condition"] == "inner_race"
+            and r["intervention"] == "despike_decimado"
+            and int(r["factor"]) == m
+            and float(r["ceiling_hz"]) == 25000.0
+        }
+        no = {
+            key(r): r
+            for r in post
+            if r["condition"] == "inner_race"
+            and r["intervention"] == "none"
+            and int(r["factor"]) == m
+            and float(r["ceiling_hz"]) == 25000.0
+        }
+        k = sorted(set(cl) & set(no))
+        out["inner_cleaning"][f"{m}x"] = {
+            "n": len(k),
+            "band_changed": sum(
+                1
+                for x in k
+                if (cl[x]["band_lo_hz"], cl[x]["band_hi_hz"])
+                != (no[x]["band_lo_hz"], no[x]["band_hi_hz"])
+            ),
+            "estimate_changed": sum(
+                1 for x in k if cl[x]["estimate_order"] != no[x]["estimate_order"]
+            ),
+            "hit_changed": sum(1 for x in k if cl[x]["hit"] != no[x]["hit"]),
+        }
+    return out
+
+
 def main() -> None:
-    rep = {"band_selection_e20": band_selection(), "rate_wall_e07_extended": rate_wall()}
+    rep = {
+        "band_selection_e20": band_selection(),
+        "rate_wall_e07_extended": rate_wall(),
+        "mitigations_e20": mitigations(),
+    }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(rep, indent=2), encoding="utf-8")
     print(json.dumps(rep["band_selection_e20"], indent=0))
     for k, v in rep["rate_wall_e07_extended"].items():
         print(k, v)
+    print(json.dumps(rep["mitigations_e20"], indent=1))
     print(f"-> {OUT}")
 
 

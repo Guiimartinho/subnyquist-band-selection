@@ -8,8 +8,10 @@ band within one Nyquist zone \citep{vaughan1991}. Multicoset sampling reaches it
 in arbitrary positions \citep{venkataramani2001optimal}, and the modulated wideband converter and
 the Xampling framework extend it to unknown supports \citep{mishali2009xampling,mishali2010practice,
 eldar2015}. In all of these, aliasing is not an artefact to be avoided but the mechanism that makes
-the rate reduction possible. What folds along with the band of interest is the subject of this
-paper.
+the rate reduction possible. Noise present in the signal before subsampling folds with it and is
+amplified by the subsampling factor, the noise folding of compressed sensing
+\citep{ariascastro2011noisefolding}. What folds along with the band of interest, and what it does
+to a blind band selector, is the subject of this paper.
 
 \paragraph{Band selection for bearing diagnostics under impulsive interference}
 The fast kurtogram selects the demodulation band by spectral kurtosis \citep{antoni2007kurtogram}.

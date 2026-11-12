@@ -44,6 +44,9 @@ This paper studies that interaction and its consequence for learned acquisition.
   present in the raw records, healthy ones included, capture kurtogram band selection under pure
   decimation and produce a non-monotonic loss of order-estimation accuracy with the decimation
   factor. Removing the spikes before decimation restores the accuracy, in a pre-registered test.
+  Three simple steps that need no access to the full-rate record do the same at $4\times$:
+  cleaning isolated outliers in the decimated stream, a three-point median, and a lower search
+  ceiling. Each has a limit, which we report.
   \item We reproduce the capture causally by injecting impulsive interference into the CWRU
   benchmark \citep{smith2015cwru}, against a phase-randomized surrogate with the same spectrum.
   \item \todo{E24:} We replicate the mechanism on the Paderborn benchmark, whose drive is fed by a

@@ -30,15 +30,34 @@ points with three seeds per fold. We suggest such a gate as a precondition for c
 acquisition on condition-monitoring benchmarks, because a negative result on an underpowered
 benchmark carries no information about the method.
 
+\paragraph{What the mitigations and the selectors do not fix}
+On Ottawa, three mitigations that need no full-rate access tie at $4\times$, and none comes for free.
+\begin{itemize}
+  \item The lower ceiling works only while the informative band lies below it. A fault whose
+  resonance sits higher would be cut off with the interference.
+  \item Cleaning the decimated stream is not selective for the artefact. On the inner race it
+  replaces fault impacts, harmlessly here, but a weak incipient fault could lose the very impacts it
+  is detected by.
+  \item The two selectors that we tested for robustness fail already at full rate.
+\end{itemize}
+A selector that matches the kurtogram at full rate and resists isolated impulses is still to be
+tested. Candidates are the conditional-variance selector \citep{hebdasobkowicz2020condvar} and an
+infogram with pre-whitening and deterministic/random separation \citep{antoni2016infogram}. Such a
+selector would protect the band choice without touching the samples.
+
 \todo[inline]{Write after the pending runs:
-(ii) what the robust selectors and spike removal after decimation do and do not fix (E20, E24);
+(ii) the same mitigations on Paderborn (E24, E24-H3);
 (iii) the origin of the Ottawa spikes is unknown, while Paderborn has a known 16~kHz inverter;
 (v) relation to MRI, where learned masks match equidistant ones at moderate acceleration
 \citep{bakker2022adaptive} (E15 on Paderborn).}
 
 \paragraph{Limitations}
 The study simulates sub-Nyquist acquisition by decimating records acquired at 200 and 64~kS/s. It
-models an ideal sampler: no track-and-hold bandwidth, jitter or quantization. The tolerance and the
+models an ideal sampler: no track-and-hold bandwidth, jitter or quantization. A converter whose
+track-and-hold has a finite bandwidth would not record a microsecond-scale event as an isolated
+sample at full amplitude, so both the capture and the cleaning may differ on hardware. Each
+benchmark comes from one rig and one acquisition system. The three segments of an Ottawa record
+are not independent, and we report record-level tests alongside the segment-level ones. The tolerance and the
 refinement span are dataset-specific and were fixed before the runs from the geometry and the
 record resolution. The Paderborn local ruler exists only where the fault line is visible at full
 rate. Energy is reported as converted samples per second, not measured.
