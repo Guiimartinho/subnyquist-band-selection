@@ -1,0 +1,79 @@
+{
+  "losses_on_interferer_line": {
+    "dose_db_label": 20.0,
+    "losses": 193,
+    "on_line": 189,
+    "share": 0.9793
+  },
+  "aaf_ideal_cost_no_injection": {
+    "factors": [
+      10,
+      12
+    ],
+    "n_uniform": 26,
+    "n_aaf": 26,
+    "acc_uniform": 88.46,
+    "acc_aaf_ideal": 61.54,
+    "cost_points": 26.92
+  },
+  "aaf_ideal_cost_no_injection_factors_ge2": {
+    "factors": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      10,
+      12
+    ],
+    "n_uniform": 117,
+    "n_aaf": 117,
+    "acc_uniform": 94.02,
+    "acc_aaf_ideal": 85.47,
+    "cost_points": 8.55
+  },
+  "surrogate_ratio_at_p_star": {
+    "point": 0.1445,
+    "n_boot_valid": 1954,
+    "ci95_cluster": [
+      0.031,
+      0.212
+    ],
+    "clusters": {
+      "bpfi_213": [
+        "213DE"
+      ],
+      "centrada": [
+        "135DE",
+        "136DE",
+        "137DE",
+        "138DE"
+      ],
+      "oposta": [
+        "161DE",
+        "162DE",
+        "163DE",
+        "164DE"
+      ],
+      "ortogonal": [
+        "148DE",
+        "149DE",
+        "150DE",
+        "151DE"
+      ]
+    }
+  },
+  "spike_max_drop_points_factor_ge2": {
+    "rate=1300.0|amp=16.0": 30.8,
+    "rate=1300.0|amp=32.0": 61.5,
+    "rate=1300.0|amp=8.0": 7.7,
+    "rate=2500.0|amp=16.0": 23.1,
+    "rate=2500.0|amp=32.0": 46.2,
+    "rate=2500.0|amp=8.0": 15.4,
+    "rate=500.0|amp=16.0": 23.1,
+    "rate=500.0|amp=32.0": 61.5,
+    "rate=500.0|amp=8.0": 7.7
+  }
+}

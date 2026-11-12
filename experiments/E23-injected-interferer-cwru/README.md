@@ -270,13 +270,15 @@ mais pesam: a dose, as unidades independentes e o poder preditivo da fração do
 
 **O que o artigo pode afirmar a partir do E23:**
 - sob decimação pura, um interferente impulsivo acima do teto volta à busca e, com dose suficiente,
-  captura o kurtograma; 97 % das perdas caem sobre a taxa das rajadas;
+  captura o kurtograma; 98 % das perdas (189 de 193) caem sobre a taxa das rajadas;
 - para seletores por curtose, a captura exige impulsividade: um substituto gaussiano de mesmo
   espectro dá razão 0,14 (IC por aglomerado [0,02; 0,22]);
 - picos de uma amostra também capturam, com dose-resposta em amplitude;
 - um teto de busca que protege o seletor em taxa cheia é desfeito pela subamostragem; é a
   contribuição própria, estreita;
-- o passa-baixas evita a captura e custa 8,5 pontos em 10× e 12×, o compromisso clássico.
+- o passa-baixas evita a captura e custa, sem injeção, 8,5 pontos nos fatores ≥ 2 (94,0 → 85,5 %)
+  e 27 pontos em 10× e 12× (88,5 → 61,5 %), o compromisso clássico. Corrigido em 2026-11-12 por
+  `paper_numbers.py`: antes dizia "8,5 pontos em 10× e 12×", trocando os dois recortes.
 
 **O que NÃO pode afirmar:**
 - "onde a aritmética da dobra prevê, e só ali";
@@ -303,3 +305,21 @@ mais pesam: a dose, as unidades independentes e o poder preditivo da fração do
 - **Confirmação:**
   - cadeia física do `snq-sim`;
   - um segundo conjunto (Paderborn).
+
+## Números do artigo, recalculados (2026-11-12)
+
+Os números da lista "O que o artigo pode afirmar" que vieram do recálculo do revisor agora saem de
+`paper_numbers.py`, que grava `results/paper_numbers.json`. As definições estão no docstring.
+- **Perdas sobre a taxa das rajadas:** 189 de 193 (98 %), no braço uniforme, no teto de
+  referência, em fatores ≥ 2, com o impulsivo na maior dose. Confere com o revisor.
+- **Razão substituto/impulsivo em P\*:** 0,14, com IC de 95 % [0,03; 0,21] por bootstrap dos 4
+  aglomerados de falha (2000 reamostras, 1954 com P\* definido). O revisor deu [0,02; 0,22].
+- **Custo do anti-alias ideal sem injeção:** 8,5 pontos nos fatores ≥ 2 e 27 pontos em 10× e 12×.
+  O README atribuía os 8,5 pontos a 10× e 12×, e foi corrigido acima.
+- **Picos, queda máxima do uniforme em fatores ≥ 2:**
+  - 8 a 15 pontos a 8 MAD;
+  - 23 a 31 pontos a 16 MAD;
+  - 46 a 62 pontos a 32 MAD.
+  São as três taxas, e cada registro vale 7,7 pontos. Confere com a correção do revisor (23, 31 e
+  23 a 16 MAD).
+
