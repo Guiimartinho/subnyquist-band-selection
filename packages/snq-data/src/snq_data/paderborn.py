@@ -17,6 +17,18 @@ Zimmer e Sextro, 2016). O detalhe está em ``datasets/manifests/paderborn.yaml``
     frequências características.
   - A BPFO (3,054) e a BPFI (4,946) ficam a 0,054 ordem das harmônicas 3 e 5 do eixo, então a
     tolerância de ordem tem de ficar abaixo de ~0,027.
+
+**Base de tempo (conferida em 2026-11-12, nos 2560 arquivos).**
+- O número de amostras de 64 kHz varia: 256001 em 1042 arquivos, até 262062 nos mais longos.
+- O eixo ``HostService`` vai sempre de 0 a 4 s, o que sugeriria taxa variável.
+- **A taxa é de 64 kHz fixos.** O PMSM tem 4 pares de polos, então a corrente gira a exatamente 4×
+  a rotação medida no canal de 4 kHz. Com 64 kHz fixos, a razão entre as duas tem mediana
+  0,99998 (P1 0,99936; P99 1,00057), e só 1 arquivo passa de 0,5 %. Pela hipótese do eixo de
+  tempo, 185 arquivos passam de 0,5 %, até 8 %.
+- Os registros mais longos são só mais longos. O carregador corta a vibração nas primeiras 256001
+  amostras (4 s), alinhadas com o canal de rotação.
+- **Um arquivo não abre no scipy:** ``KA08/N15_M01_F10_KA08_2.mat`` ("Expecting matrix here").
+  O carregador levanta ``ValueError``, e quem chama pula a medição.
 """
 
 from __future__ import annotations
@@ -125,12 +137,22 @@ class Measurement:
         return np.interp(t_v, t_s, self.speed_rpm) / 60.0
 
 
+N_VIB = 256_001  # 4 s a 64 kHz, alinhados com as 16001 amostras de rotação a 4 kHz
+
+
 def load_measurement(root: str | Path, code: str, setting: str, n: int) -> Measurement:
-    """Lê uma medição. Confere o nome da variável, as taxas pelos comprimentos e a duração."""
+    """Lê uma medição, com a vibração cortada em 4 s a 64 kHz fixos (ver o docstring do módulo).
+
+    Confere o nome da variável, os rasters, a duração do canal de rotação e o comprimento mínimo
+    da vibração. Arquivo ilegível vira ``ValueError``.
+    """
     from scipy.io import loadmat
 
     path = measurement_path(root, code, setting, n)
-    m = loadmat(path, squeeze_me=False, struct_as_record=False)
+    try:
+        m = loadmat(path, squeeze_me=False, struct_as_record=False)
+    except (TypeError, ValueError) as exc:  # KA08/N15_M01_F10_KA08_2.mat
+        raise ValueError(f"{path.name}: ilegível pelo scipy ({exc})") from exc
     keys = [k for k in m if not k.startswith("__")]
     if keys != [path.stem]:
         raise ValueError(f"{path.name}: variáveis inesperadas {keys}")
@@ -143,7 +165,9 @@ def load_measurement(root: str | Path, code: str, setting: str, n: int) -> Measu
         if name not in sig or sig[name][0] != raster:
             raise ValueError(f"{path.name}: canal {name} ausente ou fora do raster {raster}")
     vib, spd = sig["vibration_1"][1], sig["speed"][1]
-    dur_v, dur_s = (vib.size - 1) / FS_HZ, (spd.size - 1) / SPEED_FS_HZ
-    if abs(dur_v - dur_s) > 1e-3 or not 3.9 < dur_v < 4.1:
-        raise ValueError(f"{path.name}: durações {dur_v:.4f} s e {dur_s:.4f} s não batem")
-    return Measurement(code, setting, n, vib, spd)
+    dur_s = (spd.size - 1) / SPEED_FS_HZ
+    if not 3.99 < dur_s < 4.01:
+        raise ValueError(f"{path.name}: rotação com {dur_s:.4f} s, esperado 4 s")
+    if vib.size < N_VIB - 2:
+        raise ValueError(f"{path.name}: vibração com {vib.size} amostras, menos de 4 s a 64 kHz")
+    return Measurement(code, setting, n, vib[:N_VIB], spd)

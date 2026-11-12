@@ -55,9 +55,19 @@ def test_load_measurement_reads_the_struct(tmp_path):
     assert float(np.mean(v)) == pytest.approx(25.0, abs=0.05)
 
 
-def test_load_measurement_rejects_mismatched_durations(tmp_path):
+def test_load_measurement_trims_longer_records_to_4s(tmp_path):
+    """Taxa de 64 kHz fixos: registro mais longo é só mais longo, e é cortado em 4 s."""
+    stem = "N15_M07_F10_KA01_3"
+    (tmp_path / "KA01").mkdir()
+    _fake_mat(tmp_path / "KA01" / f"{stem}.mat", stem, n_vib=262062)
+    m = P.load_measurement(tmp_path, "KA01", "N15_M07_F10", 3)
+    assert m.vibration.size == P.N_VIB
+
+
+@pytest.mark.parametrize("n_vib,n_spd", [(256001, 8001), (200000, 16001)])
+def test_load_measurement_rejects_short_channels(tmp_path, n_vib, n_spd):
     stem = "N15_M07_F10_KA01_2"
     (tmp_path / "KA01").mkdir()
-    _fake_mat(tmp_path / "KA01" / f"{stem}.mat", stem, n_spd=8001)
+    _fake_mat(tmp_path / "KA01" / f"{stem}.mat", stem, n_vib=n_vib, n_spd=n_spd)
     with pytest.raises(ValueError):
         P.load_measurement(tmp_path, "KA01", "N15_M07_F10", 2)

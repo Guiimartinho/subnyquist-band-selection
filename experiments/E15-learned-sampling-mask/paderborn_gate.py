@@ -90,11 +90,23 @@ def classical_task(task: tuple[dict, str, str]) -> dict:
         "sha256": {},
         "truth": {},
         "grid": {},
+        "unreadable": {},
     }
     for n in [int(cfg["calibration_measurement"]), *[int(t) for t in cfg["test_measurements"]]]:
         path = pb.measurement_path(root, code, setting, n)
         out["sha256"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
-        m = pb.load_measurement(root, code, setting, n)
+        try:
+            m = pb.load_measurement(root, code, setting, n)
+        except ValueError as exc:  # medição ilegível: fica fora (ver snq_data.paderborn)
+            out["unreadable"][n] = str(exc)[:120]
+            if n == int(cfg["calibration_measurement"]):
+                out["calib"] = {
+                    "center": math.nan,
+                    "at_edge": True,
+                    "ok": False,
+                    "error": "ilegivel",
+                }
+            continue
         x, v = m.vibration, m.speed_profile_hz()
         lc = line_calibration(x, v, nominal, cfg)
         if n == int(cfg["calibration_measurement"]):
@@ -145,7 +157,10 @@ def build_rows(cfg, ids, cls, splits) -> list[dict]:
         for (n, f), e in by_id[r]["grid"].items()
         if e is not None and np.isfinite(e)
     }
-    segs = {r: [int(n) for n in cfg["test_measurements"]] for r in ids}
+    segs = {
+        r: [int(n) for n in cfg["test_measurements"] if int(n) not in by_id[r]["unreadable"]]
+        for r in ids
+    }
     factors = list(range(min(cfg["budgets"]), int(cfg["factor_grid_max"]) + 1))
     rows = []
     for sp in splits:
@@ -326,6 +341,7 @@ def main() -> None:
         "source_sha256": e15.source_sha256()[0],
         "splits": splits,
         "input_sha256": {k: v for c in cls for k, v in c["sha256"].items()},
+        "unreadable": {c["rid"]: c["unreadable"] for c in cls if c["unreadable"]},
         "criterion": crit,
         "best_power_at_criterion": best,
         "verdict": "testavel" if best >= float(crit["power"]) else "nao_testavel",

@@ -648,4 +648,13 @@ consegue detectar, pela regra da H1, um braço de fato melhor que o baseline? Ro
   - Se for, o E15 roda no Paderborn, com os braços aprendidos e as correções da revisão
     adversarial, depois de um pré-registro próprio.
   - Se não for, a parte (b) sai do artigo.
+- **Correção antes de qualquer número (2026-11-12, achada na fumaça).**
+  - O número de amostras de 64 kHz por arquivo varia (de 255999 a 262062), mas o eixo de tempo
+    vai sempre de 0 a 4 s.
+  - A corrente do PMSM, que gira a 4× a rotação, mostra que a taxa é de 64 kHz fixos: razão
+    mediana de 0,99998, com 1 arquivo de 2559 acima de 0,5 %.
+  - O carregador passa a cortar a vibração em 4 s, alinhados com o canal de rotação.
+  - Um arquivo não abre (`KA08/N15_M01_F10_KA08_2.mat`). A medição fica fora e vai registrada no
+    manifest.
+  - Nada do protocolo acima mudou.
 
