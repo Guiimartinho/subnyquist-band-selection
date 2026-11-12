@@ -49,9 +49,11 @@ This paper studies that interaction and its consequence for learned acquisition.
   ceiling. Each has a limit, which we report.
   \item We reproduce the capture causally by injecting impulsive interference into the CWRU
   benchmark \citep{smith2015cwru}, against a phase-randomized surrogate with the same spectrum.
-  \item \todo{E24:} We replicate the mechanism on the Paderborn benchmark, whose drive is fed by a
-  16~kHz PWM inverter, and compare spike removal with robust selectors (the SES infogram of
-  \citet{antoni2016infogram} and the spectral Gini index).
+  \item We test the same interventions on the Paderborn benchmark, whose drive is fed by a 16~kHz
+  PWM inverter. There, the kurtogram is already captured at full rate, decimation produces no
+  valley, spike removal changes little, and the SES infogram \citep{antoni2016infogram} helps only
+  at the lowest rate. The replication shows when the mechanism's precondition, a selector that is
+  right at full rate, is absent.
   \item We show with a pre-registered power gate that a widely used benchmark cannot detect any
   improvement over a training-selected uniform rate, not even from a perfect estimator, while
   another can. We argue that such a gate should precede the training of learned acquisition on

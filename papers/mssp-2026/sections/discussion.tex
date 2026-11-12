@@ -45,9 +45,19 @@ tested. Candidates are the conditional-variance selector \citep{hebdasobkowicz20
 infogram with pre-whitening and deterministic/random separation \citep{antoni2016infogram}. Such a
 selector would protect the band choice without touching the samples.
 
-\todo[inline]{Write after the pending runs:
-(ii) the same mitigations on Paderborn (E24, E24-H3);
-(iii) the origin of the Ottawa spikes is unknown, while Paderborn has a known 16~kHz inverter;
+\paragraph{Where the impulses come from}
+The source of the impulses differs between the two benchmarks, and neither is established.
+\begin{itemize}
+  \item On Ottawa they are single-sample spikes of the raw records.
+  \item On Paderborn the drive is fed by a 16~kHz PWM inverter, and the 15--17~kHz band is the most
+  impulsive one, but no switching line appears in the vibration spectrum.
+\end{itemize}
+On Paderborn, removing the spikes does not release the selector, and decimation seems to relieve
+the full-rate capture by narrowing the search range. That reading was not isolated: a full-rate
+run with the same lower ceilings would separate it from folding. A sub-Nyquist node shares its rig
+with such sources, and the band choice has to be protected from them whatever their origin.
+
+\todo[inline]{Write after E15 on Paderborn:
 (v) relation to MRI, where learned masks match equidistant ones at moderate acceleration
 \citep{bakker2022adaptive} (E15 on Paderborn).}
 

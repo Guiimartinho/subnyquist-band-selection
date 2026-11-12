@@ -1,0 +1,192 @@
+{
+  "segments": 1305,
+  "bearings": 23,
+  "fullrate_bands_from_11khz": 1147,
+  "fullrate_bands_from_11khz_pct": 87.9,
+  "hits_in_those_bands": 0,
+  "fullrate_accuracy_by_bearing": {
+    "KA01": 63.2,
+    "KA03": 0.0,
+    "KA04": 0.0,
+    "KA05": 0.0,
+    "KA06": 0.0,
+    "KA07": 0.0,
+    "KA08": 0.0,
+    "KA09": 0.0,
+    "KA15": 0.0,
+    "KA16": 1.8,
+    "KA22": 0.0,
+    "KA30": 0.0,
+    "KI01": 98.2,
+    "KI03": 0.0,
+    "KI04": 0.0,
+    "KI05": 0.0,
+    "KI07": 0.0,
+    "KI08": 0.0,
+    "KI14": 0.0,
+    "KI16": 0.0,
+    "KI17": 0.0,
+    "KI18": 12.3,
+    "KI21": 0.0
+  },
+  "bearings_above_50pct_fullrate": [
+    "KA01",
+    "KI01"
+  ],
+  "ses_on_bearings_without_visible_line": {
+    "bearings": 16,
+    "by_race": {
+      "IR": 0.0,
+      "OR": 34.0
+    },
+    "balanced": 17.0
+  },
+  "robustness": {
+    "boot": 200000,
+    "tests": [
+      {
+        "hypothesis": "H1",
+        "factor": 4,
+        "diff_points": 0.79,
+        "bearings_differing": 3,
+        "bearings_up": 3,
+        "p_signflip": 0.125,
+        "p_boot": 0.038349808250958746,
+        "p_signflip_holm": 0.375,
+        "p_boot_holm": 0.115
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 8,
+        "diff_points": 2.1,
+        "bearings_differing": 6,
+        "bearings_up": 5,
+        "p_signflip": 0.0625,
+        "p_boot": 0.013829930850345748,
+        "p_signflip_holm": 0.25,
+        "p_boot_holm": 0.0553
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 16,
+        "diff_points": 1.64,
+        "bearings_differing": 7,
+        "bearings_up": 3,
+        "p_signflip": 0.2265625,
+        "p_boot": 0.13666931665341672,
+        "p_signflip_holm": 0.4375,
+        "p_boot_holm": 0.1798
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 32,
+        "diff_points": 2.19,
+        "bearings_differing": 5,
+        "bearings_up": 3,
+        "p_signflip": 0.21875,
+        "p_boot": 0.08989455052724736,
+        "p_signflip_holm": 0.4375,
+        "p_boot_holm": 0.1798
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 4,
+        "diff_points": 8.81,
+        "bearings_differing": 8,
+        "bearings_up": 7,
+        "p_signflip": 0.06640625,
+        "p_boot": 0.023774881125594373,
+        "p_signflip_holm": 0.1992,
+        "p_boot_holm": 0.0713
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 8,
+        "diff_points": 5.31,
+        "bearings_differing": 10,
+        "bearings_up": 8,
+        "p_signflip": 0.173828125,
+        "p_boot": 0.15793921030394847,
+        "p_signflip_holm": 0.3477,
+        "p_boot_holm": 0.3159
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 16,
+        "diff_points": 0.61,
+        "bearings_differing": 10,
+        "bearings_up": 6,
+        "p_signflip": 0.4384765625,
+        "p_boot": 0.38454307728461357,
+        "p_signflip_holm": 0.4385,
+        "p_boot_holm": 0.3845
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 32,
+        "diff_points": 3.08,
+        "bearings_differing": 8,
+        "bearings_up": 8,
+        "p_signflip": 0.00390625,
+        "p_boot": 9.999950000249999e-06,
+        "p_signflip_holm": 0.0156,
+        "p_boot_holm": 0.0
+      },
+      {
+        "hypothesis": "H3",
+        "factor": 4,
+        "diff_points": -1.04,
+        "bearings_differing": 3,
+        "bearings_up": 1,
+        "p_signflip": 0.875,
+        "p_boot": 0.8777906110469448,
+        "p_signflip_holm": 1.0,
+        "p_boot_holm": 1.0
+      },
+      {
+        "hypothesis": "H3",
+        "factor": 8,
+        "diff_points": 0.68,
+        "bearings_differing": 2,
+        "bearings_up": 2,
+        "p_signflip": 0.25,
+        "p_boot": 0.12380438097809511,
+        "p_signflip_holm": 1.0,
+        "p_boot_holm": 0.4952
+      },
+      {
+        "hypothesis": "H3",
+        "factor": 16,
+        "diff_points": 0.0,
+        "bearings_differing": 0,
+        "bearings_up": 0,
+        "p_signflip": 1.0,
+        "p_boot": 1.0,
+        "p_signflip_holm": 1.0,
+        "p_boot_holm": 1.0
+      },
+      {
+        "hypothesis": "H3",
+        "factor": 32,
+        "diff_points": 0.15,
+        "bearings_differing": 1,
+        "bearings_up": 1,
+        "p_signflip": 0.5,
+        "p_boot": 0.3502932485337573,
+        "p_signflip_holm": 1.0,
+        "p_boot_holm": 1.0
+      }
+    ]
+  },
+  "inverter_lines": {
+    "records": 69,
+    "readable": 68,
+    "fe_hz_median": 101.56,
+    "records_with_any_10db_line": 0,
+    "lines_10db_median": 0.0,
+    "coh_median": null,
+    "sk_15_17_median": 10.8505,
+    "sk_11_15_median": 5.7895,
+    "sk_15_17_gt_11_15": 68
+  }
+}

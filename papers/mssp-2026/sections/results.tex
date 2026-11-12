@@ -149,8 +149,48 @@ whether a robust selector avoids the valley, because both fail already at full r
 \end{itemize}
 
 \subsection{Replication on Paderborn}
-\todo[inline]{From E24: H1 (spike removal) and H2 (SES infogram) under the nested ruler, with the
-local ruler as secondary, and the selected bands.}
+\label{sec:res-paderborn}
+
+Fig.~\ref{fig:paderborn} gives the balanced order accuracy on Paderborn (E24): 1305 segments of 23
+bearings, under the nested ruler and, for the 7 bearings with a valid full-rate line, the local one.
+\begin{itemize}
+  \item \emph{There is no valley} at the factors tested. Under the nested ruler, the kurtogram
+  reaches 7.7\% at full rate and 16.1--19.2\% from $4\times$ to $16\times$.
+  \item \emph{The kurtogram is already captured at full rate.} It selects a band starting at 11~kHz
+  or above in 1147 of the 1305 segments (88\%), and none of them is a hit.
+  \begin{itemize}
+    \item The 15--17~kHz band is more impulsive than the 11--15~kHz band in all 68 readable records
+    (median spectral kurtosis 10.9 against 5.8).
+    \item The vibration spectrum shows no line at the 16~kHz PWM carrier or its sidebands, 10~dB
+    above the local median, in any record.
+    \item The capture is compatible with impulsive interference from the drive
+    \citep{smith2016emi}, but its source was not established.
+  \end{itemize}
+  \item \emph{Removing single-sample spikes changes little.} Before decimation the change is $+0.8$
+  to $+2.2$ points.
+  \begin{itemize}
+    \item The only budget that passed the pre-registered bootstrap was $8\times$, with Holm
+    $p = 0.0500$ at $B = 4000$. It fails with $B = 2\times10^{5}$ (Holm $p = 0.055$) and under an
+    exact sign-flip test stratified by race (Holm $p = 0.25$), with 6 bearings responding.
+    \item After decimation the change is $-1.0$ to $+0.7$ points.
+  \end{itemize}
+  \item \emph{The SES infogram is better than the kurtogram at 1/32,} by 3.1 points, with all 8
+  differing bearings in favour (exact sign-flip test, Holm $p = 0.016$), almost all of them on the
+  outer race. Its 8.8-point advantage at 1/4 does not pass (Holm $p = 0.20$).
+\end{itemize}
+
+Paderborn therefore does not test the Ottawa mechanism, which presupposes a selector that is right
+at full rate. Here the kurtogram is right at full rate in only 2 of the 23 bearings, 63\% in KA01
+and 98\% in KI01; in the others it reaches at most 12\%.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics{figures/fig_paderborn.pdf}
+  \caption{Balanced order accuracy against the decimation factor on Paderborn, under the nested
+  ruler (a) and the local ruler (b; 7 bearings). Shaded bands are 95\% intervals from a bootstrap
+  over bearings within each race. The top axis gives the effective rate.}
+  \label{fig:paderborn}
+\end{figure}
 
 \subsection{Can a benchmark detect a learned improvement?}
 \label{sec:res-power}
@@ -226,7 +266,13 @@ factors (E07, extended sweep to $160\times$, \texttt{E07/results/extended}).
 The wall is set by the search floor of the pipeline, not by the sampling rate itself, and the
 learned masks were therefore tested at budgets from 1/4 to 1/32, below it.
 
-\paragraph{Fault lines invisible at full rate}
-\todo[inline]{From E24: on Paderborn, the bearings whose fault line is not visible at full rate
-(the gate found 6 of 23 with a visible line in measurement 1). Report the full-rate accuracy split
-by visibility, which bounds what any arm can reach under the nested ruler.}
+\paragraph{A selector captured at full rate} On Paderborn, the kurtogram fails before any
+decimation: it is right at full rate in 2 of 23 bearings (Section~\ref{sec:res-paderborn}).
+\begin{itemize}
+  \item The fault line is visible at full rate in only 7 bearings, but visibility is measured in
+  the band that the kurtogram selects, which is the captured one.
+  \item The SES infogram reaches 17\% balanced accuracy on the other 16 bearings, 34\% on the outer
+  race, so the failure is partly the selector's, not only the signal's.
+  \item Under these conditions the classical pipeline cannot serve as the reference for a
+  decimation study, and the results on Paderborn are bounded by it.
+\end{itemize}
