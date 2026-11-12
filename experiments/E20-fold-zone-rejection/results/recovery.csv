@@ -1,0 +1,15 @@
+intervention,ruler,n,hits,hits_none,gain,loss,mcnemar_p,verdict,records_up,records_down,sign_test_p_records,hits_by_factor
+aaf_ideal,nested,36,27,6,21,0,9.54e-07,recupera,11,0,0.000977,1x:27 2x:27 3x:27 4x:27 5x:27 6x:25 8x:27
+aaf_ideal,local,35,31,6,25,0,5.96e-08,recupera,11,0,0.000977,1x:31 2x:31 3x:31 4x:31 5x:29 6x:28 8x:30
+despike,nested,36,28,6,22,0,4.77e-07,recupera,11,0,0.000977,1x:28 2x:28 3x:28 4x:28 5x:27 6x:24 8x:29
+despike,local,35,32,6,26,0,2.98e-08,recupera,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:30 6x:27 8x:32
+median3,nested,36,28,6,22,0,4.77e-07,recupera,11,0,0.000977,1x:28 2x:28 3x:28 4x:28 5x:25 6x:25 8x:28
+median3,local,35,32,6,26,0,2.98e-08,recupera,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:28 6x:28 8x:31
+stop_z1,nested,36,7,6,1,0,1.0,nao recupera,1,0,1.0,1x:27 2x:20 3x:4 4x:7 5x:3 6x:12 8x:25
+stop_z1,local,35,7,6,1,0,1.0,nao recupera,1,0,1.0,1x:31 2x:22 3x:4 4x:7 5x:3 6x:12 8x:28
+stop_z123,nested,36,27,6,21,0,9.54e-07,recupera,11,0,0.000977,1x:27 2x:28 3x:21 4x:27 5x:15 6x:23 8x:29
+stop_z123,local,35,31,6,25,0,5.96e-08,recupera,11,0,0.000977,1x:31 2x:32 3x:23 4x:31 5x:16 6x:26 8x:32
+stop_z2,nested,36,21,6,15,0,6.1e-05,recupera,11,0,0.000977,1x:27 2x:20 3x:4 4x:21 5x:12 6x:12 8x:26
+stop_z2,local,35,24,6,18,0,7.63e-06,recupera,11,0,0.000977,1x:31 2x:22 3x:4 4x:24 5x:13 6x:12 8x:29
+stop_z3,nested,36,21,6,15,0,6.1e-05,recupera,11,0,0.000977,1x:27 2x:28 3x:19 4x:21 5x:2 6x:24 8x:26
+stop_z3,local,35,24,6,18,0,7.63e-06,recupera,11,0,0.000977,1x:31 2x:32 3x:21 4x:24 5x:2 6x:27 8x:29

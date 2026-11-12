@@ -301,3 +301,14 @@ fazer. A pergunta aqui é se a mesma remoção, aplicada ao fluxo **já decimado
   - Vale para as duas réguas.
 - **Leitura:** se recuperar, a correção é realizável no nó, porque não precisa da taxa cheia.
 
+**Análise dos dois pré-registros acima** (escrita em 2026-11-12, antes de qualquer número das duas
+rodadas):
+- O script é `recovery.py <diretório>/metrics.csv`, que grava `recovery.csv` ao lado.
+- Ele aplica o critério nas duas réguas: a aninhada, que é a coluna `hit`, e a local, `hit_local`.
+- Também reporta o teste do sinal exato sobre os 12 registros da pista externa. Esse teste é
+  sensibilidade, fora do pré-registro, e responde ao limite de "Nível de segmento" acima.
+- Aplicado ao `results/` atual, o script reproduz a tabela da re-execução. `despike` em 4× fica em:
+  - 28/36 contra 6/36, com 22 a 0 nos pares discordantes, na régua aninhada (p = 4,8·10⁻⁷);
+  - 32/35 contra 6/35 na régua local (p = 3·10⁻⁸);
+  - 11 registros a 0 no teste do sinal (p = 0,001).
+
