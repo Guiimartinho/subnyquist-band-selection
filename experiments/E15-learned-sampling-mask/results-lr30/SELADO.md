@@ -13,3 +13,11 @@
   (convergência, margem, melhor época, épocas, lr e posições). Nenhum número de teste.
 - **Outro diagnóstico de treino, que motivou a regra de avaliabilidade da H2:** a máscara
   livre (`dec_livre`, `dec_livre_projetada`) saiu do ruído em 1/5, 1/5, 1/5 e 0/5 das divisões.
+- **Número de teste visto, por descuido, durante o acompanhamento.** As linhas de progresso do
+  log trazem acertos de teste por divisão. Às 22:33 UTC, duas delas foram exibidas: em 1/32,
+  na divisão de índice 1, `dec_multicoset_vb` com 8/12 e `dec_uniforme_treino` com 9/12 pela
+  régua local.
+  - Eram de baselines, e nenhuma da máscara aprendida.
+  - Todas as regras da rodada corrigida foram fixadas em código e commitadas antes de
+    qualquer número dela.
+  - Desde então, o acompanhamento extrai do log só a posição.
