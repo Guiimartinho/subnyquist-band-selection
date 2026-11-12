@@ -563,3 +563,45 @@ detectar pela regra da H1 um braço que seja de fato melhor que o baseline? Ela 
   - Cada teste usa 2000 reamostras, com semente fixa.
   - Antes, o bootstrap vetorizado é conferido contra o `cluster_bootstrap` do `run.py` nos dados
     reais.
+
+### Resultado da porta de poder (2026-11-12)
+
+- **Execução:** `power_gate.py`, cerca de 1 min de CPU. As saídas estão em `results/power_gate/`
+  (`power.csv`, `validation.json` e `baseline.json`).
+- **Validação do bootstrap vetorizado** contra o `hypotheses.csv` real: as diferenças pontuais são
+  idênticas, e os p ficam dentro do erro de Monte Carlo (maior desvio de 0,026, com 4000
+  reamostras de cada lado).
+
+Poder da H1, isto é, a fração das repetições em que a regra passa nas duas réguas:
+
+| desenho | regra | +5 pontos | +10 pontos | braço perfeito |
+|---|---|---|---|---|
+| D0 (como rodado) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
+| D1 (3 sementes) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
+| D2 (5 sementes) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
+| DK (cada registro testado uma vez) | otimista | 0,03 | 0,06 | 0,07 |
+| D3 (bootstrap por registro, inválido) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
+
+**Veredito pelo critério pré-registrado: a H1 não é testável no Ottawa.** Entre os desenhos
+válidos, o maior poder pela regra otimista com +5 pontos é de 0,03. O critério exigia 0,80.
+
+- **O limite é o número de erros do clássico.** `uniforme_treino` erra só de 3 a 9 dos 59 ou 60
+  segmentos de teste, conforme o orçamento e a régua, e todos na pista externa. A pista interna
+  não tem erro em nenhum orçamento.
+  - Pela régua local, em 1/4 e 1/8, os 3 erros estão em O-A (o único segmento válido do
+    aglomerado) e em O-B.
+- **Por que nem o braço perfeito passa em D0 a D2.**
+  - Na regra otimista, os 8 testes tomados como significativos ocupam os primeiros postos do Holm.
+  - Assim, o menor p contra `uniforme_treino` precisaria ficar abaixo de 0,05/4 = 0,0125.
+  - O braço perfeito chega, no máximo, a cerca de 0,02, pela régua aninhada.
+- **Mais sementes não mudam isso,** porque o baseline é determinístico. Testar cada registro uma
+  vez também não, porque continuam sendo poucos erros para corrigir.
+- **Nem a referência anticonservadora passa a regra completa.** É o D3, em que cada registro é um
+  aglomerado.
+
+**Consequência.**
+- A parte (b) do artigo não pode ser decidida no Ottawa.
+- A pergunta precisa de um conjunto em que o baseline erre o bastante, espalhado por aglomerados
+  independentes o bastante, para que um ganho de +5 pontos seja detectável.
+- Essa conta pode ser feita antes de treinar, porque a porta só precisa do estágio clássico, que
+  roda em CPU.
