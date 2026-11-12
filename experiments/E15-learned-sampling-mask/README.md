@@ -605,3 +605,47 @@ válidos, o maior poder pela regra otimista com +5 pontos é de 0,03. O critéri
   independentes o bastante, para que um ganho de +5 pontos seja detectável.
 - Essa conta pode ser feita antes de treinar, porque a porta só precisa do estágio clássico, que
   roda em CPU.
+
+## Porta de poder no Paderborn (pré-registro, 2026-11-12)
+
+Escrito antes de rodar, depois da ingestão e da checagem de adequação
+(`datasets/manifests/paderborn.yaml`). A pergunta é a mesma da porta do Ottawa: o conjunto
+consegue detectar, pela regra da H1, um braço de fato melhor que o baseline? Roda só em CPU, com
+`paderborn_gate.py` e `config/paderborn_gate.yaml`.
+
+- **Registros:** rolamento × ajuste, nos três ajustes de 1500 rpm. A medição 1 calibra a régua
+  aninhada, e as medições 2 a 20 são os segmentos de teste, de 4 s cada (100 voltas, 0,010 ordem
+  de resolução).
+- **Grupos e aglomerados:** a pista é o grupo, e o rolamento é o aglomerado do bootstrap.
+  - Pista externa: 12 rolamentos (7 artificiais e 5 reais).
+  - Pista interna: 11 rolamentos (5 artificiais e 6 reais).
+  - Ficam fora os combinados (KB), cuja família de ordem é ambígua, e os saudáveis.
+- **Divisões:** K-fold por rolamento, com 4 dobras estratificadas por pista. Cada rolamento é
+  testado uma vez, e nenhum aparece no treino e no teste da mesma dobra.
+- **Pipeline clássico:** o do E15, com quatro mudanças.
+  - **Tolerância de 0,025 ordem**, em vez de 0,06. A BPFO e a BPFI ficam a 0,054 das harmônicas 3
+    e 5 do eixo.
+  - **Busca da régua em ±1 % da nominal**, em vez de ±12 %, para excluir 3,0 e 5,0.
+  - **Teto do kurtograma no Nyquist efetivo.**
+  - **Guarda de 1,0 × 64 pontos por volta**, a mesma do CWRU no E15. Com 2,0, o fator 32 não
+    rodaria.
+- **Régua local:** a raia em taxa cheia do próprio segmento.
+  - Só vale se não encostar na borda da busca e se o pico, em ±0,015 ordem do centro, tiver pelo
+    menos 5 vezes a mediana da janela de ±7 % da nominal.
+  - Na checagem de adequação, as raias visíveis deram de 14 a 141, e as ausentes de 0,3 a 2,5.
+- **Régua aninhada:** a mediana das calibrações válidas da medição 1 dos registros fora do teste,
+  na mesma pista. Ela vale para todos os segmentos de teste, inclusive os de rolamento sem raia
+  visível.
+- **Baseline:** `uniforme_treino`, a melhor taxa uniforme até o orçamento, escolhida pela régua
+  local nos registros fora do teste.
+- **Porta:** a do Ottawa, com braços plantados a partir do baseline (+5 pontos, +10 pontos e
+  perfeito) e 1, 3 ou 5 sementes (D0, D1 e D2).
+  - Só a regra otimista: não há braço aprendido, então os 8 testes contra os baselines
+    aprendidos entram no Holm como significativos.
+  - São 200 repetições por desenho (20 para o perfeito) e 2000 reamostras por teste.
+- **Critério:** a H1 é testável no Paderborn se o poder para +5 pontos, nas duas réguas, for de
+  pelo menos 80 % em algum dos desenhos D0, D1 ou D2.
+  - Se for, o E15 roda no Paderborn, com os braços aprendidos e as correções da revisão
+    adversarial, depois de um pré-registro próprio.
+  - Se não for, a parte (b) sai do artigo.
+

@@ -1,0 +1,43 @@
+# E15: porta de poder no Paderborn (README, "Porta de poder no Paderborn (pre-registro)").
+# Pre-registro: escrito e commitado antes de rodar. Mudar depois de ver um numero o invalida.
+seed: 20261112
+data_dir: datasets/raw/paderborn
+# 1500 rpm: 4 s dao 100 voltas e resolucao de 0,010 ordem. O de 900 rpm (0,017) fica de fora,
+# porque a tolerancia de 0,025 seria so 1,5 raia.
+settings: [N15_M07_F10, N15_M01_F10, N15_M07_F04]
+# aglomerado = rolamento; pista = grupo. Os combinados (KB) ficam fora, porque a familia de
+# ordem e ambigua; os saudaveis nao entram na porta.
+outer: [KA01, KA03, KA05, KA06, KA07, KA08, KA09, KA04, KA15, KA16, KA22, KA30]
+inner: [KI01, KI03, KI05, KI07, KI08, KI04, KI14, KI16, KI17, KI18, KI21]
+calibration_measurement: 1           # regua aninhada: calibracao da medicao 1 de cada registro
+test_measurements: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+ceiling0_hz: null                    # teto do kurtograma = Nyquist efetivo
+budgets: [4, 8, 16, 32]
+factor_grid_max: 48
+# 2,0 (o do Ottawa) so deixaria rodar ate o fator 20 a 25 Hz de eixo e eliminaria 1/32; 1,0
+# e o que o E15 usa no CWRU pelo mesmo motivo (64 pontos por volta: fator <= 40)
+guard_points_per_rev_factor: 1.0
+# pipeline classico identico ao do E15 (config/base.yaml), com duas mudancas forcadas pela
+# geometria (BPFO e BPFI a 0,054 ordem das harmonicas 3 e 5 do eixo):
+min_samples: 4096
+kurtogram: {max_level: 4, f_min_hz: 500.0}
+samples_per_rev: 64
+order_min: 2.0
+tolerance_order: 0.025               # < metade de 0,054; 2,5 raias a 1500 rpm
+prior: {score_harmonics: 3, calibration_span: 0.01}   # +-1 %: exclui 3,0 e 5,0 da busca
+# regua local so vale se a raia for visivel em taxa cheia: pico em +-0,015 ordem do centro
+# refinado de pelo menos 5 vezes a mediana da janela de +-7 % da nominal. A checagem de
+# adequacao deu 14-141 nas raias visiveis e 0,3-2,5 nas ausentes (a harmonica chegou a 5,6
+# fora da busca de +-1 %).
+min_line_prominence: 5.0
+prominence_window: 0.07
+splits: {kind: kfold_bearing, n_folds: 4}
+power_gate:
+  effects: [5, 10, perfeito]
+  designs: {D0: 1, D1: 3, D2: 5}     # sementes do braco plantado
+  n_sim: 200
+  n_sim_perfect: 20
+  n_boot: 2000
+  alpha: 0.05
+  min_budgets: 2
+  criterion: {effect: 5, power: 0.80, rule: otimista}
