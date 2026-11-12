@@ -361,3 +361,76 @@ em taxa cheia, contra 27 do kurtograma.
 - A outra possibilidade é erro de implementação, apesar dos testes contra os valores do artigo.
 - Um infograma no domínio de ordem não foi pré-registrado e seria exploratório.
 
+### Revisão adversarial (`reviewer-2`, 2026-11-12): revisão maior
+
+O revisor recalculou de forma independente:
+- as 144 estimativas;
+- os pareamentos;
+- a proveniência: `run.py`, config, e o `source_sha256` 8491841f… sobre 32 arquivos;
+- as colunas `none` e `despike`, idênticas nas três rodadas.
+
+O efeito pré-registrado é real, mas a leitura acima exagerava.
+
+**Conferido por mim nos CSVs desta rodada:**
+- **Em 4×, a remoção depois de decimar empata com o teto de 12,5 kHz,** que também não exige a
+  taxa cheia.
+  - `despike_decimado` com teto de 25 kHz e `none` com teto de 12,5 kHz fazem 29/36 e 29/36 (régua
+    aninhada), com **0 pares discordantes**. Na régua local, 32/35 e 32/35, também com 0.
+  - Em 5×, o teto é melhor: 23 contra 29, −6/+0, p = 0,031; na régua local, p = 0,016.
+  - Em 6×, 25 contra 29 (p = 0,22).
+  - O teto só funciona porque a banda informativa (2,5–4,6 kHz) fica abaixo dele.
+- **Os dois seletores "robustos" falham já em taxa cheia:** infograma SES 7/36 e Gini 15/36, contra
+  27/36 do kurtograma. A rodada não decide se um seletor robusto evita o vale.
+
+**Calculado pelo revisor, sem script no repositório (exploratório até virar rodada):**
+- Uma **mediana de 3 no fluxo decimado** também dá 29/36 em 4×. O critério de "amostra isolada" não
+  é o que importa. Recortar a amplitude não recupera: 8/36 com 6 MAD e 5/36 com 10 MAD.
+- O efeito resiste à fase da decimação: os deslocamentos 0–3 dão 29, 29, 29 e 28, contra 6, 5, 5 e
+  4 do `none`.
+- Ao limiar: 5, 7 e 10 MAD dão 29/36, e 15, 20 e 30 MAD dão 23, 16 e 6.
+- **Na pista interna, o critério troca amostras dos impactos da falha,** e não picos de aquisição.
+  - As amostras trocadas ficam travadas em fase na ordem da falha: R ≈ 0,90, contra 0,18–0,39 no
+    95º percentil do nulo.
+  - A estimativa só muda em 0–2 segmentos.
+  - Em 6×, a proeminência da raia cai mais de 10 % em 7 de 36 segmentos.
+- **Na pista externa, as amostras trocadas são picos do registro bruto** (precisão mediana 1,0).
+  - O critério pega só parte dos picos que sobrevivem: 21,5 % em 4×, porque o MAD da segunda
+    diferença cresce 3,7×.
+  - Mesmo assim, o vale some.
+- **Infograma SES sem erro nas eq. 10–12,** mas com dois desvios não declarados: faltam a separação
+  determinística/aleatória (§4.4) e o pré-branqueamento (§4.5).
+  - Das 29 estimativas erradas em 1×, 17 param na ordem 2,0, que é `order_min`, e 11 em ~6.
+  - Calcular o SES em ordem sobe para 19/36, o que apoia em parte a hipótese da rotação variável.
+  - No CWRU 48k, com rotação constante, os quatro seletores fazem 33/33. Isso descarta erro
+    grosseiro, mas não discrimina.
+- **O Gini é capturado:** remover os picos o devolve à banda de taxa cheia.
+- **Novidade:**
+  - Não foi achada remoção de picos num fluxo de vibração decimado para proteger o seletor de banda.
+  - Há práticas vizinhas: *blanking* de pulsos depois do conversor em receptores, inclusive antes e
+    depois da decimação, e troca do pico pela média dos vizinhos em ressonância magnética.
+  - O mecanismo tem nome na teoria de amostragem: *noise folding* (Arias-Castro e Eldar, 2011).
+  - Como a mediana de 3 empata, não há método novo; há uma observação empírica.
+
+**O que o artigo pode afirmar:**
+- No Ottawa, em 4×, limpar o fluxo já decimado (picos isolados acima de 10 MAD) elevou o acerto da
+  pista externa de 6/36 para 29/36. Os 12 registros melhoraram (teste do sinal, p ≈ 5·10⁻⁴).
+- Uma mediana de 3 no fluxo decimado e o teto de busca de 12,5 kHz dão o mesmo acerto em 4×, e
+  nenhuma das três correções exige a taxa cheia. A mediana fica pendente da rodada de confirmação.
+- Na pista interna, o critério também troca amostras travadas em fase com a falha. A estimativa não
+  mudou, mas o critério não é seletivo para o artefato.
+- O Gini do envelope é capturado de 2× a 6×.
+- O infograma SES sem pré-branqueamento não é capturado, mas acerta 7/36 já em taxa cheia, e nenhum
+  dos dois decide se um seletor robusto evita o vale.
+- Tudo supõe amostrador ideal: decimação de um registro a 200 kS/s.
+
+**O que não pode:**
+- "correção realizável no nó";
+- "remove só os artefatos";
+- "os seletores robustos da literatura não resolvem a captura";
+- "o infograma é capturado";
+- "o infograma falha pela rotação variável", como fato;
+- "Gini robusto a impulsos";
+- "o vale some graças à remoção", em todos os fatores;
+- p por segmento como força da evidência; o teste por registro é o que vale;
+- "método novo" ou "primeira vez".
+
