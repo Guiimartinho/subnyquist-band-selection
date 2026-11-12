@@ -1,0 +1,5 @@
+intervention,ruler,n,hits,hits_none,gain,loss,mcnemar_p,verdict,records_up,records_down,sign_test_p_records,hits_by_factor
+despike_decimado,nested,36,29,6,23,0,2.38e-07,recupera,12,0,0.000488,1x:28 2x:29 3x:29 4x:29 5x:23 6x:25 8x:26
+despike_decimado,local,35,32,6,26,0,2.98e-08,recupera,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:25 6x:27 8x:29
+mediana3_decimado,nested,36,29,6,23,0,2.38e-07,recupera,12,0,0.000488,1x:28 2x:29 3x:29 4x:29 5x:27 6x:28 8x:27
+mediana3_decimado,local,35,32,6,26,0,2.98e-08,recupera,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:29 6x:30 8x:31

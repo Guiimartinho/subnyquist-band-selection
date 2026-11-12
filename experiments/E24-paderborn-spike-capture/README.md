@@ -73,6 +73,47 @@ A tolerância é de 0,025 ordem: a BPFO e a BPFI ficam a 0,054 das harmônicas 3
 - A banda escolhida por braço e fator, para mostrar para onde os picos levam o seletor.
 - Não há reconstrução de forma de onda, então a decomposição espaço-imagem/núcleo não se aplica.
 
-## Resultado
+## Resultado (2026-11-12)
 
-Preenchido depois de rodar.
+**Proveniência.**
+- Rodada base: `config/base.yaml`, commit `fb091b8`, das 14:13 às 20:52 UTC.
+- H3: `config/post_despike.yaml`, commit `6a95a72`, das 15:24 às 20:52 UTC, num checkout separado.
+- Os hashes de `run.py`, config, README e fonte (`8491841f…`) no manifest batem com esses commits.
+- São 69 registros e 1305 segmentos. A régua local cobre 7 rolamentos.
+
+**Vereditos pré-registrados** (a régua aninhada decide; Holm sobre os 4 orçamentos; α = 0,05):
+
+| hipótese | resultado (régua aninhada) | veredicto |
+|---|---|---|
+| H1, remover os picos antes de decimar | +2,1 pontos em 8× [0,15; 4,49], p de Holm = 0,04999 (4 × 50/4001); nos outros orçamentos, +0,8, +1,6 e +2,2, sem significância | **apoiada só em 8×, no limite** |
+| H2, infograma SES sem remover os picos | +3,1 pontos em 32× [0,95; 5,78], p de Holm = 0,001; em 4×, +8,8 [−0,1; 19,1], p de Holm = 0,08 | **apoiada em 32×** |
+| H3, remover os picos depois de decimar | de −1,0 a +0,7 ponto, nenhum significativo | **não apoiada** |
+
+Pela régua local (7 rolamentos), nenhuma das três passa.
+
+**Descritivo:**
+- **Não há vale.** A acurácia balanceada do kurtograma, pela régua aninhada, é de 7,7, 16,1, 18,6,
+  19,2 e 13,0 % em 1×, 4×, 8×, 16× e 32×. A pior é a da taxa cheia.
+- **A captura já acontece em taxa cheia.** O kurtograma escolhe 11,0–21,5 kHz em 909 segmentos,
+  justamente a faixa que contém o chaveamento de 16 kHz do inversor.
+  - Remover os picos antes de decimar não o tira dali: 350 segmentos continuam em 11,0–21,5 kHz,
+    e quase todos os outros ficam acima de 16 kHz.
+  - Sob decimação, a escolha vai para a banda mais baixa da busca, 0,5–1,1 kHz em 4× e 8×.
+- **Aritmética da dobra (hipótese, não testada).** A 64 kS/s, com os fatores 4, 8, 16 e 32, todo
+  múltiplo de 16 kHz cai exatamente em 0 Hz. As bandas laterais do chaveamento cairiam então no
+  fundo da faixa de busca.
+- **Visibilidade da raia.** Só 7 dos 23 rolamentos têm raia visível em algum segmento: KA01, KA06,
+  KA16, KI01, KI16, KI17 e KI18.
+  - A visibilidade é medida na banda que o kurtograma escolhe em taxa cheia, e essa banda está
+    capturada (`line_calibration`).
+  - Nos outros 16 rolamentos, o kurtograma não acerta nenhum segmento em taxa cheia pela régua
+    aninhada. O infograma SES acerta 19 % deles.
+  - Por isso, "sem raia visível" é em parte uma falha do seletor, e não só do sinal.
+
+**Leitura:**
+- O vale do Ottawa não se reproduz no Paderborn. Ali o seletor já é capturado em taxa cheia pela
+  faixa do inversor, que é o cenário de `smith2016emi`.
+- A remoção de picos de uma amostra muda pouco. A H1 passa no limite, com efeito pequeno, e não
+  sustenta que "a captura por picos se reproduz fora do Ottawa".
+- O infograma SES ajuda no Paderborn, ao contrário do Ottawa.
+- **Antes de entrar no artigo:** revisão adversarial.

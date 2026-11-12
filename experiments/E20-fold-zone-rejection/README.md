@@ -450,3 +450,19 @@ commitado e de um `metrics.csv` no formato do E20.
 - **Leitura que este README já assume:** se a mediana empatar, o critério de "amostra isolada" não
   é necessário, e a correção é uma limpeza simples do fluxo decimado, sem método novo.
 
+### Resultado da mediana de 3 no fluxo decimado (2026-11-12)
+
+- **Proveniência.** A rodada foi do checkout separado `~/snq/post2`, no commit `e5ceb4e`.
+  - Os hashes de `run.py` e config do manifest batem com o commit.
+  - O controle do E07 bate exatamente.
+- **Critério** (`results-post-median/recovery.csv`). `mediana3_decimado` em 4× **recupera** nas duas
+  réguas:
+  - régua aninhada: 29/36 contra 6/36, com +23/−0 (p = 2,4·10⁻⁷);
+  - régua local: 32/35 (p = 3·10⁻⁸);
+  - por registro: 12 a 0 (p = 0,0005).
+  - Confere com a reanálise do revisor.
+- **Nos outros fatores** (régua aninhada): 28, 29, 29, 29, 27, 28 e 27 de 1× a 8×. A mediana empata
+  com a remoção de picos isolados até 4× e fica melhor de 5× a 8×, onde aquela faz 23, 25 e 26.
+- **Leitura:** o critério de "amostra isolada" não é necessário. A correção é uma limpeza simples
+  do fluxo decimado, e não um método novo.
+
