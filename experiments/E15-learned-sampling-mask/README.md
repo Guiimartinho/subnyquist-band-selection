@@ -519,3 +519,47 @@ pré-registrada.
    - um braço que parte da melhor uniforme (`init: uniform`, com L = 4 × o fator escolhido);
    - o mesmo orçamento de treino para todos os braços.
 4. **Braço adaptativo como primário pré-registrado,** com controle pareado. Depende de 2 e 3.
+
+## Porta de poder (pré-registro, 2026-11-12)
+
+Escrito antes de rodar. A porta responde a uma pergunta: o Ottawa consegue, em algum desenho,
+detectar pela regra da H1 um braço que seja de fato melhor que o baseline? Ela roda só em CPU, com
+`power_gate.py`, sobre o `metrics.csv` da rodada decisiva.
+
+- **Braço plantado.**
+  - Parte das linhas de `uniforme_treino`. Cada segmento em que ele erra vira acerto com
+    probabilidade q, com o mesmo sorteio nas duas réguas. Onde ele acerta, o plantado também
+    acerta.
+  - O q de cada (orçamento, régua) produz o efeito pedido em acurácia balanceada. Quando o teto não
+    comporta o efeito, o q para no braço perfeito (q = 1).
+- **Efeitos:** +5 pontos (o que decide), +10 pontos e o braço perfeito.
+- **Desenhos:**
+  - **D0:** como foi rodado, com 5 divisões de Monte Carlo e 1 semente.
+  - **D1 e D2:** com 3 e 5 sementes, emuladas como sorteios independentes do braço plantado e
+    tiradas em média por (divisão, registro).
+  - **DK:** cada registro testado uma vez, em 4 dobras estratificadas por pista, com 5 sementes.
+    - A grade clássica não fica em cache, então o baseline é sintético.
+    - Em cada pista, ele erra cada segmento com a taxa média de erro observada, o que espalha os
+      erros por todos os aglomerados.
+  - **D3, só como referência anticonservadora:** D2 com bootstrap por registro em vez de por
+    aglomerado.
+    - Não é um desenho válido para o artigo, porque registros da mesma condição × cenário não são
+      independentes.
+    - Serve para medir quanto o aglomerado limita o poder.
+- **Regras de decisão:**
+  - **Pré-registrada:** a da H1, com os três baselines e Holm sobre os 12 testes de cada régua. Vale
+    em D0 a D3.
+  - **Otimista:** só o teste contra `uniforme_treino`. Os 8 testes contra os baselines aprendidos
+    entram no Holm como significativos (p = 0). Vale em todos os desenhos e, no DK, é a única.
+- **Otimismo deliberado.** Os baselines aprendidos ficam fixos, sem ruído de semente, e o plantado
+  nunca piora. No DK, os erros do clássico ficam espalhados do jeito mais favorável ao teste. Por
+  isso um "não" é conclusivo, e um "sim" não prova que um desenho real funcione.
+- **Critério:** a H1 é testável no Ottawa se, em algum dos desenhos D0, D1, D2 ou DK, o poder pela
+  regra otimista para +5 pontos for de pelo menos 80 %. Se não for, a H1 não é testável no Ottawa,
+  e a parte (b) precisa de outro conjunto ou sai do artigo.
+- **Simulação:**
+  - São 200 repetições por desenho e efeito. O braço perfeito, que fora do DK só varia pelo
+    bootstrap, tem 20.
+  - Cada teste usa 2000 reamostras, com semente fixa.
+  - Antes, o bootstrap vetorizado é conferido contra o `cluster_bootstrap` do `run.py` nos dados
+    reais.
