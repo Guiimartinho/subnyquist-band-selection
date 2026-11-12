@@ -28,8 +28,8 @@ SEG, N_SEG, PPR = 500_000, 3, 1024  # os segmentos do E20
 FACTORS = [1, 2, 3, 4, 5, 6, 8]
 CEILING_HZ, F_MIN_HZ, MAX_LEVEL = 25000.0, 500.0, 3
 NOMINAL = {"BPFO": 4.5 * (1 - 0.206), "BPFI": 4.5 * (1 + 0.206)}  # 9 esferas, d/D cos = 0,206
-HARMONICS = (1, 2, 3)
-W_SEARCH, W_LOCAL = 0.02, 0.07
+HARMONICS = (1, 2)  # revisão de 2026-11-12: com ±12 %, 3·BPFO sobreporia 2·BPFI
+W_SEARCH = W_LOCAL = 0.12  # o span de calibração do Ottawa no E07 e no E20
 FALSE_ALARM = 0.05
 TRUE_FAULT = {"I": "BPFI", "O": "BPFO", "H": "none"}
 
@@ -137,7 +137,7 @@ def main() -> int:
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
         for r in pool.map(task, names):
             rows += r
-    out = EXP / "results-pilot"
+    out = EXP / "results-pilot-w12"
     out.mkdir(parents=True, exist_ok=True)
     with (out / "metrics.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))

@@ -46,6 +46,29 @@ O piloto decide se vale um pré-registro. Os números dele não vão ao artigo c
   - o kurtograma cego do E20 (`results/metrics.csv`, braço `none`, teto de 25 kHz, régua
     aninhada) nos mesmos segmentos.
 
-## Resultado do piloto
+## Resultado do piloto, primeira rodada (janela de ±2 %, `results-pilot/`)
 
-Preenchido depois de rodar.
+| fator | guiado: externa | guiado: interna | guiado: sãos corretos | cego (E20): externa | cego (E20): interna |
+|---|---|---|---|---|---|
+| 1× | 0 % | 100 % | 94 % | 75 % | 97 % |
+| 4× | 0 % | 100 % | 94 % | 17 % | 97 % |
+| 8× | 0 % | 100 % | 94 % | 69 % | 100 % |
+
+**Por que a pista externa fica em 0 %, até em 1×.**
+- A BPFO real do Ottawa fica 4 % abaixo da nominal: a mediana da régua aninhada é 3,432, contra
+  3,573.
+- Na régua local, ela vai de 3,33 a 3,79, porque a raia deriva com a rotação.
+- A janela de ±2 % nunca a alcança, e o escore da pista externa fica no nível dos sãos (mediana de
+  3,2, contra 3,4).
+- Na pista interna, a BPFI real fica a 0,2 % da nominal, e o acerto é de 100 %.
+- **Foi erro do desenho, e não um efeito da decimação.** O E07 e o E20 calibram o Ottawa em ±12 %
+  justamente por essa incerteza.
+
+## Revisão do piloto, segunda rodada (2026-11-12, depois da primeira; `results-pilot-w12/`)
+
+- **Janela:** ±12 % em torno de cada ordem candidata, com o pico e a mediana na mesma janela. É o
+  span de calibração do Ottawa no E07 e no E20.
+- **Harmônicas:** só 1 e 2. Com a janela larga, 3·BPFO sobreporia 2·BPFI.
+- **O resto não muda,** inclusive o limiar nos sãos.
+- A revisão foi feita depois de ver a primeira rodada. Ela corrige um erro de desenho conhecido de
+  antemão, mas é um piloto exploratório e assim deve ser lido.
