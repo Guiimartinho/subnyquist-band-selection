@@ -111,9 +111,11 @@ def line_calibration(x, v, nominal: float, cfg: dict) -> dict:
     return {"center": float(r.center), "ok": bool(ok), "prominence": round(prom, 3)}
 
 
-def estimate(x, v, factor: int, selector: str, cfg: dict):
+def estimate(x, v, factor: int, selector: str, cfg: dict, post_despike: bool = False):
     """Pipeline do E07/E22 num fator, com o seletor do braço. Devolve (ordem, banda) ou None."""
     xd, vd = undersample(x, factor), undersample(v, factor)
+    if post_despike:  # no fluxo já decimado: realizável no nó
+        xd = despike(xd, float(cfg["despike"]["k_mad"]))
     fs_eff = FS / factor
     guard = float(cfg["guard_points_per_rev_factor"]) * int(cfg["samples_per_rev"])
     if (
@@ -169,7 +171,9 @@ def record_task(task: tuple[dict, str, str]) -> dict:
         for arm, spec in cfg["arms"].items():
             xa = xs[bool(spec["despike"])]
             for f in (int(f) for f in cfg["factors"]):
-                out["est"][(n, arm, f)] = estimate(xa, v, f, spec["selector"], cfg)
+                out["est"][(n, arm, f)] = estimate(
+                    xa, v, f, spec["selector"], cfg, bool(spec.get("despike_after", False))
+                )
     if out["calib"] is None:
         out["calib"] = {"center": math.nan, "ok": False, "prominence": math.nan}
     return out

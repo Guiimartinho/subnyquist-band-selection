@@ -1,0 +1,68 @@
+# E20, remocao de picos no fluxo ja decimado (pre-registro no README, 'Remocao depois de
+# decimar', 2026-11-12). Derivado de config/base.yaml; so mudam os bracos.
+seed: 20261110
+data_dir: datasets/raw/ottawa
+conditions:
+- I
+- O
+scenarios:
+- A
+- B
+- C
+- D
+trials:
+- 1
+- 2
+- 3
+segment_samples: 500000
+segments_per_record: 3
+min_samples: 4096
+pulses_per_rev: 1024
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+nominal:
+  n_elements: 9
+  geom_ratio: 0.206
+prior:
+  score_harmonics: 3
+  calibration_span: 0.12
+tolerance_order: 0.06
+samples_per_rev: 64
+order_min: 2.0
+calibration_ceiling_hz: 25000.0
+sweep:
+  undersampling_factor:
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 8
+  search_ceiling_hz:
+  - 25000.0
+  - 12500.0
+interventions:
+  none:
+    kind: none
+  despike:
+    kind: despike
+    k_mad: 10.0
+  despike_decimado:
+    kind: none
+    post: despike
+    k_mad: 10.0
+analysis:
+  recovery_hits: 20
+  no_recovery_hits: 10
+  alpha: 0.01
+  e07_control_hits:
+    1: 62
+    2: 55
+    4: 41
+    8: 61
+compute:
+  workers: 30
+output:
+  results_dir: results-post-despike

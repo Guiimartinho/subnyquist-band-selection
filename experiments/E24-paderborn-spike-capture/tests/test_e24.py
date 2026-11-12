@@ -39,3 +39,14 @@ def test_cluster_test_detects_a_consistent_gain_and_not_a_null():
 
 def test_holm():
     assert e24.holm([0.01, 0.04, 0.03]) == pytest.approx([0.03, 0.06, 0.06])
+
+
+def test_post_decimation_despike_cleans_spikes_that_survive_decimation():
+    """H3: um pico que cai numa amostra mantida continua isolado no fluxo decimado."""
+    rng = np.random.default_rng(3)
+    x = rng.normal(size=40_000)
+    x[np.arange(400, 39_600, 1600)] += 30.0  # todos em múltiplos de 4: sobrevivem a 4x
+    xd = x[::4]
+    y = e24.despike(xd)
+    assert np.max(np.abs(y)) < 8.0
+    assert np.max(np.abs(xd)) > 25.0

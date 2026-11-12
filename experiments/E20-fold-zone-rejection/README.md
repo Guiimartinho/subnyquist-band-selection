@@ -283,3 +283,21 @@ impulsos evita o vale de 4× **sem** remover os picos?
   - Se não recuperar, a remoção dos picos antes de decimar continua necessária, e os seletores
     robustos da literatura não resolvem a captura sob decimação pura.
 
+## Remoção depois de decimar (pré-registro, 2026-11-12)
+
+Escrito antes de rodar. O braço `despike` remove os picos em taxa cheia, o que o nó não pode
+fazer. A pergunta aqui é se a mesma remoção, aplicada ao fluxo **já decimado**, desfaz o vale.
+
+- **O que muda:** só o momento da remoção.
+  - Um pico de uma amostra em taxa cheia só sobrevive à decimação se cair numa amostra mantida.
+  - Se cair, continua isolado no fluxo decimado.
+  - O critério é o mesmo do E20 (10 MAD, vizinhos opostos e menores que 0,8 vez), calculado na
+    taxa efetiva.
+- **Braços** (`config/post_despike.yaml`): `none` e `despike` repetem os do E20, e o novo é
+  `despike_decimado`.
+- **Critério:** o da recuperação do E20, na pista externa, em 4× e com teto de 25 kHz.
+  - Recupera: pelo menos 20 de 36 acertos e McNemar exato pareado contra `none` com p < 0,01.
+  - Não recupera: até 10 de 36.
+  - Vale para as duas réguas.
+- **Leitura:** se recuperar, a correção é realizável no nó, porque não precisa da taxa cheia.
+

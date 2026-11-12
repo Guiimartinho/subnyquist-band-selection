@@ -18,6 +18,10 @@ Escrito e commitado antes de rodar. Mudar depois de ver um número invalida o pr
   balanceada de ordem do pipeline clássico em pelo menos um dos orçamentos 1/4, 1/8, 1/16 e 1/32.
 - **H2 (seletor robusto).** Trocar o kurtograma pelo infograma SES (Antoni 2016), sem remover os
   picos, aumenta a mesma acurácia em pelo menos um desses orçamentos.
+- **H3 (remoção realizável; pré-registrada em 2026-11-12, antes de qualquer número do E24).**
+  Remover os picos do fluxo **já decimado**, pelo mesmo critério, aumenta a acurácia do
+  pipeline clássico em pelo menos um dos orçamentos. É o `config/post_despike.yaml`, que tem o
+  mesmo bootstrap e o mesmo Holm. Se a H3 valer, a correção não exige a taxa cheia.
 
 ## O que refutaria
 

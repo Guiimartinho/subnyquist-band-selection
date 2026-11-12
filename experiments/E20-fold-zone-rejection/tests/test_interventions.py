@@ -98,3 +98,18 @@ def test_analyse_selector_default_is_the_plain_kurtogram_and_robust_ones_run():
     for sel in ("ses_negentropy", "gini"):
         k, spec = e20.analyse(x, fs, spd, cfg, 25_000.0, sel)
         assert k.f_hi_hz <= 25_000.0 and spec.magnitude.size > 0
+
+
+def test_post_despike_config_keeps_the_signal_before_decimation():
+    """O braço depois de decimar não mexe no sinal em taxa cheia (kind none)."""
+    import yaml
+
+    cfg = yaml.safe_load(
+        (Path(__file__).resolve().parents[1] / "config" / "post_despike.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    spec = cfg["interventions"]["despike_decimado"]
+    x = np.random.default_rng(0).normal(size=1000)
+    assert np.array_equal(e20.apply_intervention(x, FS, spec, 4), x)
+    assert spec["post"] == "despike"
