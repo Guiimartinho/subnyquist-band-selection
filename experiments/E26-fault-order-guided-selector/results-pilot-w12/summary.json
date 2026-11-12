@@ -1,0 +1,83 @@
+{
+  "guided": {
+    "1x": {
+      "threshold": 7.018,
+      "outer_pct": 100.0,
+      "inner_pct": 100.0,
+      "balanced_pct": 100.0,
+      "healthy_correct_pct": 94.4
+    },
+    "2x": {
+      "threshold": 11.172,
+      "outer_pct": 72.2,
+      "inner_pct": 100.0,
+      "balanced_pct": 86.1,
+      "healthy_correct_pct": 94.4
+    },
+    "3x": {
+      "threshold": 6.16,
+      "outer_pct": 100.0,
+      "inner_pct": 100.0,
+      "balanced_pct": 100.0,
+      "healthy_correct_pct": 94.4
+    },
+    "4x": {
+      "threshold": 14.333,
+      "outer_pct": 11.1,
+      "inner_pct": 100.0,
+      "balanced_pct": 55.6,
+      "healthy_correct_pct": 94.4
+    },
+    "5x": {
+      "threshold": 14.879,
+      "outer_pct": 5.6,
+      "inner_pct": 100.0,
+      "balanced_pct": 52.8,
+      "healthy_correct_pct": 94.4
+    },
+    "6x": {
+      "threshold": 8.67,
+      "outer_pct": 97.2,
+      "inner_pct": 100.0,
+      "balanced_pct": 98.6,
+      "healthy_correct_pct": 94.4
+    },
+    "8x": {
+      "threshold": 8.367,
+      "outer_pct": 97.2,
+      "inner_pct": 100.0,
+      "balanced_pct": 98.6,
+      "healthy_correct_pct": 94.4
+    }
+  },
+  "e20_blind_kurtogram": {
+    "1x": {
+      "outer_pct": 75.0,
+      "inner_pct": 97.2
+    },
+    "2x": {
+      "outer_pct": 55.6,
+      "inner_pct": 97.2
+    },
+    "3x": {
+      "outer_pct": 11.1,
+      "inner_pct": 100.0
+    },
+    "4x": {
+      "outer_pct": 16.7,
+      "inner_pct": 97.2
+    },
+    "5x": {
+      "outer_pct": 5.6,
+      "inner_pct": 97.2
+    },
+    "6x": {
+      "outer_pct": 30.6,
+      "inner_pct": 100.0
+    },
+    "8x": {
+      "outer_pct": 69.4,
+      "inner_pct": 100.0
+    }
+  }
+}

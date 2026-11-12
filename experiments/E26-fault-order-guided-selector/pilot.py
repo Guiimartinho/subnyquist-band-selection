@@ -66,7 +66,18 @@ def scores(x: np.ndarray, v: np.ndarray, fs_hz: float) -> dict[str, tuple[float,
     return best
 
 
-def task(name: str) -> list[dict]:
+def median3(x: np.ndarray) -> np.ndarray:
+    """Mediana de 3 amostras (a do E20), aplicada ao fluxo já decimado."""
+    y = x.copy()
+    y[1:-1] = np.median(np.vstack([x[:-2], x[1:-1], x[2:]]), axis=0)
+    return y
+
+
+CLEAN = {"none": lambda x: x, "median3": median3}
+
+
+def task(job) -> list[dict]:
+    name, clean = job
     rec = load(name, RAW)
     speed = rec.speed_profile_hz(PPR)
     rows = []
@@ -74,7 +85,7 @@ def task(name: str) -> list[dict]:
         a, b = seg * SEG, (seg + 1) * SEG
         x, v = rec.vibration[a:b], speed[a:b]
         for m in FACTORS:
-            sc = scores(undersample(x, m), undersample(v, m), FS_HZ / m)
+            sc = scores(CLEAN[clean](undersample(x, m)), undersample(v, m), FS_HZ / m)
             rows.append(
                 {
                     "record": name.replace(".mat", ""),
@@ -131,13 +142,14 @@ def e20_blind() -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--clean", choices=sorted(CLEAN), default="none")
     args = ap.parse_args()
     names = record_names(("H", "I", "O"), ("A", "B", "C", "D"), (1, 2, 3))
     rows: list[dict] = []
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        for r in pool.map(task, names):
+        for r in pool.map(task, [(n, args.clean) for n in names]):
             rows += r
-    out = EXP / "results-pilot-w12"
+    out = EXP / ("results-pilot-w12" + ("" if args.clean == "none" else f"-{args.clean}"))
     out.mkdir(parents=True, exist_ok=True)
     with (out / "metrics.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]))

@@ -72,3 +72,35 @@ O piloto decide se vale um pré-registro. Os números dele não vão ao artigo c
 - **O resto não muda,** inclusive o limiar nos sãos.
 - A revisão foi feita depois de ver a primeira rodada. Ela corrige um erro de desenho conhecido de
   antemão, mas é um piloto exploratório e assim deve ser lido.
+
+## Resultado da segunda rodada (janela de ±12 %, `results-pilot-w12/`)
+
+| fator | guiado: externa | guiado: interna | limiar (sãos) | cego (E20): externa |
+|---|---|---|---|---|
+| 1× | 100 % | 100 % | 7,0 | 75 % |
+| 2× | 72 % | 100 % | 11,2 | 56 % |
+| 3× | **100 %** | 100 % | 6,2 | 11 % |
+| 4× | 11 % | 100 % | **14,3** | 17 % |
+| 5× | 6 % | 100 % | **14,9** | 6 % |
+| 6× | **97 %** | 100 % | 8,7 | 31 % |
+| 8× | 97 % | 100 % | 8,4 | 69 % |
+
+Os sãos ficam corretos em 94 % dos segmentos, em todos os fatores.
+
+**Por que 4× e 5× falham.**
+- Nos registros **sãos**, aparecem raias fortes dentro da janela da BPFI, em ordens de 5,63 a 5,84,
+  com a 2ª harmônica em 11,26–11,67.
+- Elas surgem nas bandas altas (12,7–25 kHz), justamente onde os picos dobrados caem, e não em
+  ordens inteiras. Mudam de registro para registro.
+- Isso é compatível com um trem de picos de taxa fixa em Hz, que, sob rotação variável, aparece em
+  ordens diferentes.
+- O limiar calibrado nos sãos sobe, e a pista externa deixa de passar.
+- É o modo de falha esperado do seletor guiado: um interferente cíclico perto de uma ordem
+  candidata.
+
+## Terceira variante (2026-11-12): mediana de 3 no fluxo decimado antes do seletor guiado
+
+É a mesma janela de ±12 %, com a correção do E20 aplicada antes. Testa se os picos produzem as
+raias falsas dos sãos (`pilot.py --clean median3`, `results-pilot-w12-median3/`). Também é
+exploratória e foi decidida depois de ver a segunda rodada.
+
