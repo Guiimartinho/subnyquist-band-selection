@@ -1,13 +1,118 @@
 name: paderborn
 full_name: Paderborn University KAt-DataCenter bearing dataset
-url: https://mb.uni-paderborn.de/kat/forschung/kat-datacenter
-license: conferir termos antes de redistribuir
-fs_hz: [64000]
-channels: [vibration, motor_current, temperature]
+url: https://mb.uni-paderborn.de/en/kat/research/bearing-datacenter
+download_url: https://groups.uni-paderborn.de/kat/BearingDataCenter/
+license: >
+  CC BY-NC 4.0 (conferido em 2026-11-12 na pagina oficial): "The data is licensed under the
+  Creative Commons Attribution-NonCommercial 4.0 International Licence." "Non-commercial
+  academic use of the data is permitted, but a citation of the source is required."
+  Dado bruto nao e versionado nem redistribuido.
+citation: >
+  Christian Lessmeier et al., KAt-DataCenter: mb.uni-paderborn.de/en/kat/research/bearing-datacenter,
+  Chair of Design and Drive Technology, Paderborn University. Artigo: Lessmeier, Kimotho, Zimmer
+  e Sextro, "Condition Monitoring of Bearing Damage in Electromechanical Drive Systems by Using
+  Motor Current Signals of Electric Motors: A Benchmark Data Set for Data-Driven
+  Classification", European Conference of the PHM Society 2016 (PHME16).
+fs_hz: [64000]  # vibracao e correntes; inferida do arquivo (256001 amostras em 4 s)
+channels:
+  vibration_1: {raster: HostService, fs_hz: 64000, note: acelerometro PCB 336C04 no adaptador do modulo}
+  phase_current_1: {raster: HostService, fs_hz: 64000}
+  phase_current_2: {raster: HostService, fs_hz: 64000}
+  speed: {raster: Mech_4kHz, fs_hz: 4000, unit: rpm}
+  force: {raster: Mech_4kHz, fs_hz: 4000, unit: N}
+  torque: {raster: Mech_4kHz, fs_hz: 4000, unit: Nm}
+  temp_2_bearing_module: {raster: Temp_1Hz, fs_hz: 1}
+structure: >
+  <codigo>/<ajuste>_<codigo>_<n>.mat, n = 1..20, MATLAB 5. Variavel unica com o nome do
+  arquivo; struct com Info, X (eixos de tempo por raster), Y (sinais: Name, Raster, Data, ...),
+  Description. Cada pasta traz tambem a ficha <codigo>.pdf do rolamento.
+operating_conditions:  # pagina "operating conditions", conferida em 2026-11-12
+  N15_M07_F10: {rpm: 1500, torque_nm: 0.7, radial_force_n: 1000}
+  N09_M07_F10: {rpm: 900, torque_nm: 0.7, radial_force_n: 1000}
+  N15_M01_F10: {rpm: 1500, torque_nm: 0.1, radial_force_n: 1000}
+  N15_M07_F04: {rpm: 1500, torque_nm: 0.7, radial_force_n: 400}
+measurements: 20 por ajuste, 4 s cada; temperatura mantida em ~45-50 C
+bearing:
+  type: rolamento de esferas 6203 (FAG, MTK e IBU/IBB; PHME16, secao 3)
+  manufacturer_spread: >
+    "the characteristic kinematic frequencies do not vary more than 1-2%" (PHME16, secao 3).
+geometry:  # PHME16, tabela 1 (FAG)
+  n_elements: 8
+  ball_diameter_mm: 6.75
+  pitch_diameter_mm: 28.55
+  contact_angle_deg: 0
+  computed_orders: {BPFO: 3.0543, BPFI: 4.9457}  # 4 (1 -+ d/D), d/D = 0,23643
+  measured_orders: >
+    Checagem de 2026-11-12 (datasets/scripts/paderborn_suitability.py, N15_M07_F10, taxa cheia):
+    KA01 3,060; KI01 e KI18 4,931. Dentro de 0,2-0,3 % das calculadas.
+bearings:  # PHME16, tabelas 4 e 5; pagina "data sets and download" (6 saudaveis, 12 artificiais, 14 reais)
+  healthy: [K001, K002, K003, K004, K005, K006]
+  artificial:
+    outer: {KA01: [1, EDM], KA03: [2, engraver], KA05: [1, engraver], KA06: [2, engraver],
+            KA07: [1, drilling], KA08: [2, drilling], KA09: [2, drilling]}
+    inner: {KI01: [1, EDM], KI03: [1, engraver], KI05: [1, engraver], KI07: [2, engraver],
+            KI08: [2, engraver]}
+  real:  # ensaio de vida acelerado; [nivel, sintoma, combinacao]
+    outer: {KA04: [1, pitting, S], KA15: [1, indentations, S], KA16: [2, pitting, R],
+            KA22: [1, pitting, S], KA30: [1, indentations, R]}
+    inner: {KI04: [1, pitting, M], KI14: [1, pitting, M], KI16: [3, pitting, S],
+            KI17: [1, pitting, R], KI18: [2, pitting, S], KI21: [1, pitting, S]}
+    combined: {KB23: [2, pitting, "IR (+OR)"], KB24: [3, pitting, "IR (+OR)"],
+               KB27: [1, indentations, "OR + IR"]}
+rig: >
+  PMSM de 425 W, 4 pares de polos, acionado por inversor KEB Combivert com chaveamento de
+  16 kHz (PHME16, secao 4.1). As correntes passam por filtro passa-baixas de 25 kHz antes de
+  amostrar a 64 kHz.
 notes: |
-  Melhor rotulagem disponivel, com danos reais e artificiais separados.
-  Inclui corrente do motor - e o eixo magnetico da triade do projeto, permitindo
-  testar a mesma metodologia em outra modalidade sem trocar de bancada.
+  INGERIDO EM 2026-11-12 no servidor remoto, em datasets/raw/paderborn (fora do git): 32
+  arquivos, 2560 .mat, 21 GB extraidos. Os .rar sao RAR4; o 7z do servidor nao tem o codec, e
+  a extracao usa unrar-cffi (datasets/scripts/extract_rar.py).
+  readme_versions.txt: "2016-07-13: update of profile of bearing damage KI03 (correction of
+  mistakes in description of damage geometry)".
+  Checagem de adequacao (2026-11-12, taxa cheia, kurtograma nivel 4 com piso de 500 Hz):
+  - A raia de falha aparece e se separa da harmonica do eixo em KA01 (EDM), KI01 (EDM) e KI18
+    (real, nivel 2). Nao aparece em KA05, KA07, KI05 (artificiais nivel 1), KA04, KA15, KA22,
+    KI04, KI14 (reais nivel 1).
+  - Nos reais de pista externa, o pico da janela da BPFO e a 3a harmonica do eixo (2,98-3,01).
+    A BPFO fica a 0,054 ordem de 3,0 e a BPFI a 0,054 ordem de 5,0: com a tolerancia de 0,06
+    ordem do Ottawa, travar na harmonica contaria como acerto. Neste conjunto a tolerancia tem de
+    ficar abaixo de ~0,027 ordem. A resolucao de 4 s e 0,010 ordem a 1500 rpm e 0,017 a 900 rpm.
+  - O kurtograma escolhe 11-21,5 kHz na maioria dos registros sem raia, faixa que contem o
+    chaveamento de 16 kHz do inversor. Hipotese para a Parte 1 do ADR 0006, nao testada.
+archives:  # sha256 dos arquivos baixados em 2026-11-12 (a pagina nao publica checksum); ver paderborn.sha256
+  K001.rar: {bytes: 173881721, sha256: 0f119ebdb28fb2f4d9fac1beb1319429f63f7ae1256c23c872f280f3560918e5}
+  K002.rar: {bytes: 161981588, sha256: 1040da8b74d169c4e8c8545afa335d7a3a320bcaf36a471250c3e434bc4caffd}
+  K003.rar: {bytes: 173194389, sha256: d7d1edf6047fac088efe118198abd0856c5280dd8653496fbac9a5d877180f1e}
+  K004.rar: {bytes: 163337851, sha256: 97242542046cf3ce286c13e12d8df11f618a53365efe592750e2047256345333}
+  K005.rar: {bytes: 167366765, sha256: 2faf0ee4ee66055bcc066e5b6d9ed9fc44638b2c1ea397a279261103aa83caaa}
+  K006.rar: {bytes: 175997605, sha256: 250b8e0ef18082163ae4003cd7f50e6daa3061b3a095e226378910da55b78b94}
+  KA01.rar: {bytes: 166571438, sha256: 6a6be1e11132730cc6f560d51eacedcbfd5fd74b829e9d8d3728c6c8a7cd4c0e}
+  KA03.rar: {bytes: 176196084, sha256: 21f188899e46183a29752e5dbc830e3132e0fee4d7eb5507450d1730a5b264b5}
+  KA04.rar: {bytes: 180920703, sha256: 6fc317157e2cd4cb55bc54d6fac1b1753f8ab31abcccd1ac68cbfb78e5e8299d}
+  KA05.rar: {bytes: 163644977, sha256: 880ad18fae8f1deef2c99643cb74e2dbd284cdf1fe490caff9418717729c4dd1}
+  KA06.rar: {bytes: 164139086, sha256: a0f3e8b167b1a1cee63f904566dff6ee8b0d905ffb67796809dbfc7f279c5f60}
+  KA07.rar: {bytes: 160346192, sha256: 0c081e1fe273d17cf26f052bd99c742fc9a1fcbbc76667b4c0c394f3a8aaf95b}
+  KA08.rar: {bytes: 169188540, sha256: aa5c16a379859f67018e23818d671bd12a5c820eb75d02d3a037a16b8a06fd7f}
+  KA09.rar: {bytes: 171467156, sha256: 6a4fb9b05c95324d9f4ee38d3855106dba21052309f25c30c866dbae9305ce9b}
+  KA15.rar: {bytes: 164268273, sha256: 2914d003a7a7a23425a825f03f09b2dede8e0f53c266e0b3ad90aa6b98958b7b}
+  KA16.rar: {bytes: 167165704, sha256: 3e300d2e3402b47a18ce9c75694d3146f6e4b5f86bcd1d159f4938221fb261b6}
+  KA22.rar: {bytes: 159054470, sha256: 95790035ebe5a69bb298f93a7f4fc64769f0baeffd04a2cbb3ff5b4af8608642}
+  KA30.rar: {bytes: 163625195, sha256: cbe1810281a7cbd28d5ad0372cc392c910744709d46d4db501a45eeea18dd518}
+  KB23.rar: {bytes: 170933916, sha256: a07e976b285438c33492650c4f5b28250a49e7855990191b30b6bcb541831c6c}
+  KB24.rar: {bytes: 186677308, sha256: ae5928ee2ed02773e3787aeceaae73074b15ff3ae158cd932c7a6865fbc9c1ff}
+  KB27.rar: {bytes: 162452979, sha256: 738b9c332b31038ab051f60a7e1ceec5612f28449254cccda6154ae14655e4aa}
+  KI01.rar: {bytes: 175265779, sha256: b1dd6d99bb64d556f889fefaedb7e6e672900f5f015125615feaae776f055348}
+  KI03.rar: {bytes: 159217524, sha256: 725010ee4158256eef9ef7f58da835fc2150579d6e97b5d48bcd2ee70795d77e}
+  KI04.rar: {bytes: 172644279, sha256: 8fde861a9ceac4b41fe8a030b4c5bbb4b9b9af0590d9338a8de0150b4661be77}
+  KI05.rar: {bytes: 160359281, sha256: 5a936f170f4188e38c537b05a260a3cf60cc3b671f90502a008636aac6c66bf4}
+  KI07.rar: {bytes: 160646876, sha256: 5f3089d19db77ae071a6731198ef116c800e03d3628316086f4672d029d5a2ed}
+  KI08.rar: {bytes: 163760131, sha256: f00d6dca7360ed6ec30b78c0e186161913852db4c209551975c5a0998447d514}
+  KI14.rar: {bytes: 163581312, sha256: 16911b5f8c723b568b6aa69397b00796fea41e43bf627a1a0158a7294f2b7a60}
+  KI16.rar: {bytes: 166348305, sha256: f7f4ce4feffc3ae799f92289cdea7708d2cf6e154ad5382f9f4c2c8bed890c44}
+  KI17.rar: {bytes: 167363476, sha256: d80dbdb612cfaeb7ba1ffe6387c52c4d938084b2466e55d96a5528aff4d8b084}
+  KI18.rar: {bytes: 161226797, sha256: 37b9b17c392d033f0b14c35bf0fd19ea878909299cdc8c517e2226f794048615}
+  KI21.rar: {bytes: 164882839, sha256: 1e3c563fa1d1564e3586736189b2e0807688389b549944af4a06908485c1d5bf}
+  readme_versions.txt: {sha256: 0458cfdc33a09702e88a878b359c8c4f7606cf1d78ab4acab685a7a0b0031be0}
 undersampling:
   method: decimacao_pura
   factors: [2, 4, 8, 16, 32, 64]
