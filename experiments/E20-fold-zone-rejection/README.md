@@ -312,3 +312,52 @@ rodadas):
   - 32/35 contra 6/35 na régua local (p = 3·10⁻⁸);
   - 11 registros a 0 no teste do sinal (p = 0,001).
 
+## Resultado dos seletores robustos e da remoção depois de decimar (2026-11-12)
+
+As duas rodadas terminaram às 18:27 e 18:28 UTC no servidor.
+- **Proveniência.**
+  - Seletores: `config/selectors.yaml` e `run.py` do commit `4a67eae`.
+  - Remoção depois de decimar: `config/post_despike.yaml` e `run.py` do commit `6a95a72`. Rodou
+    num checkout separado, para não mudar o `run.py` sob a rodada dos seletores.
+  - O `input_sha256` é o mesmo da rodada base, com os 24 registros.
+  - O controle do E07 bate exatamente nas duas: 62, 55, 41 e 61 de 72.
+- **Critério pré-registrado** (`recovery.py`, `recovery.csv`): pista externa, 4×, teto de 25 kHz.
+
+| braço | régua aninhada (de 36) | régua local (de 35) | veredicto |
+|---|---|---|---|
+| `despike_decimado` (realizável no nó) | **29** contra 6, +23/−0, p = 2,4·10⁻⁷ | **32** contra 6, +26/−0, p = 3·10⁻⁸ | **recupera** nas duas |
+| `infograma_ses` | 11, +10/−5, p = 0,3 | 11, +10/−5, p = 0,3 | inconclusivo |
+| `infograma_ses_despike` | 7, +6/−5, p = 1 | 7, +6/−5, p = 1 | não recupera |
+| `gini` | 0, +0/−6, p = 0,031 | 0, +0/−6, p = 0,031 | não recupera (pior que `none`) |
+
+- **Sensibilidade por registro** (teste do sinal, fora do pré-registro). Para `despike_decimado`,
+  12 registros melhoram e nenhum piora pela régua aninhada (p = 0,0005), e 11 a 0 pela local.
+- **Nos outros fatores** (régua aninhada, teto de 25 kHz):
+  - `despike_decimado` faz 28, 29, 29, 29, 23, 25 e 26 de 1× a 8×, contra 27, 20, 4, 6, 2, 11 e 25
+    do `none`. O vale some.
+  - `infograma_ses` faz 7, 7, 11, 11, 17, 7 e 13.
+  - `gini` faz 15 em 1×, 0 de 2× a 6× e 22 em 8×.
+- **Pista interna:** nenhum braço a prejudica, que fica em 34–36/36 em todas as células.
+- **Teto de 12,5 kHz:**
+  - `despike_decimado` faz 26–29;
+  - `gini` faz 20–23, porque a banda que os picos capturam fica acima do teto;
+  - `infograma_ses` faz de 0 a 13.
+- **Bandas escolhidas** (pista externa, teto de 25 kHz):
+  - `despike_decimado` volta em 4× à banda de taxa cheia, 2,5–4,6 kHz, em 25/36.
+  - `gini` vai a 18,9–20,9 kHz em 4× (23/36). É a captura.
+  - `infograma_ses`, já em taxa cheia, escolhe 4,6–6,6 kHz (18/36) ou 0,5–12,75 kHz (13/36), e não
+    a banda do kurtograma (2,5–4,6 kHz).
+
+**Leitura pré-registrada:**
+- A remoção de picos **depois** de decimar recupera o acerto, e por isso a correção é realizável
+  no nó, sem a taxa cheia.
+- Nenhum seletor robusto recupera pelo critério. O Gini é capturado. O infograma SES fica
+  inconclusivo em 4×.
+
+**Ainda não explicado, a conferir antes de entrar no artigo.** O infograma SES acerta só 7 de 36
+em taxa cheia, contra 27 do kurtograma.
+- A hipótese é a rotação variável do Ottawa: a negentropia do espectro do envelope em Hz supõe
+  frequência cíclica estacionária, e uma rampa espalha a raia de falha.
+- A outra possibilidade é erro de implementação, apesar dos testes contra os valores do artigo.
+- Um infograma no domínio de ordem não foi pré-registrado e seria exploratório.
+
