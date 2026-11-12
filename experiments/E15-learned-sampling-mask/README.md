@@ -658,3 +658,31 @@ consegue detectar, pela regra da H1, um braço de fato melhor que o baseline? Ro
     manifest.
   - Nada do protocolo acima mudou.
 
+### Resultado da porta no Paderborn (2026-11-12)
+
+O estágio clássico levou 3246 s em 28 processos de CPU. As saídas estão em
+`results-paderborn-gate/` (`power.csv`, `metrics.csv`, `truths.json` e `manifest.json`).
+
+| desenho (regra otimista) | +5 pontos | +10 pontos | perfeito |
+|---|---|---|---|
+| D0 (1 semente) | 0,74 | 0,99 | 1,00 |
+| D1 (3 sementes) | **1,00** | 1,00 | 1,00 |
+| D2 (5 sementes) | **1,00** | 1,00 | 1,00 |
+
+**Veredito pelo critério pré-registrado: a H1 é testável no Paderborn, com pelo menos 3 sementes
+por dobra.** No Ottawa, nem o braço perfeito passava.
+
+- **Há espaço para ganho.** `uniforme_treino` acerta 41,5 / 44,8 / 49,7 / 26,7 % pela régua local
+  e 16,8 / 17,4 / 18,6 / 13,2 % pela aninhada, de 1/4 a 1/32.
+- **Régua local:** só 6 dos 23 rolamentos têm raia visível em taxa cheia na medição 1 (KA01,
+  KA06, KA16, KI01, KI16 e KI18). São 180 segmentos de 1291 com régua local.
+- **Régua aninhada:** vale para todos os segmentos.
+  - Inclui rolamentos sem assinatura visível, nos quais nenhum método talvez acerte.
+  - A porta mede se o teste consegue detectar o ganho, e não se ele é alcançável.
+- **Medições fora: 21.**
+  - 1 ilegível; 2 com ~3,9 s; 3 com o canal de rotação de duração errada.
+  - 15 só têm 3 a 5 amostras a menos que 4 s. Esse critério foi rígido demais, e a rodada do E15
+    no Paderborn o relaxa: aceita até 1 ms a menos.
+  - Isso não muda o veredito, com poder de 1,00.
+- **Consequência:** a parte (b) volta ao artigo, condicionada ao E15 no Paderborn. Ele terá
+  pré-registro próprio, as correções da revisão adversarial e 3 sementes por dobra.
