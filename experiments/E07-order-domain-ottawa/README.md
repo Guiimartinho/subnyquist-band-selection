@@ -617,7 +617,8 @@ não depende do fator, então vale também para 96–160×.
 
 **Conclusão para T1.1.** O fator publicável do E07 continua sendo 64× (3,12 kSPS) em `sem_prior`.
 A curva estendida mostra um joelho entre 2,08 e 1,56 kSPS. Ele é do pipeline: a faixa de busca
-estreita e as bandas mais estreitas que a frequência de falha. Um ganho de método nesses fatores
+estreita e as bandas mais estreitas que os harmônicos de falha que o escore usa (corrigido em 2026-11-12, de `results/extended/metrics.csv`: a frequência de falha mediana é 81 Hz; em 128× a banda mediana, de 141 Hz, ainda é mais larga que ela, mas mais estreita que os três harmônicos do escore, que somam 243 Hz; só em 160×, com 10,4 Hz, fica mais estreita que a própria frequência de falha).
+Um ganho de método nesses fatores
 seria contra um espantalho.
 
 A rodada "com `spr = 64` e só o piso variando", proposta antes, é **inviável** em 128×: o guarda
@@ -665,5 +666,5 @@ e uma verdade constante por registro erra a raia nos segmentos de rotação dife
 
 - **Joelho.** A queda corrigida de 64× para 96× fica perto do limiar pré-registrado de 13 pontos:
   cerca de 17 pelo degrau médio, cerca de 12 extrapolando a inclinação. 128× é um colapso.
-- **Mecanismo** (seção anterior): bandas mais estreitas que a frequência de falha contra o piso de
-  500 Hz.
+- **Mecanismo** (seção anterior): bandas mais estreitas que os três harmônicos de falha do escore,
+  por causa do piso de 500 Hz (corrigido em 2026-11-12, de `results/extended/metrics.csv`: a frequência de falha mediana é 81 Hz; em 128× a banda mediana, de 141 Hz, ainda é mais larga que ela, mas mais estreita que os três harmônicos do escore, que somam 243 Hz; só em 160×, com 10,4 Hz, fica mais estreita que a própria frequência de falha).

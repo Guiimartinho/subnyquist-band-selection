@@ -164,6 +164,25 @@ evidence, not evidence of absence.
 first, then H1 and H2.}
 
 \subsection{Where the method fails}
-\todo[inline]{Mandatory failure case: bearings whose fault line is invisible at full rate on
-Paderborn (17 of 23); the 96--128$\times$ wall of the classical pipeline on Ottawa, where the
-selected bands become narrower than the fault frequency.}
+\label{sec:res-fail}
+
+\paragraph{A rate wall set by the pipeline} On Ottawa, the classical pipeline fails at high
+factors (E07, extended sweep to $160\times$, \texttt{E07/results/extended}).
+\begin{itemize}
+  \item Under the local ruler the order hits are 78.6\% at $64\times$ (3.12~kS/s), 64.3\% at
+  $96\times$, 22.9\% at $128\times$ and 0\% at $160\times$ (1.25~kS/s).
+  \item The search range of the kurtogram is $[500~\mathrm{Hz}, f_s/2M]$, so it narrows as the
+  factor grows, and the selected bands narrow with it. Their median width is 271~Hz at $96\times$,
+  141~Hz at $128\times$ and 10.4~Hz at $160\times$.
+  \item The median fault frequency is 81~Hz, and the first three harmonics used by the order score
+  span 243~Hz. The hits fall as the band becomes narrower than that span.
+  \item At $160\times$, 83\% of the estimates lie within 0.2 order of the lower limit of the order
+  search.
+\end{itemize}
+The wall is set by the search floor of the pipeline, not by the sampling rate itself, and the
+learned masks were therefore tested at budgets from 1/4 to 1/32, below it.
+
+\paragraph{Fault lines invisible at full rate}
+\todo[inline]{From E24: on Paderborn, the bearings whose fault line is not visible at full rate
+(the gate found 6 of 23 with a visible line in measurement 1). Report the full-rate accuracy split
+by visibility, which bounds what any arm can reach under the nested ruler.}
