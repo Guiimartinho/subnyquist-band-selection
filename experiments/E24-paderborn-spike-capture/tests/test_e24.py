@@ -50,3 +50,19 @@ def test_post_decimation_despike_cleans_spikes_that_survive_decimation():
     y = e24.despike(xd)
     assert np.max(np.abs(y)) < 8.0
     assert np.max(np.abs(xd)) > 25.0
+
+
+def test_notch_zeroes_only_its_band_and_the_ceiling_caps_the_search():
+    """E24b: o notch tira 16 kHz e deixa 3 kHz; o teto do braço limita a banda escolhida."""
+    fs = e24.FS
+    t = np.arange(64000) / fs
+    x = np.sin(2 * np.pi * 16000 * t) + np.sin(2 * np.pi * 3000 * t)
+    y = e24.notch(x, fs, [[15000.0, 17000.0]])
+    f = np.fft.rfftfreq(y.size, 1 / fs)
+    sy, sx = np.abs(np.fft.rfft(y)), np.abs(np.fft.rfft(x))
+    assert sy[np.argmin(np.abs(f - 16000))] < 1e-6 * sx.max()
+    assert sy[np.argmin(np.abs(f - 3000))] > 0.99 * sx[np.argmin(np.abs(f - 3000))]
+    cfg = {"kurtogram": {"max_level": 2, "f_min_hz": 500.0}}
+    noise = np.random.default_rng(0).normal(size=64000)
+    assert e24.select_band(noise, fs, "sk", cfg, 8000.0).band_hz[1] <= 8000.0 + 1e-6
+    assert e24.select_band(noise, fs, "sk", cfg).band_hz[1] <= fs / 2 + 1e-6

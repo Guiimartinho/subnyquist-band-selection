@@ -75,12 +75,13 @@ def despike(x: np.ndarray, k_mad: float = 10.0) -> np.ndarray:
     return y
 
 
-def select_band(x, fs_hz: float, selector: str, cfg: dict):
+def select_band(x, fs_hz: float, selector: str, cfg: dict, f_max_hz: float | None = None):
     kg = cfg["kurtogram"]
+    top = fs_hz / 2.0 if f_max_hz is None else min(fs_hz / 2.0, float(f_max_hz))
     kw = {
         "max_level": int(kg["max_level"]),
         "f_min_hz": float(kg["f_min_hz"]),
-        "f_max_hz": fs_hz / 2.0,
+        "f_max_hz": top,  # teto da busca: o Nyquist efetivo, ou um teto menor do braço
     }
     if selector == "sk":
         return fast_kurtogram(x, fs_hz, **kw)
@@ -111,8 +112,28 @@ def line_calibration(x, v, nominal: float, cfg: dict) -> dict:
     return {"center": float(r.center), "ok": bool(ok), "prominence": round(prom, 3)}
 
 
-def estimate(x, v, factor: int, selector: str, cfg: dict, post_despike: bool = False):
+def notch(x: np.ndarray, fs_hz: float, bands_hz: list) -> np.ndarray:
+    """Zera faixas por máscara ideal de FFT, de fase zero (atribuição, não filtro realizável)."""
+    xf = np.fft.rfft(x)
+    f = np.fft.rfftfreq(x.size, d=1.0 / fs_hz)
+    for lo, hi in bands_hz:
+        xf[(f >= float(lo)) & (f <= float(hi))] = 0.0
+    return np.fft.irfft(xf, n=x.size)
+
+
+def estimate(
+    x,
+    v,
+    factor: int,
+    selector: str,
+    cfg: dict,
+    post_despike: bool = False,
+    f_max_hz: float | None = None,
+    notch_hz: list | None = None,
+):
     """Pipeline do E07/E22 num fator, com o seletor do braço. Devolve (ordem, banda) ou None."""
+    if notch_hz:  # em taxa cheia, antes de decimar
+        x = notch(x, FS, notch_hz)
     xd, vd = undersample(x, factor), undersample(v, factor)
     if post_despike:  # no fluxo já decimado: realizável no nó
         xd = despike(xd, float(cfg["despike"]["k_mad"]))
@@ -125,7 +146,7 @@ def estimate(x, v, factor: int, selector: str, cfg: dict, post_despike: bool = F
     ):
         return None
     try:
-        k = select_band(xd, fs_eff, selector, cfg)
+        k = select_band(xd, fs_eff, selector, cfg, f_max_hz)
         spec = envelope_order_spectrum(
             xd, fs_eff, vd, k.band_hz, samples_per_rev=cfg["samples_per_rev"]
         )
@@ -170,9 +191,16 @@ def record_task(task: tuple[dict, str, str]) -> dict:
         out["despiked_samples"][n] = int(np.count_nonzero(xs[True] != x))
         for arm, spec in cfg["arms"].items():
             xa = xs[bool(spec["despike"])]
-            for f in (int(f) for f in cfg["factors"]):
+            for f in (int(f) for f in spec.get("factors", cfg["factors"])):
                 out["est"][(n, arm, f)] = estimate(
-                    xa, v, f, spec["selector"], cfg, bool(spec.get("despike_after", False))
+                    xa,
+                    v,
+                    f,
+                    spec["selector"],
+                    cfg,
+                    bool(spec.get("despike_after", False)),
+                    spec.get("f_max_hz"),
+                    spec.get("notch_hz"),
                 )
     if out["calib"] is None:
         out["calib"] = {"center": math.nan, "ok": False, "prominence": math.nan}
@@ -293,8 +321,8 @@ def main() -> None:
 
     an = cfg["analysis"]
     summary = []
-    for arm in cfg["arms"]:
-        for f in (int(f) for f in cfg["factors"]):
+    for arm, aspec in cfg["arms"].items():
+        for f in (int(f) for f in aspec.get("factors", cfg["factors"])):
             row = {"arm": arm, "factor": f}
             for ru in RULERS:
                 acc = per_bearing(rows, arm, f, ru)

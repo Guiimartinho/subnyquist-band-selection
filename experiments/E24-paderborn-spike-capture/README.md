@@ -191,3 +191,39 @@ cada registro, 68 legíveis):
 - C3: *notch* em 15–17 kHz e 30,5–32 kHz, com controle.
 - C5: régua independente do braço.
 
+## E24b: teto sem dobra e notch (pré-registro, 2026-11-12)
+
+Escrito e commitado antes de rodar, junto com a análise (`exploratory/teto_notch_analysis.py`). São
+as checagens C1 e C3 da revisão adversarial.
+
+A pergunta: no Paderborn, a decimação ajuda porque estreita a faixa de busca (efeito de teto) ou
+por causa do que dobra? E o conteúdo perto de 16 kHz é o que captura o kurtograma em taxa cheia?
+
+- **Braços** (`config/teto_notch.yaml`), todos sem remover os picos:
+  - **C1:** `kurtograma_teto8k`, `teto4k`, `teto2k` e `teto1k`, mais os mesmos quatro para o
+    infograma SES. Todos rodam em 1×, com o teto da busca em 8, 4, 2 e 1 kHz.
+  - A partição da busca é idêntica à de 4×, 8×, 16× e 32×, porque só depende de
+    [f_min, min(teto, fs/2)]. A diferença é o conteúdo dobrado e a taxa do envelope.
+  - **C3:** `kurtograma_notch` zera 15–17 kHz e 30,5–32 kHz em taxa cheia, antes de decimar, e roda
+    em 1× e 4×. `kurtograma_notch_controle` zera faixas de mesma largura em 12–14 kHz e
+    26,5–28 kHz.
+  - Os braços de referência sem teto e sem notch são lidos de `results/`. O código é o mesmo e é
+    determinístico.
+- **Critérios** (régua aninhada; troca de sinal exata por rolamento, estratificada por pista):
+  - **C1a, dobra.** É a fração de segmentos na banda do piso (início ≤ 501 Hz e fim ≤ 1200 Hz) com
+    teto de 8 kHz em 1×.
+    - Com ≥ 20 %, a escolha do piso em 4× (23 %) é conteúdo de banda base, e a dobra fica
+      refutada como causa.
+    - Com ≤ 10 %, a dobra está implicada. Entre os dois, inconclusivo.
+  - **C1b, teto.** É o kurtograma com teto contra o kurtograma sem teto, os dois em 1×, com Holm
+    sobre os 4 tetos. O teto alivia a captura se algum passar (Holm p < 0,05, diferença > 0).
+  - **C1c (descritivo).** É o teto em 1× contra a decimação de mesma partição. Diz se o ganho da
+    decimação vem do teto ou da dobra.
+  - **C3a, notch.** Entre os segmentos em que o kurtograma em 1× escolhe 11,0–21,5 kHz, é a fração
+    que muda de banda com o notch.
+    - Com ≥ 50 %, o conteúdo das faixas zeradas sustenta a escolha. Com < 20 %, não sustenta.
+    - Entre os dois, inconclusivo.
+  - **C3b, validade.** O notch de controle precisa mudar a banda em menos de 10 % dos segmentos em
+    1×. Se mudar mais, a C3a não é interpretável.
+- **Fora do escopo:** a C2 (fatores 5, 7 e 9) e a C5 (régua independente do braço).
+

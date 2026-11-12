@@ -1,0 +1,162 @@
+# E24b: teto sem dobra (C1) e notch (C3), revisao adversarial de 2026-11-12. Pre-registro no
+# README, 'E24b'. Os bracos de referencia (kurtograma e infograma_ses sem teto) sao lidos de
+# results/ (mesmo codigo, deterministico). Analise: exploratory/teto_notch_analysis.py.
+seed: 20261112
+data_dir: datasets/raw/paderborn
+settings:
+- N15_M07_F10
+- N15_M01_F10
+- N15_M07_F04
+outer:
+- KA01
+- KA03
+- KA05
+- KA06
+- KA07
+- KA08
+- KA09
+- KA04
+- KA15
+- KA16
+- KA22
+- KA30
+inner:
+- KI01
+- KI03
+- KI05
+- KI07
+- KI08
+- KI04
+- KI14
+- KI16
+- KI17
+- KI18
+- KI21
+calibration_measurement: 1
+test_measurements:
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+- 10
+- 11
+- 12
+- 13
+- 14
+- 15
+- 16
+- 17
+- 18
+- 19
+- 20
+segment_samples: 255936
+factors:
+- 1
+- 4
+- 8
+- 16
+- 32
+guard_points_per_rev_factor: 1.0
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+samples_per_rev: 64
+order_min: 2.0
+tolerance_order: 0.025
+prior:
+  score_harmonics: 3
+  calibration_span: 0.01
+min_line_prominence: 5.0
+prominence_window: 0.07
+despike:
+  k_mad: 10.0
+arms:
+  kurtograma_teto8k:
+    selector: sk
+    despike: false
+    f_max_hz: 8000.0
+    factors:
+    - 1
+  kurtograma_teto4k:
+    selector: sk
+    despike: false
+    f_max_hz: 4000.0
+    factors:
+    - 1
+  kurtograma_teto2k:
+    selector: sk
+    despike: false
+    f_max_hz: 2000.0
+    factors:
+    - 1
+  kurtograma_teto1k:
+    selector: sk
+    despike: false
+    f_max_hz: 1000.0
+    factors:
+    - 1
+  infograma_ses_teto8k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 8000.0
+    factors:
+    - 1
+  infograma_ses_teto4k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 4000.0
+    factors:
+    - 1
+  infograma_ses_teto2k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 2000.0
+    factors:
+    - 1
+  infograma_ses_teto1k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 1000.0
+    factors:
+    - 1
+  kurtograma_notch:
+    selector: sk
+    despike: false
+    notch_hz:
+    - - 15000.0
+      - 17000.0
+    - - 30500.0
+      - 32000.0
+    factors:
+    - 1
+    - 4
+  kurtograma_notch_controle:
+    selector: sk
+    despike: false
+    notch_hz:
+    - - 12000.0
+      - 14000.0
+    - - 26500.0
+      - 28000.0
+    factors:
+    - 1
+    - 4
+tests: {}
+analysis:
+  bootstrap_resamples: 4000
+  alpha: 0.05
+  decisive_factors:
+  - 4
+  - 8
+  - 16
+  - 32
+  primary_ruler: nested
+compute:
+  workers: 6
+output:
+  results_dir: results-teto-notch
