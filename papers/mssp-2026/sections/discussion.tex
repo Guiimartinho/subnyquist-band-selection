@@ -1,14 +1,40 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\todo[inline]{Write after the results. Points to cover:
-(i) why the anti-alias filter that confines EMI in conventional acquisition is absent by design
-below the Nyquist rate;
-(ii) what the robust selectors do and do not fix;
+\paragraph{A protection that sub-Nyquist acquisition gives up}
+In conventional acquisition, the anti-alias filter in front of the converter confines
+interference. Content above the Nyquist frequency never reaches the samples, and a search ceiling
+below it keeps the selector away from high bands. Sub-Nyquist acquisition gives up this protection
+by design, because the folding of the band of interest is what makes the rate reduction possible
+\citep{vaughan1991,mishali2010practice}. Interference folds with it.
+
+The ideal anti-alias filter shows the price of restoring the protection:
+\begin{itemize}
+  \item on Ottawa it prevents the capture;
+  \item on CWRU it prevents the capture by band-limited bursts, but not by spike trains, whose
+  in-band part stays impulsive;
+  \item without injection it costs 27 points at $10\times$ and $12\times$, because it also removes
+  the folded fault resonance.
+\end{itemize}
+A search ceiling that protects the selector at full rate is likewise undone by decimation: the
+ceiling stays where it was, and the interference folds below it. The protection that a full-rate
+system takes for granted has to be rebuilt after decimation, by the selector or by a cleaning step
+that the node can run.
+
+\paragraph{Benchmark power before learned acquisition}
+The decisive Ottawa run of the learned masks could not have detected a gain. The classical
+baseline misses 3 to 9 of about 60 test segments, and even a perfect arm fails the pre-registered
+rule. The question was answered by a power analysis that needs only the classical stage, which
+runs on CPU before any training. The same analysis showed that Paderborn can detect a gain of 5
+points with three seeds per fold. We suggest such a gate as a precondition for claims about learned
+acquisition on condition-monitoring benchmarks, because a negative result on an underpowered
+benchmark carries no information about the method.
+
+\todo[inline]{Write after the pending runs:
+(ii) what the robust selectors and spike removal after decimation do and do not fix (E20, E24);
 (iii) the origin of the Ottawa spikes is unknown, while Paderborn has a known 16~kHz inverter;
-(iv) benchmark power as a precondition for claims about learned acquisition;
 (v) relation to MRI, where learned masks match equidistant ones at moderate acceleration
-\citep{bakker2022adaptive}.}
+\citep{bakker2022adaptive} (E15 on Paderborn).}
 
 \paragraph{Limitations}
 The study simulates sub-Nyquist acquisition by decimating records acquired at 200 and 64~kS/s. It
