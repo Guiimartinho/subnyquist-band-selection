@@ -1,0 +1,11 @@
+{
+  "records": 69,
+  "readable": 68,
+  "fe_hz_median": 101.56,
+  "records_with_any_10db_line": 0,
+  "lines_10db_median": 0.0,
+  "coh_median": null,
+  "sk_15_17_median": 10.8505,
+  "sk_11_15_median": 5.7895,
+  "sk_15_17_gt_11_15": 68
+}

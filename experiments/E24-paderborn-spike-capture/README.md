@@ -97,7 +97,7 @@ Pela régua local (7 rolamentos), nenhuma das três passa.
 - **A captura já acontece em taxa cheia.** O kurtograma escolhe 11,0–21,5 kHz em 909 segmentos,
   justamente a faixa que contém o chaveamento de 16 kHz do inversor.
   - Remover os picos antes de decimar não o tira dali: 350 segmentos continuam em 11,0–21,5 kHz,
-    e quase todos os outros ficam acima de 16 kHz.
+    e 735 dos 955 restantes (77 %) ficam acima de 16 kHz.
   - Sob decimação, a escolha vai para a banda mais baixa da busca, 0,5–1,1 kHz em 4× e 8×.
 - **Aritmética da dobra (hipótese, não testada).** A 64 kS/s, com os fatores 4, 8, 16 e 32, todo
   múltiplo de 16 kHz cai exatamente em 0 Hz. As bandas laterais do chaveamento cairiam então no
@@ -107,7 +107,9 @@ Pela régua local (7 rolamentos), nenhuma das três passa.
   - A visibilidade é medida na banda que o kurtograma escolhe em taxa cheia, e essa banda está
     capturada (`line_calibration`).
   - Nos outros 16 rolamentos, o kurtograma não acerta nenhum segmento em taxa cheia pela régua
-    aninhada. O infograma SES acerta 19 % deles.
+    aninhada, o que vale por construção, porque a visibilidade é medida no mesmo espectro. O
+    infograma SES chega a 17,0 % de acurácia balanceada neles: 34,0 % na pista externa e 0 %
+    na interna.
   - Por isso, "sem raia visível" é em parte uma falha do seletor, e não só do sinal.
 
 **Leitura:**
@@ -117,3 +119,75 @@ Pela régua local (7 rolamentos), nenhuma das três passa.
   sustenta que "a captura por picos se reproduz fora do Ottawa".
 - O infograma SES ajuda no Paderborn, ao contrário do Ottawa.
 - **Antes de entrar no artigo:** revisão adversarial.
+
+### Revisão adversarial (`reviewer-2`, 2026-11-12): revisão maior
+
+O revisor reproduziu o `hypotheses.csv` a partir do `metrics.csv` com as funções do `run.py`. Os
+números e a proveniência conferem, e os commits são anteriores às rodadas. O problema está na
+inferência e na leitura.
+
+**Conferido por mim, com código no repositório** (`exploratory/robustness.py`, que grava
+`results/exploratory/robustness.json`):
+- **A H1 não se sustenta.** Em 8×, o teste exato de troca de sinal, estratificado por pista, dá
+  p = 0,0625 e p de Holm = 0,25. O bootstrap pré-registrado com B = 200 000 dá p de Holm = 0,055.
+  - Só 6 rolamentos diferem, 5 deles a favor.
+  - Com 6 rolamentos que respondem, a troca de sinal não poderia passar no Holm nem com os 6 a
+    favor: o menor p seria 1/64.
+  - O "apoio" pré-registrado (p de Holm = 0,04999, com B = 4000) é erro de Monte Carlo.
+  - Pelo critério de refutação deste README, a H1 está refutada.
+- **A H2 se sustenta só em 1/32.** A troca de sinal dá p = 0,0039 e p de Holm = 0,016, com os 8
+  rolamentos que diferem a favor. Em 4× ela não passa: p de Holm de 0,20 pela troca de sinal e de
+  0,07 pelo bootstrap.
+- **A H3 tem resultado nulo** nos dois testes.
+
+**Conferido por mim no sinal bruto** (`exploratory/inverter_lines.py`, checagem C4, medição 2 de
+cada registro, 68 legíveis):
+- **Não há raia de PWM na vibração.** Em nenhum registro aparece raia 10 dB acima da mediana local
+  em 16 kHz ± 2k·f_e ou em 32 kHz − (2k+1)·f_e. A f_e é medida na corrente de fase, com mediana de
+  101,6 Hz.
+- **A faixa de 15–17 kHz é mais impulsiva que a de 11–15 kHz** em 68 de 68 registros, com curtose
+  espectral mediana de 10,9 contra 5,8.
+- A captura em taxa cheia fica, portanto, associada a conteúdo impulsivo perto de 16 kHz, mas a
+  fonte não está estabelecida. A hipótese do inversor não é confirmada nem refutada.
+
+**Do revisor, sem script no repositório:**
+- **A régua não é neutra.** Ela vem de 12 calibrações em 6 rolamentos, todas medidas na banda
+  capturada.
+  - A variação das frequências cinemáticas entre fabricantes (1 a 2 %, PHME16) passa da tolerância
+    de 0,025 ordem.
+  - Há quase-acertos fora da janela: o SES no KA08 e o kurtograma sem picos no KI04.
+  - A régua tende a favorecer o kurtograma, o que torna a H2 conservadora.
+- **A réplica não testa o mecanismo do Ottawa.** O mecanismo pressupõe o seletor correto em taxa
+  cheia, e isso só vale em 2 dos 23 rolamentos: KA01, com 63 %, e KI01, com 98 %.
+  - No KI01 há uma parede, e não um vale: 98, 81, 75, 46 e 2 %.
+  - Em KA01, KA04 e KA16, a decimação ajuda, o que sugere efeito de teto de busca (não isolado).
+  - A grade não tem 2× nem 3×.
+- **A banda de 11,0–21,5 kHz é larga demais para apontar o inversor.** A dobra para 0 Hz não é
+  testável com fatores múltiplos de 4. A aritmética de amostrar num submúltiplo da portadora é
+  conhecida: `blasko1998pwmsampling`.
+- Correção: "de 2 a 730 picos por segundo" vem da checagem exploratória. No E24 são de 0 a 5553
+  picos por segmento de 4 s, até cerca de 1390/s no KI08.
+
+**O que o artigo pode afirmar:**
+- No Paderborn, a decimação pura não produziu vale de 1/4 a 1/32.
+- Remover os picos de uma amostra, antes ou depois de decimar, muda pouco e sem significância
+  robusta.
+- Em taxa cheia, o kurtograma escolhe bandas acima de 11 kHz em 88 % dos segmentos, sem acerto
+  nelas. Isso é compatível com interferência impulsiva, e a fonte não foi verificada.
+- O infograma SES sem pré-branqueamento é melhor em 1/32 (+3,1 pontos, p de Holm = 0,016), quase só
+  na pista externa.
+- O Paderborn não testa o mecanismo do Ottawa.
+
+**O que não pode:**
+- "H1 apoiada" ou "a captura por picos se reproduz";
+- "o inversor captura" ou "a dobra para 0 Hz explica", como fato;
+- "seletores robustos resolvem";
+- "a decimação melhora o diagnóstico";
+- "o mecanismo generaliza", ou que é refutado.
+
+**Checagens sugeridas e não feitas:**
+- C1: teto sem dobra em 1×.
+- C2: fatores 5, 7 e 9.
+- C3: *notch* em 15–17 kHz e 30,5–32 kHz, com controle.
+- C5: régua independente do braço.
+
