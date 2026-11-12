@@ -133,6 +133,11 @@ def fit(
             if since >= int(cfg.patience):
                 stopped = True
                 break
+    if best_epoch < 0:
+        # o treino acabou antes de `min_epochs`: vale o ultimo estado finito, ja guardado
+        finite = [h for h in history if math.isfinite(h["val_loss"])]
+        if finite:
+            best_epoch, best_loss = int(finite[-1]["epoch"]), float(finite[-1]["val_loss"])
     model.load_state_dict(best_state)
     model.eval()
     return FitResult(

@@ -358,3 +358,61 @@ def test_divisoes_separam_teste_validacao_e_treino_por_registro():
         for g in ("inner", "outer"):
             assert any(group[r] == g for r in te) and any(group[r] == g for r in va)
     assert e15.make_splits(recs, group, pcfg, 7) == splits
+
+
+def _conv_rows(b: int, arm: str, convs: list[int]) -> list[dict]:
+    base = {"dataset": "ottawa", "variant": "bruto", "budget": b, "arm": arm, "seed": 0}
+    return [
+        {**base, "split": s, "segment": seg, "record": f"I{s}", "mask_converged": c}
+        for s, c in enumerate(convs)
+        for seg in (0, 1)
+    ]
+
+
+def test_orcamento_com_mascara_no_ruido_nao_e_avaliavel():
+    rows = _conv_rows(8, "dec_aprendida", [1, 1, 0]) + _conv_rows(16, "dec_aprendida", [1, 0, 0])
+    ev = e15.evaluable_budgets(rows, "ottawa", "bruto", [8, 16], ["dec_aprendida"], 0.5)
+    assert ev[8][0] is True and ev[16][0] is False
+    assert "dec_aprendida=0.333" in ev[16][1]
+    # braco listado sem diagnostico nao passa em silencio
+    ev2 = e15.evaluable_budgets(rows, "ottawa", "bruto", [8], ["dec_livre_projetada"], 0.5)
+    assert ev2[8][0] is False
+    # sem bracos listados (configs antigas), todo orcamento e avaliavel
+    assert e15.evaluable_budgets(rows, "ottawa", "bruto", [8], [], 0.5)[8][0] is True
+
+
+def test_hipotese_em_orcamento_nao_avaliavel_tem_p_1_e_nao_vence():
+    pr = {
+        "dataset": "ottawa",
+        "variant": "bruto",
+        "alpha": 0.05,
+        "rulers": ["local"],
+        "min_budgets": 1,
+        "min_clusters_per_group": 3,
+        "min_splits": 2,
+        "min_mask_converged_frac": 0.5,
+        "h1": {
+            "arm": "dec_aprendida_sel",
+            "baselines": ["dec_aleatoria"],
+            "convergence_arms": ["dec_aprendida", "dec_aprendida_sel"],
+        },
+        "h2": {
+            "arm": "dec_aprendida",
+            "baseline": "dec_livre_projetada",
+            "convergence_arms": ["dec_aprendida", "dec_livre_projetada"],
+        },
+    }
+    cfg = {"preregistration": pr, "analysis": {"bootstrap_resamples": 10}, "seed": 0}
+    rows = (
+        _conv_rows(16, "dec_aprendida", [1, 0, 0])
+        + _conv_rows(16, "dec_aprendida_sel", [1, 0, 0])
+        + _conv_rows(16, "dec_livre_projetada", [0, 0, 0])
+        + _conv_rows(16, "dec_aleatoria", [0, 0, 0])
+    )
+    out = e15.hypotheses(rows, cfg, {}, {})
+    tests = [r for r in out if "p_holm" in r]
+    assert len(tests) == 2
+    assert all(r["p_holm"] == 1.0 and r["significant"] == 0 and r["evaluable"] == 0 for r in tests)
+    per_ruler = [r for r in out if "verdict_ruler" in r]
+    assert all(r["verdict_ruler"] == 0 and r["budgets_not_evaluable"] == "16" for r in per_ruler)
+    assert all(r["verdict"] == 0 for r in out if "verdict" in r)

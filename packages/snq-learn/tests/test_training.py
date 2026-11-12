@@ -106,3 +106,23 @@ def test_min_epochs_blocks_early_stop_and_checkpoint_during_annealing():
     )
     assert res.epochs_run >= 50 + 5
     assert res.best_epoch >= 50
+
+
+def test_min_epochs_acima_do_teto_vale_o_ultimo_estado():
+    """Se o treino acaba antes de min_epochs, o melhor e o ultimo estado finito."""
+    import torch
+    from snq_learn.training import FitConfig, fit
+
+    torch.manual_seed(0)
+    model = torch.nn.Linear(1, 1)
+    losses = iter([float(i) for i in range(100)])
+    res = fit(
+        model,
+        train_batches=lambda epoch: [torch.zeros(1)],
+        batch_loss=lambda m, b: (m(b.view(1, 1)) ** 2).sum(),
+        val_loss=lambda m: next(losses),
+        cfg=FitConfig(max_epochs=10, patience=5, lr=1e-3, min_epochs=50),
+    )
+    assert res.epochs_run == 10
+    assert res.best_epoch == 9
+    assert res.best_val_loss == 9.0

@@ -254,6 +254,27 @@ bloco depois de ver um número invalida o pré-registro.
       iguais.
     - Se mesmo assim a fração ficar abaixo de 0,5 em algum orçamento da variante bruta, esse
       orçamento é declarado não avaliável, sem nova refação.
+  - **Decisão do usuário (2026-11-12, 01:23 UTC), antes de abrir qualquer número de teste da
+    rodada 30×:** a rodada corrigida decide H1 e H2 em todos os orçamentos, com um único
+    procedimento de treino.
+    - A decisão veio antes dos números porque a rodada corrigida só pode melhorar o resultado.
+      Decidir rodá-la só depois de ver a 30× seria escolher a rodada pelo resultado.
+    - A rodada 30× foi interrompida na metade `sem_picos`, que não decide nada, e selada sem
+      análise em `results-lr30/` (`SELADO.md`). Como não chegou ao fim, não gerou
+      `hypotheses.csv`. Só os diagnósticos de treino saíram dela (`convergencia.txt`).
+    - A rodada corrigida roda só a variante `bruto` (`despike_variants: [false]`). A `sem_picos`
+      fica para uma rodada secundária posterior.
+  - **Avaliabilidade por orçamento, em código** (`evaluable_budgets`; `min_mask_converged_frac`
+    e `convergence_arms` no bloco `preregistration`):
+    - Um orçamento só é avaliável numa hipótese se a máscara de cada braço de
+      `convergence_arms` saiu do ruído em pelo menos 0,5 das divisões.
+    - Os testes de um orçamento não avaliável entram no Holm com p = 1, o que é conservador, e
+      ele não pode vencer. `hypotheses.csv` marca `evaluable` e a convergência de cada braço.
+    - **H1:** `dec_aprendida` (o B5 como pré-registrado) e `dec_aprendida_sel` (a máscara
+      efetivamente usada em cada divisão, que pode vir de um orçamento treinado mais esparso).
+    - **H2:** `dec_aprendida` e `dec_livre_projetada`. Na rodada 30×, a máscara livre saiu do
+      ruído em só 1/5, 1/5, 1/5 e 0/5 das divisões (diagnóstico de treino). Sem essa exigência,
+      a H2 mediria o gap de projeção contra um baseline preso no ruído.
 
   Verificação no recorte da fumaça (1/32, 120 passos, sem parada antecipada; não é resultado):
   - com multiplicador 1, o desvio dos logits foi de 0,01 a 0,047, dentro do ruído;

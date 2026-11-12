@@ -1580,6 +1580,30 @@ def arm_rows(rows: list[dict], ds: str, var: str, b: int, arm: str) -> list[dict
     ]
 
 
+def mask_converged_frac(rows: list[dict], ds: str, var: str, b: int, arm: str) -> float | None:
+    """B5: fracao das celulas (divisao, semente) em que a mascara do braco saiu do ruido."""
+    conv: dict[tuple, int] = {}
+    for r in arm_rows(rows, ds, var, b, arm):
+        if r.get("mask_converged") not in (None, ""):
+            conv[(r["split"], r.get("seed", ""))] = int(r["mask_converged"])
+    return float(np.mean(list(conv.values()))) if conv else None
+
+
+def evaluable_budgets(
+    rows: list[dict], ds: str, var: str, budgets: list[int], arms: list[str], min_frac: float
+) -> dict[int, tuple[bool, str]]:
+    """Orcamento avaliavel numa hipotese: cada braco de `arms` com a mascara fora do ruido em pelo
+    menos `min_frac` das divisoes. Braco listado sem diagnostico conta como nao avaliavel, para nao
+    passar em silencio; sem bracos listados, todo orcamento e avaliavel."""
+    out = {}
+    for b in budgets:
+        fr = {a: mask_converged_frac(rows, ds, var, b, a) for a in arms}
+        ok = all(f is not None and f >= min_frac for f in fr.values())
+        txt = " ".join(f"{a}={'' if f is None else round(f, 3)}" for a, f in fr.items())
+        out[b] = (ok, txt)
+    return out
+
+
 def hypotheses(
     rows: list[dict], cfg: dict, group_of: dict[str, str], cluster_of: dict[str, str]
 ) -> list[dict]:
@@ -1588,15 +1612,25 @@ def hypotheses(
     ds, var, alpha = pr["dataset"], pr["variant"], float(pr["alpha"])
     n_boot, seed = int(cfg["analysis"]["bootstrap_resamples"]), int(cfg["seed"])
     budgets = sorted({int(r["budget"]) for r in rows if r["dataset"] == ds and r["variant"] == var})
+    min_conv = float(pr.get("min_mask_converged_frac", 0.0))
     out: list[dict] = []
-    for name, arm, baselines in (
-        ("H1", pr["h1"]["arm"], list(pr["h1"]["baselines"])),
-        ("H2", pr["h2"]["arm"], [pr["h2"]["baseline"]]),
-    ):
+    for name, key in (("H1", "h1"), ("H2", "h2")):
+        h = pr[key]
+        arm = h["arm"]
+        baselines = list(h["baselines"]) if "baselines" in h else [h["baseline"]]
+        conv_arms = list(h.get("convergence_arms", []))
+        evals = evaluable_budgets(rows, ds, var, budgets, conv_arms, min_conv)
         verdict_rulers = {}
         for ruler in pr["rulers"]:
             tests = []
             for b in budgets:
+                ok, conv_txt = evals[b]
+                if not ok:
+                    # B5: mascara presa no ruido -> p = 1 no Holm (conservador), e nao vence
+                    for base in baselines:
+                        nt = {"budget": b, "baseline": base, "p_one_sided": 1.0}
+                        tests.append({**nt, "evaluable": 0, "convergence": conv_txt})
+                    continue
                 a_rec = per_record(arm_rows(rows, ds, var, b, arm), ruler)
                 for base in baselines:
                     b_rec = per_record(arm_rows(rows, ds, var, b, base), ruler)
@@ -1611,7 +1645,8 @@ def hypotheses(
                         min_clusters=int(pr["min_clusters_per_group"]),
                         min_splits=int(pr["min_splits"]),
                     )
-                    tests.append({"budget": b, "baseline": base, **(res or {"p_one_sided": 1.0})})
+                    t = {"budget": b, "baseline": base, **(res or {"p_one_sided": 1.0})}
+                    tests.append({**t, "evaluable": 1, "convergence": conv_txt})
             adj = holm([float(t["p_one_sided"]) for t in tests])
             passed = defaultdict(list)
             for t, p_adj in zip(tests, adj, strict=True):
@@ -1636,6 +1671,7 @@ def hypotheses(
                     "arm": arm,
                     "verdict_ruler": int(verdict_rulers[ruler]),
                     "budgets_won": " ".join(str(x) for x in sorted(wins)),
+                    "budgets_not_evaluable": " ".join(str(x) for x in budgets if not evals[x][0]),
                 }
             )
         out.append(

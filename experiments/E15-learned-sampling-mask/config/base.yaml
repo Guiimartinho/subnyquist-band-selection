@@ -30,7 +30,9 @@ datasets:
     factor_grid_max: 48
     guard_points_per_rev_factor: 2.0 # a guarda do E22
     min_gap_ticks: 2                 # 10 us a 200 kSPS; o valor realizavel no SAADC e medida de bancada nao feita
-    despike_variants: [false, true]  # a decisiva e a `bruto` (pre-registro); `sem_picos` exige taxa cheia
+    # Rodada corrigida (decisao do usuario, 2026-11-12): so a variante decisiva, a `bruto`. A
+    # `sem_picos` (exige taxa cheia, nao decide nada) fica para uma rodada secundaria posterior.
+    despike_variants: [false]
     healthy_control: {enabled: true, conditions: [H]}
     window_samples: 500000           # janela de treino = segmento (2,5 s), e o trecho da regua local
     # regua local: refino em taxa cheia numa grade deslizante de janelas de `window_samples`
@@ -165,12 +167,18 @@ preregistration:
   min_budgets: 2
   min_clusters_per_group: 3         # teste com menos aglomerados por pista nao e elegivel (p = 1)
   min_splits: 2
+  # B5, avaliabilidade (2026-11-12, antes de qualquer numero de teste da rodada corrigida): um
+  # orcamento so e avaliavel numa hipotese se a mascara de cada braco de `convergence_arms` saiu
+  # do ruido em pelo menos esta fracao das divisoes; senao, seus testes entram no Holm com p = 1.
+  min_mask_converged_frac: 0.5
   h1:
     arm: dec_aprendida_sel
     baselines: [uniforme_treino, dec_uniforme_treino, dec_aleatoria]
+    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 como pre-registrado + mascara usada
   h2:
     arm: dec_aprendida
     baseline: dec_livre_projetada
+    convergence_arms: [dec_aprendida, dec_livre_projetada]  # sem isso, baseline preso no ruido
 
 analysis: {bootstrap_resamples: 4000}
 
