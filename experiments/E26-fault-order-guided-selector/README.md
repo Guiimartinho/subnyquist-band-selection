@@ -192,3 +192,8 @@ ajustá-lo.
   - A janela do guiado (±2 %) é mais larga que a tolerância do cego (0,025). O preço disso é o
     alarme falso, controlado pelo limiar dos sãos.
 
+**Correção antes da rodada completa (2026-11-13).** A fumaça, com 6 rolamentos, 1 ajuste, 2
+medições e os fatores 1 e 4, rodou, mas a análise quebrou ao procurar o fator 8, que ela não tinha.
+A análise passou a testar só os fatores decisivos presentes nos dados. Nenhum critério mudou, e os
+números da fumaça não foram olhados.
+

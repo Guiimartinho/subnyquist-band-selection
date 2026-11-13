@@ -172,7 +172,7 @@ def main() -> int:
         "H2": ("mediana_guiado", "mediana_kurtograma"),
     }.items():
         cell = []
-        for f in (int(x) for x in an["decisive_factors"]):
+        for f in (int(x) for x in an["decisive_factors"] if int(x) in factors):  # só os rodados
             t = signflip(
                 per_bearing(arm, f, ("OR", "IR")),
                 per_bearing(base, f, ("OR", "IR")),
