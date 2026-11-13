@@ -53,10 +53,11 @@ internas das entradas ficam no campo `annote`, que o estilo da Elsevier não imp
 - [x] caso de falha documentado (seção "Where the method fails" e apêndice);
 - [x] `reviewer-2` no manuscrito inteiro;
 - [ ] `literature/scout.py --anchors` rodado de novo, com as âncoras novas sugeridas pela revisão;
-- [x] autores (Luiz Guilherme Martinho Sampaio Ito e José Rodrigo Furlanetto Azambuja);
+- [x] autores e e-mails (Luiz Guilherme Martinho Sampaio Ito, Lucas Saraiva de Carvalho e José Rodrigo
+  Furlanetto Azambuja; o primeiro é o correspondente);
 - [x] seção de disponibilidade de dados e código, apontando para este repositório;
 - [ ] repositório público, ou cópia arquivada com DOI, antes de submeter (tirar do histórico os PDFs de editora de `literature/pdf`);
-- [ ] afiliações conferidas, e-mail do autor correspondente, CRediT, conflito de interesses e financiamento;
+- [ ] afiliações conferidas, CRediT, conflito de interesses e financiamento;
 - [ ] texto reescrito pelo autor;
 - [x] compilação (TinyTeX local, 44 páginas, sem referência indefinida nem caixa fora da margem);
 - [ ] conferência visual do PDF pelo autor;
