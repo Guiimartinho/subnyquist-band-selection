@@ -140,3 +140,55 @@ o desenho (o Paderborn), com:
 - limiar em rolamentos sãos com validação cruzada;
 - os mesmos baselines: kurtograma cego, mediana + kurtograma e teto baixo.
 
+## Confirmação no Paderborn (pré-registro, 2026-11-13)
+
+Escrito e commitado antes de rodar, junto com `run_paderborn.py`, `analyze_paderborn.py` e
+`config/paderborn.yaml`. O desenho fica fixo daqui em diante. O piloto do Ottawa **não** faz parte
+do teste, porque foi revisado duas vezes depois de ver os dados. O Paderborn não serviu para
+ajustá-lo.
+
+- **Dados.**
+  - 23 rolamentos danificados (12 de pista externa e 11 de pista interna, os do E24) e os 6 sãos
+    (K001–K006).
+  - Os três ajustes de 1500 rpm, com as medições 2 a 20 de 255 936 amostras.
+  - A medição 1 dos danificados serve à régua aninhada (`line_calibration` do E24).
+- **Fatores:** 1, 4, 8, 16 e 32. Decidem 4, 8, 16 e 32; o 1 é descritivo.
+- **Braços,** todos no fluxo já decimado:
+  - `kurtograma`, o pipeline cego do E24;
+  - `mediana_kurtograma`, a mediana de 3 seguida do kurtograma;
+  - `guiado`, o seletor guiado sem limpeza;
+  - `mediana_guiado`, a mediana de 3 seguida do seletor guiado.
+- **Seletor guiado,** com parâmetros fixados a priori:
+  - **Ordens:** as da geometria, BPFO = 3,0543 e BPFI = 4,9457, e só as harmônicas 1 e 2.
+  - **Janela de ±2 %:** é a dispersão de 1 a 2 % entre fabricantes (PHME16, seção 3).
+  - **Ordens inteiras excluídas, ±0,015.** No Paderborn, a BPFO e a BPFI ficam 0,054 da 3ª e da
+    5ª harmônica do eixo, e a rotação é constante. A resolução em 4 s é de 0,01 ordem.
+  - **Partição:** a do kurtograma, níveis 1 a 3, com 23 bandas até o Nyquist efetivo.
+  - **Escore:** a proeminência média, isto é, o pico dividido pela mediana na própria janela.
+- **Limiar:** o percentil 95 dos escores dos sãos, por fator e limpeza. Para avaliar cada são, o
+  limiar sai dos outros 5.
+- **Identificação.**
+  - **Cego:** pista externa ou interna, se a ordem estimada ficar a ≤ 0,025 da verdadeira; senão,
+    "nenhuma". A verdadeira é a régua aninhada do E24 para a própria pista, e a mediana de todas as
+    calibrações para a outra pista e para os sãos.
+  - **Guiado:** a falha de maior escore, se ele passar do limiar; senão, "nenhuma".
+- **Métricas.**
+  - Acurácia balanceada nos danificados: a média, sobre as pistas, do acerto por rolamento.
+  - Especificidade nos sãos: a fração de "nenhuma".
+- **Hipóteses.**
+  - **H1:** `mediana_guiado` > `kurtograma`.
+  - **H2:** `mediana_guiado` > `mediana_kurtograma`. É o ganho do seletor guiado além da limpeza.
+  - **O teste:** troca de sinal por rolamento, estratificada por pista, unilateral, nas diferenças
+    de acerto por rolamento. É exata até 2^18 combinações e Monte Carlo com 10^6 acima disso. A
+    revisão do E24 mostrou que o bootstrap é anticonservador com tão poucos aglomerados.
+  - Holm sobre os 4 fatores, com α = 0,05.
+  - **Um fator passa** se o p de Holm ficar abaixo de 0,05, a diferença for positiva e a
+    especificidade do `mediana_guiado` ali for de pelo menos 90 %.
+- **O que refutaria.** A H1 cai se nenhum fator passar. O mesmo vale para a H2.
+- **Limites declarados.**
+  - O cego não tem limiar de alarme falso; a especificidade dele nos sãos é reportada.
+  - A régua aninhada vem de poucas calibrações, medidas na banda que o kurtograma escolhe (revisão
+    do E24). Ela só entra na identificação do cego.
+  - A janela do guiado (±2 %) é mais larga que a tolerância do cego (0,025). O preço disso é o
+    alarme falso, controlado pelo limiar dos sãos.
+
