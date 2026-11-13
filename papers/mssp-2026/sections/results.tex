@@ -254,8 +254,9 @@ and 98\% in KI01; in the others it reaches at most 12\%.
 \subsection{A fault-order rule and the acquisition on Paderborn}
 \label{sec:res-rule}
 
-Table~\ref{tab:rule} gives the balanced accuracy of the fault-order rule (Section~\ref{sec:met-rule})
-on Paderborn, for three band choices and two acquisitions, with the blind pipeline for reference.
+Table~\ref{tab:rule} and Fig.~\ref{fig:rule} give the balanced accuracy of the fault-order rule
+(Section~\ref{sec:met-rule}) on Paderborn, for three band choices and two acquisitions, with the
+blind pipeline for reference.
 The specificity of the rule ranges from 89.8 to 95.0\% over all arms and factors, against 99.4 to
 100\% for the blind pipeline.
 
@@ -316,10 +317,12 @@ before decimation is better than pure decimation for every band choice (Table~\r
   and 2.5 to 27.5\% in the three zones above it. At $8\times$ the base band reaches 51.9\%, the two
   zones above it 35.6 and 40.4\%, and the zones from 12~kHz up 2.0 to 8.1\%.
   \item Classical band-pass sampling with the zone chosen on the other bearings picks the base band
-  for every bearing, so it equals the anti-alias filter. The pre-registered test that pure
-  decimation beats it failed: $+5.1$ points at $4\times$ (Holm $p = 0.087$) and $+1.1$ at $8\times$.
-  With the zone chosen by the full-rate kurtogram of a commissioning record, band-pass sampling
-  picks the captured zone and reaches 14.7 to 16.0\%.
+  for every bearing, so with the whole band and the rule it equals the anti-alias filter with the
+  same band (47.0\% at $4\times$). The pre-registered test that pure decimation with the guided band
+  beats it failed: $+5.1$ points at $4\times$ (Holm $p = 0.087$) and $+1.1$ at $8\times$. The two
+  arms differ in band as well as in acquisition: with the guided band on both sides, the anti-alias
+  filter is ahead (first item). With the zone chosen by the full-rate kurtogram of a commissioning
+  record, band-pass sampling picks the captured zone and reaches 14.7 to 16.0\%.
   \item The highest accuracy among these descriptive arms is that of the whole band with the rule
   after the anti-alias filter at $32\times$ (2~kS/s, a band from 500~Hz to 1~kHz): 71.2\%.
 \end{itemize}
@@ -351,6 +354,20 @@ inner race, and KA15, KA22 and KA30 on the outer race.
   \small
   \input{tables/tab_guided_paderborn.tex}
 \end{table}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics{figures/fig_rule_paderborn.pdf}
+  \caption{Race identification on Paderborn with the fault-order rule, raw stream. (a) Decision
+  and band under pure decimation, against blind order estimation. (b) Pure decimation (filled
+  markers, solid lines) against an ideal anti-alias filter at the same rate (open markers, dashed
+  lines), for the guided band (diamonds) and the whole band (squares).
+  (c) Whole band with the rule after an ideal band-pass filter on each Nyquist zone at $4\times$
+  and $8\times$; each horizontal segment spans its zone of the original frequency axis, and the
+  first zone is the anti-alias filter. Bands and error bars are 95\% intervals from a bootstrap
+  over bearings within each race.}
+  \label{fig:rule}
+\end{figure}
 
 \subsection{Can a benchmark detect a learned improvement?}
 \label{sec:res-power}
@@ -412,7 +429,7 @@ The mask learned without the constraint and projected onto it converged in at mo
 runs, and in none at 1/8, so H2 was not evaluable at any budget.
 
 The learned mask did not outperform any of the three references at any budget, and none of the 24
-pre-registered tests was significant.
+pre-registered tests was significant (Fig.~\ref{fig:masks}).
 \begin{itemize}
   \item Under the nested ruler (23 bearings) it stayed within $-5.2$ and $+4.4$ points of the
   uniform decimation trained on the same records and of the random mask, at 24.4--27.5\% balanced
@@ -438,6 +455,17 @@ trained on labels from the nested ruler, which tell them which order to look for
 consistent with a band choice guided by the training labels, the effect of the fault-order rule
 obtained without learning (Section~\ref{sec:res-rule}), but it was not tested, and the decoders were
 not evaluated on healthy bearings.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics{figures/fig_masks_paderborn.pdf}
+  \caption{Learned sampling masks on Paderborn: balanced order accuracy against the sample budget,
+  under the nested ruler (a) and the local ruler (b). Each point is the mean over races of the
+  per-record accuracy, the statistic of the pre-registered tests, pooled over the four folds and
+  three seeds. Shaded bands are 95\% intervals from a bootstrap over bearings within each race.
+  The top axis gives the average rate.}
+  \label{fig:masks}
+\end{figure}
 
 \subsection{Where the method fails}
 \label{sec:res-fail}

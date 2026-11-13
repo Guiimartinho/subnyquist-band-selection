@@ -45,6 +45,7 @@ SOURCES = [
     (E20 / "results-post-despike/metrics.csv", ("despike_decimado",)),
 ]
 OUT = ROOT / "papers/mssp-2026/figures"
+PNG = E20 / "results/figures"
 FS_FULL_KSPS = 200.0
 CEILING_HZ = 25000.0
 # braço -> (rótulo, cor, marcador, traço, ordem de desenho)
@@ -133,6 +134,9 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / f"fig_valley_{args.ruler}.pdf"
     fig.savefig(out)
+    # copia PNG para o relatorio em Markdown (docs/resultados-subnyquist.md)
+    PNG.mkdir(parents=True, exist_ok=True)
+    fig.savefig(PNG / f"e20_valley_{args.ruler}.png", dpi=200)
     print(f"braços: {present} -> {out}")
 
 

@@ -40,6 +40,7 @@ import numpy as np  # noqa: E402
 ROOT = Path(__file__).resolve().parents[3]
 E24 = ROOT / "experiments/E24-paderborn-spike-capture"
 OUT = ROOT / "papers/mssp-2026/figures/fig_paderborn.pdf"
+PNG = E24 / "results/figures"
 FS_FULL_KSPS = 64.0
 # braço -> (rótulo, cor, marcador, traço, ordem de desenho)
 ARMS = {
@@ -138,6 +139,9 @@ def main() -> None:
     fig.tight_layout(rect=(0, 0.13, 1, 1))  # legenda embaixo, fora dos paineis
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out)
+    # copia PNG para o relatorio em Markdown (docs/resultados-subnyquist.md)
+    PNG.mkdir(parents=True, exist_ok=True)
+    fig.savefig(PNG / "e24_paderborn.png", dpi=200)
     print(f"braços: {present}; fatores {factors} -> {args.out}")
 
 
