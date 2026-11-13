@@ -75,20 +75,20 @@ prominence_window: 0.07
 despike:
   k_mad: 10.0
 arms:
-  kurtograma:
+  kurtogram:
     selector: sk
     despike: false
-  kurtograma_sem_picos:
+  kurtogram_despiked:
     selector: sk
     despike: true
-  kurtograma_sem_picos_decimado:
+  kurtogram_despiked_after_decimation:
     selector: sk
     despike: false
     despike_after: true
 tests:
   H3:
-    arm: kurtograma_sem_picos_decimado
-    baseline: kurtograma
+    arm: kurtogram_despiked_after_decimation
+    baseline: kurtogram
 analysis:
   bootstrap_resamples: 4000
   alpha: 0.05

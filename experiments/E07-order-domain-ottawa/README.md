@@ -76,9 +76,9 @@ config/base.yaml` was re-run on the server. `results/metrics.csv` and
 | 48× | 4.17 kSPS | 72.2 % | 50.0 % | 80.6 % | 72 |
 | 64× | 3.12 kSPS | 64.4 % | 51.1 % | 73.3 % | 45 |
 
-- **Only `sem_prior` (no prior) measures estimation** (T0.2). The two columns with a prior choose
+- **Only `no_prior` measures estimation** (T0.2). The two columns with a prior choose
   within a set that contains the right answer.
-- **The `sem_prior` column changes by at most 5.6 points against 2026-09-04** (16×: 68.1 → 75.0 %).
+- **The `no_prior` column changes by at most 5.6 points against 2026-09-04** (16×: 68.1 → 75.0 %).
   The 4× dip stays: the outer race has 25, 21, **6** and 24 hits out of 36 at 1×, 2×, 4× and 8×,
   and the inner race 32, 32, 32 and 33.
 - **"At 32× the hit rate is higher than at the full rate" no longer holds.** It is now 77.8 %
@@ -566,17 +566,17 @@ which keeps route 4 closed.
 ### The pre-registered analysis: route 1 triggered, but the ruler moved
 
 Each run was evaluated against its own truth, as recorded.
-- **Paired guard step, `prior_calibrado` (calibrated prior):** −30.2 points on average (from −36.1
+- **Paired guard step, `calibrated_prior`:** −30.2 points on average (from −36.1
   to −20.8), with a slope of −0.8 ± 1.6 points per octave (95 % CI). By route 3 it is additive.
 - **Corrected values:** 73.3 % at 64×, 57.9 % at 96×, 38.5 % at 128× and 30.2 % at 160×. The drop
   at 96× is 15.4 points, above the threshold of 13, and **route 1 triggers**.
 - **Route 2 (capture by a fixed order):** does not trigger, narrowly. The most frequent order of
-  `prior_calibrado` is ≈0.39 (FTF) in 24 %, 38 % and 49 % of the segments at 96×, 128× and 160×.
+  `calibrated_prior` is ≈0.39 (FTF) in 24 %, 38 % and 49 % of the segments at 96×, 128× and 160×.
 
 **The −30-point step is not the estimator's. It is the truth that moves.** Under `spr = 16` the
 calibration shifts the reference order by a median of −0.0425 orders (from −0.065 to −0.015), and
 18 of the 24 records move more than 0.03. The tolerance is 0.06.
-- In the 23 segments that the base gets right and the extended gets wrong at 1× (`sem_prior`), the
+- In the 23 segments that the base gets right and the extended gets wrong at 1× (`no_prior`), the
   estimate and the band are practically the same in both runs, for example 5.429 against 5.429.
   What changes is the truth: 5.3808 → 5.3458 on the inner race and 3.4392 → 3.3742 in O-B.
 - **The cause is the tie-break of `refine` (review of 2026-11-11, checked).**
@@ -600,9 +600,9 @@ record and does not depend on the factor, so it also holds for 96–160×.
 
 | | 1× | 4× | 8× | 32× | 64× | 96× | 128× | 160× |
 |---|---|---|---|---|---|---|---|---|
-| `sem_prior`, extended, fixed ruler | 77.8 | 51.4 | 76.4 | 70.8 | 61.1 | 52.8 | **19.4** | **0.0** |
+| `no_prior`, extended, fixed ruler | 77.8 | 51.4 | 76.4 | 70.8 | 61.1 | 52.8 | **19.4** | **0.0** |
 
-- **Paired guard step, `sem_prior`:** −3.5 points on average (from −8.9 to 0.0). It is small, but
+- **Paired guard step, `no_prior`:** −3.5 points on average (from −8.9 to 0.0). It is small, but
   it grows with the factor: −1.0 ± 0.8 points per octave, with a CI that excludes 0. **By route 3,
   the subtraction of a single step does not hold up.**
 - **Even so, there is a knee between 96× and 128×.** From 96× to 128× the raw hit rate falls 33
@@ -618,15 +618,15 @@ record and does not depend on the factor, so it also holds for 96–160×.
   - The envelope of a band of width W only has content up to W. The fault line disappears, and the
     estimate lands next to `order_min` = 2.0: 47 % of the estimates in [2.0; 2.2) at 128× and 83 %
     at 160×.
-  - It is the capture by a fixed order of route 2, which also held for `sem_prior`.
+  - It is the capture by a fixed order of route 2, which also held for `no_prior`.
   - The previous sentence ("the search range no longer contains the resonance") was wrong: under
     pure decimation the resonance folds into the baseband.
   - It is a wall of the pipeline (the floor and the selector's partition), not of the rate.
-- **`prior_calibrado` with the fixed ruler** worsens (mean step of −38.2). This is what is expected
+- **`calibrated_prior` with the fixed ruler** worsens (mean step of −38.2). This is what is expected
   of a choice among candidates around a calibration that moved, and it confirms the invalidation
   of T0.2.
 
-**Conclusion for T1.1.** The publishable factor of E07 remains 64× (3.12 kSPS) in `sem_prior`.
+**Conclusion for T1.1.** The publishable factor of E07 remains 64× (3.12 kSPS) in `no_prior`.
 The extended curve shows a knee between 2.08 and 1.56 kSPS. It belongs to the pipeline: the narrow search range and the bands narrower than the fault harmonics that the score uses (corrected on 2026-11-12, from `results/extended/metrics.csv`: the median fault frequency is 81 Hz; at 128× the median band, of 141 Hz, is still wider than it, but narrower than the three harmonics of the score, which add up to 243 Hz; only at 160×, with 10.4 Hz, does it become narrower than the fault frequency itself).
 A method gain at these factors
 would be against a straw man.
@@ -649,7 +649,7 @@ race falls by about 0.3 per 10 Hz of rotation within the record (O-A-1: 3.519 at
 at 25.8 Hz), and a truth that is constant per record misses the line in the segments with a
 different rotation speed.
 
-`sem_prior`, hit rate (%):
+`no_prior`, hit rate (%):
 
 | factor | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
 |---|---|---|---|---|---|---|---|---|---|
@@ -658,7 +658,7 @@ different rotation speed.
 
 - **Per race, local ruler:** the outer race has 31, 22, **6** and 28 of 35 at 1×, 2×, 4× and 8×;
   the inner race 35, 35, 35 and 36 of 36. The 4× dip stays under both rulers.
-- **The `prior_calibrado` column** stays equal to or below the `sem_prior` one (1×: 84.7 %).
+- **The `calibrated_prior` column** stays equal to or below the `no_prior` one (1×: 84.7 %).
 - **Negative control (AUC BPFI / BPFO):**
 
   | factor | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |

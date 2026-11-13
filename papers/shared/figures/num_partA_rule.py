@@ -29,15 +29,15 @@ def tests(rep: dict) -> list[dict]:
 def main() -> None:
     e26, e26b, e26c = (
         load("results-paderborn"),
-        load("results-paderborn-regra"),
-        load("results-paderborn-aquisicao"),
+        load("results-paderborn-rule"),
+        load("results-paderborn-acquisition"),
     )
     s26, sb, sc = e26["summary"], e26b["summary"], e26c["summary"]
     zones = {
         f"{f}x": {
             k.split("|")[0]: sc[k]["balanced"]
             for k in sc
-            if k.endswith(f"|banda_larga_regra|{f}x")
+            if k.endswith(f"|wideband_rule|{f}x")
             and (k.startswith("antialias") or k.split("|")[0][4:].isdigit())
         }
         for f in (4, 8)
@@ -47,12 +47,10 @@ def main() -> None:
     ]
     rep = {
         "confirmation": {
-            "blind_kurtogram": {f: s26[f"kurtograma|{f}x"]["balanced"] for f in (1, 4, 8, 16, 32)},
-            "median_guided": {
-                f: s26[f"mediana_guiado|{f}x"]["balanced"] for f in (1, 4, 8, 16, 32)
-            },
+            "blind_kurtogram": {f: s26[f"kurtogram|{f}x"]["balanced"] for f in (1, 4, 8, 16, 32)},
+            "median_guided": {f: s26[f"median_guided|{f}x"]["balanced"] for f in (1, 4, 8, 16, 32)},
             "median_guided_specificity": {
-                f: s26[f"mediana_guiado|{f}x"]["specificity"] for f in (1, 4, 8, 16, 32)
+                f: s26[f"median_guided|{f}x"]["specificity"] for f in (1, 4, 8, 16, 32)
             },
             "tests": tests(e26),
         },

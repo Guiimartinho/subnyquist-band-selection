@@ -30,7 +30,7 @@ def ses_without_line(rows: list[dict]) -> dict:
     per: dict[tuple[str, str], list[int]] = defaultdict(list)
     for r in rows:
         if (
-            r["arm"] == "infograma_ses"
+            r["arm"] == "ses_infogram"
             and int(r["factor"]) == 1
             and r["hit_nested"] != ""
             and r["bearing"] not in visible
@@ -49,7 +49,7 @@ def ses_without_line(rows: list[dict]) -> dict:
 
 def ceiling_notch() -> dict:
     """E24b: fold-free ceiling and notch, from summary.csv and the pre-registered analysis."""
-    res = E24 / "results-teto-notch"
+    res = E24 / "results-ceiling-notch"
     with (res / "summary.csv").open(encoding="utf-8") as f:
         acc = {f"{r['arm']}|{r['factor']}x": float(r["bal_acc_nested"]) for r in csv.DictReader(f)}
     a = json.loads((res / "analysis.json").read_text(encoding="utf-8"))
@@ -59,7 +59,7 @@ def ceiling_notch() -> dict:
 def main() -> None:
     with (E24 / "results/metrics.csv").open(encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
-    full = [r for r in rows if r["arm"] == "kurtograma" and int(r["factor"]) == 1]
+    full = [r for r in rows if r["arm"] == "kurtogram" and int(r["factor"]) == 1]
     high = [r for r in full if r["band_lo_hz"] != "" and float(r["band_lo_hz"]) >= 11000.0 - 1e-6]
     per: dict[str, list[int]] = defaultdict(list)
     for r in full:

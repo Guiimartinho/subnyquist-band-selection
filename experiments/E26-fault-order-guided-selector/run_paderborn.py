@@ -45,7 +45,7 @@ guided = _load("e26guided", EXP / "guided.py")
 e24 = _load("e24run", E24_RUN)
 FS = pb.FS_HZ
 ORDERS = {c: pb.computed_orders()[c] for c in ("BPFO", "BPFI")}
-CLEAN = {"bruto": lambda x: x, "mediana3": guided.median3}
+CLEAN = {"raw": lambda x: x, "median3": guided.median3}
 
 
 def race_of(code: str) -> str:
@@ -114,9 +114,9 @@ def task(job) -> dict:
                 "factor": f,
             }
             if not guard_ok(xd, vd, fs, cfg):
-                # "guarda" (guard) is the data label of a row skipped by guard_ok
+                # a row skipped by guard_ok is labelled "guard"
                 for clean in CLEAN:
-                    out["rows"].append({**base, "clean": clean, "skipped": "guarda"})
+                    out["rows"].append({**base, "clean": clean, "skipped": "guard"})
                 continue
             for clean, fn in CLEAN.items():
                 xc = fn(xd)

@@ -6,6 +6,7 @@ import importlib.util
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 _spec = importlib.util.spec_from_file_location(
     "e20_run", Path(__file__).resolve().parents[1] / "run.py"
@@ -109,7 +110,31 @@ def test_post_despike_config_keeps_the_signal_before_decimation():
             encoding="utf-8"
         )
     )
-    spec = cfg["interventions"]["despike_decimado"]
+    spec = cfg["interventions"]["despike_after_decimation"]
     x = np.random.default_rng(0).normal(size=1000)
     assert np.array_equal(e20.apply_intervention(x, FS, spec, 4), x)
     assert spec["post"] == "despike"
+
+
+def _relabel_tokens() -> dict:
+    """TOKENS of tools/relabel_map.py (old label -> English label), or skip if it is absent."""
+    path = Path(__file__).resolve().parents[3] / "tools" / "relabel_map.py"
+    if not path.exists():
+        pytest.skip("tools/relabel_map.py is not part of this repository")
+    spec = importlib.util.spec_from_file_location("relabel_map", path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m.TOKENS
+
+
+def test_summary_keeps_the_row_order_of_the_versioned_files():
+    """summary.csv is sorted by the labels the runs wrote, before they were renamed to English."""
+    cell = {"condition": "outer_race", "factor": 4, "ceiling_hz": 25000.0, "record": "O-A-1"}
+    rows = [
+        {**cell, "intervention": i, "segment": 0, "hit": 1}
+        for i in ("none", "ses_infogram", "gini", "ses_infogram_despike")
+    ]
+    order = [r["intervention"] for r in e20.summarize(rows)]
+    assert order == ["gini", "ses_infogram", "ses_infogram_despike", "none"]
+    tokens = _relabel_tokens()
+    assert all(tokens[old] == new for new, old in e20.LEGACY_LABELS.items())

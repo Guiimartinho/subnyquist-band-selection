@@ -44,11 +44,11 @@
     ]
   },
   "verdict": {
-    "H1a_sensibilidade": "refutada",
-    "H1b_especificidade": "apoiada",
-    "H1_linha_impulsividade": "nao avaliavel (sem P*)",
-    "H2_tat_ba": "nao avaliavel (sem acerto ou sem erro)",
-    "H2_tat_vs_oraculo": "apoiada"
+    "H1a_sensitivity": "refuted",
+    "H1b_specificity": "supported",
+    "H1_line_impulsiveness": "not evaluable (no P*)",
+    "H2_tat_ba": "not evaluable (no hit or no miss)",
+    "H2_tat_vs_oracle": "supported"
   },
   "descriptive": {
     "interferer_line_rate": {

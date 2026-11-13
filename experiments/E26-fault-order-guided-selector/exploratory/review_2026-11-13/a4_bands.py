@@ -13,8 +13,8 @@ print(
     "   (where the bands coincide, the guided score in the blind band is the guided score itself: the difference is only the rule)"
 )
 for clean, blind_arm, g_arm in (
-    ("bruto", "kurtograma", "guiado"),
-    ("mediana3", "mediana_kurtograma", "mediana_guiado"),
+    ("raw", "kurtogram", "guided"),
+    ("median3", "median_kurtogram", "median_guided"),
 ):
     for f in FACTORS:
         same = {"ok_g": 0, "ok_b": 0, "n": 0}
@@ -36,7 +36,7 @@ print("\n== Blind orders at the 'floor' (2.015 to 2.2): most frequent values, ra
 c = Counter()
 h = Counter()
 for r in ROWS:
-    if r["clean"] == "bruto" and r["blind_order"] != "":
+    if r["clean"] == "raw" and r["blind_order"] != "":
         e = float(r["blind_order"])
         if 2.0 <= e < 2.2:
             (c if r["race"] != "H" else h)[round(e, 2)] += 1
@@ -47,11 +47,11 @@ for f in FACTORS:
     rr = [
         r
         for r in ROWS
-        if int(r["factor"]) == f and r["clean"] == "bruto" and r["race"] in ("OR", "IR")
+        if int(r["factor"]) == f and r["clean"] == "raw" and r["race"] in ("OR", "IR")
     ]
     cb = Counter(r["blind_band"] for r in rr)
     cg = Counter(r["band_BPFO" if r["race"] == "OR" else "band_BPFI"] for r in rr)
-    hh = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == "bruto" and r["race"] == "H"]
+    hh = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == "raw" and r["race"] == "H"]
     ch = Counter(r["blind_band"] for r in hh)
     print(
         f"  {f:2d}x blind: {cb.most_common(3)}\n      guided: {cg.most_common(3)}\n      blind on healthy: {ch.most_common(2)}"

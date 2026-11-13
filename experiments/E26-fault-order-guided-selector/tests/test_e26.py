@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 _spec = importlib.util.spec_from_file_location(
     "e26guided", Path(__file__).resolve().parents[1] / "guided.py"
@@ -36,3 +37,38 @@ def test_median3_removes_an_isolated_spike():
     x = np.zeros(100)
     x[50] = 30.0
     assert np.max(np.abs(g.median3(x))) == 0.0
+
+
+def _relabel_tokens() -> dict:
+    """TOKENS of tools/relabel_map.py (old label -> English label), or skip if it is absent."""
+    path = Path(__file__).resolve().parents[3] / "tools" / "relabel_map.py"
+    if not path.exists():
+        pytest.skip("tools/relabel_map.py is not part of this repository")
+    spec = importlib.util.spec_from_file_location("relabel_map", path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m.TOKENS
+
+
+def _load(name: str, file: str):
+    spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().parents[1] / file)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_random_band_seed_comes_from_the_legacy_cleaning_label():
+    """Values computed before the labels were renamed, from "bruto" and "mediana3"."""
+    rule = _load("e26rule", "run_paderborn_rule.py")
+    assert rule.segment_seed("KA01", "N15_M07_F10", 2, 4, "raw") == 3882564165
+    assert rule.segment_seed("KI21", "N15_M01_F10", 20, 32, "median3") == 1367934109
+    tokens = _relabel_tokens()
+    assert all(tokens[old] == new for new, old in rule.LEGACY_CLEAN.items())
+
+
+def test_analyses_sort_by_the_legacy_labels():
+    an = _load("e26an", "analyze_paderborn.py")
+    assert an.legacy_label("zone1|wideband_rule") == "zona1|banda_larga_regra"
+    assert an.legacy_label("antialias|guided") == "antialias|guiado"
+    tokens = _relabel_tokens()
+    assert all(tokens[old] == new for new, old in an.LEGACY_LABELS.items())

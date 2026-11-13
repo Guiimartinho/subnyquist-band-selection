@@ -1,6 +1,6 @@
 {
-  "ottawa/bruto/b16/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b16/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 176,
       "epochs_run": 217,
@@ -39,8 +39,8 @@
       ]
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b16/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -72,8 +72,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b16/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 260,
       "epochs_run": 301,
@@ -196,7 +196,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -330,8 +330,8 @@
       }
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b16/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 263,
       "epochs_run": 304,
@@ -663,7 +663,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 263,
       "epochs_run": 304,
@@ -1016,7 +1016,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -1380,7 +1380,7 @@
       }
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_multicoset": {
+  "ottawa/raw/b16/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 87,
@@ -1413,7 +1413,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b16/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 51,
@@ -1481,11 +1481,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b16/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -1517,8 +1517,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b16/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b16/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 22,
       "epochs_run": 63,
@@ -1551,7 +1551,7 @@
       "chosen_factor": 30
     }
   },
-  "ottawa/bruto/b16/split0/seed0/wdcnn": {
+  "ottawa/raw/b16/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 160,
@@ -1563,8 +1563,8 @@
       "val_loss": 1.9709202661033487e-06
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b16/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 251,
       "epochs_run": 292,
@@ -1603,8 +1603,8 @@
       ]
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b16/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 71,
       "epochs_run": 112,
@@ -1636,8 +1636,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b16/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -1760,7 +1760,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 83,
       "epochs_run": 124,
@@ -1894,8 +1894,8 @@
       }
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b16/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -2227,7 +2227,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -2580,7 +2580,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 23,
       "epochs_run": 64,
@@ -2944,7 +2944,7 @@
       }
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_multicoset": {
+  "ottawa/raw/b16/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 85,
@@ -2977,7 +2977,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b16/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 24,
@@ -3045,11 +3045,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b16/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 84,
       "epochs_run": 125,
@@ -3081,8 +3081,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b16/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 135,
       "epochs_run": 176,
@@ -3115,7 +3115,7 @@
       "chosen_factor": 46
     }
   },
-  "ottawa/bruto/b16/split1/seed0/wdcnn": {
+  "ottawa/raw/b16/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 148,
@@ -3127,8 +3127,8 @@
       "val_loss": 1.9470810457278276e-06
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b16/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 164,
       "epochs_run": 205,
@@ -3167,8 +3167,8 @@
       ]
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b16/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -3200,8 +3200,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b16/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 83,
       "epochs_run": 124,
@@ -3324,7 +3324,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -3458,8 +3458,8 @@
       }
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b16/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 54,
       "epochs_run": 95,
@@ -3791,7 +3791,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 54,
       "epochs_run": 95,
@@ -4144,7 +4144,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -4508,7 +4508,7 @@
       }
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_multicoset": {
+  "ottawa/raw/b16/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -4541,7 +4541,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b16/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 82,
@@ -4609,11 +4609,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b16/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -4645,8 +4645,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b16/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b16/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -4679,7 +4679,7 @@
       "chosen_factor": 30
     }
   },
-  "ottawa/bruto/b16/split2/seed0/wdcnn": {
+  "ottawa/raw/b16/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 86,
@@ -4691,8 +4691,8 @@
       "val_loss": 4.007384632132016e-06
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b16/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 440,
       "epochs_run": 481,
@@ -4731,8 +4731,8 @@
       ]
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b16/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -4764,8 +4764,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b16/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -4888,7 +4888,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -5022,8 +5022,8 @@
       }
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b16/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -5355,7 +5355,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -5708,7 +5708,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -6072,7 +6072,7 @@
       }
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_multicoset": {
+  "ottawa/raw/b16/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 88,
@@ -6105,7 +6105,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b16/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 31,
@@ -6173,11 +6173,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b16/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -6209,8 +6209,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b16/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b16/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 77,
       "epochs_run": 118,
@@ -6243,7 +6243,7 @@
       "chosen_factor": 41
     }
   },
-  "ottawa/bruto/b16/split3/seed0/wdcnn": {
+  "ottawa/raw/b16/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 86,
@@ -6255,8 +6255,8 @@
       "val_loss": 3.320947826068732e-06
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b16/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 345,
       "epochs_run": 386,
@@ -6295,8 +6295,8 @@
       ]
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b16/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -6328,8 +6328,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b16/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 146,
       "epochs_run": 187,
@@ -6452,7 +6452,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 79,
       "epochs_run": 120,
@@ -6586,8 +6586,8 @@
       }
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b16/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -6919,7 +6919,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -7272,7 +7272,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 76,
       "epochs_run": 117,
@@ -7636,7 +7636,7 @@
       }
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_multicoset": {
+  "ottawa/raw/b16/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -7669,7 +7669,7 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b16/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 32,
@@ -7737,11 +7737,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b16/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -7773,8 +7773,8 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b16/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b16/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -7807,7 +7807,7 @@
       "chosen_factor": 46
     }
   },
-  "ottawa/bruto/b16/split4/seed0/wdcnn": {
+  "ottawa/raw/b16/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 104,
@@ -7819,8 +7819,8 @@
       "val_loss": 8.166723091562744e-06
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b32/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 160,
       "epochs_run": 201,
@@ -7859,8 +7859,8 @@
       ]
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b32/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -7892,8 +7892,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b32/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 164,
       "epochs_run": 205,
@@ -8080,7 +8080,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -8278,8 +8278,8 @@
       }
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b32/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -8867,7 +8867,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -9476,7 +9476,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -10096,7 +10096,7 @@
       }
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_multicoset": {
+  "ottawa/raw/b32/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 45,
@@ -10129,7 +10129,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b32/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 47,
@@ -10208,11 +10208,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b32/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -10244,8 +10244,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b32/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b32/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -10278,7 +10278,7 @@
       "chosen_factor": 46
     }
   },
-  "ottawa/bruto/b32/split0/seed0/wdcnn": {
+  "ottawa/raw/b32/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 108,
@@ -10290,8 +10290,8 @@
       "val_loss": 7.407885732391151e-06
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b32/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 90,
       "epochs_run": 131,
@@ -10330,8 +10330,8 @@
       ]
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b32/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 14,
       "epochs_run": 55,
@@ -10363,8 +10363,8 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b32/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -10551,7 +10551,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 79,
       "epochs_run": 120,
@@ -10749,8 +10749,8 @@
       }
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b32/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 84,
       "epochs_run": 125,
@@ -11338,7 +11338,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 84,
       "epochs_run": 125,
@@ -11947,7 +11947,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 74,
       "epochs_run": 115,
@@ -12567,7 +12567,7 @@
       }
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_multicoset": {
+  "ottawa/raw/b32/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 61,
@@ -12600,7 +12600,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b32/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 16,
@@ -12679,11 +12679,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b32/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 90,
       "epochs_run": 131,
@@ -12715,8 +12715,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b32/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -12749,7 +12749,7 @@
       "chosen_factor": 46
     }
   },
-  "ottawa/bruto/b32/split1/seed0/wdcnn": {
+  "ottawa/raw/b32/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 64,
@@ -12761,8 +12761,8 @@
       "val_loss": 4.5086408135830425e-06
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b32/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 132,
       "epochs_run": 173,
@@ -12801,8 +12801,8 @@
       ]
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b32/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -12834,8 +12834,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b32/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 76,
       "epochs_run": 117,
@@ -13022,7 +13022,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 64,
       "epochs_run": 105,
@@ -13220,8 +13220,8 @@
       }
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b32/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -13809,7 +13809,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -14418,7 +14418,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -15038,7 +15038,7 @@
       }
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_multicoset": {
+  "ottawa/raw/b32/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 42,
@@ -15071,7 +15071,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b32/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 30,
@@ -15150,11 +15150,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b32/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 89,
       "epochs_run": 130,
@@ -15186,8 +15186,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b32/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b32/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 31,
       "epochs_run": 72,
@@ -15220,7 +15220,7 @@
       "chosen_factor": 33
     }
   },
-  "ottawa/bruto/b32/split2/seed0/wdcnn": {
+  "ottawa/raw/b32/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 50,
@@ -15232,8 +15232,8 @@
       "val_loss": 9.579147445037961e-06
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b32/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -15272,8 +15272,8 @@
       ]
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b32/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -15305,8 +15305,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b32/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -15493,7 +15493,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -15691,8 +15691,8 @@
       }
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b32/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 95,
       "epochs_run": 136,
@@ -16280,7 +16280,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 95,
       "epochs_run": 136,
@@ -16889,7 +16889,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 63,
       "epochs_run": 104,
@@ -17509,7 +17509,7 @@
       }
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_multicoset": {
+  "ottawa/raw/b32/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 27,
@@ -17542,7 +17542,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b32/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 18,
@@ -17621,11 +17621,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b32/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -17657,8 +17657,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b32/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b32/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -17691,7 +17691,7 @@
       "chosen_factor": 41
     }
   },
-  "ottawa/bruto/b32/split3/seed0/wdcnn": {
+  "ottawa/raw/b32/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -17703,8 +17703,8 @@
       "val_loss": 4.232877472531982e-05
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b32/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 94,
       "epochs_run": 135,
@@ -17743,8 +17743,8 @@
       ]
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b32/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -17776,8 +17776,8 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b32/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 12,
       "epochs_run": 53,
@@ -17964,7 +17964,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 66,
       "epochs_run": 107,
@@ -18162,8 +18162,8 @@
       }
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b32/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -18751,7 +18751,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -19360,7 +19360,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -19980,7 +19980,7 @@
       }
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_multicoset": {
+  "ottawa/raw/b32/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 36,
@@ -20013,7 +20013,7 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b32/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -20092,11 +20092,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b32/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 116,
       "epochs_run": 157,
@@ -20128,8 +20128,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b32/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b32/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 33,
       "epochs_run": 74,
@@ -20162,7 +20162,7 @@
       "chosen_factor": 46
     }
   },
-  "ottawa/bruto/b32/split4/seed0/wdcnn": {
+  "ottawa/raw/b32/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 226,
@@ -20174,8 +20174,8 @@
       "val_loss": 1.9286296719656093e-06
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b4/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 495,
       "epochs_run": 500,
@@ -20214,8 +20214,8 @@
       ]
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b4/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -20247,8 +20247,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b4/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 92,
       "epochs_run": 133,
@@ -20323,7 +20323,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -20409,8 +20409,8 @@
       }
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b4/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 109,
       "epochs_run": 150,
@@ -20550,7 +20550,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 109,
       "epochs_run": 150,
@@ -20711,7 +20711,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -20883,7 +20883,7 @@
       }
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_multicoset": {
+  "ottawa/raw/b4/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 52,
@@ -20916,7 +20916,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b4/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 50,
@@ -20970,11 +20970,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b4/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -21006,8 +21006,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b4/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -21040,7 +21040,7 @@
       "chosen_factor": 13
     }
   },
-  "ottawa/bruto/b4/split0/seed0/wdcnn": {
+  "ottawa/raw/b4/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -21052,8 +21052,8 @@
       "val_loss": 1.3274382581585087e-05
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b4/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -21092,8 +21092,8 @@
       ]
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b4/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -21125,8 +21125,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b4/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 77,
       "epochs_run": 118,
@@ -21201,7 +21201,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 67,
       "epochs_run": 108,
@@ -21287,8 +21287,8 @@
       }
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b4/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 118,
       "epochs_run": 159,
@@ -21428,7 +21428,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 118,
       "epochs_run": 159,
@@ -21589,7 +21589,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 131,
       "epochs_run": 172,
@@ -21761,7 +21761,7 @@
       }
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_multicoset": {
+  "ottawa/raw/b4/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -21794,7 +21794,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b4/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -21848,11 +21848,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b4/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -21884,8 +21884,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b4/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 120,
       "epochs_run": 161,
@@ -21918,7 +21918,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b4/split1/seed0/wdcnn": {
+  "ottawa/raw/b4/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -21930,8 +21930,8 @@
       "val_loss": 1.8093051039613783e-05
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b4/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 224,
       "epochs_run": 265,
@@ -21970,8 +21970,8 @@
       ]
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b4/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 80,
       "epochs_run": 121,
@@ -22003,8 +22003,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b4/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -22079,7 +22079,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 20,
       "epochs_run": 61,
@@ -22165,8 +22165,8 @@
       }
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b4/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -22306,7 +22306,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -22467,7 +22467,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -22639,7 +22639,7 @@
       }
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_multicoset": {
+  "ottawa/raw/b4/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 46,
@@ -22672,7 +22672,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b4/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 44,
@@ -22726,11 +22726,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b4/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -22762,8 +22762,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b4/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 129,
       "epochs_run": 170,
@@ -22796,7 +22796,7 @@
       "chosen_factor": 13
     }
   },
-  "ottawa/bruto/b4/split2/seed0/wdcnn": {
+  "ottawa/raw/b4/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 131,
@@ -22808,8 +22808,8 @@
       "val_loss": 5.045792022428941e-06
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b4/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 213,
       "epochs_run": 254,
@@ -22848,8 +22848,8 @@
       ]
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b4/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -22881,8 +22881,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b4/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -22957,7 +22957,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -23043,8 +23043,8 @@
       }
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b4/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 65,
       "epochs_run": 106,
@@ -23184,7 +23184,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 65,
       "epochs_run": 106,
@@ -23345,7 +23345,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -23517,7 +23517,7 @@
       }
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_multicoset": {
+  "ottawa/raw/b4/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -23550,7 +23550,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b4/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -23604,11 +23604,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b4/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 78,
       "epochs_run": 119,
@@ -23640,8 +23640,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b4/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b4/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -23674,7 +23674,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b4/split3/seed0/wdcnn": {
+  "ottawa/raw/b4/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 116,
@@ -23686,8 +23686,8 @@
       "val_loss": 1.0212726920144632e-05
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b4/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 12,
       "epochs_run": 53,
@@ -23726,8 +23726,8 @@
       ]
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b4/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 97,
       "epochs_run": 138,
@@ -23759,8 +23759,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b4/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 142,
       "epochs_run": 183,
@@ -23835,7 +23835,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 89,
       "epochs_run": 130,
@@ -23921,8 +23921,8 @@
       }
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b4/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 303,
       "epochs_run": 344,
@@ -24062,7 +24062,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 303,
       "epochs_run": 344,
@@ -24223,7 +24223,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 143,
       "epochs_run": 184,
@@ -24395,7 +24395,7 @@
       }
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_multicoset": {
+  "ottawa/raw/b4/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 98,
@@ -24428,7 +24428,7 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b4/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 81,
@@ -24482,11 +24482,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b4/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 177,
       "epochs_run": 218,
@@ -24518,8 +24518,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b4/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b4/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 215,
       "epochs_run": 256,
@@ -24552,7 +24552,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b4/split4/seed0/wdcnn": {
+  "ottawa/raw/b4/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 157,
@@ -24564,8 +24564,8 @@
       "val_loss": 5.770278221461922e-06
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b8/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 166,
       "epochs_run": 207,
@@ -24604,8 +24604,8 @@
       ]
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b8/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 56,
       "epochs_run": 97,
@@ -24637,8 +24637,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b8/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 138,
       "epochs_run": 179,
@@ -24729,7 +24729,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 165,
       "epochs_run": 206,
@@ -24831,8 +24831,8 @@
       }
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b8/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 210,
       "epochs_run": 251,
@@ -25036,7 +25036,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 210,
       "epochs_run": 251,
@@ -25261,7 +25261,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -25497,7 +25497,7 @@
       }
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_multicoset": {
+  "ottawa/raw/b8/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 61,
@@ -25530,7 +25530,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b8/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 30,
@@ -25591,11 +25591,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b8/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -25627,8 +25627,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b8/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 218,
       "epochs_run": 259,
@@ -25661,7 +25661,7 @@
       "chosen_factor": 13
     }
   },
-  "ottawa/bruto/b8/split0/seed0/wdcnn": {
+  "ottawa/raw/b8/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 82,
@@ -25673,8 +25673,8 @@
       "val_loss": 1.993010755541036e-06
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b8/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 139,
       "epochs_run": 180,
@@ -25713,8 +25713,8 @@
       ]
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b8/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 130,
       "epochs_run": 171,
@@ -25746,8 +25746,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b8/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -25838,7 +25838,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 194,
       "epochs_run": 235,
@@ -25940,8 +25940,8 @@
       }
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b8/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -26145,7 +26145,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -26370,7 +26370,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -26606,7 +26606,7 @@
       }
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_multicoset": {
+  "ottawa/raw/b8/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 40,
@@ -26639,7 +26639,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b8/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -26700,11 +26700,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b8/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 162,
       "epochs_run": 203,
@@ -26736,8 +26736,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b8/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 212,
       "epochs_run": 253,
@@ -26770,7 +26770,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b8/split1/seed0/wdcnn": {
+  "ottawa/raw/b8/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 104,
@@ -26782,8 +26782,8 @@
       "val_loss": 1.6381338355131447e-05
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b8/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 187,
       "epochs_run": 228,
@@ -26822,8 +26822,8 @@
       ]
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b8/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -26855,8 +26855,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b8/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 94,
       "epochs_run": 135,
@@ -26947,7 +26947,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 189,
       "epochs_run": 230,
@@ -27049,8 +27049,8 @@
       }
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b8/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 115,
       "epochs_run": 156,
@@ -27254,7 +27254,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 115,
       "epochs_run": 156,
@@ -27479,7 +27479,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -27715,7 +27715,7 @@
       }
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_multicoset": {
+  "ottawa/raw/b8/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 54,
@@ -27748,7 +27748,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b8/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 77,
@@ -27809,11 +27809,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b8/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 94,
       "epochs_run": 135,
@@ -27845,8 +27845,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b8/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 95,
       "epochs_run": 136,
@@ -27879,7 +27879,7 @@
       "chosen_factor": 13
     }
   },
-  "ottawa/bruto/b8/split2/seed0/wdcnn": {
+  "ottawa/raw/b8/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 120,
@@ -27891,8 +27891,8 @@
       "val_loss": 4.2775336623890325e-06
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b8/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 251,
       "epochs_run": 292,
@@ -27931,8 +27931,8 @@
       ]
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b8/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 256,
       "epochs_run": 297,
@@ -27964,8 +27964,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b8/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -28056,7 +28056,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 80,
       "epochs_run": 121,
@@ -28158,8 +28158,8 @@
       }
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b8/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 195,
       "epochs_run": 236,
@@ -28363,7 +28363,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 195,
       "epochs_run": 236,
@@ -28588,7 +28588,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -28824,7 +28824,7 @@
       }
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_multicoset": {
+  "ottawa/raw/b8/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -28857,7 +28857,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b8/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -28918,11 +28918,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b8/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -28954,8 +28954,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/bruto/b8/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b8/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 83,
       "epochs_run": 124,
@@ -28988,7 +28988,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b8/split3/seed0/wdcnn": {
+  "ottawa/raw/b8/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 133,
@@ -29000,8 +29000,8 @@
       "val_loss": 3.2801049201225396e-06
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/raw/b8/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -29040,8 +29040,8 @@
       ]
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/raw/b8/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -29073,8 +29073,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/raw/b8/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 139,
       "epochs_run": 180,
@@ -29165,7 +29165,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 99,
       "epochs_run": 140,
@@ -29267,8 +29267,8 @@
       }
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/raw/b8/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -29472,7 +29472,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -29697,7 +29697,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 163,
       "epochs_run": 204,
@@ -29933,7 +29933,7 @@
       }
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_multicoset": {
+  "ottawa/raw/b8/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 138,
@@ -29966,7 +29966,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_multicoset_vb": {
+  "ottawa/raw/b8/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 209,
@@ -30027,11 +30027,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/raw/b8/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 158,
       "epochs_run": 199,
@@ -30063,8 +30063,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/bruto/b8/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/raw/b8/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 407,
       "epochs_run": 448,
@@ -30097,7 +30097,7 @@
       "chosen_factor": 14
     }
   },
-  "ottawa/bruto/b8/split4/seed0/wdcnn": {
+  "ottawa/raw/b8/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 137,
@@ -30109,8 +30109,8 @@
       "val_loss": 3.171123353240546e-06
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b16/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -30149,8 +30149,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b16/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -30182,8 +30182,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b16/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -30306,7 +30306,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -30440,8 +30440,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b16/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -30773,7 +30773,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -31126,7 +31126,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -31490,7 +31490,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_multicoset": {
+  "ottawa/despiked/b16/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 68,
@@ -31523,7 +31523,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b16/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 38,
@@ -31591,11 +31591,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b16/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 129,
       "epochs_run": 170,
@@ -31627,8 +31627,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b16/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -31661,7 +31661,7 @@
       "chosen_factor": 31
     }
   },
-  "ottawa/sem_picos/b16/split0/seed0/wdcnn": {
+  "ottawa/despiked/b16/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 155,
@@ -31673,8 +31673,8 @@
       "val_loss": 4.29548708780203e-06
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b16/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -31713,8 +31713,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b16/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 84,
       "epochs_run": 125,
@@ -31746,8 +31746,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b16/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 176,
       "epochs_run": 217,
@@ -31870,7 +31870,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 85,
       "epochs_run": 126,
@@ -32004,8 +32004,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b16/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -32337,7 +32337,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -32690,7 +32690,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -33054,7 +33054,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_multicoset": {
+  "ottawa/despiked/b16/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 116,
@@ -33087,7 +33087,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b16/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 22,
@@ -33155,11 +33155,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b16/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -33191,8 +33191,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b16/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 23,
       "epochs_run": 64,
@@ -33225,7 +33225,7 @@
       "chosen_factor": 31
     }
   },
-  "ottawa/sem_picos/b16/split1/seed0/wdcnn": {
+  "ottawa/despiked/b16/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 95,
@@ -33237,8 +33237,8 @@
       "val_loss": 1.2982690350327175e-05
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b16/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 130,
       "epochs_run": 171,
@@ -33277,8 +33277,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b16/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -33310,8 +33310,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b16/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -33434,7 +33434,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -33568,8 +33568,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b16/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -33901,7 +33901,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -34254,7 +34254,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -34618,7 +34618,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_multicoset": {
+  "ottawa/despiked/b16/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 47,
@@ -34651,7 +34651,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b16/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 50,
@@ -34719,11 +34719,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b16/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -34755,8 +34755,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b16/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -34789,7 +34789,7 @@
       "chosen_factor": 31
     }
   },
-  "ottawa/sem_picos/b16/split2/seed0/wdcnn": {
+  "ottawa/despiked/b16/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 132,
@@ -34801,8 +34801,8 @@
       "val_loss": 5.747792329202639e-06
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b16/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 64,
       "epochs_run": 105,
@@ -34841,8 +34841,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b16/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -34874,8 +34874,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b16/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -34998,7 +34998,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 54,
       "epochs_run": 95,
@@ -35132,8 +35132,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b16/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -35465,7 +35465,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -35818,7 +35818,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 91,
       "epochs_run": 132,
@@ -36182,7 +36182,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_multicoset": {
+  "ottawa/despiked/b16/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 27,
@@ -36215,7 +36215,7 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b16/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 15,
@@ -36283,11 +36283,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b16/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -36319,8 +36319,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b16/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -36353,7 +36353,7 @@
       "chosen_factor": 39
     }
   },
-  "ottawa/sem_picos/b16/split3/seed0/wdcnn": {
+  "ottawa/despiked/b16/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 242,
@@ -36365,8 +36365,8 @@
       "val_loss": 1.0887769121836754e-06
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b16/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 391,
       "epochs_run": 432,
@@ -36405,8 +36405,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b16/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -36438,8 +36438,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b16/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -36562,7 +36562,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 89,
       "epochs_run": 130,
@@ -36696,8 +36696,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b16/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 91,
       "epochs_run": 132,
@@ -37029,7 +37029,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 91,
       "epochs_run": 132,
@@ -37382,7 +37382,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 72,
       "epochs_run": 113,
@@ -37746,7 +37746,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_multicoset": {
+  "ottawa/despiked/b16/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 109,
@@ -37779,7 +37779,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b16/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 32,
@@ -37847,11 +37847,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b16/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 122,
       "epochs_run": 163,
@@ -37883,8 +37883,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b16/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 160,
       "epochs_run": 201,
@@ -37917,7 +37917,7 @@
       "chosen_factor": 33
     }
   },
-  "ottawa/sem_picos/b16/split4/seed0/wdcnn": {
+  "ottawa/despiked/b16/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 237,
@@ -37929,8 +37929,8 @@
       "val_loss": 3.208713508229266e-07
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b32/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 173,
       "epochs_run": 214,
@@ -37969,8 +37969,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b32/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -38002,8 +38002,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b32/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -38190,7 +38190,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 17,
       "epochs_run": 58,
@@ -38388,8 +38388,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b32/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -38977,7 +38977,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -39586,7 +39586,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -40206,7 +40206,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_multicoset": {
+  "ottawa/despiked/b32/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 48,
@@ -40239,7 +40239,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b32/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 23,
@@ -40318,11 +40318,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b32/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -40354,8 +40354,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b32/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 93,
       "epochs_run": 134,
@@ -40388,7 +40388,7 @@
       "chosen_factor": 32
     }
   },
-  "ottawa/sem_picos/b32/split0/seed0/wdcnn": {
+  "ottawa/despiked/b32/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 166,
@@ -40400,8 +40400,8 @@
       "val_loss": 7.982742999956827e-07
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b32/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 158,
       "epochs_run": 199,
@@ -40440,8 +40440,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b32/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -40473,8 +40473,8 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b32/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -40661,7 +40661,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 92,
       "epochs_run": 133,
@@ -40859,8 +40859,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b32/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -41448,7 +41448,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -42057,7 +42057,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -42677,7 +42677,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_multicoset": {
+  "ottawa/despiked/b32/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 87,
@@ -42710,7 +42710,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b32/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 13,
@@ -42789,11 +42789,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b32/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -42825,8 +42825,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b32/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -42859,7 +42859,7 @@
       "chosen_factor": 33
     }
   },
-  "ottawa/sem_picos/b32/split1/seed0/wdcnn": {
+  "ottawa/despiked/b32/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 220,
@@ -42871,8 +42871,8 @@
       "val_loss": 1.4347507431011763e-06
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b32/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 182,
       "epochs_run": 223,
@@ -42911,8 +42911,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b32/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -42944,8 +42944,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b32/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -43132,7 +43132,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -43330,8 +43330,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b32/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 185,
       "epochs_run": 226,
@@ -43919,7 +43919,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 185,
       "epochs_run": 226,
@@ -44528,7 +44528,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -45148,7 +45148,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_multicoset": {
+  "ottawa/despiked/b32/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 79,
@@ -45181,7 +45181,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b32/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 83,
@@ -45260,11 +45260,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b32/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -45296,8 +45296,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b32/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -45330,7 +45330,7 @@
       "chosen_factor": 32
     }
   },
-  "ottawa/sem_picos/b32/split2/seed0/wdcnn": {
+  "ottawa/despiked/b32/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 197,
@@ -45342,8 +45342,8 @@
       "val_loss": 1.1920892575290054e-06
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b32/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 343,
       "epochs_run": 384,
@@ -45382,8 +45382,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b32/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 56,
       "epochs_run": 97,
@@ -45415,8 +45415,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b32/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -45603,7 +45603,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -45801,8 +45801,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b32/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 12,
       "epochs_run": 53,
@@ -46390,7 +46390,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 12,
       "epochs_run": 53,
@@ -46999,7 +46999,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -47619,7 +47619,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_multicoset": {
+  "ottawa/despiked/b32/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 61,
@@ -47652,7 +47652,7 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b32/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -47731,11 +47731,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b32/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -47767,8 +47767,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b32/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -47801,7 +47801,7 @@
       "chosen_factor": 39
     }
   },
-  "ottawa/sem_picos/b32/split3/seed0/wdcnn": {
+  "ottawa/despiked/b32/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 218,
@@ -47813,8 +47813,8 @@
       "val_loss": 1.5880350474617444e-06
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b32/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 499,
       "epochs_run": 500,
@@ -47853,8 +47853,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b32/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -47886,8 +47886,8 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b32/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -48074,7 +48074,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 31,
       "epochs_run": 72,
@@ -48272,8 +48272,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b32/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -48861,7 +48861,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -49470,7 +49470,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -50090,7 +50090,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_multicoset": {
+  "ottawa/despiked/b32/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 21,
@@ -50123,7 +50123,7 @@
       "val_bal_acc": 0.625
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b32/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -50202,11 +50202,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b32/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 33,
       "epochs_run": 74,
@@ -50238,8 +50238,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b32/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -50272,7 +50272,7 @@
       "chosen_factor": 33
     }
   },
-  "ottawa/sem_picos/b32/split4/seed0/wdcnn": {
+  "ottawa/despiked/b32/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 189,
@@ -50284,8 +50284,8 @@
       "val_loss": 1.262337150365056e-06
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b4/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 189,
       "epochs_run": 230,
@@ -50324,8 +50324,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b4/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -50357,8 +50357,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b4/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -50433,7 +50433,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -50519,8 +50519,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b4/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 329,
       "epochs_run": 370,
@@ -50660,7 +50660,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 329,
       "epochs_run": 370,
@@ -50821,7 +50821,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 20,
       "epochs_run": 61,
@@ -50993,7 +50993,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_multicoset": {
+  "ottawa/despiked/b4/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 19,
@@ -51026,7 +51026,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b4/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 19,
@@ -51080,11 +51080,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b4/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 89,
       "epochs_run": 130,
@@ -51116,8 +51116,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b4/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -51150,7 +51150,7 @@
       "chosen_factor": 4
     }
   },
-  "ottawa/sem_picos/b4/split0/seed0/wdcnn": {
+  "ottawa/despiked/b4/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 295,
@@ -51162,8 +51162,8 @@
       "val_loss": 3.566929080989212e-07
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b4/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 16,
       "epochs_run": 57,
@@ -51202,8 +51202,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b4/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -51235,8 +51235,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b4/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 90,
       "epochs_run": 131,
@@ -51311,7 +51311,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -51397,8 +51397,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b4/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -51538,7 +51538,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -51699,7 +51699,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -51871,7 +51871,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_multicoset": {
+  "ottawa/despiked/b4/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -51904,7 +51904,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b4/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -51958,11 +51958,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b4/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 85,
       "epochs_run": 126,
@@ -51994,8 +51994,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b4/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -52028,7 +52028,7 @@
       "chosen_factor": 4
     }
   },
-  "ottawa/sem_picos/b4/split1/seed0/wdcnn": {
+  "ottawa/despiked/b4/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 138,
@@ -52040,8 +52040,8 @@
       "val_loss": 7.634571375092492e-06
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b4/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 217,
       "epochs_run": 258,
@@ -52080,8 +52080,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b4/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -52113,8 +52113,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b4/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -52189,7 +52189,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 144,
       "epochs_run": 185,
@@ -52275,8 +52275,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b4/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -52416,7 +52416,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -52577,7 +52577,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -52749,7 +52749,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_multicoset": {
+  "ottawa/despiked/b4/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -52782,7 +52782,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b4/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 52,
@@ -52836,11 +52836,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b4/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 74,
       "epochs_run": 115,
@@ -52872,8 +52872,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b4/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -52906,7 +52906,7 @@
       "chosen_factor": 4
     }
   },
-  "ottawa/sem_picos/b4/split2/seed0/wdcnn": {
+  "ottawa/despiked/b4/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 30,
@@ -52918,8 +52918,8 @@
       "val_loss": 5.660350143443793e-05
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b4/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 147,
       "epochs_run": 188,
@@ -52958,8 +52958,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b4/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 39,
       "epochs_run": 80,
@@ -52991,8 +52991,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b4/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 71,
       "epochs_run": 112,
@@ -53067,7 +53067,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -53153,8 +53153,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b4/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -53294,7 +53294,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -53455,7 +53455,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -53627,7 +53627,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_multicoset": {
+  "ottawa/despiked/b4/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -53660,7 +53660,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b4/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 42,
@@ -53714,11 +53714,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b4/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -53750,8 +53750,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b4/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -53784,7 +53784,7 @@
       "chosen_factor": 4
     }
   },
-  "ottawa/sem_picos/b4/split3/seed0/wdcnn": {
+  "ottawa/despiked/b4/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 66,
@@ -53796,8 +53796,8 @@
       "val_loss": 1.8277933122590184e-05
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b4/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -53836,8 +53836,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b4/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -53869,8 +53869,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b4/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 139,
       "epochs_run": 180,
@@ -53945,7 +53945,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 85,
       "epochs_run": 126,
@@ -54031,8 +54031,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b4/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 154,
       "epochs_run": 195,
@@ -54172,7 +54172,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 154,
       "epochs_run": 195,
@@ -54333,7 +54333,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 157,
       "epochs_run": 198,
@@ -54505,7 +54505,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_multicoset": {
+  "ottawa/despiked/b4/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 146,
@@ -54538,7 +54538,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b4/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 140,
@@ -54592,11 +54592,11 @@
         ]
       ],
       "noise_amplification": 0.078125,
-      "noise_amplification_uniforme": 0.078125
+      "noise_amplification_uniform": 0.078125
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b4/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 151,
       "epochs_run": 192,
@@ -54628,8 +54628,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b4/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 114,
       "epochs_run": 155,
@@ -54662,7 +54662,7 @@
       "chosen_factor": 4
     }
   },
-  "ottawa/sem_picos/b4/split4/seed0/wdcnn": {
+  "ottawa/despiked/b4/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 146,
@@ -54674,8 +54674,8 @@
       "val_loss": 5.160215550858993e-06
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b8/split0/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 480,
       "epochs_run": 500,
@@ -54714,8 +54714,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b8/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 194,
       "epochs_run": 235,
@@ -54747,8 +54747,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b8/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 253,
       "epochs_run": 294,
@@ -54839,7 +54839,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -54941,8 +54941,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b8/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 260,
       "epochs_run": 301,
@@ -55146,7 +55146,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 260,
       "epochs_run": 301,
@@ -55371,7 +55371,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 253,
       "epochs_run": 294,
@@ -55607,7 +55607,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_multicoset": {
+  "ottawa/despiked/b8/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 125,
@@ -55640,7 +55640,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b8/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 24,
@@ -55701,11 +55701,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b8/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 218,
       "epochs_run": 259,
@@ -55737,8 +55737,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b8/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 206,
       "epochs_run": 247,
@@ -55771,7 +55771,7 @@
       "chosen_factor": 8
     }
   },
-  "ottawa/sem_picos/b8/split0/seed0/wdcnn": {
+  "ottawa/despiked/b8/split0/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 166,
@@ -55783,8 +55783,8 @@
       "val_loss": 2.818146185745718e-06
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b8/split1/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -55823,8 +55823,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b8/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 132,
       "epochs_run": 173,
@@ -55856,8 +55856,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b8/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 189,
       "epochs_run": 230,
@@ -55948,7 +55948,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 96,
       "epochs_run": 137,
@@ -56050,8 +56050,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b8/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -56255,7 +56255,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -56480,7 +56480,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -56716,7 +56716,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_multicoset": {
+  "ottawa/despiked/b8/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 48,
@@ -56749,7 +56749,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b8/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 63,
@@ -56810,11 +56810,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b8/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 163,
       "epochs_run": 204,
@@ -56846,8 +56846,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b8/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 164,
       "epochs_run": 205,
@@ -56880,7 +56880,7 @@
       "chosen_factor": 8
     }
   },
-  "ottawa/sem_picos/b8/split1/seed0/wdcnn": {
+  "ottawa/despiked/b8/split1/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 282,
@@ -56892,8 +56892,8 @@
       "val_loss": 5.234029458733858e-07
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b8/split2/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 176,
       "epochs_run": 217,
@@ -56932,8 +56932,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b8/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -56965,8 +56965,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b8/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 119,
       "epochs_run": 160,
@@ -57057,7 +57057,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 133,
       "epochs_run": 174,
@@ -57159,8 +57159,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b8/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -57364,7 +57364,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -57589,7 +57589,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -57825,7 +57825,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_multicoset": {
+  "ottawa/despiked/b8/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 67,
@@ -57858,7 +57858,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b8/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 121,
@@ -57919,11 +57919,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b8/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -57955,8 +57955,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b8/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 76,
       "epochs_run": 117,
@@ -57989,7 +57989,7 @@
       "chosen_factor": 8
     }
   },
-  "ottawa/sem_picos/b8/split2/seed0/wdcnn": {
+  "ottawa/despiked/b8/split2/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 77,
@@ -58001,8 +58001,8 @@
       "val_loss": 8.531460480298847e-06
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b8/split3/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 273,
       "epochs_run": 314,
@@ -58041,8 +58041,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b8/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 174,
       "epochs_run": 215,
@@ -58074,8 +58074,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b8/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -58166,7 +58166,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -58268,8 +58268,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b8/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -58473,7 +58473,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -58698,7 +58698,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -58934,7 +58934,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_multicoset": {
+  "ottawa/despiked/b8/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -58967,7 +58967,7 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b8/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -59028,11 +59028,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b8/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -59064,8 +59064,8 @@
       "val_bal_acc": 0.875
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b8/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 72,
       "epochs_run": 113,
@@ -59098,7 +59098,7 @@
       "chosen_factor": 8
     }
   },
-  "ottawa/sem_picos/b8/split3/seed0/wdcnn": {
+  "ottawa/despiked/b8/split3/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 305,
@@ -59110,8 +59110,8 @@
       "val_loss": 4.963943638358614e-07
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_adaptativa": {
-    "dec_adaptativa_blocos": {
+  "ottawa/despiked/b8/split4/seed0/dec_adaptive": {
+    "dec_adaptive_blocks": {
       "lr": 0.003,
       "best_epoch": 257,
       "epochs_run": 298,
@@ -59150,8 +59150,8 @@
       ]
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "ottawa/despiked/b8/split4/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 118,
       "epochs_run": 159,
@@ -59183,8 +59183,8 @@
       "val_bal_acc": 0.75
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "ottawa/despiked/b8/split4/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -59275,7 +59275,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 229,
       "epochs_run": 270,
@@ -59377,8 +59377,8 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_livre": {
-    "dec_livre": {
+  "ottawa/despiked/b8/split4/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -59582,7 +59582,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -59807,7 +59807,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -60043,7 +60043,7 @@
       }
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_multicoset": {
+  "ottawa/despiked/b8/split4/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 155,
@@ -60076,7 +60076,7 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_multicoset_vb": {
+  "ottawa/despiked/b8/split4/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 100,
@@ -60137,11 +60137,11 @@
         ]
       ],
       "noise_amplification": 0.16406249999999997,
-      "noise_amplification_uniforme": 0.1640625
+      "noise_amplification_uniform": 0.1640625
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "ottawa/despiked/b8/split4/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 195,
       "epochs_run": 236,
@@ -60173,8 +60173,8 @@
       "val_bal_acc": 1.0
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "ottawa/despiked/b8/split4/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -60207,7 +60207,7 @@
       "chosen_factor": 8
     }
   },
-  "ottawa/sem_picos/b8/split4/seed0/wdcnn": {
+  "ottawa/despiked/b8/split4/seed0/wdcnn": {
     "wdcnn": {
       "lr": 0.003,
       "best_epoch": 126,

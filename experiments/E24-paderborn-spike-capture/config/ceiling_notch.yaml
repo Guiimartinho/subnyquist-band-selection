@@ -1,0 +1,163 @@
+# E24b: ceiling without folding (C1) and notch (C3), adversarial review of 2026-11-12.
+# Pre-registration in the README, 'E24b'. The reference arms (kurtogram and ses_infogram with no
+# ceiling) are read from results/ (same code, deterministic). Analysis:
+# exploratory/ceiling_notch_analysis.py.
+seed: 20261112
+data_dir: datasets/raw/paderborn
+settings:
+- N15_M07_F10
+- N15_M01_F10
+- N15_M07_F04
+outer:
+- KA01
+- KA03
+- KA05
+- KA06
+- KA07
+- KA08
+- KA09
+- KA04
+- KA15
+- KA16
+- KA22
+- KA30
+inner:
+- KI01
+- KI03
+- KI05
+- KI07
+- KI08
+- KI04
+- KI14
+- KI16
+- KI17
+- KI18
+- KI21
+calibration_measurement: 1
+test_measurements:
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+- 10
+- 11
+- 12
+- 13
+- 14
+- 15
+- 16
+- 17
+- 18
+- 19
+- 20
+segment_samples: 255936
+factors:
+- 1
+- 4
+- 8
+- 16
+- 32
+guard_points_per_rev_factor: 1.0
+min_samples: 4096
+kurtogram:
+  max_level: 4
+  f_min_hz: 500.0
+samples_per_rev: 64
+order_min: 2.0
+tolerance_order: 0.025
+prior:
+  score_harmonics: 3
+  calibration_span: 0.01
+min_line_prominence: 5.0
+prominence_window: 0.07
+despike:
+  k_mad: 10.0
+arms:
+  kurtogram_ceiling8k:
+    selector: sk
+    despike: false
+    f_max_hz: 8000.0
+    factors:
+    - 1
+  kurtogram_ceiling4k:
+    selector: sk
+    despike: false
+    f_max_hz: 4000.0
+    factors:
+    - 1
+  kurtogram_ceiling2k:
+    selector: sk
+    despike: false
+    f_max_hz: 2000.0
+    factors:
+    - 1
+  kurtogram_ceiling1k:
+    selector: sk
+    despike: false
+    f_max_hz: 1000.0
+    factors:
+    - 1
+  ses_infogram_ceiling8k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 8000.0
+    factors:
+    - 1
+  ses_infogram_ceiling4k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 4000.0
+    factors:
+    - 1
+  ses_infogram_ceiling2k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 2000.0
+    factors:
+    - 1
+  ses_infogram_ceiling1k:
+    selector: ses_negentropy
+    despike: false
+    f_max_hz: 1000.0
+    factors:
+    - 1
+  kurtogram_notch:
+    selector: sk
+    despike: false
+    notch_hz:
+    - - 15000.0
+      - 17000.0
+    - - 30500.0
+      - 32000.0
+    factors:
+    - 1
+    - 4
+  kurtogram_notch_control:
+    selector: sk
+    despike: false
+    notch_hz:
+    - - 12000.0
+      - 14000.0
+    - - 26500.0
+      - 28000.0
+    factors:
+    - 1
+    - 4
+tests: {}
+analysis:
+  bootstrap_resamples: 4000
+  alpha: 0.05
+  decisive_factors:
+  - 4
+  - 8
+  - 16
+  - 32
+  primary_ruler: nested
+compute:
+  workers: 6
+output:
+  results_dir: results-ceiling-notch

@@ -8,24 +8,24 @@
     otherwise, "none".
 - **Arms,** from ``metrics.csv``: ``acquisition|strategy``. To these are added two band-pass arms
   with the zone chosen at commissioning:
-  - ``zona_kurtograma|banda_larga_regra``: the zone that contains the centre of the full-rate
+  - ``kurtogram_zone|wideband_rule``: the zone that contains the centre of the full-rate
     kurtogram band on measurement 1 of the same bearing and setting;
-  - ``zona_frota|banda_larga_regra``: the zone with the highest balanced accuracy on the other
+  - ``fleet_zone|wideband_rule``: the zone with the highest balanced accuracy on the other
     bearings. For a damaged bearing, the zone comes from the other damaged bearings. For a healthy
     one, it comes from all the damaged bearings, with the threshold leaving the healthy bearing
     itself out.
-- **H5:** ``pura|guiado`` > ``antialias|guiado`` at 4×, 8×, 16× and 32×, with Holm over 4.
-- **H6:** ``pura|guiado`` > ``zona_frota|banda_larga_regra`` at 4× and 8×, with Holm over 2.
+- **H5:** ``pure|guided`` > ``antialias|guided`` at 4×, 8×, 16× and 32×, with Holm over 4.
+- **H6:** ``pure|guided`` > ``fleet_zone|wideband_rule`` at 4× and 8×, with Holm over 2.
 - **The tests:** per-bearing sign-flip test, stratified by race, one-sided. A test passes if the
   Holm p is below α and the difference is positive.
 - **Descriptive analyses:**
-  - the kurtogram and the whole band, ``pura`` against ``antialias``;
+  - the kurtogram and the whole band, ``pure`` against ``antialias``;
   - the profile by zone;
-  - the leakage: among the detections of ``pura|guiado``, the fraction with the peak of the 1st
+  - the leakage: among the detections of ``pure|guided``, the fraction with the peak of the 1st
     harmonic within 0.03 of an integer order, and the hit rate with the ±0.03 exclusion;
   - the decoys: the fraction of segments in which the largest decoy exceeds the threshold, on the
     damaged and on the healthy bearings.
-- **Integrity.** The scores of ``pura|guiado`` have to be identical to those of the raw guided arm
+- **Integrity.** The scores of ``pure|guided`` have to be identical to those of the raw guided arm
   of E26.
 
     uv run python experiments/E26-fault-order-guided-selector/analyze_paderborn_acq.py \
@@ -108,14 +108,14 @@ def main() -> int:
     for dec in (int(z) for z in cfg["zone_factors"] if int(z) in factors):
         width = FS / (2 * dec)
         for r in rows:
-            if int(r["factor"]) != dec or r["strategy"] != "banda_larga_regra":
+            if int(r["factor"]) != dec or r["strategy"] != "wideband_rule":
                 continue
             c = comm.get((r["bearing"], r["setting"]))
             if c is None:
                 continue
             k = min(dec - 1, int(0.5 * (float(c["lo_hz"]) + float(c["hi_hz"])) // width))
-            if r["acquisition"] == ("antialias" if k == 0 else f"zona{k}"):
-                arms[("zona_kurtograma|banda_larga_regra", dec)].append(r)
+            if r["acquisition"] == ("antialias" if k == 0 else f"zone{k}"):
+                arms[("kurtogram_zone|wideband_rule", dec)].append(r)
 
     per: dict = {}
     for (arm, f), rs in arms.items():
@@ -123,8 +123,8 @@ def main() -> int:
 
     # band-pass with the fleet zone, leaving the bearing out
     for dec in (int(z) for z in cfg["zone_factors"] if int(z) in factors):
-        zones = ["antialias", *[f"zona{k}" for k in range(1, dec)]]
-        zacc = {z: per.get((f"{z}|banda_larga_regra", dec), {}) for z in zones}
+        zones = ["antialias", *[f"zone{k}" for k in range(1, dec)]]
+        zacc = {z: per.get((f"{z}|wideband_rule", dec), {}) for z in zones}
         frota = {}
         for key in {k for z in zones for k in zacc[z]}:
             race, b = key
@@ -137,10 +137,10 @@ def main() -> int:
             zbest = max(zones, key=score_zone)
             if key in zacc[zbest]:
                 frota[key] = zacc[zbest][key]
-        per[("zona_frota|banda_larga_regra", dec)] = frota
+        per[("fleet_zone|wideband_rule", dec)] = frota
 
     summary = {}
-    for (arm, f), pbr in sorted(per.items()):
+    for (arm, f), pbr in sorted(per.items(), key=lambda kv: (an.legacy_label(kv[0][0]), kv[0][1])):
         fault = balanced({k: v for k, v in pbr.items() if k[0] in ("OR", "IR")})
         spec = balanced({k: v for k, v in pbr.items() if k[0] == "H"}).get("H")
         summary[f"{arm}|{f}x"] = {
@@ -154,8 +154,8 @@ def main() -> int:
 
     tests = []
     for name, arm, basearm, fs_ in (
-        ("H5", "pura|guiado", "antialias|guiado", a["h5_factors"]),
-        ("H6", "pura|guiado", "zona_frota|banda_larga_regra", a["h6_factors"]),
+        ("H5", "pure|guided", "antialias|guided", a["h5_factors"]),
+        ("H6", "pure|guided", "fleet_zone|wideband_rule", a["h6_factors"]),
     ):
         cell = []
         for f in (int(x) for x in fs_ if int(x) in factors):
@@ -172,10 +172,10 @@ def main() -> int:
             t["passes"] = int(pa < float(a["alpha"]) and t["diff_points"] > 0)
         tests += cell
 
-    # leakage and decoys in pura|guiado
+    # leakage and decoys in pure|guided
     leak = {}
     for f in factors:
-        rs = arms[("pura|guiado", f)]
+        rs = arms[("pure|guided", f)]
         _, tau = evaluate(rs, q)
         dets, near_int, decoy_dmg, decoy_h, true_dmg = 0, 0, [], [], []
         for r in rs:
@@ -215,16 +215,16 @@ def main() -> int:
             else None,
         }
 
-    # integrity: pura|guiado against the raw guided arm of E26
+    # integrity: pure|guided against the raw guided arm of E26
     with (EXP / a["guided_results"] / "metrics.csv").open(encoding="utf-8") as fh:
         g = {
             (r["bearing"], r["setting"], r["measurement"], r["factor"]): r
             for r in csv.DictReader(fh)
-            if not r["skipped"] and r["clean"] == "bruto"
+            if not r["skipped"] and r["clean"] == "raw"
         }
     diffs = []
     for r in rows:
-        if r["acquisition"] == "pura" and r["strategy"] == "guiado":
+        if r["acquisition"] == "pure" and r["strategy"] == "guided":
             o = g.get((r["bearing"], r["setting"], r["measurement"], r["factor"]))
             if o:
                 for c in FAULTS:

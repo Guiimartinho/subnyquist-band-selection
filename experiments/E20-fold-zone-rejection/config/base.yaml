@@ -53,7 +53,7 @@ analysis:
   recovery_hits: 20
   no_recovery_hits: 10
   alpha: 0.01
-  # Reproduction control: hits of `sem_prior` (without prior) in E07 (of 72), 25 kHz ceiling.
+  # Reproduction control: hits of `no_prior` in E07 (of 72), 25 kHz ceiling.
   # With the DSP corrected by the 2026-11-11 audit (before: 56, 53, 37, 55) and with the ruler at
   # the plateau centre (snq_recon.refine_order; before, at the 1st point: 57, 53, 38, 57). Checked
   # against the official E07 re-run of 2026-11-11 (12:47 UTC): 62, 55, 41, 61.

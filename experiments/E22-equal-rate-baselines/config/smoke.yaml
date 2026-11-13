@@ -42,10 +42,10 @@ order_min: 2.0
 
 tat:
   folded_share_threshold: 0.5
-  # uniforme_teto: candidate ceilings as a fraction of ceiling0 (the highest admissible wins)
+  # uniform_ceiling: candidate ceilings as a fraction of ceiling0 (the highest admissible wins)
   ceiling_fractions: [1.0, 0.5, 0.25]
 
-cs:   # aleatorio_cs arm: identical to E13 (sensors2025csvibration), envelope after reconstruction
+cs:   # random_cs arm: identical to E13 (sensors2025csvibration), envelope after reconstruction
   order_min: 0.5
   order_max: 24.0
   order_step_per_rev: 1.0
@@ -55,7 +55,7 @@ cs:   # aleatorio_cs arm: identical to E13 (sensors2025csvibration), envelope af
   cs_samples_per_rev: 48
   max_dictionary_elements: 3.0e+8
 
-arms: [uniforme, uniforme_teto, taxa_tat, aleatorio_cs, passa_faixa_lu]
+arms: [uniform, uniform_ceiling, tat_rate, random_cs, bandpass_lu]
 
 compute:
   workers: 30

@@ -8,7 +8,7 @@ This script runs, in another process, the cells it receives in ``--cells`` and w
 to ``runs/`` with the same ``run_key`` as ``run.py``. The key covers the config, ``run.py``, the
 package code and the CLI options that change the result. When the main process reaches a cell
 that is already written, it resumes it (``execute``), and its manifest marks it as
-``"retomado"`` (resumed).
+``"resumed"``.
 
 **What does not change:**
 - **No computation.** The script calls ``run.run_method`` with the same context. The data seed

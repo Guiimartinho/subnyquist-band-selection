@@ -10,6 +10,7 @@ import importlib.util
 import math
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -146,9 +147,9 @@ def test_regua_aninhada_so_usa_registros_fora_do_teste():
     assert tr["b2"]["truth"] == pytest.approx(3.38)
     # outside the test set: leave-one-out only among those outside it (a3 is in the test set)
     assert tr["a1"]["truth"] == pytest.approx(5.42)
-    assert tr["a1"]["source"] == "aninhada"
+    assert tr["a1"]["source"] == "nested"
     # single-record class outside the test set: its own calibration, flagged
-    assert tr["c1"]["truth"] == pytest.approx(2.0) and tr["c1"]["source"] == "propria_calibracao"
+    assert tr["c1"]["truth"] == pytest.approx(2.0) and tr["c1"]["source"] == "own_calibration"
 
 
 def test_calibracao_na_borda_fica_fora_das_medianas():
@@ -182,11 +183,11 @@ def test_escolha_da_uniforme_usa_a_regua_por_segmento_e_empata_para_a_maior_taxa
 def _rc(**kw):
     base = dict(
         ds="ottawa",
-        variant="bruto",
+        variant="raw",
         split={"index": 0, "seed": 1, "train": [], "val": [], "test": []},
         budget=16,
         seed=0,
-        nested={"a1": {"truth": 5.42, "source": "aninhada"}},
+        nested={"a1": {"truth": 5.42, "source": "nested"}},
         seg_truth={("a1", 1): 5.30, ("a1", 2): math.nan},
         centers={"inner_race": 5.42, "outer_race": 3.40},
         tol=0.06,
@@ -204,7 +205,7 @@ def test_linha_pontua_as_duas_reguas_e_o_controle_saudavel():
     row = e15.score_row({"group": "inner_race"}, 5.43, rc, "a1", 2)
     assert row["hit_local"] == "" and row["hit_nested"] == 1  # no local ruler on this segment
     healthy = e15.score_row({"group": "healthy"}, 3.41, rc, "h1", 1)
-    assert healthy["family_true"] == "saudavel" and healthy["fault_like"] == 1
+    assert healthy["family_true"] == "healthy_bearing" and healthy["fault_like"] == 1
     assert "hit_local" not in healthy
 
 
@@ -212,9 +213,9 @@ def test_familia_pela_ordem_mais_proxima_dentro_da_janela():
     centers = {"inner_race": 5.40, "outer_race": 3.39}
     assert e15.family_of_estimate(5.43, centers, 0.12) == "inner_race"
     assert e15.family_of_estimate(3.35, centers, 0.12) == "outer_race"
-    assert e15.family_of_estimate(6.78, centers, 0.12) == "nenhuma"  # 2 x BPFO is not BPFI
-    assert e15.family_of_estimate(None, centers, 0.12) == "nenhuma"
-    assert e15.family_of_estimate(math.nan, centers, 0.12) == "nenhuma"
+    assert e15.family_of_estimate(6.78, centers, 0.12) == "no_fault"  # 2 x BPFO is not BPFI
+    assert e15.family_of_estimate(None, centers, 0.12) == "no_fault"
+    assert e15.family_of_estimate(math.nan, centers, 0.12) == "no_fault"
 
 
 def test_remocao_de_picos_troca_so_picos_isolados():
@@ -327,15 +328,15 @@ def test_holm():
 
 def test_selecao_entre_orcamentos_usa_so_validacao():
     def out(bal: float, loss: float, tag: str) -> dict:
-        info = {"dec_aprendida": {"val_bal_acc": bal, "val_loss": loss}}
-        return {"info": info, "rows": [{"arm": "dec_aprendida", "budget": 0, "tag": tag}]}
+        info = {"dec_learned": {"val_bal_acc": bal, "val_loss": loss}}
+        return {"info": info, "rows": [{"arm": "dec_learned", "budget": 0, "tag": tag}]}
 
     outs = {8: out(0.6, 1.0, "b8"), 16: out(0.9, 2.0, "b16"), 32: out(0.9, 1.5, "b32")}
     rows = e15.select_across_budgets(outs, [8, 16, 32])
     chosen = {r["budget"]: (r["chosen_budget"], r["tag"]) for r in rows}
     # at 8 and 16 the accuracy ties (0.9) between 16 and 32; the lower loss wins (32)
     assert chosen == {8: (32, "b32"), 16: (32, "b32"), 32: (32, "b32")}
-    assert all(r["arm"] == "dec_aprendida_sel" for r in rows)
+    assert all(r["arm"] == "dec_learned_sel" for r in rows)
 
 
 def test_banda_conhecida_e_a_mais_frequente_fora_do_teste():
@@ -361,7 +362,7 @@ def test_divisoes_separam_teste_validacao_e_treino_por_registro():
 
 
 def _conv_rows(b: int, arm: str, convs: list[int]) -> list[dict]:
-    base = {"dataset": "ottawa", "variant": "bruto", "budget": b, "arm": arm, "seed": 0}
+    base = {"dataset": "ottawa", "variant": "raw", "budget": b, "arm": arm, "seed": 0}
     return [
         {**base, "split": s, "segment": seg, "record": f"I{s}", "mask_converged": c}
         for s, c in enumerate(convs)
@@ -370,21 +371,21 @@ def _conv_rows(b: int, arm: str, convs: list[int]) -> list[dict]:
 
 
 def test_orcamento_com_mascara_no_ruido_nao_e_avaliavel():
-    rows = _conv_rows(8, "dec_aprendida", [1, 1, 0]) + _conv_rows(16, "dec_aprendida", [1, 0, 0])
-    ev = e15.evaluable_budgets(rows, "ottawa", "bruto", [8, 16], ["dec_aprendida"], 0.5)
+    rows = _conv_rows(8, "dec_learned", [1, 1, 0]) + _conv_rows(16, "dec_learned", [1, 0, 0])
+    ev = e15.evaluable_budgets(rows, "ottawa", "raw", [8, 16], ["dec_learned"], 0.5)
     assert ev[8][0] is True and ev[16][0] is False
-    assert "dec_aprendida=0.333" in ev[16][1]
+    assert "dec_learned=0.333" in ev[16][1]
     # a listed arm without diagnostics does not pass silently
-    ev2 = e15.evaluable_budgets(rows, "ottawa", "bruto", [8], ["dec_livre_projetada"], 0.5)
+    ev2 = e15.evaluable_budgets(rows, "ottawa", "raw", [8], ["dec_free_projected"], 0.5)
     assert ev2[8][0] is False
     # with no arms listed (old configs), every budget is evaluable
-    assert e15.evaluable_budgets(rows, "ottawa", "bruto", [8], [], 0.5)[8][0] is True
+    assert e15.evaluable_budgets(rows, "ottawa", "raw", [8], [], 0.5)[8][0] is True
 
 
 def test_hipotese_em_orcamento_nao_avaliavel_tem_p_1_e_nao_vence():
     pr = {
         "dataset": "ottawa",
-        "variant": "bruto",
+        "variant": "raw",
         "alpha": 0.05,
         "rulers": ["local"],
         "min_budgets": 1,
@@ -392,22 +393,22 @@ def test_hipotese_em_orcamento_nao_avaliavel_tem_p_1_e_nao_vence():
         "min_splits": 2,
         "min_mask_converged_frac": 0.5,
         "h1": {
-            "arm": "dec_aprendida_sel",
-            "baselines": ["dec_aleatoria"],
-            "convergence_arms": ["dec_aprendida", "dec_aprendida_sel"],
+            "arm": "dec_learned_sel",
+            "baselines": ["dec_random"],
+            "convergence_arms": ["dec_learned", "dec_learned_sel"],
         },
         "h2": {
-            "arm": "dec_aprendida",
-            "baseline": "dec_livre_projetada",
-            "convergence_arms": ["dec_aprendida", "dec_livre_projetada"],
+            "arm": "dec_learned",
+            "baseline": "dec_free_projected",
+            "convergence_arms": ["dec_learned", "dec_free_projected"],
         },
     }
     cfg = {"preregistration": pr, "analysis": {"bootstrap_resamples": 10}, "seed": 0}
     rows = (
-        _conv_rows(16, "dec_aprendida", [1, 0, 0])
-        + _conv_rows(16, "dec_aprendida_sel", [1, 0, 0])
-        + _conv_rows(16, "dec_livre_projetada", [0, 0, 0])
-        + _conv_rows(16, "dec_aleatoria", [0, 0, 0])
+        _conv_rows(16, "dec_learned", [1, 0, 0])
+        + _conv_rows(16, "dec_learned_sel", [1, 0, 0])
+        + _conv_rows(16, "dec_free_projected", [0, 0, 0])
+        + _conv_rows(16, "dec_random", [0, 0, 0])
     )
     out = e15.hypotheses(rows, cfg, {}, {})
     tests = [r for r in out if "p_holm" in r]
@@ -462,3 +463,92 @@ def test_kfold_by_cluster_repeats_the_gate_folds():
     cluster_of = {r: r.split("_")[0] for r in ids}
     mine = e15.kfold_by_cluster(d, ids, cluster_of, cfg["protocol"], seed=1)
     assert [g["test_bearings"] for g in gate] == [m["test_clusters"] for m in mine]
+
+
+# --- seeds from the labels the runs wrote -------------------------------------------------------
+# The labels were renamed to English after the runs (tools/relabel_map.py). The values below were
+# computed with the code before the renaming, from the Portuguese labels; the renamed code has to
+# reproduce them through legacy_label, so that a rerun draws the same random numbers.
+SEED = 20261113
+
+
+def test_seeds_are_derived_from_the_labels_the_runs_wrote():
+    lg, d = e15.legacy_label, e15.derive_seed
+    assert d(SEED, "ottawa", lg("raw"), 0, 0, 4, lg("dec_learned_A"), 0) == 1947562739
+    assert d(SEED, "paderborn", lg("raw"), 2, 1, 16, lg("dec_free_projected"), 1) == 1912949126
+    assert d(SEED, "ottawa", lg("despiked"), 1, 0, 8, "wdcnn", 0) == 3712539223
+    assert d(SEED, "H1", "local", 4, lg("dec_learned_sel"), lg("uniform_trained")) == 1723424141
+    assert d(SEED, "H2", "nested", 32, lg("dec_learned"), lg("dec_free_projected")) == 528893334
+    pair = (lg("dec_uniform_trained"), lg("uniform_trained"))
+    assert d(SEED, "paderborn", lg("raw"), 16, *pair, "nested") == 4226970293
+    assert e15.legacy_path("ottawa/raw/b16/split0/seed0/dec_learned.json") == (
+        "ottawa/bruto/b16/split0/seed0/dec_aprendida.json"
+    )
+
+
+def test_training_seed_comes_from_the_legacy_variant_and_label():
+    seen = []
+
+    class StopError(Exception):
+        pass
+
+    def build(seed):
+        seen.append(seed)
+        raise StopError
+
+    rc = SimpleNamespace(ds="ottawa", variant="raw", split={"index": 0}, seed=0, budget=4)
+    ctx = SimpleNamespace(rc=rc, cfg={"seed": SEED, "training": {"lr_grid": [0.003]}})
+    with pytest.raises(StopError):
+        e15.best_over_lr(ctx, "dec_learned_A", build, anneal=True)
+    assert seen == [1947562739]
+
+
+def test_bootstrap_seeds_come_from_the_legacy_labels(monkeypatch):
+    seeds = []
+    monkeypatch.setattr(e15, "cluster_bootstrap", lambda *a, **k: seeds.append(a[5]))
+    base = {"dataset": "ottawa", "variant": "raw", "budget": 4, "split": 0, "seed": 0}
+    row = {**base, "record": "I-A-1.mat", "family_true": "inner_race", "hit_local": 1}
+    pr = {
+        "dataset": "ottawa",
+        "variant": "raw",
+        "alpha": 0.05,
+        "rulers": ["local"],
+        "min_budgets": 1,
+        "min_clusters_per_group": 3,
+        "min_splits": 2,
+        "h1": {"arm": "dec_learned_sel", "baselines": ["uniform_trained"]},
+        "h2": {"arm": "dec_learned_sel", "baseline": "uniform_trained"},
+    }
+    cfg = {"preregistration": pr, "analysis": {"bootstrap_resamples": 10}, "seed": SEED}
+    arms = ("dec_learned_sel", "uniform_trained", "uniform_oracle")
+    rows = [{**row, "arm": a} for a in arms]
+    e15.hypotheses(rows, cfg, {}, {})
+    assert seeds[0] == 1723424141  # H1, local, 4, dec_aprendida_sel, uniforme_treino
+    seeds.clear()
+    e15.comparisons(rows, cfg, {}, {})
+    assert seeds[0] == 3388427448  # ottawa, bruto, 4, dec_aprendida_sel, oraculo_uniforme, local
+
+
+def test_power_gate_seeds_come_from_the_legacy_design_and_effect():
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    import power_gate as pg
+
+    lg, d = pg.legacy_label, e15.derive_seed
+    assert d(SEED, "power_gate", lg("D3_record_anticonservative"), lg("perfect")) == 40437659
+    assert d(SEED, "power_gate", "DK", lg("perfect")) == 2249162303
+    assert d(SEED, "power_gate", "D0", lg(5)) == 2623283485
+    assert d(SEED, "paderborn_gate", "D1", lg("perfect")) == 2368391636
+
+
+def test_legacy_labels_invert_the_relabel_map():
+    path = Path(__file__).resolve().parents[3] / "tools" / "relabel_map.py"
+    if not path.exists():
+        pytest.skip("tools/relabel_map.py is not part of this repository")
+    spec = importlib.util.spec_from_file_location("relabel_map", path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    import power_gate as pg
+
+    for new, old in {**e15.LEGACY_LABELS, **pg.LEGACY_LABELS}.items():
+        assert m.TOKENS[old] == new

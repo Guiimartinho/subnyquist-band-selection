@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SRC = HERE / "results-paderborn" / "metrics.csv.gz"
 OUT = HERE / "results-paderborn" / "exploratory" / "line_split.csv"
-ARMS = ("uniforme_treino", "dec_uniforme_treino", "dec_aleatoria", "dec_aprendida_sel")
+ARMS = ("uniform_trained", "dec_uniform_trained", "dec_random", "dec_learned_sel")
 BUDGETS = ("4", "8", "16", "32")
 
 
@@ -43,7 +43,7 @@ def balanced(rows: list[dict]) -> tuple[float, int]:
 def main() -> None:
     with gzip.open(SRC, "rt", encoding="utf-8") as fh:
         rows = [
-            r for r in csv.DictReader(fh) if r["dataset"] == "paderborn" and r["variant"] == "bruto"
+            r for r in csv.DictReader(fh) if r["dataset"] == "paderborn" and r["variant"] == "raw"
         ]
     with_line = {bearing(r["record"]) for r in rows if r["truth_local"] not in ("", "nan")}
     out = []
@@ -51,9 +51,9 @@ def main() -> None:
         for arm in ARMS:
             sub = [r for r in rows if r["budget"] == b and r["arm"] == arm]
             strata = {
-                "todos": sub,
-                "com_raia": [r for r in sub if bearing(r["record"]) in with_line],
-                "sem_raia": [r for r in sub if bearing(r["record"]) not in with_line],
+                "all": sub,
+                "with_line": [r for r in sub if bearing(r["record"]) in with_line],
+                "without_line": [r for r in sub if bearing(r["record"]) not in with_line],
             }
             for name, part in strata.items():
                 acc, n = balanced(part)

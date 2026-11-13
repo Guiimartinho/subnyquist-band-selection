@@ -5,7 +5,7 @@
 
 Written BEFORE the 1st full run. Definitions:
 
-- cell: (carrier, factor, effective ceiling) of the ``uniforme`` arm; evaluable if, without
+- cell: (carrier, factor, effective ceiling) of the ``uniform`` arm; evaluable if, without
   injection, the hit rate over the records is >= ``evaluable_baseline``;
 - predicted class of the cell: the mode, across records, of the class computed from the injected
   realization (1 capture, 0 no capture, -1 borderline); mixed classes become borderline;
@@ -16,7 +16,7 @@ Written BEFORE the 1st full run. Definitions:
 - H1': P* = lowest power with a mean impulsive drop >= drop_points in the predicted cells; at P*,
   ratio between the mean drop of the surrogate and that of the impulsive in the same cells;
 - H2: balanced accuracy of the TAT (admissible -> predicts a hit) over all rows of the uniform
-  arm at the reference ceiling; and the mean difference between ``taxa_tat`` and the uniform
+  arm at the reference ceiling; and the mean difference between ``tat_rate`` and the uniform
   oracle (best factor >= budget in the test, per condition), over conditions x budgets.
 
 Intervals: bootstrap by record (``analysis.bootstrap`` resamples).
@@ -59,7 +59,7 @@ class Data:
     def __init__(self, rows: list[dict], cfg: dict) -> None:
         self.cfg = cfg
         self.records = sorted({r["record"] for r in rows})
-        uni = [r for r in rows if r["arm"] == "uniforme"]
+        uni = [r for r in rows if r["arm"] == "uniform"]
         # base[(rec, factor, ceil)] ; inj[(kind, fc, db, rec, factor, ceil)]
         self.base = {
             (r["record"], r["factor"], r["search_ceiling_hz"]): r["hit"]
@@ -166,7 +166,7 @@ class Data:
         uni0 = [
             r
             for r in self.rows
-            if r["arm"] == "uniforme"
+            if r["arm"] == "uniform"
             and r["hit"] is not None
             and r["search_ceiling_hz"] == ceiling0(self.cfg, r["factor"])
             and r["record"] in cnt
@@ -188,7 +188,7 @@ class Data:
             ]
         acc_tat: dict = defaultdict(list)
         for r in self.rows:
-            if r["arm"] == "taxa_tat" and r["hit"] is not None and r["record"] in cnt:
+            if r["arm"] == "tat_rate" and r["hit"] is not None and r["record"] in cnt:
                 acc_tat[(r["kind"], r["fc_hz"], r["rel_db"], r["factor"])] += [r["hit"]] * cnt[
                     r["record"]
                 ]
@@ -243,10 +243,8 @@ def verdict(h1: dict, h2: dict, a: dict) -> dict:
     )
     ba, gap = h2["tat_balanced_accuracy"], h2["mean_gap_tat_minus_oracle_points"]
 
-    # The verdict labels are data (analysis.json, tests) and stay in Portuguese: apoiada =
-    # supported, refutada = refuted, inconclusiva = inconclusive, nao avaliavel = not evaluable.
     def three(ok: bool, bad: bool) -> str:
-        return "apoiada" if ok else ("refutada" if bad else "inconclusiva")
+        return "supported" if ok else ("refuted" if bad else "inconclusive")
 
     h1a = three(
         sens is not None and sens >= a["predicted_fraction"],
@@ -257,12 +255,12 @@ def verdict(h1: dict, h2: dict, a: dict) -> dict:
         fa is not None and fa > a["refute_fraction"],
     )
     h1p = (
-        "nao avaliavel (sem P*)"
+        "not evaluable (no P*)"
         if ratio is None
         else three(ratio < a["surrogate_ratio"], ratio >= a["surrogate_refute_ratio"])
     )
     if not np.isfinite(ba):
-        h2a = "nao avaliavel (sem acerto ou sem erro)"
+        h2a = "not evaluable (no hit or no miss)"
     else:
         h2a = three(ba >= a["tat_min_balanced_accuracy"], ba < a["tat_refute_balanced_accuracy"])
     h2b = three(
@@ -270,24 +268,24 @@ def verdict(h1: dict, h2: dict, a: dict) -> dict:
         gap is not None and gap < -a["oracle_gap_points"],
     )
     return {
-        "H1a_sensibilidade": h1a,
-        "H1b_especificidade": h1b,
-        "H1_linha_impulsividade": h1p,
+        "H1a_sensitivity": h1a,
+        "H1b_specificity": h1b,
+        "H1_line_impulsiveness": h1p,
         "H2_tat_ba": h2a,
-        "H2_tat_vs_oraculo": h2b,
+        "H2_tat_vs_oracle": h2b,
     }
 
 
 def analyze_spikes(path: Path, cfg: dict) -> dict:
-    """H-picos (H-spikes, pre-registered in the README): drop per arm, factor, rate and amplitude.
+    """H-spikes (pre-registered in the README): drop per arm, factor, rate and amplitude.
 
     Drop = hit rate without injection minus hit rate with spikes, in points, paired by record, at
     the reference ceiling for the uniform arm. Verdict, at the Ottawa condition (rate and amplitude
     in ``analysis.spikes.ottawa_like``):
-    - ``apoiada`` (supported) if the uniform arm drops >= ``drop_points`` at some factor >= 2 AND
+    - ``supported`` if the uniform arm drops >= ``drop_points`` at some factor >= 2 AND
       ``aaf_ideal`` and ``despike`` drop <= ``mitigation_max_drop_points`` at all factors;
-    - ``refutada`` (refuted) if no uniform factor >= 2 drops >= ``drop_points`` at any amplitude;
-    - ``inconclusiva`` (inconclusive) in between.
+    - ``refuted`` if no uniform factor >= 2 drops >= ``drop_points`` at any amplitude;
+    - ``inconclusive`` in between.
     """
     sa = cfg["analysis"]["spikes"]
     hit: dict = defaultdict(dict)
@@ -295,7 +293,7 @@ def analyze_spikes(path: Path, cfg: dict) -> dict:
         if r["hit"] == "":
             continue
         f = int(r["factor"])
-        if r["arm"] == "uniforme" and float(r["search_ceiling_hz"]) != ceiling0(cfg, f):
+        if r["arm"] == "uniform" and float(r["search_ceiling_hz"]) != ceiling0(cfg, f):
             continue
         key = (r["arm"], r["kind"], r["spike_rate_hz"], r["spike_amp_mad"], f)
         hit[key][r["record"]] = int(r["hit"])
@@ -323,7 +321,7 @@ def analyze_spikes(path: Path, cfg: dict) -> dict:
     o_rate = str(float(sa["ottawa_like"]["rate_hz"]))
     o_amp = str(float(sa["ottawa_like"]["amplitude_mad"]))
     dmin, mmax = float(sa["drop_points"]), float(sa["mitigation_max_drop_points"])
-    uni = [drop("uniforme", o_rate, o_amp, f) for f in factors if f >= 2]
+    uni = [drop("uniform", o_rate, o_amp, f) for f in factors if f >= 2]
     falls = any(d is not None and d >= dmin for d in uni)
     mitig = all(
         d is None or d <= mmax
@@ -333,14 +331,14 @@ def analyze_spikes(path: Path, cfg: dict) -> dict:
     any_fall = any(
         d is not None and d >= dmin
         for amp in amps
-        for d in (drop("uniforme", o_rate, amp, f) for f in factors if f >= 2)
+        for d in (drop("uniform", o_rate, amp, f) for f in factors if f >= 2)
     )
-    verdict = "apoiada" if (falls and mitig) else ("refutada" if not any_fall else "inconclusiva")
+    verdict = "supported" if (falls and mitig) else ("refuted" if not any_fall else "inconclusive")
     return {
         "ottawa_like": {"rate": o_rate, "amp": o_amp},
         "uniform_falls_somewhere": falls,
         "mitigations_within_threshold": mitig,
-        "verdict_H_picos": verdict,
+        "verdict_H_spikes": verdict,
         "drops_points": table,
     }
 
@@ -368,7 +366,7 @@ def main() -> int:
                     "ottawa_like",
                     "uniform_falls_somewhere",
                     "mitigations_within_threshold",
-                    "verdict_H_picos",
+                    "verdict_H_spikes",
                 )
             }
         )

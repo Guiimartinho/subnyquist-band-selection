@@ -92,7 +92,7 @@
     "tests": [
       {
         "hypothesis": "H3",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 4,
         "diff_points": 21.35,
         "bearings_up": 18,
@@ -101,7 +101,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 8,
         "diff_points": 19.01,
         "bearings_up": 18,
@@ -110,7 +110,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 16,
         "diff_points": 12.29,
         "bearings_up": 13,
@@ -119,7 +119,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 32,
         "diff_points": 7.1,
         "bearings_up": 11,
@@ -128,7 +128,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 4,
         "diff_points": 16.85,
         "bearings_up": 14,
@@ -137,7 +137,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 8,
         "diff_points": 0.23,
         "bearings_up": 9,
@@ -146,7 +146,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 16,
         "diff_points": 10.39,
         "bearings_up": 15,
@@ -155,7 +155,7 @@
       },
       {
         "hypothesis": "H3",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 32,
         "diff_points": 0.02,
         "bearings_up": 11,
@@ -164,7 +164,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 4,
         "diff_points": 13.46,
         "bearings_up": 18,
@@ -173,7 +173,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 8,
         "diff_points": 9.3,
         "bearings_up": 15,
@@ -182,7 +182,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 16,
         "diff_points": 3.82,
         "bearings_up": 9,
@@ -191,7 +191,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "bruto",
+        "clean": "raw",
         "factor": 32,
         "diff_points": -8.85,
         "bearings_up": 3,
@@ -200,7 +200,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 4,
         "diff_points": 3.84,
         "bearings_up": 9,
@@ -209,7 +209,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 8,
         "diff_points": 4.1,
         "bearings_up": 10,
@@ -218,7 +218,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 16,
         "diff_points": -1.81,
         "bearings_up": 9,
@@ -227,7 +227,7 @@
       },
       {
         "hypothesis": "H4",
-        "clean": "mediana3",
+        "clean": "median3",
         "factor": 32,
         "diff_points": -7.49,
         "bearings_up": 11,
@@ -290,19 +290,19 @@
     "zone_profile_wide_band": {
       "4x": {
         "antialias": 47.0,
-        "zona1": 27.5,
-        "zona2": 2.5,
-        "zona3": 3.0
+        "zone1": 27.5,
+        "zone2": 2.5,
+        "zone3": 3.0
       },
       "8x": {
         "antialias": 51.9,
-        "zona1": 35.6,
-        "zona2": 40.4,
-        "zona3": 8.1,
-        "zona4": 2.6,
-        "zona5": 2.2,
-        "zona6": 2.0,
-        "zona7": 3.5
+        "zone1": 35.6,
+        "zone2": 40.4,
+        "zone3": 8.1,
+        "zone4": 2.6,
+        "zone5": 2.2,
+        "zone6": 2.0,
+        "zone7": 3.5
       }
     },
     "leakage_and_decoys": {

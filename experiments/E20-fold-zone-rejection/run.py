@@ -46,6 +46,14 @@ from snq_recon.selectors import fast_band_selector
 PACKAGES = ("snq-core", "snq-sim", "snq-data", "snq-recon", "snq-eval")
 FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
 REPO_ROOT = Path(__file__).resolve().parents[2]
+# intervention labels as the runs wrote them, before they were renamed to English
+# (tools/relabel_map.py): summary.csv is sorted by them, so a rerun keeps the versioned row order
+LEGACY_LABELS = {
+    "despike_after_decimation": "despike_decimado",
+    "median3_after_decimation": "mediana3_decimado",
+    "ses_infogram": "infograma_ses",
+    "ses_infogram_despike": "infograma_ses_despike",
+}
 
 
 # ----------------------------------------------------------------------
@@ -248,7 +256,9 @@ def summarize(rows: list[dict]) -> list[dict]:
         cell = (r["condition"], r["factor"], r["ceiling_hz"], r["intervention"])
         hits[cell][(r["record"], r["segment"])] = int(r["hit"])
     out = []
-    for (cond, factor, ceiling, iname), pairs in sorted(hits.items()):
+    for (cond, factor, ceiling, iname), pairs in sorted(
+        hits.items(), key=lambda kv: (*kv[0][:3], LEGACY_LABELS.get(kv[0][3], kv[0][3]))
+    ):
         ctrl = hits.get((cond, factor, ceiling, "none"), {})
         common = sorted(set(pairs) & set(ctrl))
         b = sum(1 for k in common if pairs[k] == 1 and ctrl[k] == 0)
@@ -308,7 +318,7 @@ def write_manifest(
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     src_sha, src_n = source_sha256()
     dirty = _git("status", "--porcelain")
     manifest = {

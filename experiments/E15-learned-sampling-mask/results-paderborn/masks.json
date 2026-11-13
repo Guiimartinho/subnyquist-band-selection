@@ -1,6 +1,6 @@
 {
-  "paderborn/bruto/b16/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 39,
       "epochs_run": 80,
@@ -32,8 +32,8 @@
       "val_bal_acc": 0.26323621553884713
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -156,7 +156,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -290,8 +290,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -623,7 +623,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -976,7 +976,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -1340,7 +1340,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_multicoset": {
+  "paderborn/raw/b16/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 44,
@@ -1373,7 +1373,7 @@
       "val_bal_acc": 0.37727130325814534
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b16/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 26,
@@ -1442,11 +1442,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -1478,8 +1478,8 @@
       "val_bal_acc": 0.25892857142857145
     }
   },
-  "paderborn/bruto/b16/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -1512,8 +1512,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split0/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -1545,8 +1545,8 @@
       "val_bal_acc": 0.33341165413533835
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split0/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 120,
       "epochs_run": 161,
@@ -1669,7 +1669,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -1803,8 +1803,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split0/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -2136,7 +2136,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -2489,7 +2489,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -2853,7 +2853,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_multicoset": {
+  "paderborn/raw/b16/split0/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 40,
@@ -2886,7 +2886,7 @@
       "val_bal_acc": 0.34656954887218044
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b16/split0/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 80,
@@ -2955,11 +2955,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split0/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 26,
       "epochs_run": 67,
@@ -2991,8 +2991,8 @@
       "val_bal_acc": 0.2544642857142857
     }
   },
-  "paderborn/bruto/b16/split0/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split0/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -3025,8 +3025,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split0/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -3058,8 +3058,8 @@
       "val_bal_acc": 0.39920112781954886
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split0/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -3182,7 +3182,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -3316,8 +3316,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split0/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -3649,7 +3649,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -4002,7 +4002,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -4366,7 +4366,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_multicoset": {
+  "paderborn/raw/b16/split0/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -4399,7 +4399,7 @@
       "val_bal_acc": 0.37727130325814534
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b16/split0/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 131,
@@ -4468,11 +4468,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split0/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -4504,8 +4504,8 @@
       "val_bal_acc": 0.2544642857142857
     }
   },
-  "paderborn/bruto/b16/split0/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split0/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 66,
       "epochs_run": 107,
@@ -4538,8 +4538,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -4571,8 +4571,8 @@
       "val_bal_acc": 0.07017543859649122
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -4695,7 +4695,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -4829,8 +4829,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -5162,7 +5162,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -5515,7 +5515,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -5879,7 +5879,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_multicoset": {
+  "paderborn/raw/b16/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 19,
@@ -5912,7 +5912,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b16/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 36,
@@ -5981,11 +5981,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -6017,8 +6017,8 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b16/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 172,
       "epochs_run": 213,
@@ -6051,8 +6051,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split1/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -6084,8 +6084,8 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split1/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 102,
       "epochs_run": 143,
@@ -6208,7 +6208,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -6342,8 +6342,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split1/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 148,
       "epochs_run": 189,
@@ -6675,7 +6675,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 148,
       "epochs_run": 189,
@@ -7028,7 +7028,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -7392,7 +7392,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_multicoset": {
+  "paderborn/raw/b16/split1/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 30,
@@ -7425,7 +7425,7 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b16/split1/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 40,
@@ -7494,11 +7494,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split1/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -7530,8 +7530,8 @@
       "val_bal_acc": 0.013157894736842105
     }
   },
-  "paderborn/bruto/b16/split1/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split1/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -7564,8 +7564,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split1/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -7597,8 +7597,8 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split1/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -7721,7 +7721,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 35,
       "epochs_run": 76,
@@ -7855,8 +7855,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split1/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -8188,7 +8188,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -8541,7 +8541,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -8905,7 +8905,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_multicoset": {
+  "paderborn/raw/b16/split1/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 16,
@@ -8938,7 +8938,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b16/split1/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 43,
@@ -9007,11 +9007,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split1/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 8,
       "epochs_run": 49,
@@ -9043,8 +9043,8 @@
       "val_bal_acc": 0.008771929824561403
     }
   },
-  "paderborn/bruto/b16/split1/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split1/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 182,
       "epochs_run": 223,
@@ -9077,8 +9077,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 83,
       "epochs_run": 124,
@@ -9110,8 +9110,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -9234,7 +9234,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -9368,8 +9368,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 111,
       "epochs_run": 152,
@@ -9701,7 +9701,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 111,
       "epochs_run": 152,
@@ -10054,7 +10054,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -10418,7 +10418,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_multicoset": {
+  "paderborn/raw/b16/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 58,
@@ -10451,7 +10451,7 @@
       "val_bal_acc": 0.45089285714285715
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b16/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -10520,11 +10520,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -10556,8 +10556,8 @@
       "val_bal_acc": 0.48660714285714285
     }
   },
-  "paderborn/bruto/b16/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 78,
       "epochs_run": 119,
@@ -10590,8 +10590,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split2/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 98,
       "epochs_run": 139,
@@ -10623,8 +10623,8 @@
       "val_bal_acc": 0.48660714285714285
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split2/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -10747,7 +10747,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -10881,8 +10881,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split2/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 126,
       "epochs_run": 167,
@@ -11214,7 +11214,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 126,
       "epochs_run": 167,
@@ -11567,7 +11567,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -11931,7 +11931,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_multicoset": {
+  "paderborn/raw/b16/split2/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 51,
@@ -11964,7 +11964,7 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b16/split2/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 42,
@@ -12033,11 +12033,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split2/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -12069,8 +12069,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b16/split2/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split2/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 92,
       "epochs_run": 133,
@@ -12103,8 +12103,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split2/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 102,
       "epochs_run": 143,
@@ -12136,8 +12136,8 @@
       "val_bal_acc": 0.48237781954887216
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split2/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 146,
       "epochs_run": 187,
@@ -12260,7 +12260,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -12394,8 +12394,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split2/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 135,
       "epochs_run": 176,
@@ -12727,7 +12727,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 135,
       "epochs_run": 176,
@@ -13080,7 +13080,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -13444,7 +13444,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_multicoset": {
+  "paderborn/raw/b16/split2/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 58,
@@ -13477,7 +13477,7 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b16/split2/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 42,
@@ -13546,11 +13546,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split2/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -13582,8 +13582,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b16/split2/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split2/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -13616,8 +13616,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 35,
       "epochs_run": 76,
@@ -13649,8 +13649,8 @@
       "val_bal_acc": 0.0043859649122807015
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 109,
       "epochs_run": 150,
@@ -13773,7 +13773,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 11,
       "epochs_run": 52,
@@ -13907,8 +13907,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -14240,7 +14240,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -14593,7 +14593,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -14957,7 +14957,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_multicoset": {
+  "paderborn/raw/b16/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 37,
@@ -14990,7 +14990,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b16/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 23,
@@ -15059,11 +15059,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 38,
       "epochs_run": 79,
@@ -15095,8 +15095,8 @@
       "val_bal_acc": 0.017857142857142856
     }
   },
-  "paderborn/bruto/b16/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 33,
       "epochs_run": 74,
@@ -15129,8 +15129,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split3/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -15162,8 +15162,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split3/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -15286,7 +15286,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -15420,8 +15420,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split3/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -15753,7 +15753,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -16106,7 +16106,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -16470,7 +16470,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_multicoset": {
+  "paderborn/raw/b16/split3/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 54,
@@ -16503,7 +16503,7 @@
       "val_bal_acc": 0.0043859649122807015
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b16/split3/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 24,
@@ -16572,11 +16572,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split3/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 11,
       "epochs_run": 52,
@@ -16608,8 +16608,8 @@
       "val_bal_acc": 0.040100250626566414
     }
   },
-  "paderborn/bruto/b16/split3/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split3/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -16642,8 +16642,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b16/split3/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -16675,8 +16675,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b16/split3/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -16799,7 +16799,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 18,
       "epochs_run": 59,
@@ -16933,8 +16933,8 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b16/split3/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -17266,7 +17266,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -17619,7 +17619,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -17983,7 +17983,7 @@
       }
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_multicoset": {
+  "paderborn/raw/b16/split3/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 32,
@@ -18016,7 +18016,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b16/split3/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 24,
@@ -18085,11 +18085,11 @@
         ]
       ],
       "noise_amplification": 1.0499965279253292,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b16/split3/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 17,
       "epochs_run": 58,
@@ -18121,8 +18121,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b16/split3/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b16/split3/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -18155,8 +18155,8 @@
       "chosen_factor": 18
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -18188,8 +18188,8 @@
       "val_bal_acc": 0.39920112781954886
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -18376,7 +18376,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 51,
       "epochs_run": 92,
@@ -18574,8 +18574,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 135,
       "epochs_run": 176,
@@ -19163,7 +19163,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 135,
       "epochs_run": 176,
@@ -19772,7 +19772,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 75,
       "epochs_run": 116,
@@ -20392,7 +20392,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_multicoset": {
+  "paderborn/raw/b32/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -20425,7 +20425,7 @@
       "val_bal_acc": 0.39481516290726815
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b32/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 59,
@@ -20510,11 +20510,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -20546,8 +20546,8 @@
       "val_bal_acc": 0.2851660401002506
     }
   },
-  "paderborn/bruto/b32/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 74,
       "epochs_run": 115,
@@ -20580,8 +20580,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split0/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -20613,8 +20613,8 @@
       "val_bal_acc": 0.3728853383458646
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split0/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -20801,7 +20801,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -20999,8 +20999,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split0/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 120,
       "epochs_run": 161,
@@ -21588,7 +21588,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 120,
       "epochs_run": 161,
@@ -22197,7 +22197,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -22817,7 +22817,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_multicoset": {
+  "paderborn/raw/b32/split0/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 58,
@@ -22850,7 +22850,7 @@
       "val_bal_acc": 0.4080513784461153
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b32/split0/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -22935,11 +22935,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split0/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -22971,8 +22971,8 @@
       "val_bal_acc": 0.33341165413533835
     }
   },
-  "paderborn/bruto/b32/split0/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split0/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -23005,8 +23005,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split0/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 27,
       "epochs_run": 68,
@@ -23038,8 +23038,8 @@
       "val_bal_acc": 0.37727130325814534
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split0/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -23226,7 +23226,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -23424,8 +23424,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split0/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -24013,7 +24013,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -24622,7 +24622,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -25242,7 +25242,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_multicoset": {
+  "paderborn/raw/b32/split0/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -25275,7 +25275,7 @@
       "val_bal_acc": 0.39481516290726815
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b32/split0/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 60,
@@ -25360,11 +25360,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split0/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,
@@ -25396,8 +25396,8 @@
       "val_bal_acc": 0.2544642857142857
     }
   },
-  "paderborn/bruto/b32/split0/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split0/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 67,
       "epochs_run": 108,
@@ -25430,8 +25430,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 18,
       "epochs_run": 59,
@@ -25463,8 +25463,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 131,
       "epochs_run": 172,
@@ -25651,7 +25651,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -25849,8 +25849,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 143,
       "epochs_run": 184,
@@ -26438,7 +26438,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 143,
       "epochs_run": 184,
@@ -27047,7 +27047,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 8,
       "epochs_run": 49,
@@ -27667,7 +27667,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_multicoset": {
+  "paderborn/raw/b32/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 48,
@@ -27700,7 +27700,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b32/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 46,
@@ -27785,11 +27785,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 0,
       "epochs_run": 41,
@@ -27821,8 +27821,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 214,
       "epochs_run": 255,
@@ -27855,8 +27855,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split1/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -27888,8 +27888,8 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split1/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 159,
       "epochs_run": 200,
@@ -28076,7 +28076,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 0,
       "epochs_run": 41,
@@ -28274,8 +28274,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split1/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -28863,7 +28863,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 127,
       "epochs_run": 168,
@@ -29472,7 +29472,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 28,
       "epochs_run": 69,
@@ -30092,7 +30092,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_multicoset": {
+  "paderborn/raw/b32/split1/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 114,
@@ -30125,7 +30125,7 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b32/split1/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 62,
@@ -30210,11 +30210,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split1/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 0,
       "epochs_run": 41,
@@ -30246,8 +30246,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split1/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 188,
       "epochs_run": 229,
@@ -30280,8 +30280,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split1/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 33,
       "epochs_run": 74,
@@ -30313,8 +30313,8 @@
       "val_bal_acc": 0.043859649122807015
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split1/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -30501,7 +30501,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -30699,8 +30699,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split1/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 102,
       "epochs_run": 143,
@@ -31288,7 +31288,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 102,
       "epochs_run": 143,
@@ -31897,7 +31897,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -32517,7 +32517,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_multicoset": {
+  "paderborn/raw/b32/split1/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 74,
@@ -32550,7 +32550,7 @@
       "val_bal_acc": 0.008771929824561403
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b32/split1/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 21,
@@ -32635,11 +32635,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split1/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 0,
       "epochs_run": 41,
@@ -32671,8 +32671,8 @@
       "val_bal_acc": 0.0
     }
   },
-  "paderborn/bruto/b32/split1/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split1/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 188,
       "epochs_run": 229,
@@ -32705,8 +32705,8 @@
       "chosen_factor": 35
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -32738,8 +32738,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 102,
       "epochs_run": 143,
@@ -32926,7 +32926,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -33124,8 +33124,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -33713,7 +33713,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -34322,7 +34322,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -34942,7 +34942,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_multicoset": {
+  "paderborn/raw/b32/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 38,
@@ -34975,7 +34975,7 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b32/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 51,
@@ -35060,11 +35060,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -35096,8 +35096,8 @@
       "val_bal_acc": 0.40319548872180455
     }
   },
-  "paderborn/bruto/b32/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -35130,8 +35130,8 @@
       "chosen_factor": 36
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split2/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 82,
       "epochs_run": 123,
@@ -35163,8 +35163,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split2/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -35351,7 +35351,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 61,
       "epochs_run": 102,
@@ -35549,8 +35549,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split2/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -36138,7 +36138,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 117,
       "epochs_run": 158,
@@ -36747,7 +36747,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -37367,7 +37367,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_multicoset": {
+  "paderborn/raw/b32/split2/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -37400,7 +37400,7 @@
       "val_bal_acc": 0.5
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b32/split2/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -37485,11 +37485,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split2/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -37521,8 +37521,8 @@
       "val_bal_acc": 0.38165726817042606
     }
   },
-  "paderborn/bruto/b32/split2/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split2/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 64,
       "epochs_run": 105,
@@ -37555,8 +37555,8 @@
       "chosen_factor": 36
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split2/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -37588,8 +37588,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split2/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 112,
       "epochs_run": 153,
@@ -37776,7 +37776,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 27,
       "epochs_run": 68,
@@ -37974,8 +37974,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split2/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -38563,7 +38563,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -39172,7 +39172,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 56,
       "epochs_run": 97,
@@ -39792,7 +39792,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_multicoset": {
+  "paderborn/raw/b32/split2/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 75,
@@ -39825,7 +39825,7 @@
       "val_bal_acc": 0.500078320802005
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b32/split2/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -39910,11 +39910,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split2/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -39946,8 +39946,8 @@
       "val_bal_acc": 0.293937969924812
     }
   },
-  "paderborn/bruto/b32/split2/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split2/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 71,
       "epochs_run": 112,
@@ -39980,8 +39980,8 @@
       "chosen_factor": 36
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 170,
       "epochs_run": 211,
@@ -40013,8 +40013,8 @@
       "val_bal_acc": 0.022086466165413533
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 196,
       "epochs_run": 237,
@@ -40201,7 +40201,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -40399,8 +40399,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 318,
       "epochs_run": 359,
@@ -40988,7 +40988,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 318,
       "epochs_run": 359,
@@ -41597,7 +41597,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 87,
       "epochs_run": 128,
@@ -42217,7 +42217,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_multicoset": {
+  "paderborn/raw/b32/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 82,
@@ -42250,7 +42250,7 @@
       "val_bal_acc": 0.01331453634085213
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b32/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 135,
@@ -42335,11 +42335,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -42371,8 +42371,8 @@
       "val_bal_acc": 0.05740914786967419
     }
   },
-  "paderborn/bruto/b32/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -42405,8 +42405,8 @@
       "chosen_factor": 32
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split3/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 132,
       "epochs_run": 173,
@@ -42438,8 +42438,8 @@
       "val_bal_acc": 0.026472431077694234
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split3/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 187,
       "epochs_run": 228,
@@ -42626,7 +42626,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 0,
       "epochs_run": 41,
@@ -42824,8 +42824,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split3/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -43413,7 +43413,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -44022,7 +44022,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 79,
       "epochs_run": 120,
@@ -44642,7 +44642,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_multicoset": {
+  "paderborn/raw/b32/split3/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 97,
@@ -44675,7 +44675,7 @@
       "val_bal_acc": 0.008850250626566416
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b32/split3/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 128,
@@ -44760,11 +44760,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split3/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 124,
       "epochs_run": 165,
@@ -44796,8 +44796,8 @@
       "val_bal_acc": 0.021929824561403508
     }
   },
-  "paderborn/bruto/b32/split3/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split3/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 65,
       "epochs_run": 106,
@@ -44830,8 +44830,8 @@
       "chosen_factor": 32
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b32/split3/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 75,
       "epochs_run": 116,
@@ -44863,8 +44863,8 @@
       "val_bal_acc": 0.0043859649122807015
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b32/split3/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 134,
       "epochs_run": 175,
@@ -45051,7 +45051,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 92,
       "epochs_run": 133,
@@ -45249,8 +45249,8 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b32/split3/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -45838,7 +45838,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -46447,7 +46447,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -47067,7 +47067,7 @@
       }
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_multicoset": {
+  "paderborn/raw/b32/split3/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 92,
@@ -47100,7 +47100,7 @@
       "val_bal_acc": 0.01331453634085213
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b32/split3/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 99,
@@ -47185,11 +47185,11 @@
         ]
       ],
       "noise_amplification": 0.9954410957887989,
-      "noise_amplification_uniforme": Infinity
+      "noise_amplification_uniform": Infinity
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b32/split3/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 38,
       "epochs_run": 79,
@@ -47221,8 +47221,8 @@
       "val_bal_acc": 0.0043859649122807015
     }
   },
-  "paderborn/bruto/b32/split3/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b32/split3/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -47255,8 +47255,8 @@
       "chosen_factor": 32
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -47288,8 +47288,8 @@
       "val_bal_acc": 0.431547619047619
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -47364,7 +47364,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -47450,8 +47450,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 132,
       "epochs_run": 173,
@@ -47591,7 +47591,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 132,
       "epochs_run": 173,
@@ -47752,7 +47752,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 85,
       "epochs_run": 126,
@@ -47924,7 +47924,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_multicoset": {
+  "paderborn/raw/b4/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 25,
@@ -47957,7 +47957,7 @@
       "val_bal_acc": 0.29910714285714285
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b4/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 71,
@@ -48018,11 +48018,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -48054,8 +48054,8 @@
       "val_bal_acc": 0.3392857142857143
     }
   },
-  "paderborn/bruto/b4/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -48088,8 +48088,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split0/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -48121,8 +48121,8 @@
       "val_bal_acc": 0.4851190476190476
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split0/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -48197,7 +48197,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -48283,8 +48283,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split0/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -48424,7 +48424,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -48585,7 +48585,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -48757,7 +48757,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_multicoset": {
+  "paderborn/raw/b4/split0/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 70,
@@ -48790,7 +48790,7 @@
       "val_bal_acc": 0.5198934837092732
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b4/split0/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 84,
@@ -48851,11 +48851,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split0/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 60,
       "epochs_run": 101,
@@ -48887,8 +48887,8 @@
       "val_bal_acc": 0.3482142857142857
     }
   },
-  "paderborn/bruto/b4/split0/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split0/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -48921,8 +48921,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split0/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -48954,8 +48954,8 @@
       "val_bal_acc": 0.3927005012531328
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split0/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -49030,7 +49030,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -49116,8 +49116,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split0/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -49257,7 +49257,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -49418,7 +49418,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -49590,7 +49590,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_multicoset": {
+  "paderborn/raw/b4/split0/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 44,
@@ -49623,7 +49623,7 @@
       "val_bal_acc": 0.47172619047619047
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b4/split0/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 23,
@@ -49684,11 +49684,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split0/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -49720,8 +49720,8 @@
       "val_bal_acc": 0.3871397243107769
     }
   },
-  "paderborn/bruto/b4/split0/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split0/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -49754,8 +49754,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -49787,8 +49787,8 @@
       "val_bal_acc": 0.07456140350877193
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 108,
       "epochs_run": 149,
@@ -49863,7 +49863,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -49949,8 +49949,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 150,
       "epochs_run": 191,
@@ -50090,7 +50090,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 150,
       "epochs_run": 191,
@@ -50251,7 +50251,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 39,
       "epochs_run": 80,
@@ -50423,7 +50423,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_multicoset": {
+  "paderborn/raw/b4/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 39,
@@ -50456,7 +50456,7 @@
       "val_bal_acc": 0.05263157894736842
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b4/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 37,
@@ -50517,11 +50517,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -50553,8 +50553,8 @@
       "val_bal_acc": 0.03508771929824561
     }
   },
-  "paderborn/bruto/b4/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 49,
       "epochs_run": 90,
@@ -50587,8 +50587,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split1/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -50620,8 +50620,8 @@
       "val_bal_acc": 0.07017543859649122
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split1/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 109,
       "epochs_run": 150,
@@ -50696,7 +50696,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 21,
       "epochs_run": 62,
@@ -50782,8 +50782,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split1/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -50923,7 +50923,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -51084,7 +51084,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -51256,7 +51256,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_multicoset": {
+  "paderborn/raw/b4/split1/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 23,
@@ -51289,7 +51289,7 @@
       "val_bal_acc": 0.043859649122807015
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b4/split1/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 60,
@@ -51350,11 +51350,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split1/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 32,
       "epochs_run": 73,
@@ -51386,8 +51386,8 @@
       "val_bal_acc": 0.05263157894736842
     }
   },
-  "paderborn/bruto/b4/split1/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split1/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 27,
       "epochs_run": 68,
@@ -51420,8 +51420,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split1/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 24,
       "epochs_run": 65,
@@ -51453,8 +51453,8 @@
       "val_bal_acc": 0.02631578947368421
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split1/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 103,
       "epochs_run": 144,
@@ -51529,7 +51529,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -51615,8 +51615,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split1/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -51756,7 +51756,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 110,
       "epochs_run": 151,
@@ -51917,7 +51917,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -52089,7 +52089,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_multicoset": {
+  "paderborn/raw/b4/split1/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 79,
@@ -52122,7 +52122,7 @@
       "val_bal_acc": 0.07894736842105263
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b4/split1/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 47,
@@ -52183,11 +52183,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split1/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -52219,8 +52219,8 @@
       "val_bal_acc": 0.09210526315789473
     }
   },
-  "paderborn/bruto/b4/split1/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split1/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -52253,8 +52253,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 55,
       "epochs_run": 96,
@@ -52286,8 +52286,8 @@
       "val_bal_acc": 0.42113095238095233
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 118,
       "epochs_run": 159,
@@ -52362,7 +52362,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -52448,8 +52448,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -52589,7 +52589,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -52750,7 +52750,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -52922,7 +52922,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_multicoset": {
+  "paderborn/raw/b4/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 58,
@@ -52955,7 +52955,7 @@
       "val_bal_acc": 0.337797619047619
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b4/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 57,
@@ -53016,11 +53016,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 97,
       "epochs_run": 138,
@@ -53052,8 +53052,8 @@
       "val_bal_acc": 0.4869204260651629
     }
   },
-  "paderborn/bruto/b4/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -53086,8 +53086,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split2/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -53119,8 +53119,8 @@
       "val_bal_acc": 0.42113095238095233
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split2/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -53195,7 +53195,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -53281,8 +53281,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split2/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 108,
       "epochs_run": 149,
@@ -53422,7 +53422,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 108,
       "epochs_run": 149,
@@ -53583,7 +53583,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 39,
       "epochs_run": 80,
@@ -53755,7 +53755,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_multicoset": {
+  "paderborn/raw/b4/split2/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 50,
@@ -53788,7 +53788,7 @@
       "val_bal_acc": 0.34218358395989973
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b4/split2/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 63,
@@ -53849,11 +53849,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split2/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -53885,8 +53885,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b4/split2/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split2/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 63,
       "epochs_run": 104,
@@ -53919,8 +53919,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split2/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 67,
       "epochs_run": 108,
@@ -53952,8 +53952,8 @@
       "val_bal_acc": 0.5044642857142857
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split2/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -54028,7 +54028,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 54,
       "epochs_run": 95,
@@ -54114,8 +54114,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split2/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 112,
       "epochs_run": 153,
@@ -54255,7 +54255,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 112,
       "epochs_run": 153,
@@ -54416,7 +54416,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 74,
       "epochs_run": 115,
@@ -54588,7 +54588,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_multicoset": {
+  "paderborn/raw/b4/split2/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 68,
@@ -54621,7 +54621,7 @@
       "val_bal_acc": 0.41235902255639095
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b4/split2/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 95,
@@ -54682,11 +54682,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split2/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 96,
       "epochs_run": 137,
@@ -54718,8 +54718,8 @@
       "val_bal_acc": 0.46499060150375937
     }
   },
-  "paderborn/bruto/b4/split2/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split2/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 77,
       "epochs_run": 118,
@@ -54752,8 +54752,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -54785,8 +54785,8 @@
       "val_bal_acc": 0.11599310776942356
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -54861,7 +54861,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -54947,8 +54947,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -55088,7 +55088,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -55249,7 +55249,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 38,
       "epochs_run": 79,
@@ -55421,7 +55421,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_multicoset": {
+  "paderborn/raw/b4/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 20,
@@ -55454,7 +55454,7 @@
       "val_bal_acc": 0.16517857142857142
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b4/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 49,
@@ -55515,11 +55515,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -55551,8 +55551,8 @@
       "val_bal_acc": 0.08035714285714286
     }
   },
-  "paderborn/bruto/b4/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -55585,8 +55585,8 @@
       "chosen_factor": 4
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split3/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -55618,8 +55618,8 @@
       "val_bal_acc": 0.04887218045112782
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split3/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -55694,7 +55694,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 40,
       "epochs_run": 81,
@@ -55780,8 +55780,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split3/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -55921,7 +55921,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -56082,7 +56082,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 25,
       "epochs_run": 66,
@@ -56254,7 +56254,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_multicoset": {
+  "paderborn/raw/b4/split3/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 26,
@@ -56287,7 +56287,7 @@
       "val_bal_acc": 0.13839285714285715
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b4/split3/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 69,
@@ -56348,11 +56348,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split3/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 64,
       "epochs_run": 105,
@@ -56384,8 +56384,8 @@
       "val_bal_acc": 0.07589285714285714
     }
   },
-  "paderborn/bruto/b4/split3/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split3/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -56418,8 +56418,8 @@
       "chosen_factor": 4
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b4/split3/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 33,
       "epochs_run": 74,
@@ -56451,8 +56451,8 @@
       "val_bal_acc": 0.16964285714285715
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b4/split3/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -56527,7 +56527,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -56613,8 +56613,8 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b4/split3/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -56754,7 +56754,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -56915,7 +56915,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 46,
       "epochs_run": 87,
@@ -57087,7 +57087,7 @@
       }
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_multicoset": {
+  "paderborn/raw/b4/split3/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 45,
@@ -57120,7 +57120,7 @@
       "val_bal_acc": 0.17410714285714285
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b4/split3/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 43,
@@ -57181,11 +57181,11 @@
         ]
       ],
       "noise_amplification": 0.328125,
-      "noise_amplification_uniforme": 0.328125
+      "noise_amplification_uniform": 0.328125
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b4/split3/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 62,
       "epochs_run": 103,
@@ -57217,8 +57217,8 @@
       "val_bal_acc": 0.07589285714285714
     }
   },
-  "paderborn/bruto/b4/split3/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b4/split3/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -57251,8 +57251,8 @@
       "chosen_factor": 4
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split0/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 54,
       "epochs_run": 95,
@@ -57284,8 +57284,8 @@
       "val_bal_acc": 0.4270833333333333
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split0/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -57376,7 +57376,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 62,
       "epochs_run": 103,
@@ -57478,8 +57478,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split0/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 112,
       "epochs_run": 153,
@@ -57683,7 +57683,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 112,
       "epochs_run": 153,
@@ -57908,7 +57908,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -58144,7 +58144,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_multicoset": {
+  "paderborn/raw/b8/split0/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -58177,7 +58177,7 @@
       "val_bal_acc": 0.39489348370927324
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b8/split0/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 56,
@@ -58249,11 +58249,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split0/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 56,
       "epochs_run": 97,
@@ -58285,8 +58285,8 @@
       "val_bal_acc": 0.368656015037594
     }
   },
-  "paderborn/bruto/b8/split0/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split0/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -58319,8 +58319,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split0/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -58352,8 +58352,8 @@
       "val_bal_acc": 0.43060776942355894
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split0/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -58444,7 +58444,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 18,
       "epochs_run": 59,
@@ -58546,8 +58546,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split0/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -58751,7 +58751,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -58976,7 +58976,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 50,
       "epochs_run": 91,
@@ -59212,7 +59212,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_multicoset": {
+  "paderborn/raw/b8/split0/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 90,
@@ -59245,7 +59245,7 @@
       "val_bal_acc": 0.4521459899749373
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b8/split0/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 37,
@@ -59317,11 +59317,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split0/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 37,
       "epochs_run": 78,
@@ -59353,8 +59353,8 @@
       "val_bal_acc": 0.35126879699248115
     }
   },
-  "paderborn/bruto/b8/split0/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split0/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -59387,8 +59387,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split0/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 52,
       "epochs_run": 93,
@@ -59420,8 +59420,8 @@
       "val_bal_acc": 0.3778978696741855
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split0/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -59512,7 +59512,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 47,
       "epochs_run": 88,
@@ -59614,8 +59614,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split0/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -59819,7 +59819,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -60044,7 +60044,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 22,
       "epochs_run": 63,
@@ -60280,7 +60280,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_multicoset": {
+  "paderborn/raw/b8/split0/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -60313,7 +60313,7 @@
       "val_bal_acc": 0.34226190476190477
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b8/split0/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -60385,11 +60385,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split0/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 27,
       "epochs_run": 68,
@@ -60421,8 +60421,8 @@
       "val_bal_acc": 0.3334899749373434
     }
   },
-  "paderborn/bruto/b8/split0/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split0/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -60455,8 +60455,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split1/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 68,
       "epochs_run": 109,
@@ -60488,8 +60488,8 @@
       "val_bal_acc": 0.06578947368421052
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split1/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -60580,7 +60580,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -60682,8 +60682,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split1/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -60887,7 +60887,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -61112,7 +61112,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 35,
       "epochs_run": 76,
@@ -61348,7 +61348,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_multicoset": {
+  "paderborn/raw/b8/split1/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 45,
@@ -61381,7 +61381,7 @@
       "val_bal_acc": 0.017543859649122806
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b8/split1/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 40,
@@ -61453,11 +61453,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split1/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -61489,8 +61489,8 @@
       "val_bal_acc": 0.03508771929824561
     }
   },
-  "paderborn/bruto/b8/split1/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split1/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 34,
       "epochs_run": 75,
@@ -61523,8 +61523,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split1/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -61556,8 +61556,8 @@
       "val_bal_acc": 0.05263157894736842
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split1/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 100,
       "epochs_run": 141,
@@ -61648,7 +61648,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 38,
       "epochs_run": 79,
@@ -61750,8 +61750,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split1/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -61955,7 +61955,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -62180,7 +62180,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 42,
       "epochs_run": 83,
@@ -62416,7 +62416,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_multicoset": {
+  "paderborn/raw/b8/split1/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 38,
@@ -62449,7 +62449,7 @@
       "val_bal_acc": 0.05263157894736842
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b8/split1/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 274,
@@ -62521,11 +62521,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split1/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 35,
       "epochs_run": 76,
@@ -62557,8 +62557,8 @@
       "val_bal_acc": 0.02631578947368421
     }
   },
-  "paderborn/bruto/b8/split1/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split1/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 76,
       "epochs_run": 117,
@@ -62591,8 +62591,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split1/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 57,
       "epochs_run": 98,
@@ -62624,8 +62624,8 @@
       "val_bal_acc": 0.039473684210526314
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split1/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 107,
       "epochs_run": 148,
@@ -62716,7 +62716,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 115,
       "epochs_run": 156,
@@ -62818,8 +62818,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split1/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -63023,7 +63023,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -63248,7 +63248,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 62,
       "epochs_run": 103,
@@ -63484,7 +63484,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_multicoset": {
+  "paderborn/raw/b8/split1/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 58,
@@ -63517,7 +63517,7 @@
       "val_bal_acc": 0.06578947368421052
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b8/split1/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 51,
@@ -63589,11 +63589,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split1/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 165,
       "epochs_run": 206,
@@ -63625,8 +63625,8 @@
       "val_bal_acc": 0.07894736842105263
     }
   },
-  "paderborn/bruto/b8/split1/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split1/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 19,
       "epochs_run": 60,
@@ -63659,8 +63659,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split2/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 48,
       "epochs_run": 89,
@@ -63692,8 +63692,8 @@
       "val_bal_acc": 0.4781484962406015
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split2/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 101,
       "epochs_run": 142,
@@ -63784,7 +63784,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 85,
       "epochs_run": 126,
@@ -63886,8 +63886,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split2/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -64091,7 +64091,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -64316,7 +64316,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 69,
       "epochs_run": 110,
@@ -64552,7 +64552,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_multicoset": {
+  "paderborn/raw/b8/split2/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 63,
@@ -64585,7 +64585,7 @@
       "val_bal_acc": 0.42113095238095233
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b8/split2/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 70,
@@ -64657,11 +64657,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split2/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 70,
       "epochs_run": 111,
@@ -64693,8 +64693,8 @@
       "val_bal_acc": 0.49130639097744355
     }
   },
-  "paderborn/bruto/b8/split2/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split2/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 53,
       "epochs_run": 94,
@@ -64727,8 +64727,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split2/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 59,
       "epochs_run": 100,
@@ -64760,8 +64760,8 @@
       "val_bal_acc": 0.46060463659147866
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split2/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 188,
       "epochs_run": 229,
@@ -64852,7 +64852,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 83,
       "epochs_run": 124,
@@ -64954,8 +64954,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split2/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 114,
       "epochs_run": 155,
@@ -65159,7 +65159,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 114,
       "epochs_run": 155,
@@ -65384,7 +65384,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -65620,7 +65620,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_multicoset": {
+  "paderborn/raw/b8/split2/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 50,
@@ -65653,7 +65653,7 @@
       "val_bal_acc": 0.42113095238095233
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b8/split2/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 51,
@@ -65725,11 +65725,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split2/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 89,
       "epochs_run": 130,
@@ -65761,8 +65761,8 @@
       "val_bal_acc": 0.500078320802005
     }
   },
-  "paderborn/bruto/b8/split2/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split2/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 19,
       "epochs_run": 60,
@@ -65795,8 +65795,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split2/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 74,
       "epochs_run": 115,
@@ -65828,8 +65828,8 @@
       "val_bal_acc": 0.4869204260651629
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split2/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -65920,7 +65920,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 45,
       "epochs_run": 86,
@@ -66022,8 +66022,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split2/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 163,
       "epochs_run": 204,
@@ -66227,7 +66227,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 163,
       "epochs_run": 204,
@@ -66452,7 +66452,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 88,
       "epochs_run": 129,
@@ -66688,7 +66688,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_multicoset": {
+  "paderborn/raw/b8/split2/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 47,
@@ -66721,7 +66721,7 @@
       "val_bal_acc": 0.49130639097744355
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b8/split2/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 55,
@@ -66793,11 +66793,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split2/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 113,
       "epochs_run": 154,
@@ -66829,8 +66829,8 @@
       "val_bal_acc": 0.49130639097744355
     }
   },
-  "paderborn/bruto/b8/split2/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split2/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 30,
       "epochs_run": 71,
@@ -66863,8 +66863,8 @@
       "chosen_factor": 9
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split3/seed0/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 36,
       "epochs_run": 77,
@@ -66896,8 +66896,8 @@
       "val_bal_acc": 0.08035714285714286
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split3/seed0/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 148,
       "epochs_run": 189,
@@ -66988,7 +66988,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 43,
       "epochs_run": 84,
@@ -67090,8 +67090,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split3/seed0/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -67295,7 +67295,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 123,
       "epochs_run": 164,
@@ -67520,7 +67520,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -67756,7 +67756,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_multicoset": {
+  "paderborn/raw/b8/split3/seed0/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 70,
@@ -67789,7 +67789,7 @@
       "val_bal_acc": 0.008771929824561403
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_multicoset_vb": {
+  "paderborn/raw/b8/split3/seed0/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 33,
@@ -67861,11 +67861,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split3/seed0/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -67897,8 +67897,8 @@
       "val_bal_acc": 0.049107142857142856
     }
   },
-  "paderborn/bruto/b8/split3/seed0/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split3/seed0/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 41,
       "epochs_run": 82,
@@ -67931,8 +67931,8 @@
       "chosen_factor": 8
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split3/seed1/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 44,
       "epochs_run": 85,
@@ -67964,8 +67964,8 @@
       "val_bal_acc": 0.08035714285714286
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split3/seed1/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 126,
       "epochs_run": 167,
@@ -68056,7 +68056,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 16,
       "epochs_run": 57,
@@ -68158,8 +68158,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split3/seed1/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -68363,7 +68363,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 104,
       "epochs_run": 145,
@@ -68588,7 +68588,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 23,
       "epochs_run": 64,
@@ -68824,7 +68824,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_multicoset": {
+  "paderborn/raw/b8/split3/seed1/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 45,
@@ -68857,7 +68857,7 @@
       "val_bal_acc": 0.03125
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_multicoset_vb": {
+  "paderborn/raw/b8/split3/seed1/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 81,
@@ -68929,11 +68929,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split3/seed1/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 81,
       "epochs_run": 122,
@@ -68965,8 +68965,8 @@
       "val_bal_acc": 0.039786967418546364
     }
   },
-  "paderborn/bruto/b8/split3/seed1/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split3/seed1/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 81,
       "epochs_run": 122,
@@ -68999,8 +68999,8 @@
       "chosen_factor": 8
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_aleatoria": {
-    "dec_aleatoria": {
+  "paderborn/raw/b8/split3/seed2/dec_random": {
+    "dec_random": {
       "lr": 0.003,
       "best_epoch": 26,
       "epochs_run": 67,
@@ -69032,8 +69032,8 @@
       "val_bal_acc": 0.044642857142857144
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_aprendida": {
-    "dec_aprendida_sem_ajuste": {
+  "paderborn/raw/b8/split3/seed2/dec_learned": {
+    "dec_learned_norefit": {
       "lr": 0.003,
       "best_epoch": 152,
       "epochs_run": 193,
@@ -69124,7 +69124,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_aprendida": {
+    "dec_learned": {
       "lr": 0.003,
       "best_epoch": 58,
       "epochs_run": 99,
@@ -69226,8 +69226,8 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_livre": {
-    "dec_livre": {
+  "paderborn/raw/b8/split3/seed2/dec_free": {
+    "dec_free": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -69431,7 +69431,7 @@
       ],
       "projected_moved": true
     },
-    "dec_livre_projetada_sem_ajuste": {
+    "dec_free_projected_norefit": {
       "lr": 0.003,
       "best_epoch": 105,
       "epochs_run": 146,
@@ -69656,7 +69656,7 @@
         "timer_clock_hz": 16000000.0
       }
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "lr": 0.003,
       "best_epoch": 35,
       "epochs_run": 76,
@@ -69892,7 +69892,7 @@
       }
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_multicoset": {
+  "paderborn/raw/b8/split3/seed2/dec_multicoset": {
     "dec_multicoset": {
       "lr": 0.003,
       "best_epoch": 53,
@@ -69925,7 +69925,7 @@
       "val_bal_acc": 0.013392857142857142
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_multicoset_vb": {
+  "paderborn/raw/b8/split3/seed2/dec_multicoset_vb": {
     "dec_multicoset_vb": {
       "lr": 0.003,
       "best_epoch": 45,
@@ -69997,11 +69997,11 @@
         ]
       ],
       "noise_amplification": 0.65625,
-      "noise_amplification_uniforme": 0.65625
+      "noise_amplification_uniform": 0.65625
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_uniforme": {
-    "dec_uniforme": {
+  "paderborn/raw/b8/split3/seed2/dec_uniform": {
+    "dec_uniform": {
       "lr": 0.003,
       "best_epoch": 65,
       "epochs_run": 106,
@@ -70033,8 +70033,8 @@
       "val_bal_acc": 0.022164786967418547
     }
   },
-  "paderborn/bruto/b8/split3/seed2/dec_uniforme_treino": {
-    "dec_uniforme_treino": {
+  "paderborn/raw/b8/split3/seed2/dec_uniform_trained": {
+    "dec_uniform_trained": {
       "lr": 0.003,
       "best_epoch": 29,
       "epochs_run": 70,

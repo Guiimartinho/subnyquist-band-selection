@@ -240,8 +240,7 @@ def build_rows(cfg: dict, cls: list[dict]) -> list[dict]:
                     if np.isfinite(nested)
                     else "",
                     "hit_local": int(ok and abs(est - tl) < tol) if np.isfinite(tl) else "",
-                    # data label, kept as is: "guarda ou ValueError" = "guard or ValueError"
-                    "skipped": "" if res is not None else "guarda ou ValueError",
+                    "skipped": "" if res is not None else "guard or ValueError",
                 }
             )
     return rows
@@ -376,7 +375,7 @@ def main() -> None:
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     files = sorted((REPO_ROOT / "packages").glob("*/src/**/*.py"))
     src = hashlib.sha256()
     for p in files:

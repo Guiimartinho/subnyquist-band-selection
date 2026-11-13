@@ -1,8 +1,8 @@
 """Pre-registered analysis of E26 on Paderborn (README, "Confirmation on Paderborn").
 
 - **Arms** (cleaning × selector):
-  - ``kurtograma`` (raw, blind) and ``mediana_kurtograma`` (median, blind);
-  - ``guiado`` (raw, guided) and ``mediana_guiado`` (median, guided).
+  - ``kurtogram`` (raw, blind) and ``median_kurtogram`` (median, blind);
+  - ``guided`` (raw, guided) and ``median_guided`` (median, guided).
 - **Identification.**
   - **Blind:** it is outer race if the estimated order lies ≤ ``tolerance_order`` from the true
     BPFO, inner race if it lies that close to the BPFI, and "none" otherwise.
@@ -20,13 +20,13 @@
     accuracy is the mean, over the races, of the mean over the bearings.
   - On the healthy bearings, it is the fraction with "none" (specificity).
 - **Tests.**
-  - H1: ``mediana_guiado`` against ``kurtograma``. H2: ``mediana_guiado`` against
-    ``mediana_kurtograma``.
+  - H1: ``median_guided`` against ``kurtogram``. H2: ``median_guided`` against
+    ``median_kurtogram``.
   - They are run at the decisive factors, by a sign-flip test stratified by race on the
     per-bearing differences: exact up to 2^``signflip_exact_max``, otherwise Monte Carlo.
   - Holm over the factors.
   - Passes if the Holm p is below α, the difference is positive and the specificity of
-    ``mediana_guiado`` at that factor is at least ``min_specificity``.
+    ``median_guided`` at that factor is at least ``min_specificity``.
 
     uv run python experiments/E26-fault-order-guided-selector/analyze_paderborn.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn.yaml
@@ -46,12 +46,37 @@ import yaml
 
 EXP = Path(__file__).resolve().parent
 ARMS = {
-    "kurtograma": ("bruto", "cego"),
-    "mediana_kurtograma": ("mediana3", "cego"),
-    "guiado": ("bruto", "guiado"),
-    "mediana_guiado": ("mediana3", "guiado"),
+    "kurtogram": ("raw", "blind"),
+    "median_kurtogram": ("median3", "blind"),
+    "guided": ("raw", "guided"),
+    "median_guided": ("median3", "guided"),
 }
 RACE_FAULT = {"OR": "BPFO", "IR": "BPFI"}
+# The labels as the runs wrote them, before they were renamed to English (tools/relabel_map.py).
+# The analyses sort their output by these, so that rerunning them rewrites the versioned
+# analysis.json files byte for byte.
+LEGACY_LABELS = {
+    "raw": "bruto",
+    "median3": "mediana3",
+    "blind": "cego",
+    "kurtogram": "kurtograma",
+    "median_kurtogram": "mediana_kurtograma",
+    "guided": "guiado",
+    "median_guided": "mediana_guiado",
+    "kurtogram_rule": "kurtograma_regra",
+    "ses_infogram_rule": "infograma_ses_regra",
+    "wideband_rule": "banda_larga_regra",
+    "random_band_rule": "sorteada_regra",
+    "pure": "pura",
+    "fleet_zone": "zona_frota",
+    "kurtogram_zone": "zona_kurtograma",
+    **{f"zone{k}": f"zona{k}" for k in range(1, 8)},
+}
+
+
+def legacy_label(label: str) -> str:
+    """A label as the runs wrote it, part by part for a composite ``a|b``."""
+    return "|".join(LEGACY_LABELS.get(p, p) for p in label.split("|"))
 
 
 def holm(p: list[float]) -> list[float]:
@@ -120,7 +145,7 @@ def main() -> int:
     healthy = sorted({r["bearing"] for r in rows if r["race"] == "H"})
     tau: dict = {}
     for f in factors:
-        for clean in ("bruto", "mediana3"):
+        for clean in ("raw", "median3"):
             hs = defaultdict(list)
             for r in rows:
                 if r["race"] == "H" and int(r["factor"]) == f and r["clean"] == clean:
@@ -137,7 +162,7 @@ def main() -> int:
         for arm, (cl, sel) in ARMS.items():
             if cl != clean:
                 continue
-            if sel == "cego":
+            if sel == "blind":
                 est = float(r["blind_order"]) if r["blind_order"] != "" else np.nan
                 pred = "none"
                 for rc in ("OR", "IR"):
@@ -171,8 +196,8 @@ def main() -> int:
             }
     tests = []
     for name, (arm, base) in {
-        "H1": ("mediana_guiado", "kurtograma"),
-        "H2": ("mediana_guiado", "mediana_kurtograma"),
+        "H1": ("median_guided", "kurtogram"),
+        "H2": ("median_guided", "median_kurtogram"),
     }.items():
         cell = []
         for f in (int(x) for x in an["decisive_factors"] if int(x) in factors):  # only those run
@@ -207,7 +232,7 @@ def main() -> int:
     }
     rep = {
         "thresholds": {
-            f"{f}x|{c}": round(tau[(f, c, None)], 3) for f in factors for c in ("bruto", "mediana3")
+            f"{f}x|{c}": round(tau[(f, c, None)], 3) for f in factors for c in ("raw", "median3")
         },
         "nested_all_median": all_med,
         "summary": summary,

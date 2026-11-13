@@ -4,8 +4,8 @@ For each fault record (48 kHz, DE) the 1st half is calibration and the 2nd is te
 test an interferer is injected on a carrier above the search ceiling: impulsive bursts, or
 the phase-randomized surrogate of the same realization (same power spectrum bin by bin,
 kurtosis ~3), which isolates impulsiveness from power. The pipeline is E02's in hertz, with the
-search range restricted to [f_min, ceiling]. Arms: uniforme, aaf_ideal, uniforme_teto (ceiling
-set by the TAT) and taxa_tat (factor set by the TAT); the uniform oracle comes out in the analysis.
+search range restricted to [f_min, ceiling]. Arms: uniform, aaf_ideal, uniform_ceiling (ceiling
+set by the TAT) and tat_rate (factor set by the TAT); the uniform oracle comes out in the analysis.
 
     uv run python experiments/E23-injected-interferer-cwru/run.py \
         --config experiments/E23-injected-interferer-cwru/config/base.yaml
@@ -219,7 +219,7 @@ def classic_hz(x, fs_hz: float, factor: int, f_max_hz: float, truth_hz: float, c
     if fs_eff / 2.0 <= 2.0 * truth_hz:
         return {"skipped": "envelope_nyquist"}  # the E02 guard
     if f_max_hz <= f_min:
-        return {"skipped": "teto abaixo do piso do kurtograma"}  # "ceiling below kurtogram floor"
+        return {"skipped": "ceiling below the kurtogram floor"}
     try:
         k = kurtogram(xd, fs_eff, f_max_hz, cfg)
         est = estimate_without_prior(
@@ -360,7 +360,7 @@ def run_record(task: dict) -> dict:
                 res = (
                     uni[m] if c_eff == round(c0, 3) else classic_hz(xtest, fs, m, c_eff, truth, cfg)
                 )
-                arms.append(("uniforme", c_eff, res))
+                arms.append(("uniform", c_eff, res))
             arms.append(
                 ("aaf_ideal", c0, classic_hz(aaf_ideal(xtest, fs, m), fs, m, c0, truth, cfg))
             )
@@ -372,7 +372,7 @@ def run_record(task: dict) -> dict:
             c_teto = ceiling_at(fs_eff, cfg, frac)
             arms.append(
                 (
-                    "uniforme_teto",
+                    "uniform_ceiling",
                     c_teto,
                     {**classic_hz(xtest, fs, m, c_teto, truth, cfg), "ceiling_frac": frac},
                 )
@@ -386,11 +386,11 @@ def run_record(task: dict) -> dict:
                 m,
             )
             arms.append(
-                ("taxa_tat", ceiling_at(fs / m_tat, cfg), {**uni[m_tat], "chosen_factor": m_tat})
+                ("tat_rate", ceiling_at(fs / m_tat, cfg), {**uni[m_tat], "chosen_factor": m_tat})
             )
             tat_here = int(admissible(m, c0))
             for arm, c_eff, res in arms:
-                if s_test is None or arm != "uniforme":
+                if s_test is None or arm != "uniform":
                     share, pred = "", ""
                 else:
                     sh = folded_share_in_search(s_test, fs, m, f_min, c_eff)

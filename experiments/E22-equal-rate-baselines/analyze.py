@@ -2,8 +2,8 @@
 
     uv run python experiments/E22-equal-rate-baselines/analyze.py
 
-H1: aleatorio_cs does not beat uniforme_teto at any budget (refuted if the difference has a
-per-record bootstrap CI above zero). H2: taxa_tat stays within at most 5 points of the uniform
+H1: random_cs does not beat uniform_ceiling at any budget (refuted if the difference has a
+per-record bootstrap CI above zero). H2: tat_rate stays within at most 5 points of the uniform
 oracle at every budget. Both are pre-registered in the README.
 
 The oracle chooses, among the grid factors >= budget, the one with the highest accuracy ON THE
@@ -11,7 +11,7 @@ TEST ITSELF, per group (inner / outer race). It is an optimistic upper bound; in
 is re-chosen in each resample.
 
 Added after seeing that the outer-race oracle lands on an isolated peak (factor 46 among
-45 noisy factors): ``uniforme_varredura_cv``, the best uniform rate chosen OUTSIDE the test
+45 noisy factors): ``uniform_sweep_cv``, the best uniform rate chosen OUTSIDE the test
 (it chooses on segment 1 and evaluates on 2, and vice versa; a tie goes to the higher rate). It is
 post hoc and is labelled as such in the README.
 """
@@ -31,13 +31,13 @@ E = Path(__file__).resolve().parent
 N_BOOT = 4000
 SEED = 20261111
 GAP_POINTS = 5.0
-ARMS = ("uniforme", "despike", "uniforme_teto", "taxa_tat", "aleatorio_cs", "passa_faixa_lu")
+ARMS = ("uniform", "despike", "uniform_ceiling", "tat_rate", "random_cs", "bandpass_lu")
 TOL_ORDER = 0.06  # hit tolerance of E22 (config: tolerance_order)
 PAIRS = (
-    ("taxa_tat", "uniforme"),
-    ("uniforme_teto", "uniforme"),
-    ("passa_faixa_lu", "uniforme"),
-    ("aleatorio_cs", "uniforme"),
+    ("tat_rate", "uniform"),
+    ("uniform_ceiling", "uniform"),
+    ("bandpass_lu", "uniform"),
+    ("random_cs", "uniform"),
 )
 
 
@@ -64,7 +64,7 @@ class Cells:
     segs: list
     groups: list
     factors: list
-    est: dict  # (record, segment, factor) -> order estimate (uniforme_grid arm)
+    est: dict  # (record, segment, factor) -> order estimate (uniform_grid arm)
     calib: dict  # record -> calibrated order on segment 0 (manifest)
     local: bool = False  # local ruler: the grid hits are already free of leakage
 
@@ -201,7 +201,7 @@ def load(path: Path, hit_col: str = "hit") -> dict[str, Cells]:
         d = raw.setdefault(r["dataset"], {"hit": {}, "grid": {}, "group_of": {}, "est": {}})
         d["group_of"][r["record"]] = r["group"]
         b, h = int(r["budget"]), int(r[hit_col])
-        if r["arm"] == "uniforme_grid":
+        if r["arm"] == "uniform_grid":
             d["grid"][(r["record"], r["segment"], int(r["chosen_factor"]))] = h
             if r["estimate"] != "":
                 d["est"][(r["record"], r["segment"], int(r["chosen_factor"]))] = float(
@@ -238,9 +238,9 @@ def analyze(c: Cells, rng: np.random.Generator) -> dict:
             h, n = c.acc_arm(arm, b, recs)
             cell[arm] = {"hits": h, "n": n, "acc": round(100.0 * h / max(n, 1), 1)}
         o_acc, o_n, o_f = c.oracle(b, recs)
-        cell["oraculo_uniforme"] = {"acc": round(o_acc, 1), "n": o_n, "factor": o_f}
+        cell["uniform_oracle"] = {"acc": round(o_acc, 1), "n": o_n, "factor": o_f}
         v_acc, v_n, v_f = c.cv_uniform(b, recs)
-        cell["uniforme_varredura_cv"] = {"acc": round(v_acc, 1), "n": v_n, "factor": v_f}
+        cell["uniform_sweep_cv"] = {"acc": round(v_acc, 1), "n": v_n, "factor": v_f}
         if c.local:
             # local ruler: the label of a segment depends only on itself, so choosing on the grid
             # hits of the training records leaks nothing from the test
@@ -248,42 +248,40 @@ def analyze(c: Cells, rng: np.random.Generator) -> dict:
         else:
             r_acc, r_n, r_f = c.cv_by_record(b, recs)
             # global truth: it leaks; kept only as a reference (review of 2026-11-11)
-            cell["uniforme_varredura_registro_vazamento"] = {
+            cell["uniform_sweep_record_leak"] = {
                 "acc": round(r_acc, 1),
                 "n": r_n,
                 "factor": r_f,
             }
             r_acc, r_n, r_f = c.cv_by_record_nested(b, recs)
-        cell["uniforme_varredura_registro"] = {"acc": round(r_acc, 1), "n": r_n, "factor": r_f}
+        cell["uniform_sweep_record"] = {"acc": round(r_acc, 1), "n": r_n, "factor": r_f}
 
         d_h1, d_h2, d_cv, d_rec = [], [], [], []
         for _ in range(N_BOOT):
             sample = [rec for g in c.groups for rec in rng.choice(by_g[g], size=len(by_g[g]))]
-            hc, nc = c.acc_arm("aleatorio_cs", b, sample)
-            ht, nt = c.acc_arm("uniforme_teto", b, sample)
-            hq, nq = c.acc_arm("taxa_tat", b, sample)
+            hc, nc = c.acc_arm("random_cs", b, sample)
+            ht, nt = c.acc_arm("uniform_ceiling", b, sample)
+            hq, nq = c.acc_arm("tat_rate", b, sample)
             tat = 100.0 * hq / max(nq, 1)
             d_h1.append(100.0 * (hc / max(nc, 1) - ht / max(nt, 1)))
             d_h2.append(tat - c.oracle(b, sample)[0])
             d_cv.append(tat - c.cv_uniform(b, sample)[0])
             cv = c.cv_by_record if c.local else c.cv_by_record_nested
             d_rec.append(tat - cv(b, sample)[0])
-        cell["H1_cs_minus_teto"] = {
-            "points": round(cell["aleatorio_cs"]["acc"] - cell["uniforme_teto"]["acc"], 1),
+        cell["H1_cs_minus_ceiling"] = {
+            "points": round(cell["random_cs"]["acc"] - cell["uniform_ceiling"]["acc"], 1),
             "ci95": ci95(d_h1),
         }
         cell["H2_tat_minus_oracle"] = {
-            "points": round(cell["taxa_tat"]["acc"] - cell["oraculo_uniforme"]["acc"], 1),
+            "points": round(cell["tat_rate"]["acc"] - cell["uniform_oracle"]["acc"], 1),
             "ci95": ci95(d_h2),
         }
-        cell["posthoc_tat_minus_registro"] = {
-            "points": round(
-                cell["taxa_tat"]["acc"] - cell["uniforme_varredura_registro"]["acc"], 1
-            ),
+        cell["posthoc_tat_minus_record"] = {
+            "points": round(cell["tat_rate"]["acc"] - cell["uniform_sweep_record"]["acc"], 1),
             "ci95": ci95(d_rec),
         }
         cell["posthoc_tat_minus_cv"] = {
-            "points": round(cell["taxa_tat"]["acc"] - cell["uniforme_varredura_cv"]["acc"], 1),
+            "points": round(cell["tat_rate"]["acc"] - cell["uniform_sweep_cv"]["acc"], 1),
             "ci95": ci95(d_cv),
         }
         pairs = {}
@@ -305,12 +303,12 @@ def analyze(c: Cells, rng: np.random.Generator) -> dict:
         out["budgets"][str(b)] = cell
     cells = out["budgets"].values()
     out["verdict"] = {
-        "H1": "refutada"
-        if any(x["H1_cs_minus_teto"]["ci95"][0] > 0 for x in cells)
-        else "nao refutada",
-        "H2": "refutada"
+        "H1": "refuted"
+        if any(x["H1_cs_minus_ceiling"]["ci95"][0] > 0 for x in cells)
+        else "not refuted",
+        "H2": "refuted"
         if any(x["H2_tat_minus_oracle"]["points"] < -GAP_POINTS for x in cells)
-        else "nao refutada",
+        else "not refuted",
     }
     return out
 
@@ -345,17 +343,17 @@ def main() -> int:
             )  # '—': arm absent from this run
             print(f"  1/{b}: {arms}")
             print(
-                f"        oraculo {x['oraculo_uniforme']['acc']} {x['oraculo_uniforme']['factor']}"
-                f" | varredura_cv {x['uniforme_varredura_cv']['acc']}"
-                f" | varredura_registro {x['uniforme_varredura_registro']['acc']}"
-                f" {x['uniforme_varredura_registro']['factor']}"
-                f" {x['uniforme_varredura_cv']['factor']}"
+                f"        oracle {x['uniform_oracle']['acc']} {x['uniform_oracle']['factor']}"
+                f" | sweep_cv {x['uniform_sweep_cv']['acc']}"
+                f" | sweep_record {x['uniform_sweep_record']['acc']}"
+                f" {x['uniform_sweep_record']['factor']}"
+                f" {x['uniform_sweep_cv']['factor']}"
             )
             for k in (
-                "H1_cs_minus_teto",
+                "H1_cs_minus_ceiling",
                 "H2_tat_minus_oracle",
                 "posthoc_tat_minus_cv",
-                "posthoc_tat_minus_registro",
+                "posthoc_tat_minus_record",
             ):
                 print(f"        {k}: {x[k]['points']} {x[k]['ci95']}")
             for k, m in x["mcnemar"].items():

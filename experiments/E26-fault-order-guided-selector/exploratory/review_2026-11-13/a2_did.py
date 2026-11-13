@@ -7,16 +7,16 @@ sys.path.insert(0, sys.argv[1])
 from common import *
 
 tau = thresholds(95)
-A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
+A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r))
 dmg = lambda arm, f: {k: v for k, v in A[(arm, f)].items() if k[0] in ("OR", "IR")}
 print(
     "== Guided - blind gain per factor (balanced accuracy points) and interaction with decimation =="
 )
 for arm, base in (
-    ("mediana_guiado", "kurtograma"),
-    ("guiado", "kurtograma"),
-    ("mediana_guiado", "mediana_kurtograma"),
-    ("guiado", "mediana_kurtograma"),
+    ("median_guided", "kurtogram"),
+    ("guided", "kurtogram"),
+    ("median_guided", "median_kurtogram"),
+    ("guided", "median_kurtogram"),
 ):
     g1 = {k: dmg(arm, 1)[k] - dmg(base, 1)[k] for k in dmg(arm, 1)}
     o1, p1, n1, u1 = signflip(dmg(arm, 1), dmg(base, 1))
@@ -42,21 +42,21 @@ for arm in ARMS:
         s.append(f"{f}x {o:+5.1f} (p={p:.3f}, {u}/{n})")
     print(f"{arm:20s} " + " | ".join(s))
 print(
-    "\n== Contribution of the median within the guided arm: mediana_guiado - guiado (two-sided) =="
+    "\n== Contribution of the median within the guided arm: median_guided - guided (two-sided) =="
 )
 for f in FACTORS:
-    o, p, n, u = signflip(dmg("mediana_guiado", f), dmg("guiado", f), two_sided=True)
+    o, p, n, u = signflip(dmg("median_guided", f), dmg("guided", f), two_sided=True)
     lo, hi = ci_signflip(
-        {k: dmg("mediana_guiado", f)[k] - dmg("guiado", f)[k] for k in dmg("guiado", f)}
+        {k: dmg("median_guided", f)[k] - dmg("guided", f)[k] for k in dmg("guided", f)}
     )
     print(
         f"  {f:2d}x: {o:+5.1f} CI95=[{lo:+.1f},{hi:+.1f}] p={p:.3f} ({u}/{n} in favour of the median)"
     )
 print("\n== CI95 by inversion of the sign-flip test for H1/H2 ==")
 for name, arm, base in (
-    ("H1", "mediana_guiado", "kurtograma"),
-    ("H2", "mediana_guiado", "mediana_kurtograma"),
-    ("H1'", "guiado", "kurtograma"),
+    ("H1", "median_guided", "kurtogram"),
+    ("H2", "median_guided", "median_kurtogram"),
+    ("H1'", "guided", "kurtogram"),
 ):
     for f in FACTORS:
         d = {k: dmg(arm, f)[k] - dmg(base, f)[k] for k in dmg(arm, f)}

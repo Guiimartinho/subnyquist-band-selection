@@ -1,9 +1,9 @@
 intervention,ruler,n,hits,hits_none,gain,loss,mcnemar_p,verdict,records_up,records_down,sign_test_p_records,hits_by_factor
-despike,nested,36,28,6,22,0,4.77e-07,recupera,11,0,0.000977,1x:28 2x:28 3x:28 4x:28 5x:27 6x:24 8x:29
-despike,local,35,32,6,26,0,2.98e-08,recupera,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:30 6x:27 8x:32
-gini,nested,36,0,6,0,6,0.0312,nao recupera,0,4,0.125,1x:15 2x:0 3x:0 4x:0 5x:0 6x:0 8x:22
-gini,local,35,0,6,0,6,0.0312,nao recupera,0,4,0.125,1x:16 2x:0 3x:0 4x:0 5x:0 6x:0 8x:22
-infograma_ses,nested,36,11,6,10,5,0.302,inconclusivo,7,3,0.344,1x:7 2x:7 3x:11 4x:11 5x:17 6x:7 8x:13
-infograma_ses,local,35,11,6,10,5,0.302,inconclusivo,6,3,0.508,1x:7 2x:7 3x:11 4x:11 5x:18 6x:5 8x:14
-infograma_ses_despike,nested,36,7,6,6,5,1.0,nao recupera,5,3,0.727,1x:7 2x:7 3x:10 4x:7 5x:1 6x:3 8x:1
-infograma_ses_despike,local,35,7,6,6,5,1.0,nao recupera,4,3,1.0,1x:7 2x:7 3x:11 4x:7 5x:0 6x:1 8x:1
+despike,nested,36,28,6,22,0,4.77e-07,recovers,11,0,0.000977,1x:28 2x:28 3x:28 4x:28 5x:27 6x:24 8x:29
+despike,local,35,32,6,26,0,2.98e-08,recovers,11,0,0.000977,1x:32 2x:32 3x:32 4x:32 5x:30 6x:27 8x:32
+gini,nested,36,0,6,0,6,0.0312,does not recover,0,4,0.125,1x:15 2x:0 3x:0 4x:0 5x:0 6x:0 8x:22
+gini,local,35,0,6,0,6,0.0312,does not recover,0,4,0.125,1x:16 2x:0 3x:0 4x:0 5x:0 6x:0 8x:22
+ses_infogram,nested,36,11,6,10,5,0.302,inconclusive,7,3,0.344,1x:7 2x:7 3x:11 4x:11 5x:17 6x:7 8x:13
+ses_infogram,local,35,11,6,10,5,0.302,inconclusive,6,3,0.508,1x:7 2x:7 3x:11 4x:11 5x:18 6x:5 8x:14
+ses_infogram_despike,nested,36,7,6,6,5,1.0,does not recover,5,3,0.727,1x:7 2x:7 3x:10 4x:7 5x:1 6x:3 8x:1
+ses_infogram_despike,local,35,7,6,6,5,1.0,does not recover,4,3,1.0,1x:7 2x:7 3x:11 4x:7 5x:0 6x:1 8x:1

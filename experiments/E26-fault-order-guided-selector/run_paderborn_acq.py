@@ -6,15 +6,15 @@ information compared with filtering before decimating? Only on the raw stream (t
 contribute in E26).
 
 - **Acquisitions,** all at the rate ``FS/M``:
-  - ``pura`` (pure): ``x[::M]``;
+  - ``pure``: ``x[::M]``;
   - ``antialias``: ideal low-pass at ``FS/(2M)``, then ``[::M]``;
-  - ``zona{k}`` (zone k; only ``M`` in ``zone_factors``): ideal band-pass on the zone
+  - ``zone{k}`` (only ``M`` in ``zone_factors``): ideal band-pass on the zone
     ``[k, k+1]·FS/(2M)``, then ``[::M]``. It is classical band-pass sampling; ``zona0`` is the
     anti-alias.
 - **Bands,** with the guided rule of E26 (mean prominence in the harmonic windows):
-  - ``guiado``: the maximum over the partition of 23 bands, only in ``pura`` and ``antialias``;
-  - ``kurtograma_regra``: the band of the fast kurtogram, only in ``pura`` and ``antialias``;
-  - ``banda_larga_regra``: [f_min, fs/2], in all acquisitions.
+  - ``guided``: the maximum over the partition of 23 bands, only in ``pure`` and ``antialias``;
+  - ``kurtogram_rule``: the band of the fast kurtogram, only in ``pure`` and ``antialias``;
+  - ``wideband_rule``: [f_min, fs/2], in all acquisitions.
 - **Extra columns for leakage** (review, attack 6):
   - the order of the peak in the window of the 1st harmonic, in the chosen band;
   - the score with an exclusion of ±0.03 around the integer orders;
@@ -185,13 +185,13 @@ def task(job) -> dict:
             fs = FS / dec
             vd = undersample(v, dec)
             acqs = {
-                "pura": undersample(x, dec),
+                "pure": undersample(x, dec),
                 "antialias": undersample(ideal_band(x, 0.0, FS / (2 * dec)), dec),
             }
             if dec in [int(z) for z in cfg["zone_factors"]]:
                 for k in range(1, dec):
                     lo, hi = k * FS / (2 * dec), (k + 1) * FS / (2 * dec)
-                    acqs[f"zona{k}"] = undersample(ideal_band(x, lo, hi), dec)
+                    acqs[f"zone{k}"] = undersample(ideal_band(x, lo, hi), dec)
             for acq, xd in acqs.items():
                 if not base.guard_ok(xd, vd, fs, cfg):
                     continue
@@ -208,16 +208,16 @@ def task(job) -> dict:
                     out["rows"].append(
                         {
                             **key,
-                            "strategy": "banda_larga_regra",
+                            "strategy": "wideband_rule",
                             "band": f"{f_min:.0f}-{fs / 2:.0f}",
                             **fmt(wide),
                         }
                     )
-                if acq in ("pura", "antialias"):
+                if acq in ("pure", "antialias"):
                     out["rows"].append(
                         {
                             **key,
-                            "strategy": "guiado",
+                            "strategy": "guided",
                             "band": "",
                             **fmt(guided_best(xd, vd, fs, cfg)),
                         }
@@ -230,7 +230,7 @@ def task(job) -> dict:
                             out["rows"].append(
                                 {
                                     **key,
-                                    "strategy": "kurtograma_regra",
+                                    "strategy": "kurtogram_rule",
                                     "band": f"{kb[0]:.0f}-{kb[1]:.0f}",
                                     **fmt(ks),
                                 }

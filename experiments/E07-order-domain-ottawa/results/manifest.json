@@ -32,7 +32,7 @@
   },
   "dataset": "University of Ottawa 2018 (Mendeley v43hmbwxpm), CC BY 4.0",
   "pulses_per_rev": 1024,
-  "ppr_provenance": "determinado empiricamente; nao documentado pelos autores",
+  "ppr_provenance": "determined empirically; not documented by the authors",
   "packages": {
     "snq-core": "0.1.0",
     "snq-sim": "0.1.0",
@@ -48,7 +48,7 @@
   "source_sha256": "cf25c6c5219a65dd436f0d0e36c9618a6378b5419106e98180eab0b54318df16",
   "source_sha256_files": 30,
   "runner_sha256": "d803bc9f2d07e0c46f3174e31ec852df41ff1b5ed45d6e6a61c78a3c234352a0",
-  "source_sha256_scheme": "sha256 sobre a concatenacao, em ordem de caminho POSIX, de '<caminho relativo ao repositorio>\\n<sha256 do conteudo do arquivo>\\n' para cada packages/*/src/**/*.py",
+  "source_sha256_scheme": "sha256 over the concatenation, in POSIX path order, of '<path relative to the repository>\\n<sha256 of the file content>\\n' for each packages/*/src/**/*.py",
   "nominal_orders": {
     "BPFO": 3.573,
     "BPFI": 5.427,

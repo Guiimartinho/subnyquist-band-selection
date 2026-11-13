@@ -1,8 +1,8 @@
 """E22 - published baselines at the same samples/s rate (ADR 0006), phase 1.
 
-Arms (see README): uniforme, uniforme_teto (ceiling by the TAT), taxa_tat (factor by the TAT),
-oraculo_uniforme (upper bound, computed in the analysis from `uniforme_grid`),
-aleatorio_cs (sensors2025csvibration, via E13) and passa_faixa_lu (lu2018undersampled).
+Arms (see README): uniform, uniform_ceiling (ceiling by the TAT), tat_rate (factor by the TAT),
+uniform_oracle (upper bound, computed in the analysis from `uniform_grid`),
+random_cs (sensors2025csvibration, via E13) and bandpass_lu (lu2018undersampled).
 
 Each record has a full-rate calibration part (Ottawa: segment 0; MAFAULDA: 1st
 half) and test parts. Only the arms that declare that they use calibration use it.
@@ -51,6 +51,15 @@ from snq_recon import (
 PACKAGES = ("snq-core", "snq-sim", "snq-data", "snq-recon", "snq-eval")
 REPO_ROOT = Path(__file__).resolve().parents[2]
 FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
+# arm labels as the runs wrote them, before they were renamed to English (tools/relabel_map.py):
+# summary.csv is sorted by them, so a rerun keeps the versioned row order
+LEGACY_LABELS = {
+    "uniform": "uniforme",
+    "uniform_ceiling": "uniforme_teto",
+    "tat_rate": "taxa_tat",
+    "random_cs": "aleatorio_cs",
+    "bandpass_lu": "passa_faixa_lu",
+}
 
 
 def at_repo(p: str) -> Path:
@@ -138,7 +147,7 @@ def classic(x, v, fs_hz: float, factor: int, f_max_hz: float, cfg: dict) -> dict
     if guard:
         return {"skipped": guard}
     if f_max_hz <= float(cfg["kurtogram"]["f_min_hz"]):
-        return {"skipped": "teto abaixo do piso do kurtograma"}
+        return {"skipped": "ceiling below the kurtogram floor"}
     try:
         k = kurtogram(xd, fs_eff, f_max_hz, cfg)
         spec = envelope_order_spectrum(
@@ -185,7 +194,7 @@ def arm_cs(x, v, fs_hz: float, indices, cfg: dict) -> dict:
     step = float(c["order_step_per_rev"]) / revs
     orders = np.arange(float(c["order_min"]), float(c["order_max"]) + 0.5 * step, step)
     if indices.size * 2.0 * orders.size > float(c["max_dictionary_elements"]):
-        return {"skipped": f"dicionario {indices.size}x{2 * orders.size} acima do teto"}
+        return {"skipped": f"dictionary {indices.size}x{2 * orders.size} above the ceiling"}
     sol = omp(
         order_basis(phase, orders),
         x[indices],
@@ -240,7 +249,7 @@ def arm_lu(
                 "band_hi_hz": round(hi, 1),
                 "lu_band_kurtosis": round(kurt, 3),
             }
-    return {"skipped": "nenhuma banda da calibracao e amostravel no orcamento"}
+    return {"skipped": "no calibration band can be sampled within the budget"}
 
 
 # ----------------------------------------------------------------------
@@ -331,14 +340,14 @@ def run_record(task: dict) -> dict:
                     **base,
                     "segment": seg,
                     "budget": m,
-                    "arm": "uniforme_grid",
+                    "arm": "uniform_grid",
                     "chosen_factor": m,
                     **uni[m],
                 }
             )
         for b in budgets:
             arms = {}
-            arms["uniforme"] = {**uni[b], "chosen_factor": b}
+            arms["uniform"] = {**uni[b], "chosen_factor": b}
             if "despike" in cfg["arms"]:
                 # removal of one-sample spikes before decimating (review of 2026-11-11)
                 arms["despike"] = {
@@ -350,7 +359,7 @@ def run_record(task: dict) -> dict:
             valid = [f for f in fracs if ceiling_at(c0, fs / b, f) > f_min] or [fracs[0]]
             # the highest ceiling that the TAT admits; if none, the most protective valid one
             frac = next((f for f in valid if admissible(b, ceiling_at(c0, fs / b, f))), valid[-1])
-            arms["uniforme_teto"] = {
+            arms["uniform_ceiling"] = {
                 **classic(xt, vt, fs, b, ceiling_at(c0, fs / b, frac), cfg),
                 "chosen_factor": b,
                 "ceiling_frac": frac,
@@ -363,8 +372,8 @@ def run_record(task: dict) -> dict:
                 ),
                 b,
             )
-            arms["taxa_tat"] = {**uni[m_tat], "chosen_factor": m_tat}
-            if "aleatorio_cs" in cfg["arms"]:
+            arms["tat_rate"] = {**uni[m_tat], "chosen_factor": m_tat}
+            if "random_cs" in cfg["arms"]:
                 rng = np.random.default_rng(
                     [
                         int(cfg["seed"]),
@@ -380,20 +389,20 @@ def run_record(task: dict) -> dict:
                     min_gap_samples=int(cfg["cs"]["min_gap_samples"]),
                 )
                 try:
-                    arms["aleatorio_cs"] = {**arm_cs(xt, vt, fs, idx, cfg), "chosen_factor": b}
+                    arms["random_cs"] = {**arm_cs(xt, vt, fs, idx, cfg), "chosen_factor": b}
                 except (ValueError, MemoryError, np.linalg.LinAlgError) as exc:
-                    arms["aleatorio_cs"] = {
+                    arms["random_cs"] = {
                         "skipped": f"{type(exc).__name__}: {str(exc)[:50]}",
                         "chosen_factor": b,
                     }
-            if "passa_faixa_lu" in cfg["arms"]:
+            if "bandpass_lu" in cfg["arms"]:
                 lu_bands = sorted(
                     ((lo, hi, k) for _lvl, lo, hi, k in k_full.grid), key=lambda t: -t[2]
                 )
                 try:
-                    arms["passa_faixa_lu"] = arm_lu(xt, vt, fs, lu_bands, b, grid, cfg)
+                    arms["bandpass_lu"] = arm_lu(xt, vt, fs, lu_bands, b, grid, cfg)
                 except ValueError as exc:
-                    arms["passa_faixa_lu"] = {"skipped": f"ValueError: {str(exc)[:60]}"}
+                    arms["bandpass_lu"] = {"skipped": f"ValueError: {str(exc)[:60]}"}
             for arm, res in arms.items():
                 rows.append({**base, "segment": seg, "budget": b, "arm": arm, **res})
     return {
@@ -436,9 +445,9 @@ def summarize(rows: list[dict]) -> list[dict]:
             cell[k][1] += int(r["hit"])
     out = []
     for (ds, g, b, arm), (n, h, sk) in sorted(
-        cell.items(), key=lambda kv: (kv[0][0], kv[0][1], kv[0][2], kv[0][3])
+        cell.items(), key=lambda kv: (*kv[0][:3], LEGACY_LABELS.get(kv[0][3], kv[0][3]))
     ):
-        if arm == "uniforme_grid":
+        if arm == "uniform_grid":
             continue
         out.append(
             {"dataset": ds, "group": g, "budget": b, "arm": arm, "n": n, "hits": h, "skipped": sk}
@@ -446,7 +455,7 @@ def summarize(rows: list[dict]) -> list[dict]:
     # oracle: the best uniform factor >= budget, chosen WITH the test label
     grid = defaultdict(lambda: [0, 0])
     for r in rows:
-        if r["arm"] == "uniforme_grid" and r.get("hit", "") != "":
+        if r["arm"] == "uniform_grid" and r.get("hit", "") != "":
             g = grid[(r["dataset"], r["group"], r["chosen_factor"])]
             g[0] += 1
             g[1] += int(r["hit"])
@@ -463,7 +472,7 @@ def summarize(rows: list[dict]) -> list[dict]:
                     "dataset": ds,
                     "group": g,
                     "budget": b,
-                    "arm": "oraculo_uniforme",
+                    "arm": "uniform_oracle",
                     "n": n,
                     "hits": h,
                     "skipped": 0,

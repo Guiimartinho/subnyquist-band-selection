@@ -5,8 +5,8 @@ transcribed number.
 
 - **Sources,** all from the raw stream:
   - `E26/results-paderborn/analysis.json`: the blind kurtogram;
-  - `E26/results-paderborn-regra/analysis.json`: E26b, with the rule fixed and the band changing;
-  - `E26/results-paderborn-aquisicao/analysis.json`: E26c, with anti-alias before decimating.
+  - `E26/results-paderborn-rule/analysis.json`: E26b, with the rule fixed and the band changing;
+  - `E26/results-paderborn-acquisition/analysis.json`: E26c, with anti-alias before decimating.
 - **Rows:** the balanced accuracy on the damaged bearings, per factor.
 
     uv run python papers/shared/figures/tab_guided_paderborn.py
@@ -30,22 +30,22 @@ def load(name: str) -> dict:
 def main() -> None:
     e26, e26b, e26c = (
         load("results-paderborn"),
-        load("results-paderborn-regra"),
-        load("results-paderborn-aquisicao"),
+        load("results-paderborn-rule"),
+        load("results-paderborn-acquisition"),
     )
     rows = [
-        ("pure decimation", "kurtogram band, blind order estimate", e26, "kurtograma|{f}x"),
-        ("", "kurtogram band, fault-order rule", e26b, "kurtograma_regra|bruto|{f}x"),
-        ("", "wide band, fault-order rule", e26b, "banda_larga_regra|bruto|{f}x"),
-        ("", "guided band, fault-order rule", e26b, "guiado|bruto|{f}x"),
+        ("pure decimation", "kurtogram band, blind order estimate", e26, "kurtogram|{f}x"),
+        ("", "kurtogram band, fault-order rule", e26b, "kurtogram_rule|raw|{f}x"),
+        ("", "wide band, fault-order rule", e26b, "wideband_rule|raw|{f}x"),
+        ("", "guided band, fault-order rule", e26b, "guided|raw|{f}x"),
         (
             "anti-alias filter",
             "kurtogram band, fault-order rule",
             e26c,
-            "antialias|kurtograma_regra|{f}x",
+            "antialias|kurtogram_rule|{f}x",
         ),
-        ("", "wide band, fault-order rule", e26c, "antialias|banda_larga_regra|{f}x"),
-        ("", "guided band, fault-order rule", e26c, "antialias|guiado|{f}x"),
+        ("", "wide band, fault-order rule", e26c, "antialias|wideband_rule|{f}x"),
+        ("", "guided band, fault-order rule", e26c, "antialias|guided|{f}x"),
     ]
     cols = " & ".join(f"{f}$\\times$" for f in FACTORS)
     lines = [

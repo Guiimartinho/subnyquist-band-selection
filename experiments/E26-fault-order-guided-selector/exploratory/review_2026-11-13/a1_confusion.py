@@ -27,7 +27,7 @@ for arm, (cl, sel) in ARMS.items():
         for r in ROWS:
             if int(r["factor"]) != f or r["clean"] != cl:
                 continue
-            p = pred_guided(r, tau) if sel == "guiado" else pred_blind(r)
+            p = pred_guided(r, tau) if sel == "guided" else pred_blind(r)
             cnt[r["race"]][p] += 1
         s = []
         for race in ("OR", "IR", "H"):
@@ -40,7 +40,7 @@ for arm, (cl, sel) in ARMS.items():
 print(
     "\n== Guided decomposition: P(detection) and P(right race | detected), per race (segments) =="
 )
-for arm in ("guiado", "mediana_guiado"):
+for arm in ("guided", "median_guided"):
     cl = ARMS[arm][0]
     for f in FACTORS:
         out = []
@@ -54,7 +54,7 @@ for arm in ("guiado", "mediana_guiado"):
             out.append(f"{race}: det={100 * len(det) / len(p):4.1f} right|det={100 * pc:4.1f}")
         print(f"{arm:15s} {f:2d}x | " + " | ".join(out))
 print("\n== Threshold exceedance by the WRONG candidate (no argmax) and by the right one ==")
-for arm in ("guiado", "mediana_guiado"):
+for arm in ("guided", "median_guided"):
     cl = ARMS[arm][0]
     for f in FACTORS:
         out = []
@@ -100,7 +100,7 @@ def auc(pos, neg):
 print(
     "\n== AUC (segments): detection = max(scores) damaged x healthy; race = log(BPFO/BPFI) OR x IR =="
 )
-for cl in ("bruto", "mediana3"):
+for cl in ("raw", "median3"):
     for f in FACTORS:
         rr = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == cl]
         dmg = [max(sc(r, "BPFO"), sc(r, "BPFI")) for r in rr if r["race"] in ("OR", "IR")]

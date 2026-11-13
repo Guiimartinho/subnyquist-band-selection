@@ -46,13 +46,11 @@ def sign_test_p(diffs: list[int]) -> float:
 
 
 def verdict(hits: int, p: float) -> str:
-    # The labels are data (recovery.csv, tests) and stay as they are: "recupera" = recovers,
-    # "nao recupera" = does not recover, "inconclusivo" = inconclusive.
     if hits >= RECOVER_HITS and p < ALPHA:
-        return "recupera"
+        return "recovers"
     if hits <= NO_RECOVERY_HITS:
-        return "nao recupera"
-    return "inconclusivo"
+        return "does not recover"
+    return "inconclusive"
 
 
 def load(path: Path) -> dict[tuple, dict[tuple, int]]:

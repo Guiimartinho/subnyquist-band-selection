@@ -4,8 +4,8 @@ Project rule: the figure comes from metrics.csv, never from a transcribed number
 
 - **Panels:**
   - (a) decision and band under pure decimation, on the raw stream: blind estimation (E26
-    `kurtograma`), kurtogram band and wide band with the rule (E26b), and guided band with the
-    rule (E26 `guiado`);
+    `kurtogram`), kurtogram band and wide band with the rule (E26b), and guided band with the
+    rule (E26 `guided`);
   - (b) acquisition at the same rate (E26c): pure decimation against the ideal anti-alias filter,
     for the guided band and the wide band with the rule;
   - (c) profile by Nyquist zone (E26c): wide band with the rule after the ideal band-pass of each
@@ -51,8 +51,8 @@ import yaml  # noqa: E402
 ROOT = Path(__file__).resolve().parents[3]
 E26 = ROOT / "experiments/E26-fault-order-guided-selector"
 CONF = E26 / "results-paderborn"
-RULE = E26 / "results-paderborn-regra"
-ACQ = E26 / "results-paderborn-aquisicao"
+RULE = E26 / "results-paderborn-rule"
+ACQ = E26 / "results-paderborn-acquisition"
 OUT = ROOT / "papers/mssp-2026/figures/fig_rule_paderborn.pdf"
 PNG = ACQ / "figures/e26_rule_paderborn.png"
 FS_FULL_KSPS = 64.0
@@ -188,9 +188,9 @@ def main() -> None:
     s_rule = json.loads((RULE / "analysis.json").read_text(encoding="utf-8"))["summary"]
     s_acq = json.loads((ACQ / "analysis.json").read_text(encoding="utf-8"))["summary"]
 
-    conf = [r for r in read(CONF / "metrics.csv") if not r["skipped"] and r["clean"] == "bruto"]
+    conf = [r for r in read(CONF / "metrics.csv") if not r["skipped"] and r["clean"] == "raw"]
     calib = read(CONF / "calib.csv")
-    rule = [r for r in read(RULE / "metrics.csv") if r["clean"] == "bruto"]
+    rule = [r for r in read(RULE / "metrics.csv") if r["clean"] == "raw"]
     acq = read(ACQ / "metrics.csv")
 
     def by_factor(rows: Rows, keep: Callable[[dict[str, str]], bool]) -> dict[int, Rows]:
@@ -212,23 +212,23 @@ def main() -> None:
     guided = {f: rule_per_bearing(rs, score_conf) for f, rs in conf_f.items()}
     kurt_rule = {
         f: rule_per_bearing(rs, score_conf)
-        for f, rs in by_factor(rule, lambda r: r["strategy"] == "kurtograma").items()
+        for f, rs in by_factor(rule, lambda r: r["strategy"] == "kurtogram").items()
     }
     wide_rule = {
         f: rule_per_bearing(rs, score_conf)
-        for f, rs in by_factor(rule, lambda r: r["strategy"] == "banda_larga").items()
+        for f, rs in by_factor(rule, lambda r: r["strategy"] == "wideband").items()
     }
     for f in blind:
-        check(balanced_ci(blind[f])[0], s_conf, f"kurtograma|{f}x")
-        check(balanced_ci(guided[f])[0], s_conf, f"guiado|{f}x")
+        check(balanced_ci(blind[f])[0], s_conf, f"kurtogram|{f}x")
+        check(balanced_ci(guided[f])[0], s_conf, f"guided|{f}x")
     for f in kurt_rule:
-        check(balanced_ci(kurt_rule[f])[0], s_rule, f"kurtograma_regra|bruto|{f}x")
-        check(balanced_ci(wide_rule[f])[0], s_rule, f"banda_larga_regra|bruto|{f}x")
+        check(balanced_ci(kurt_rule[f])[0], s_rule, f"kurtogram_rule|raw|{f}x")
+        check(balanced_ci(wide_rule[f])[0], s_rule, f"wideband_rule|raw|{f}x")
 
     # (b) acquisition: pure against anti-alias
     acq_cells = {}
-    for acqn in ("pura", "antialias"):
-        for strat in ("guiado", "banda_larga_regra"):
+    for acqn in ("pure", "antialias"):
+        for strat in ("guided", "wideband_rule"):
             cells = {
                 f: rule_per_bearing(rs, score_acq)
                 for f, rs in by_factor(
@@ -244,16 +244,16 @@ def main() -> None:
     for m in (4, 8):
         prof = []
         for k in range(m):
-            name = "antialias" if k == 0 else f"zona{k}"
+            name = "antialias" if k == 0 else f"zone{k}"
             rs = [
                 r
                 for r in acq
                 if int(r["factor"]) == m
                 and r["acquisition"] == name
-                and r["strategy"] == "banda_larga_regra"
+                and r["strategy"] == "wideband_rule"
             ]
             pt = balanced_ci(rule_per_bearing(rs, score_acq))
-            check(pt[0], s_acq, f"{name}|banda_larga_regra|{m}x")
+            check(pt[0], s_acq, f"{name}|wideband_rule|{m}x")
             prof.append((k, pt))
         zones[m] = prof
 
@@ -277,14 +277,14 @@ def main() -> None:
 
     ax = axes[1]
     for (acqn, strat), label, color, marker, ls, filled, z in (
-        (("pura", "banda_larga_regra"), "whole band, pure", TEAL, "s", "-", True, 1),
-        (("antialias", "banda_larga_regra"), "whole band, anti-alias", TEAL, "s", "--", False, 2),
-        (("pura", "guiado"), "guided band, pure", "black", "D", "-", True, 3),
-        (("antialias", "guiado"), "guided band, anti-alias", "black", "D", "--", False, 4),
+        (("pure", "wideband_rule"), "whole band, pure", TEAL, "s", "-", True, 1),
+        (("antialias", "wideband_rule"), "whole band, anti-alias", TEAL, "s", "--", False, 2),
+        (("pure", "guided"), "guided band, pure", "black", "D", "-", True, 3),
+        (("antialias", "guided"), "guided band, anti-alias", "black", "D", "--", False, 4),
     ):
         xs, pts = series(acq_cells[(acqn, strat)])
         draw(ax, xs, pts, label, color, marker, ls, z, filled)
-    factor_axis(ax, sorted(acq_cells[("pura", "guiado")]))
+    factor_axis(ax, sorted(acq_cells[("pure", "guided")]))
     ax.legend(loc="upper left", frameon=False, bbox_to_anchor=(0.0, 0.93))
     ax.text(0.02, 0.98, "(b) acquisition at equal rate", transform=ax.transAxes, va="top")
 

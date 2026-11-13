@@ -159,10 +159,10 @@ test, because it was revised twice after seeing the data. Paderborn was not used
   - Measurement 1 of the damaged bearings feeds the nested ruler (`line_calibration` of E24).
 - **Factors:** 1, 4, 8, 16 and 32. The decisive ones are 4, 8, 16 and 32; 1 is descriptive.
 - **Arms,** all on the already-decimated stream:
-  - `kurtograma` (kurtogram), the blind pipeline of E24;
-  - `mediana_kurtograma` (median kurtogram), the median of 3 followed by the kurtogram;
-  - `guiado` (guided), the guided selector without cleaning;
-  - `mediana_guiado` (median guided), the median of 3 followed by the guided selector.
+  - `kurtogram`, the blind pipeline of E24;
+  - `median_kurtogram`, the median of 3 followed by the kurtogram;
+  - `guided`, the guided selector without cleaning;
+  - `median_guided`, the median of 3 followed by the guided selector.
 - **Guided selector,** with parameters fixed a priori:
   - **Orders:** those of the geometry, BPFO = 3.0543 and BPFI = 4.9457, and only harmonics 1 and 2.
   - **±2 % window:** it is the 1 to 2 % spread between manufacturers (PHME16, section 3).
@@ -183,15 +183,15 @@ test, because it was revised twice after seeing the data. Paderborn was not used
     rate.
   - Specificity on the healthy bearings: the fraction of "none".
 - **Hypotheses.**
-  - **H1:** `mediana_guiado` > `kurtograma`.
-  - **H2:** `mediana_guiado` > `mediana_kurtograma`. It is the gain of the guided selector beyond
+  - **H1:** `median_guided` > `kurtogram`.
+  - **H2:** `median_guided` > `median_kurtogram`. It is the gain of the guided selector beyond
     the cleaning.
   - **The test:** per-bearing sign-flip test, stratified by race, one-sided, on the per-bearing
     differences in hit rate. It is exact up to 2^18 combinations and Monte Carlo with 10^6 above
     that. The E24 review showed that the bootstrap is anticonservative with so few clusters.
   - Holm over the 4 factors, with α = 0.05.
   - **A factor passes** if the Holm p is below 0.05, the difference is positive and the
-    specificity of `mediana_guiado` there is at least 90 %.
+    specificity of `median_guided` there is at least 90 %.
 - **What would refute.** H1 falls if no factor passes. The same holds for H2.
 - **Declared limitations.**
   - The blind arm has no false-alarm threshold; its specificity on the healthy bearings is
@@ -219,22 +219,22 @@ criterion changed, and the numbers of the smoke run were not looked at.
 
   | arm | 1× | 4× | 8× | 16× | 32× |
   |---|---|---|---|---|---|
-  | `kurtograma` | 7.7 | 16.1 | 18.6 | 19.2 | 13.0 |
-  | `mediana_kurtograma` | 15.6 | 18.8 | 27.8 | 20.8 | 17.4 |
-  | `guiado` | 36.2 | 52.2 | 53.0 | 45.4 | 32.2 |
-  | `mediana_guiado` | 38.3 | 49.0 | 50.9 | 45.2 | 25.2 |
+  | `kurtogram` | 7.7 | 16.1 | 18.6 | 19.2 | 13.0 |
+  | `median_kurtogram` | 15.6 | 18.8 | 27.8 | 20.8 | 17.4 |
+  | `guided` | 36.2 | 52.2 | 53.0 | 45.4 | 32.2 |
+  | `median_guided` | 38.3 | 49.0 | 50.9 | 45.2 | 25.2 |
 
   - The specificity on the healthy bearings is 93.9 to 95.0 % in the guided arms and 99.4 to 100 %
     in the blind ones.
 - **Tests** (per-bearing sign-flip test, stratified by race, Holm over 4, 4× to 32×):
-  - **H1** (`mediana_guiado` against `kurtograma`): +32.9, +32.3, +26.0 and +12.2 points, with 16 of
+  - **H1** (`median_guided` against `kurtogram`): +32.9, +32.3, +26.0 and +12.2 points, with 16 of
     17, 17 of 18, 18 of 19 and 21 of 22 discordant bearings in favour. The Holm p is below 0.001 at
     all four.
-  - **H2** (`mediana_guiado` against `mediana_kurtograma`): +30.2, +23.1, +24.3 and +7.8 points, with
+  - **H2** (`median_guided` against `median_kurtogram`): +30.2, +23.1, +24.3 and +7.8 points, with
     Holm p of 0.0004, 0.0014, 0.0006 and 0.031.
 - **What the verdict does not say, and what the review needs to attack:**
-  - **The median does not contribute on Paderborn.** `guiado`, without cleaning, ties with
-    `mediana_guiado` or is above it. At 32× it is 7 points above.
+  - **The median does not contribute on Paderborn.** `guided`, without cleaning, ties with
+    `median_guided` or is above it. At 32× it is 7 points above.
   - **The gain already exists at 1×,** with 36.2 % against 7.7 %. So it is not specific to
     decimation: on Paderborn the kurtogram is already captured at full rate (E24).
   - **The arms change two things at the same time:** the band and the identification rule.
@@ -259,19 +259,19 @@ Written and committed before running, together with `run_paderborn_rule.py`,
     leaving the healthy bearing itself out when it is the one evaluated;
   - the decision: the fault with the highest score, or "none".
 - **What changes: only the band in which the score is measured.**
-  - `guiado`: the maximum over the 23 bands of the partition, from the E26
+  - `guided`: the maximum over the 23 bands of the partition, from the E26
     `results-paderborn/metrics.csv`, without recomputing.
-  - `kurtograma_regra` (kurtogram rule): the band of the fast kurtogram up to the effective
+  - `kurtogram_rule`: the band of the fast kurtogram up to the effective
     Nyquist, the same as in the blind arm.
-  - `banda_larga_regra` (whole-band rule): [500 Hz, fs/2], without selection. It is the classical
+  - `wideband_rule`: [500 Hz, fs/2], without selection. It is the classical
     envelope.
-  - `infograma_ses_regra` (SES infogram rule): the band of the SES infogram (descriptive).
-  - `sorteada_regra` (random-band rule): a band drawn at random from the partition, with a seed per
+  - `ses_infogram_rule`: the band of the SES infogram (descriptive).
+  - `random_band_rule`: a band drawn at random from the partition, with a seed per
     segment (descriptive).
 - **Hypotheses** (per-bearing sign-flip test, stratified by race, as in E26):
-  - **H3:** `guiado` is above `kurtograma_regra`. The test is done on both cleanings and at 4×, 8×,
+  - **H3:** `guided` is above `kurtogram_rule`. The test is done on both cleanings and at 4×, 8×,
     16× and 32×, with Holm over the 8.
-  - **H4:** `guiado` is above `banda_larga_regra`, in the same way.
+  - **H4:** `guided` is above `wideband_rule`, in the same way.
   - A test passes if the Holm p is below 0.05 and the difference is positive. The specificity is
     the same across the arms by construction, close to 95 %, and is reported.
 - **Combined reading, before the result:**
@@ -293,7 +293,7 @@ difference-in-differences (`a2_did.py`) and the per-bearing count (`a10_bearingl
 
 - **What survived:**
   - **Reproduction.** The analysis reproduces bit for bit from the CSV, and the hashes match.
-  - **The prior does not invent detections.** Given a detection by `mediana_guiado`, the race comes
+  - **The prior does not invent detections.** Given a detection by `median_guided`, the race comes
     out right in 91 to 100 % from 1× to 16×, and in 84 to 92 % at 32×. The wrong candidate exceeds
     the threshold on the damaged bearings in 0 to 7.7 % of the segments, the false-alarm level.
   - **The ruler of the blind arm is fair.** Changing the ruler or widening the tolerance moves the
@@ -378,22 +378,22 @@ the review.
   - factors 4, 8, 16 and 32;
   - the same bearings, settings and test measurements.
 - **Acquisitions,** with ideal filters by masking the full-rate FFT:
-  - `pura` (pure): `x[::M]`;
+  - `pure`: `x[::M]`;
   - `antialias`: low-pass at FS/(2M), then `[::M]`;
-  - `zona{k}` (zone k): band-pass on [k, k+1]·FS/(2M), then `[::M]`, only at 4× and 8×. It is
-    classical band-pass sampling (`lu2018undersampled`, `vaughan1991`); `zona0` (zone 0) is the
+  - `zone{k}`: band-pass on [k, k+1]·FS/(2M), then `[::M]`, only at 4× and 8×. It is
+    classical band-pass sampling (`lu2018undersampled`, `vaughan1991`); zone 0 is the
     anti-alias.
 - **Bands,** always with the E26 rule:
-  - `guiado` (maximum over the partition) and `kurtograma_regra`, in `pura` and `antialias`;
-  - `banda_larga_regra` ([500 Hz, fs/2]), in all acquisitions.
+  - `guided` (maximum over the partition) and `kurtogram_rule`, in `pure` and `antialias`;
+  - `wideband_rule` ([500 Hz, fs/2]), in all acquisitions.
 - **Choice of the zone for band-pass:**
-  - `zona_kurtograma` (kurtogram zone): the zone of the centre of the full-rate kurtogram band on
+  - `kurtogram_zone`: the zone of the centre of the full-rate kurtogram band on
     measurement 1 of the same bearing and setting. It is the commissioning a practitioner would do.
-  - `zona_frota` (fleet zone): the zone with the highest balanced accuracy on the other damaged
+  - `fleet_zone`: the zone with the highest balanced accuracy on the other damaged
     bearings, leaving the bearing itself out.
 - **Hypotheses** (per-bearing sign-flip test, stratified by race, one-sided):
-  - **H5:** `pura|guiado` > `antialias|guiado` at 4×, 8×, 16× and 32×, with Holm over 4.
-  - **H6:** `pura|guiado` > `zona_frota|banda_larga_regra` at 4× and 8×, with Holm over 2.
+  - **H5:** `pure|guided` > `antialias|guided` at 4×, 8×, 16× and 32×, with Holm over 4.
+  - **H6:** `pure|guided` > `fleet_zone|wideband_rule` at 4× and 8×, with Holm over 2.
   - A factor passes if the Holm p is below 0.05 and the difference is positive.
 - **Combined reading, before the result:**
   - **H5 passes:** the folding carries information that the anti-alias throws away. It is the
@@ -403,10 +403,10 @@ the review.
   - **H6 fails with the band-pass above:** band-pass sampling with a zone chosen on the fleet is the
     best design at the same rate.
 - **Descriptive analyses:**
-  - the kurtogram and the whole band, `pura` against `antialias`;
+  - the kurtogram and the whole band, `pure` against `antialias`;
   - the accuracy profile by zone;
-  - `zona_kurtograma`.
-- **Leakage (attack 6),** in `pura|guiado`:
+  - `kurtogram_zone`.
+- **Leakage (attack 6),** in `pure|guided`:
   - among the detections on the damaged bearings, the fraction with the peak of the 1st harmonic
     within 0.03 of an integer order;
   - the accuracy with the ±0.03 exclusion.
@@ -414,7 +414,7 @@ the review.
   - the fraction of segments in which the largest of 4 decoy windows, at 0.9 and 1.1 times the BPFO
     and the BPFI, exceeds the threshold, on the damaged and on the healthy bearings;
   - the same fraction for the true fault, for comparison.
-- **Integrity.** The scores of `pura|guiado` have to be identical to those of the raw guided arm of
+- **Integrity.** The scores of `pure|guided` have to be identical to those of the raw guided arm of
   E26.
 - **Declared limitations:**
   - Paderborn was already seen in E26, in E26b and in the review;
@@ -424,7 +424,7 @@ the review.
 
 ### Result of E26b (2026-11-13): mixed
 
-- **Run:** `results-paderborn-regra/`, 65 880 rows, without smoke-run subsetting. The hashes match
+- **Run:** `results-paderborn-rule/`, 65 880 rows, without smoke-run subsetting. The hashes match
   `14c68d9`.
 - **Integrity:** 1474 matches between the random band and the guided band, with a maximum
   difference of 0.0. The scores of the two files are the same computation.
@@ -434,23 +434,23 @@ the review.
   | raw stream | 1× | 4× | 8× | 16× | 32× |
   |---|---|---|---|---|---|
   | blind kurtogram (E26) | 7.7 | 16.1 | 18.6 | 19.2 | 13.0 |
-  | `kurtograma_regra` | 14.1 | 30.9 | 34.0 | 33.1 | 25.1 |
-  | `sorteada_regra` | 15.1 | 36.6 | 35.2 | 32.3 | 10.8 |
-  | `infograma_ses_regra` | 36.0 | 43.4 | 39.0 | 34.0 | 24.6 |
-  | `banda_larga_regra` | 32.2 | 38.8 | 43.7 | 41.5 | 41.1 |
-  | `guiado` | 36.2 | 52.2 | 53.0 | 45.4 | 32.2 |
+  | `kurtogram_rule` | 14.1 | 30.9 | 34.0 | 33.1 | 25.1 |
+  | `random_band_rule` | 15.1 | 36.6 | 35.2 | 32.3 | 10.8 |
+  | `ses_infogram_rule` | 36.0 | 43.4 | 39.0 | 34.0 | 24.6 |
+  | `wideband_rule` | 32.2 | 38.8 | 43.7 | 41.5 | 41.1 |
+  | `guided` | 36.2 | 52.2 | 53.0 | 45.4 | 32.2 |
 
   | median of 3 | 1× | 4× | 8× | 16× | 32× |
   |---|---|---|---|---|---|
-  | `kurtograma_regra` | 20.0 | 32.1 | 50.7 | 34.8 | 25.2 |
-  | `banda_larga_regra` | 51.8 | 45.1 | 46.8 | 47.0 | 32.7 |
-  | `guiado` | 38.3 | 49.0 | 50.9 | 45.2 | 25.2 |
+  | `kurtogram_rule` | 20.0 | 32.1 | 50.7 | 34.8 | 25.2 |
+  | `wideband_rule` | 51.8 | 45.1 | 46.8 | 47.0 | 32.7 |
+  | `guided` | 38.3 | 49.0 | 50.9 | 45.2 | 25.2 |
 
-- **H3** (guided against `kurtograma_regra`; Holm over 8):
+- **H3** (guided against `kurtogram_rule`; Holm over 8):
   - **On the raw stream, it passes at 4×, 8× and 16×:** +21.4, +19.0 and +12.3 points, with 18 of
     20, 18 of 19 and 13 of 18 bearings in favour (Holm ≤ 0.003). At 32× it stays at +7.1, Holm 0.17.
   - **With the median, it passes at 4× and 16×:** +16.9 and +10.4. At 8× and 32× it ties.
-- **H4** (guided against `banda_larga_regra`):
+- **H4** (guided against `wideband_rule`):
   - **On the raw stream, it passes at 4× and 8×:** +13.5, with 18 of 18 in favour, and +9.3. At 16×
     it stays at +3.8, without passing, and at 32× it is −8.9, with the whole band ahead.
   - **With the median, it passes only at 4×,** by +3.8.
@@ -469,33 +469,33 @@ the review.
 
 ### Result of E26c (2026-11-13): on Paderborn, anti-alias beats pure decimation
 
-- **Run:** `results-paderborn-aquisicao/`, 55 998 rows, without smoke-run subsetting. The hashes
+- **Run:** `results-paderborn-acquisition/`, 55 998 rows, without smoke-run subsetting. The hashes
   match `996e4ed`.
-- **Integrity:** 13 176 matches between `pura|guiado` and the raw guided arm of E26, with a
+- **Integrity:** 13 176 matches between `pure|guided` and the raw guided arm of E26, with a
   difference of 0.0.
 - **Balanced accuracy (%), raw stream, E26 rule.** Specificity of 89.8 to 95.0 %:
 
   | arm | 4× | 8× | 16× | 32× |
   |---|---|---|---|---|
-  | `pura|guiado` | 52.2 | 53.0 | 45.4 | 32.2 |
-  | `antialias|guiado` | 59.5 | 64.5 | 54.1 | 62.0 |
-  | `pura|kurtograma_regra` | 30.9 | 34.0 | 33.1 | 25.1 |
-  | `antialias|kurtograma_regra` | 60.7 | 62.6 | 63.8 | 50.3 |
-  | `pura|banda_larga_regra` | 38.8 | 43.7 | 41.5 | 41.1 |
-  | `antialias|banda_larga_regra` | 47.0 | 51.9 | 50.5 | 71.2 |
-  | `zona_kurtograma|banda_larga_regra` | 14.7 | 16.0 | – | – |
-  | `zona_frota|banda_larga_regra` | 47.0 | 51.9 | – | – |
+  | `pure|guided` | 52.2 | 53.0 | 45.4 | 32.2 |
+  | `antialias|guided` | 59.5 | 64.5 | 54.1 | 62.0 |
+  | `pure|kurtogram_rule` | 30.9 | 34.0 | 33.1 | 25.1 |
+  | `antialias|kurtogram_rule` | 60.7 | 62.6 | 63.8 | 50.3 |
+  | `pure|wideband_rule` | 38.8 | 43.7 | 41.5 | 41.1 |
+  | `antialias|wideband_rule` | 47.0 | 51.9 | 50.5 | 71.2 |
+  | `kurtogram_zone|wideband_rule` | 14.7 | 16.0 | – | – |
+  | `fleet_zone|wideband_rule` | 47.0 | 51.9 | – | – |
 
 - **Profile by zone** (whole band with the rule):
   - **4×:** zone 0 (anti-alias) 47.0; zone 1 27.5; zone 2 2.5; zone 3 3.0.
   - **8×:** zone 0 51.9; zone 1 35.6; zone 2 40.4; zone 3 8.1; zones 4 to 7 from 2.0 to 3.5.
   - The fleet chooses zone 0 for every bearing. The band-pass chosen by the fleet is the
     anti-alias.
-- **H5 fails** (`pura|guiado` > `antialias|guiado`). Pure decimation is below:
+- **H5 fails** (`pure|guided` > `antialias|guided`). Pure decimation is below:
   - −7.3 at 4×, −11.5 at 8×, −8.7 at 16× and −29.7 at 32×;
   - 2 to 4 bearings in favour, out of 15 to 18;
   - Holm of 1.0.
-- **H6 fails** (`pura|guiado` > `zona_frota`): +5.1 at 4× (Holm 0.087) and +1.1 at 8×.
+- **H6 fails** (`pure|guided` > `fleet_zone`): +5.1 at 4× (Holm 0.087) and +1.1 at 8×.
 - **Leakage** (attack 6 of the review):
   - Among the detections on the damaged bearings, only 1.0 to 2.5 % have the peak of the 1st
     harmonic within 0.03 of an integer order.
@@ -527,7 +527,7 @@ the review.
 
 ## Figure (2026-11-13)
 
-![Rule, acquisition and profile by zone](results-paderborn-aquisicao/figures/e26_rule_paderborn.png)
+![Rule, acquisition and profile by zone](results-paderborn-acquisition/figures/e26_rule_paderborn.png)
 
 Generated by `papers/shared/figures/fig_rule_paderborn.py`, which redoes the decision from the
 three `metrics.csv` files. The script checks each point against the run's `analysis.json`

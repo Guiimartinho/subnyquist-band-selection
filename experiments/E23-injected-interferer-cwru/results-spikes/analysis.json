@@ -7,7 +7,7 @@
   },
   "uniform_falls_somewhere": true,
   "mitigations_within_threshold": false,
-  "verdict_H_picos": "inconclusiva",
+  "verdict_H_spikes": "inconclusive",
   "drops_points": {
     "aaf_ideal": {
       "500.0|8.0": {
@@ -229,7 +229,7 @@
         "12": 23.076923076923077
       }
     },
-    "taxa_tat": {
+    "tat_rate": {
       "500.0|8.0": {
         "1": 0.0,
         "2": 0.0,
@@ -339,7 +339,7 @@
         "12": 38.46153846153846
       }
     },
-    "uniforme": {
+    "uniform": {
       "500.0|8.0": {
         "1": 0.0,
         "2": 0.0,
@@ -449,7 +449,7 @@
         "12": 38.46153846153846
       }
     },
-    "uniforme_teto": {
+    "uniform_ceiling": {
       "500.0|8.0": {
         "1": 0.0,
         "2": 0.0,

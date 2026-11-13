@@ -33,7 +33,7 @@ def cat(est, race, b):
 
 
 print("== Where the blind argmax goes (fraction of segments) ==")
-for clean in ("bruto", "mediana3"):
+for clean in ("raw", "median3"):
     for race in ("OR", "IR", "H"):
         for f in FACTORS:
             rr = [
@@ -56,7 +56,7 @@ from collections import Counter
 
 c = Counter()
 for r in ROWS:
-    if r["clean"] == "bruto" and r["race"] in ("OR", "IR") and r["blind_order"] != "":
+    if r["clean"] == "raw" and r["race"] in ("OR", "IR") and r["blind_order"] != "":
         e = float(r["blind_order"])
         if abs(e - round(e)) <= 0.015:
             c[int(round(e))] += 1
@@ -94,9 +94,9 @@ def pred_blind_wide(r, rule):
 
 for rule in ("nested12", "geo"):
     A = acc_table(
-        lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind_wide(r, rule)
+        lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind_wide(r, rule)
     )
-    for arm in ("kurtograma", "mediana_kurtograma"):
+    for arm in ("kurtogram", "median_kurtogram"):
         s = []
         for f in FACTORS:
             bal = balanced(A[(arm, f)])
@@ -105,16 +105,16 @@ for rule in ("nested12", "geo"):
         print(f"  rule={rule:8s} {arm:20s} bal/spec: " + " | ".join(s))
 print("\n== Tolerance of the blind arm (nested ruler, 1st harmonic only): bal/spec ==")
 for tol in (0.01, 0.025, 0.05, 0.10):
-    A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r, tol=tol))
+    A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r, tol=tol))
     s = []
     for f in FACTORS:
         s.append(
-            f"{f}x {balanced(A[('kurtograma', f)]):5.1f}/{balanced(A[('kurtograma', f)], races=('H',)):5.1f}"
+            f"{f}x {balanced(A[('kurtogram', f)]):5.1f}/{balanced(A[('kurtogram', f)], races=('H',)):5.1f}"
         )
-    print(f"  tol={tol:.3f} kurtograma: " + " | ".join(s))
+    print(f"  tol={tol:.3f} kurtogram: " + " | ".join(s))
 print("\n== Nominal ruler (geometry) instead of the nested one, tol 0.025 ==")
 A = acc_table(
-    lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r, rule="nominal")
+    lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r, rule="nominal")
 )
-for arm in ("kurtograma", "mediana_kurtograma"):
+for arm in ("kurtogram", "median_kurtogram"):
     print(f"  {arm:20s} " + " | ".join(f"{f}x {balanced(A[(arm, f)]):5.1f}" for f in FACTORS))

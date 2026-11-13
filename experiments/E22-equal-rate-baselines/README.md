@@ -24,22 +24,22 @@ They are declared because they change which method is optimal.
 
 | arm | front-end | method | reference |
 |---|---|---|---|
-| `uniforme` (uniform) | A | decimation at the budget rate, kurtogram up to the effective Nyquist | E07 pipeline (`antoni2007kurtogram`) |
-| `uniforme_teto` (uniform with ceiling) | A | same, with the search ceiling chosen by the TAT in the calibration | E20 mitigation |
-| `taxa_tat` (TAT rate) | A | the **smallest** factor admissible by the TAT within the budget, that is, the highest admissible rate | E21 |
-| `oraculo_uniforme` (uniform oracle) | A | the best uniform factor within the budget, chosen **with the test label** | upper bound; not a method |
-| `aleatorio_cs` (random CS) | A | random instants + OMP in an order basis + envelope | `sensors2025csvibration` (E13 arm) |
-| `multitaxa` (multirate) | A | two co-prime uniform streams adding up to the budget, with order consistency between them | `zhao2018coprime`, `sun2013multirate` |
-| `passa_faixa_lu` (Lu band-pass) | B | ideal band-pass on the calibration band + band-pass sampling at the lowest valid rate within the budget | `lu2018undersampled`, `vaughan1991` |
+| `uniform` | A | decimation at the budget rate, kurtogram up to the effective Nyquist | E07 pipeline (`antoni2007kurtogram`) |
+| `uniform_ceiling` | A | same, with the search ceiling chosen by the TAT in the calibration | E20 mitigation |
+| `tat_rate` | A | the **smallest** factor admissible by the TAT within the budget, that is, the highest admissible rate | E21 |
+| `uniform_oracle` | A | the best uniform factor within the budget, chosen **with the test label** | upper bound; not a method |
+| `random_cs` | A | random instants + OMP in an order basis + envelope | `sensors2025csvibration` (E13 arm) |
+| `multirate` | A | two co-prime uniform streams adding up to the budget, with order consistency between them | `zhao2018coprime`, `sun2013multirate` |
+| `bandpass_lu` | B | ideal band-pass on the calibration band + band-pass sampling at the lowest valid rate within the budget | `lu2018undersampled`, `vaughan1991` |
 | `zhao_asns` | A | adaptive sub-Nyquist sampling | `zhao2026adaptive`, **only if the PDF allows reproducing it** |
 
 Robust selectors (`antoni2016infogram`, `smith2016emi`, `mauricio2020iesfogram`) come in as a
-variant of the `uniforme` arm when implemented.
+variant of the `uniform` arm when implemented.
 
 ## What each method may use
 
 Declared because it changes what is fair to compare:
-- `taxa_tat`, `uniforme_teto` and `passa_faixa_lu` use **a short full-rate capture of the machine
+- `tat_rate`, `uniform_ceiling` and `bandpass_lu` use **a short full-rate capture of the machine
   itself** (calibration).
 - The E15 mask uses **training records** from other machines and conditions, and no capture of the
   test machine.
@@ -47,16 +47,16 @@ Declared because it changes what is fair to compare:
 
 ## Hypotheses
 
-- **H1.** At every budget, `aleatorio_cs` does not beat `uniforme_teto`. Estimating without
+- **H1.** At every budget, `random_cs` does not beat `uniform_ceiling`. Estimating without
   reconstructing wins over reconstructing, as in E13 at 64×.
-- **H2.** `taxa_tat` stays within at most 5 points of `oraculo_uniforme` at every budget.
+- **H2.** `tat_rate` stays within at most 5 points of `uniform_oracle` at every budget.
 
 ## What would refute them
 
-- **H1 is refuted** if `aleatorio_cs` beats `uniforme_teto` at some budget, with a per-record
+- **H1 is refuted** if `random_cs` beats `uniform_ceiling` at some budget, with a per-record
   bootstrap interval above zero. That is a publishable result against the current route, and the
   paper reports it as such.
-- **H2 is refuted** if `taxa_tat` falls more than 5 points below the oracle at some budget.
+- **H2 is refuted** if `tat_rate` falls more than 5 points below the oracle at some budget.
 
 ## Protocol
 
@@ -71,20 +71,20 @@ Declared because it changes what is fair to compare:
 
 ## Status
 
-**Phase 1 implemented** (`run.py`). Arms: `uniforme`, `uniforme_teto`, `taxa_tat`,
-`oraculo_uniforme` (in the analysis), `aleatorio_cs` and `passa_faixa_lu`. Left for phase 2 are
-`multitaxa`, which needs a fusion rule of its own, and `zhao_asns`, which depends on the PDF. The
+**Phase 1 implemented** (`run.py`). Arms: `uniform`, `uniform_ceiling`, `tat_rate`,
+`uniform_oracle` (in the analysis), `random_cs` and `bandpass_lu`. Left for phase 2 are
+`multirate`, which needs a fusion rule of its own, and `zhao_asns`, which depends on the PDF. The
 helper tests are in `tests/`.
 
 **Smoke test** (2026-11-11; `config/smoke.yaml`: Ottawa, 2 inner-race records, budgets 1/16 and
 1/32):
 - The pipeline runs end to end in the six arms.
-- `aleatorio_cs` misses 8 of 8 cells, consistent with E13.
-- `passa_faixa_lu` only became faithful after **choosing, among the bands of the calibration
+- `random_cs` misses 8 of 8 cells, consistent with E13.
+- `bandpass_lu` only became faithful after **choosing, among the bands of the calibration
   kurtogram, the most impulsive one that the budget can sample**. In the first version, which used
   the best band without restriction, that band was too wide for any valid rate. After the fix, it
   hits 8 of 8.
-- `uniforme_teto` with a ceiling of 1/4 lost the informative band in one record and fell onto the
+- `uniform_ceiling` with a ceiling of 1/4 lost the informative band in one record and fell onto the
   2nd harmonic. This is the behaviour of the rule, and it is reported as such.
 
 The smoke test is not a result; the complete run uses `config/base.yaml` on the server.
@@ -103,16 +103,16 @@ Accuracy (%) over the two groups combined:
 
 | arm | 1/4 | 1/8 | 1/16 | 1/32 |
 |---|---|---|---|---|
-| `uniforme` (factor = budget) | 56.2 | 89.6 | 85.4 | 87.5 |
-| `uniforme_teto` | **87.5** | 89.6 | 54.2 | 29.2 |
-| `taxa_tat` | 79.2 | 89.6 | 85.4 | 87.5 |
-| `passa_faixa_lu` (Lu 2018) | 79.2 | 79.2 | 79.2 | 72.9 |
-| `aleatorio_cs` (Kato & Otaka) | 2.9 | 4.2 | 6.2 | 4.2 |
-| `oraculo_uniforme` (chosen on the test) | 97.9 | 97.9 | 97.9 | 97.9 |
+| `uniform` (factor = budget) | 56.2 | 89.6 | 85.4 | 87.5 |
+| `uniform_ceiling` | **87.5** | 89.6 | 54.2 | 29.2 |
+| `tat_rate` | 79.2 | 89.6 | 85.4 | 87.5 |
+| `bandpass_lu` (Lu 2018) | 79.2 | 79.2 | 79.2 | 72.9 |
+| `random_cs` (Kato & Otaka) | 2.9 | 4.2 | 6.2 | 4.2 |
+| `uniform_oracle` (chosen on the test) | 97.9 | 97.9 | 97.9 | 97.9 |
 | best uniform rate chosen on other records (*post hoc*) | 95.8 | 95.8 | 93.8 | 95.8 |
 
 **H1: the numbers stand, but the comparison is invalid (review of 2026-11-11).** Random sampling
-with CS falls 25 to 85 points below `uniforme_teto` (95 % CI below zero) and loses to `uniforme` in
+with CS falls 25 to 85 points below `uniform_ceiling` (95 % CI below zero) and loses to `uniform` in
 every discordant segment. The arm, however, is a **straw man by construction**:
 - The dictionary covers orders 0.5 to 24 (`config/base.yaml`, section `cs`), up to about 520 Hz in
   the Ottawa segments. It lies below the kurtogram's 500 Hz floor and far from the resonances that
@@ -126,9 +126,9 @@ every discordant segment. The arm, however, is a **straw man by construction**:
 underdetermined regime and a fast operator. The same limitation applies to the CS arm of E13 (see
 the report, §5).
 
-**H2, refuted at all four budgets.** `taxa_tat` falls below the oracle by −18.7 [−29.2; −8.3],
+**H2, refuted at all four budgets.** `tat_rate` falls below the oracle by −18.7 [−29.2; −8.3],
 −8.3 [−14.6; −2.1], −12.5 [−18.8; −6.2] and −10.4 [−18.8; −4.2] points.
-- **What the rule does well:** it rescues the 1/4 valley against `uniforme` (11 × 0, p = 0.001).
+- **What the rule does well:** it rescues the 1/4 valley against `uniform` (11 × 0, p = 0.001).
 - **What it does not do:** find the best rate. It chooses the highest admissible rate, and the
   best uniform rate for the outer race is factor 46 (4.35 kSPS), below any budget.
 
@@ -147,15 +147,15 @@ the report, §5).
   in 2 of 4 folds. What generalizes is a plateau of factors ≥ 7, outside the 3× to 6× valley.
 - **The 12 records of each group come from a single bearing.** "Across records" means across
   repetitions of the same test.
-- **Against the uniform rate chosen with nested truth,** `taxa_tat` falls −12.5 / −4.2 / −8.4 /
+- **Against the uniform rate chosen with nested truth,** `tat_rate` falls −12.5 / −4.2 / −8.4 /
   −4.2 points below (−16.6 / −6.2 / −8.4 / −4.2 by scenario). With a per-scenario bootstrap, all
   the CIs include 0. The only robust difference is that of the outer race at 1/4.
 
 **The other arms.**
-- `uniforme_teto` is the best arm at 1/4, but it collapses at 1/16 and 1/32 (0 × 15 and 2 × 30
-  against `uniforme`). Lowering the ceiling cuts off the informative band of the inner race, which
+- `uniform_ceiling` is the best arm at 1/4, but it collapses at 1/16 and 1/32 (0 × 15 and 2 × 30
+  against `uniform`). Lowering the ceiling cuts off the informative band of the inner race, which
   lies at 16.8–25 kHz.
-- `passa_faixa_lu` stays stable around 79 % and loses to `uniforme` at 1/32 (0 × 7, p = 0.016).
+- `bandpass_lu` stays stable around 79 % and loses to `uniform` at 1/32 (0 × 7, p = 0.016).
 
 **Consequence for E15 (corrected on 2026-11-11).** The first version of this section told E15 to
 aim at 96–128×. That was withdrawn. With the nested truth, the best uniform rate chosen in training
@@ -180,12 +180,12 @@ Accuracy (%) over both races combined:
 
 | arm | global 1/4 · 1/8 · 1/16 · 1/32 | local 1/4 · 1/8 · 1/16 · 1/32 |
 |---|---|---|
-| `uniforme` | 56.2 · 87.5 · 83.3 · 87.5 | 57.4 · 91.5 · 87.2 · 91.5 |
+| `uniform` | 56.2 · 87.5 · 83.3 · 87.5 | 57.4 · 91.5 · 87.2 · 91.5 |
 | **`despike`** | **91.7 · 93.8 · 89.6 · 89.6** | **97.9 · 97.9 · 93.6 · 93.6** |
-| `uniforme_teto` | 85.4 · 87.5 · 54.2 · 29.2 | 89.4 · 91.5 · 55.3 · 29.8 |
-| `taxa_tat` | 77.1 · 87.5 · 83.3 · 87.5 | 78.7 · 89.4 · 87.2 · 91.5 |
-| `passa_faixa_lu` | 79.2 · 79.2 · 79.2 · 77.1 | 83.0 · 83.0 · 83.0 · 80.9 |
-| `aleatorio_cs` (straw man, see above) | 2.9 · 4.2 · 6.2 · 4.2 | 2.9 · 4.3 · 6.4 · 4.3 |
+| `uniform_ceiling` | 85.4 · 87.5 · 54.2 · 29.2 | 89.4 · 91.5 · 55.3 · 29.8 |
+| `tat_rate` | 77.1 · 87.5 · 83.3 · 87.5 | 78.7 · 89.4 · 87.2 · 91.5 |
+| `bandpass_lu` | 79.2 · 79.2 · 79.2 · 77.1 | 83.0 · 83.0 · 83.0 · 80.9 |
+| `random_cs` (straw man, see above) | 2.9 · 4.2 · 6.2 · 4.2 | 2.9 · 4.3 · 6.4 · 4.3 |
 | best uniform rate chosen on other records | 89.6 · 89.6 · 87.5 · 89.6 | **97.9 · 97.9 · 95.7 · 97.9** |
 | oracle (chosen on the test) | 95.8 at all four | 97.9 at all four |
 
@@ -196,7 +196,7 @@ Accuracy (%) over both races combined:
   of the oracle.** On the outer race the chosen factor is the same in the 3 folds: 12 at 1/4 and
   1/8, 46 at 1/32. The earlier withdrawal of "factor 46 generalizes" came from the ruler: the
   nested truth also carries the drift of the line with the rotation speed.
-- **H2 remains refuted,** now under both rulers. `taxa_tat` falls −19.2 [−29.2; −4.3] points
+- **H2 remains refuted,** now under both rulers. `tat_rate` falls −19.2 [−29.2; −4.3] points
   below the uniform rate chosen outside the test at 1/4 (local ruler), and the other intervals
   include 0.
 - **Consequence for E15.** Under the local ruler, the deciding baseline, the best uniform rate

@@ -28,9 +28,9 @@ e23 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(e23)
 
 PATTERNS = {  # name -> (pattern, step, second step)
-    "taxa_cheia": ("full", 1, None),
-    "uniforme_4": ("uniform", 4, None),
-    "coprimo_8_9": ("coprime", 8, 9),
+    "full_rate": ("full", 1, None),
+    "uniform_4": ("uniform", 4, None),
+    "coprime_8_9": ("coprime", 8, 9),
 }
 CARRIERS_HZ = [13000.0, 16000.0, 19000.0, 22000.0]
 REL_DB = 20.0  # E23 label; the real dose is 3 dB lower (E23 README)
@@ -102,16 +102,16 @@ def run_record(task) -> list[dict]:
 
 
 def e23_reference(records: set[str]) -> dict[str, float]:
-    """Accuracy of the E23 blind kurtogram at 4× (uniforme arm, reference ceiling)."""
+    """Accuracy of the E23 blind kurtogram at 4× (uniform arm, reference ceiling)."""
     hits: dict[str, list[int]] = defaultdict(list)
     with (E23 / "results/metrics.csv").open(encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["arm"] != "uniforme" or int(r["factor"]) != 4 or r["hit"] == "":
+            if r["arm"] != "uniform" or int(r["factor"]) != 4 or r["hit"] == "":
                 continue
             if float(r["search_ceiling_hz"]) != 6000.0 or r["record"] not in records:
                 continue
             if r["kind"] == "none":
-                hits["sem injeção"].append(int(r["hit"]))
+                hits["no injection"].append(int(r["hit"]))
             elif r["kind"] == "impulsive" and float(r["rel_db"]) == REL_DB:
                 hits[f"{float(r['fc_hz']):.0f}"].append(int(r["hit"]))
     return {k: round(100.0 * float(np.mean(v)), 1) for k, v in sorted(hits.items())}
@@ -137,7 +137,7 @@ def main() -> int:
         w.writerows(rows)
     summary: dict = {}
     for fc in ["", *CARRIERS_HZ]:
-        label = "sem injeção" if fc == "" else f"{fc:.0f}"
+        label = "no injection" if fc == "" else f"{fc:.0f}"
         for name in PATTERNS:
             cell = [r for r in rows if r["fc_hz"] == fc and r["pattern"] == name]
             summary[f"{label}|{name}"] = {

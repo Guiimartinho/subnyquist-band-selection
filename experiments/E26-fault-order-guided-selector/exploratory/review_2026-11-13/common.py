@@ -17,10 +17,10 @@ BPFO = 4 * (1 - GR)
 BPFI = 4 * (1 + GR)
 ORD = {"BPFO": BPFO, "BPFI": BPFI}
 ARMS = {
-    "kurtograma": ("bruto", "cego"),
-    "mediana_kurtograma": ("mediana3", "cego"),
-    "guiado": ("bruto", "guiado"),
-    "mediana_guiado": ("mediana3", "guiado"),
+    "kurtogram": ("raw", "blind"),
+    "median_kurtogram": ("median3", "blind"),
+    "guided": ("raw", "guided"),
+    "median_guided": ("median3", "guided"),
 }
 ART = {
     "KA01",
@@ -66,7 +66,7 @@ HEALTHY = sorted({r["bearing"] for r in ROWS if r["race"] == "H"})
 def thresholds(q=95.0):
     tau = {}
     for f in FACTORS:
-        for clean in ("bruto", "mediana3"):
+        for clean in ("raw", "median3"):
             hs = defaultdict(list)
             for r in ROWS:
                 if r["race"] == "H" and int(r["factor"]) == f and r["clean"] == clean:

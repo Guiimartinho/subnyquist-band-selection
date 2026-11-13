@@ -8,7 +8,7 @@ from common import *
 from math import comb
 
 tau = thresholds(95)
-A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
+A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r))
 print(
     "== Bearing level: identified if > 50% of the segments are right; healthy with alarm if < 50% of 'none' =="
 )
@@ -19,9 +19,9 @@ for f in FACTORS:
         idd = sum(1 for k, v in d.items() if k[0] in ("OR", "IR") and v > 0.5)
         fa = sum(1 for k, v in d.items() if k[0] == "H" and v < 0.5)
         s.append(f"{arm} {idd}/23 (FA {fa}/6)")
-    # exact McNemar: mediana_guiado x kurtograma
-    g = A[("mediana_guiado", f)]
-    k = A[("kurtograma", f)]
+    # exact McNemar: median_guided x kurtogram
+    g = A[("median_guided", f)]
+    k = A[("kurtogram", f)]
     b10 = sum(1 for kk in g if kk[0] in ("OR", "IR") and g[kk] > 0.5 and k[kk] <= 0.5)
     b01 = sum(1 for kk in g if kk[0] in ("OR", "IR") and g[kk] <= 0.5 and k[kk] > 0.5)
     n = b10 + b01

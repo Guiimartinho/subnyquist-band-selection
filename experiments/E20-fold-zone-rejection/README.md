@@ -5,7 +5,7 @@ Part 1 (mechanism) of the single paper.
 
 ## Context
 
-In E07 (Ottawa 2018, the `sem_prior` (without prior) column), the outer race drops from 23/36 hits
+In E07 (Ottawa 2018, the `no_prior` column), the outer race drops from 23/36 hits
 at 8× to 6/36 at 4×, while the inner race stays at 31–32/36. At 4× the kurtogram picks the band
 [12.75, 25] kHz in 26/36 outer-race segments and misses all of them.
 
@@ -90,7 +90,7 @@ independent of the vibration channel. Data: Ottawa 2018, Mendeley `v43hmbwxpm`, 
 
 ## Metrics
 
-- order hit (`sem_prior`) per condition, factor, intervention and ceiling, with `n`;
+- order hit (`no_prior`) per condition, factor, intervention and ceiling, with `n`;
 - exact paired McNemar against `none`;
 - band chosen by the kurtogram, and kurtosis;
 - measurement/prior attribution: **does not apply**, because there is no reconstruction and no
@@ -269,19 +269,19 @@ to impulses avoid the 4× valley **without** removing the spikes?
 
 - **Selectors:** from `snq_recon.selectors`, tested against the values of the source papers
   themselves.
-  - `infograma_ses` (SES infogram): the negentropy of the squared envelope spectrum (Antoni 2016,
+  - `ses_infogram`: the negentropy of the squared envelope spectrum (Antoni 2016,
     eq. 12). According to section 5.1.1 of that paper, it is insensitive to impulsive noise.
   - `gini`: the Gini index of the band envelope (Hebda-Sobkowicz et al. 2020, eq. 3).
   - Both run on the same kurtogram partition.
 - **Arms** (`config/selectors.yaml`): `none` and `despike` repeat those of E20; the new ones are
-  `infograma_ses`, `infograma_ses_despike` and `gini`. Factors, ceilings, ruler and the E07 control
+  `ses_infogram`, `ses_infogram_despike` and `gini`. Factors, ceilings, ruler and the E07 control
   stay the same.
 - **Criterion:** the same as the E20 recovery, on the outer race, at 4× and with a 25 kHz ceiling.
   - Recovers: at least 20 of 36 hits and exact paired McNemar against `none` with p < 0.01.
   - Does not recover: at most 10 of 36.
   - It holds for both rulers (the E07 one and the local one).
 - **Reading:**
-  - If `infograma_ses` recovers, a robust selector is enough, and the correction does not require
+  - If `ses_infogram` recovers, a robust selector is enough, and the correction does not require
     the full rate.
   - If it does not recover, removing the spikes before decimating remains necessary, and the robust
     selectors from the literature do not solve the capture under pure decimation.
@@ -298,7 +298,7 @@ undoes the valley.
   - The criterion is the same as in E20 (10 MAD, opposite neighbours smaller than 0.8 times),
     computed at the effective rate.
 - **Arms** (`config/post_despike.yaml`): `none` and `despike` repeat those of E20, and the new one
-  is `despike_decimado` (despike after decimation).
+  is `despike_after_decimation`.
 - **Criterion:** that of the E20 recovery, on the outer race, at 4× and with a 25 kHz ceiling.
   - Recovers: at least 20 of 36 hits and exact paired McNemar against `none` with p < 0.01.
   - Does not recover: at most 10 of 36.
@@ -333,28 +333,28 @@ The two runs finished at 18:27 and 18:28 UTC on the server.
 
 | arm | nested ruler (of 36) | local ruler (of 35) | verdict |
 |---|---|---|---|
-| `despike_decimado` (realizable on the node) | **29** against 6, +23/−0, p = 2.4·10⁻⁷ | **32** against 6, +26/−0, p = 3·10⁻⁸ | **recovers** under both |
-| `infograma_ses` | 11, +10/−5, p = 0.3 | 11, +10/−5, p = 0.3 | inconclusive |
-| `infograma_ses_despike` | 7, +6/−5, p = 1 | 7, +6/−5, p = 1 | does not recover |
+| `despike_after_decimation` (realizable on the node) | **29** against 6, +23/−0, p = 2.4·10⁻⁷ | **32** against 6, +26/−0, p = 3·10⁻⁸ | **recovers** under both |
+| `ses_infogram` | 11, +10/−5, p = 0.3 | 11, +10/−5, p = 0.3 | inconclusive |
+| `ses_infogram_despike` | 7, +6/−5, p = 1 | 7, +6/−5, p = 1 | does not recover |
 | `gini` | 0, +0/−6, p = 0.031 | 0, +0/−6, p = 0.031 | does not recover (worse than `none`) |
 
-- **Per-record sensitivity** (sign test, outside the pre-registration). For `despike_decimado`,
-  12 records improve and none gets worse under the nested ruler (p = 0.0005), and 11 to 0 under
-  the local one.
+- **Per-record sensitivity** (sign test, outside the pre-registration). For
+  `despike_after_decimation`, 12 records improve and none gets worse under the nested ruler
+  (p = 0.0005), and 11 to 0 under the local one.
 - **At the other factors** (nested ruler, 25 kHz ceiling):
-  - `despike_decimado` scores 28, 29, 29, 29, 23, 25 and 26 from 1× to 8×, against 27, 20, 4, 6, 2,
-    11 and 25 for `none`. The valley disappears.
-  - `infograma_ses` scores 7, 7, 11, 11, 17, 7 and 13.
+  - `despike_after_decimation` scores 28, 29, 29, 29, 23, 25 and 26 from 1× to 8×, against 27,
+    20, 4, 6, 2, 11 and 25 for `none`. The valley disappears.
+  - `ses_infogram` scores 7, 7, 11, 11, 17, 7 and 13.
   - `gini` scores 15 at 1×, 0 from 2× to 6× and 22 at 8×.
 - **Inner race:** no arm harms it; it stays at 34–36/36 in every cell.
 - **12.5 kHz ceiling:**
-  - `despike_decimado` scores 26–29;
+  - `despike_after_decimation` scores 26–29;
   - `gini` scores 20–23, because the band that the spikes capture lies above the ceiling;
-  - `infograma_ses` scores from 0 to 13.
+  - `ses_infogram` scores from 0 to 13.
 - **Chosen bands** (outer race, 25 kHz ceiling):
-  - `despike_decimado` returns at 4× to the full-rate band, 2.5–4.6 kHz, in 25/36.
+  - `despike_after_decimation` returns at 4× to the full-rate band, 2.5–4.6 kHz, in 25/36.
   - `gini` goes to 18.9–20.9 kHz at 4× (23/36). That is the capture.
-  - `infograma_ses`, already at full rate, picks 4.6–6.6 kHz (18/36) or 0.5–12.75 kHz (13/36), and
+  - `ses_infogram`, already at full rate, picks 4.6–6.6 kHz (18/36) or 0.5–12.75 kHz (13/36), and
     not the kurtogram's band (2.5–4.6 kHz).
 
 **Pre-registered reading:**
@@ -383,9 +383,9 @@ The pre-registered effect is real, but the reading above overstated it.
 **Checked by me in this run's CSVs:**
 - **At 4×, removal after decimating ties with the 12.5 kHz ceiling,** which also does not require
   the full rate.
-  - `despike_decimado` with a 25 kHz ceiling and `none` with a 12.5 kHz ceiling score 29/36 and
-    29/36 (nested ruler), with **0 discordant pairs**. Under the local ruler, 32/35 and 32/35, also
-    with 0.
+  - `despike_after_decimation` with a 25 kHz ceiling and `none` with a 12.5 kHz ceiling score
+    29/36 and 29/36 (nested ruler), with **0 discordant pairs**. Under the local ruler, 32/35 and
+    32/35, also with 0.
   - At 5×, the ceiling is better: 23 against 29, −6/+0, p = 0.031; under the local ruler, p = 0.016.
   - At 6×, 25 against 29 (p = 0.22).
   - The ceiling only works because the informative band (2.5–4.6 kHz) lies below it.
@@ -456,14 +456,15 @@ Written before running, but **it is not blind**: `reviewer-2` already computed t
 exploratory form, with 29/36 at 4×. The run is there so that the number that goes into the paper
 comes from committed code and from a `metrics.csv` in the E20 format.
 
-- **Arms** (`config/post_median.yaml`): `none`, `despike_decimado` (repeated) and the new
-  `mediana3_decimado` (median of 3 after decimation), which applies the 3-sample median to the
+- **Arms** (`config/post_median.yaml`): `none`, `despike_after_decimation` (repeated) and the new
+  `median3_after_decimation`, which applies the 3-sample median to the
   already-decimated stream.
   - The median is the same as in the full-rate `median3` arm (`apply_intervention`), applied after
     `undersample`.
 - **Criterion:** the same as for the recovery, at 4×, under both rulers.
-- **Paired comparison, descriptive:** `mediana3_decimado` against `despike_decimado`, and both
-  against `none` with a 12.5 kHz ceiling, by two-sided McNemar and by the per-record sign test.
+- **Paired comparison, descriptive:** `median3_after_decimation` against
+  `despike_after_decimation`, and both against `none` with a 12.5 kHz ceiling, by two-sided
+  McNemar and by the per-record sign test.
 - **Reading that this README already assumes:** if the median ties, the "isolated sample" criterion
   is not necessary, and the correction is a simple cleaning of the decimated stream, with no new
   method.
@@ -473,8 +474,8 @@ comes from committed code and from a `metrics.csv` in the E20 format.
 - **Provenance.** The run was from the separate checkout `~/snq/post2`, at commit `e5ceb4e`.
   - The hashes of `run.py` and of the config in the manifest match the commit.
   - The E07 control matches exactly.
-- **Criterion** (`results-post-median/recovery.csv`). `mediana3_decimado` at 4× **recovers** under
-  both rulers:
+- **Criterion** (`results-post-median/recovery.csv`). `median3_after_decimation` at 4×
+  **recovers** under both rulers:
   - nested ruler: 29/36 against 6/36, with +23/−0 (p = 2.4·10⁻⁷);
   - local ruler: 32/35 (p = 3·10⁻⁸);
   - per record: 12 to 0 (p = 0.0005).

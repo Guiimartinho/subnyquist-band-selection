@@ -25,9 +25,9 @@ OUT = ROOT / "experiments/E07-order-domain-ottawa/results/figures"
 FS_FULL = 200_000.0
 
 MODES = {
-    "sem_prior": ("no prior", "o", "0.45", "--"),
-    "prior_nominal": ("nominal prior (catalogue)", "s", "#B4502B", ":"),
-    "prior_calibrado": ("calibrated prior", "D", "#0F6E78", "-"),
+    "no_prior": ("no prior", "o", "0.45", "--"),
+    "nominal_prior": ("nominal prior (catalogue)", "s", "#B4502B", ":"),
+    "calibrated_prior": ("calibrated prior", "D", "#0F6E78", "-"),
 }
 ACCENT = "#0F6E78"
 WARM = "#B4502B"
@@ -78,7 +78,7 @@ def main() -> None:
             s = [
                 r
                 for r in rows
-                if r["factor"] == f and r["mode"] == "sem_prior" and r["condition"] == cond
+                if r["factor"] == f and r["mode"] == "no_prior" and r["condition"] == cond
             ]
             p = float(np.mean([r["hit"] for r in s])) if s else np.nan
             y.append(100 * p)
@@ -100,8 +100,8 @@ def main() -> None:
     # ADR 0002 on real data, and the argument that the rate has to be CHOSEN, not just reduced.
     high, acc = [], []
     for f in factors:
-        # T0.2: only sem_prior measures estimation; the columns with prior contain the answer key
-        s_ = [r for r in rows if r["factor"] == f and r["mode"] == "sem_prior"]
+        # T0.2: only no_prior measures estimation; the columns with prior contain the answer key
+        s_ = [r for r in rows if r["factor"] == f and r["mode"] == "no_prior"]
         high.append(100 * float(np.mean([float(r["band_lo_hz"]) >= 12000 for r in s_])))
         acc.append(100 * float(np.mean([r["hit"] for r in s_])))
     ax3.plot(factors, high, marker="o", color=WARM, lw=1.4, ms=4, label="chosen band > 12 kHz")

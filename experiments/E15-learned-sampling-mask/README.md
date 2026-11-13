@@ -50,17 +50,17 @@ by the adversarial review; the names are those of the `arm` column of `metrics.c
 
 | arm | reference | what it isolates |
 |---|---|---|
-| `uniforme_treino` (uniform, training): best uniform rate chosen outside the test set | E22 | the best realizable classical method |
-| `dec_uniforme_treino` (decoder, uniform, training): same decoder, uniform at that factor | E07, E22 | decoder versus classical, at the same rate |
-| `dec_uniforme` (decoder, uniform): same decoder, uniform at the budget | E07, E22 | gain from learning the pattern |
-| `dec_aleatoria` (decoder, random): fixed random mask, seeded | `sensors2025csvibration` | learned versus fixed random |
+| `uniform_trained`: best uniform rate chosen outside the test set | E22 | the best realizable classical method |
+| `dec_uniform_trained`: same decoder, uniform at that factor | E07, E22 | decoder versus classical, at the same rate |
+| `dec_uniform`: same decoder, uniform at the budget | E07, E22 | gain from learning the pattern |
+| `dec_random`: fixed random mask, seeded | `sensors2025csvibration` | learned versus fixed random |
 | `dec_multicoset`: multi-coset with the lowest peak alias | `zhao2018coprime`, `sun2013multirate` | learned versus designed without data |
 | `dec_multicoset_vb`: multi-coset for a known support | `venkataramani2001optimal` | learned versus designed with the support |
-| `dec_livre_projetada` (decoder, free, projected): unconstrained top-K, then projected | `huijben2020dps`, `weiss2021pilot` | the **projection gap** (H2) |
+| `dec_free_projected`: unconstrained top-K, then projected | `huijben2020dps`, `weiss2021pilot` | the **projection gap** (H2) |
 | `dec_loupe_*` (optional): LOUPE, then projected | `bahadir2020loupe` | the same, with another sampler |
-| `dec_adaptativa_blocos` (decoder, adaptive, blocks): block-adaptive, inspired by ADPS | `vangorp2021adps` | adaptive versus fixed |
+| `dec_adaptive_blocks`: block-adaptive, inspired by ADPS | `vangorp2021adps` | adaptive versus fixed |
 | `wdcnn`: generic network on the uniformly decimated signal | `zhang2017wdcnn` | generic diagnostic network |
-| `uniforme_orcamento` (uniform, budget), `oraculo_uniforme` (uniform oracle) | E22 | reference; the oracle uses the test label |
+| `uniform_budget`, `uniform_oracle` | E22 | reference; the oracle uses the test label |
 
 ## Training protocol
 
@@ -78,22 +78,22 @@ by the adversarial review; the names are those of the `arm` column of `metrics.c
 
 ## Hypotheses
 
-Text corrected on 2026-11-11. The previous version compared against `taxa_tat` (the rate set by
-E21's rate admissibility test, TAT) and against the oracle. `taxa_tat` does not exist in this
+Text corrected on 2026-11-11. The previous version compared against `tat_rate` (the rate set by
+E21's rate admissibility test, TAT) and against the oracle. `tat_rate` does not exist in this
 experiment, and the oracle chooses with the test label. The exact test is in the
 **pre-registration**, further below.
 
-- **H1.** In at least two budgets, the learned mask (`dec_aprendida_sel`: the decoder with the
+- **H1.** In at least two budgets, the learned mask (`dec_learned_sel`: the decoder with the
   learned mask, selected across budgets) has a higher balanced order accuracy than each of these
   three arms:
-  - `uniforme_treino`, the best uniform rate chosen outside the test set;
-  - `dec_uniforme_treino`, the same decoder with the uniform mask at that factor;
-  - `dec_aleatoria`, the fixed random mask.
+  - `uniform_trained`, the best uniform rate chosen outside the test set;
+  - `dec_uniform_trained`, the same decoder with the uniform mask at that factor;
+  - `dec_random`, the fixed random mask.
 
   It holds only if the two rulers agree.
 - **H2.** The projection gap is greater than zero: training under the constraint from the start
-  (`dec_aprendida`, "learned") is better than training the Gumbel top-K without the constraint
-  and projecting afterwards (`dec_livre_projetada`).
+  (`dec_learned`) is better than training the Gumbel top-K without the constraint
+  and projecting afterwards (`dec_free_projected`).
 
 ## What would refute
 
@@ -117,14 +117,14 @@ were superseded by the adversarial review in the next section, and they are mark
     same, and the mask does not transfer without resampling.
 - **Budgets.** Ottawa: 1/4, 1/8, 1/16 and 1/32; 1/48 and 1/64 are optional. 96× to 160× do not
   serve as targets, because there the wall is the pipeline's, not the rate's.
-- **Deciding baseline:** `uniforme_treino`, the best uniform rate chosen on the records outside
+- **Deciding baseline:** `uniform_trained`, the best uniform rate chosen on the records outside
   the test set of the same split. It is one factor per dataset, because the node does not know
   the family, and ties go to the higher rate.
 - **Ground truth.** Center of the score plateau (`snq_recon.refine_order`), and not the first
   point, which lies about 0.0175 order below. The first point goes into the manifest.
   **Superseded:** the single ruler per record gave way to the two rulers (A1).
 - **Isolated one-sample spikes in Ottawa** (about 1300/s, in all records). The results are
-  reported in the `bruto` (raw) and `sem_picos` (spikes removed) variants, by the E20/E22
+  reported in the `raw` and `despiked` variants, by the E20/E22
   criterion.
 - **Selector floor.** In the learned decoder, the kurtogram's 500 Hz floor only initializes the
   bank. In the classical arms, on the grids used, the floor guard does not trigger. At a high
@@ -133,7 +133,7 @@ were superseded by the adversarial review in the next section, and they are mark
 ## Corrections from the adversarial review (2026-11-11)
 
 The first full run was interrupted before it finished. There was no test leakage, and
-`uniforme_treino` was correct, but the run was not valid because of two flaws (A1 and A2). The
+`uniform_trained` was correct, but the run was not valid because of two flaws (A1 and A2). The
 resume key changed, and the run restarts from scratch.
 
 - **A1. The outer-race line changes with the shaft speed within the record.** The coordinator
@@ -143,7 +143,7 @@ resume key changed, and the run restarts from scratch.
   - **local ruler**: `refine_order` at full rate on a sliding grid of 2.5 s windows, with a
     0.25 s step, over the training and validation records. Each training window gets the label
     of its own stretch, and a stretch with its plateau at the edge is dropped from training;
-  - the same ruler chooses `uniforme_treino`, on the segments of the records outside the test
+  - the same ruler chooses `uniform_trained`, on the segments of the records outside the test
     set;
   - the evaluation reports **two rulers side by side**: the full-rate line of the test segment
     itself, only for scoring and never for choosing, and the nested median of segment 0.
@@ -153,17 +153,17 @@ resume key changed, and the run restarts from scratch.
   single-class BPFO detection, would answer another question and would have no per-record
   interval.
 - **B1. The deciding comparison mixed decoder, mask and rate.**
-  - `dec_uniforme_treino` is added: the same decoder with the uniform mask at the factor chosen
+  - `dec_uniform_trained` is added: the same decoder with the uniform mask at the factor chosen
     outside the test set.
-  - The deciding learned arm, `dec_aprendida_sel`, chooses by validation among the trained
+  - The deciding learned arm, `dec_learned_sel`, chooses by validation among the trained
     budgets ≥ b. The criterion is the balanced accuracy by the local ruler, with ties broken by
     the lowest loss and then by the highest rate.
 - **B2. Same stage budget.** Every searched mask becomes a `FixedMask`, and the decoder is
   retrained from scratch with it, under the same protocol as the fixed arms. The search-stage
-  version is reported as `_sem_ajuste` (without refit).
+  version is reported as `_norefit`.
 - **B3. LOUPE.**
   - In the relaxed forward pass, the rate seen in training was 1.5 to 2.4 times the budget's.
-    The projection gap now uses the unconstrained Gumbel top-K (`dec_livre`, "free"): a horizon
+    The projection gap now uses the unconstrained Gumbel top-K (`dec_free`): a horizon
     of 4 periods, counting only over the horizon, and no spacing. It is projected exactly with
     `fold_project`.
   - `masks.json` records the fraction of hard masks that violate g, and the projection of the
@@ -177,9 +177,9 @@ resume key changed, and the run restarts from scratch.
   - `masks.json` records the final logits, the margin between the K-th and the (K+1)-th logit,
     `last_hard_violations`, the `best_epoch`, and the final positions against the projection of
     the initial logits, which the seed reproduces.
-- **B6.** The adaptive arm is called "block-adaptive, inspired by ADPS" (`dec_adaptativa_blocos`).
-  Since it has a single stage, it is compared with `dec_aprendida_sem_ajuste` (learned, without
-  refit).
+- **B6.** The adaptive arm is called "block-adaptive, inspired by ADPS" (`dec_adaptive_blocks`).
+  Since it has a single stage, it is compared with `dec_learned_norefit` (the stage-A
+  decoder with the projected mask, without refitting).
 - **B7.** `dec_multicoset_vb` is added: the multi-coset designed for the known support
   (`venkataramani2001optimal`; DOI checked on Crossref).
   - The support is the most frequent full-rate kurtogram band among the records outside the test
@@ -194,7 +194,7 @@ Written before any number from the full run. The config mirrors the text in the 
 block, and the manifest records the sha256 of this README (`readme_sha256`). Changing the text or
 the block after seeing a number invalidates the pre-registration.
 
-- **Deciding dataset and variant:** Ottawa, `bruto` variant. `sem_picos` is secondary, because
+- **Deciding dataset and variant:** Ottawa, `raw` variant. `despiked` is secondary, because
   removing spikes requires the full rate and is not realizable on the node.
 - **Budgets:** 1/4, 1/8, 1/16 and 1/32.
 - **Metric:** balanced order accuracy, that is, the mean, over the two races, of the fraction of
@@ -217,9 +217,9 @@ the block after seeing a number invalidates the pre-registration.
   with split variability. The bootstrap resamples the splits, and the interval carries both
   together. `protocol.seeds_per_split` separates the two, at a GPU cost.
 - **Deciding comparisons and multiplicity.**
-  - H1: `dec_aprendida_sel` against `uniforme_treino`, `dec_uniforme_treino` and `dec_aleatoria`,
+  - H1: `dec_learned_sel` against `uniform_trained`, `dec_uniform_trained` and `dec_random`,
     in the 4 budgets. That is 12 tests per ruler, with Holm correction over the 12.
-  - H2: `dec_aprendida` against `dec_livre_projetada`, in the 4 budgets. That is 4 tests per
+  - H2: `dec_learned` against `dec_free_projected`, in the 4 budgets. That is 4 tests per
     ruler, with Holm over the 4.
   - α = 0.05.
 - **Decision rule.**
@@ -230,22 +230,22 @@ the block after seeing a number invalidates the pre-registration.
   - H2 follows the same rule, with one test per budget.
   - `results/hypotheses.csv` lists each test, the adjusted p and the verdict.
 - **Decides nothing:** the comparisons in `results/comparisons.csv`, which are reported without
-  correction, the oracle, the `sem_picos` variant, the fault family, the WDCNN and the healthy
+  correction, the oracle, the `despiked` variant, the fault family, the WDCNN and the healthy
   control.
 - **Mask convergence (B5), decided only by training diagnostics.** The mask "got out of the
   noise" when the margin between the K-th and the (K+1)-th logit exceeds the standard deviation
   of the Gumbel noise, π/√6 ≈ 1.28 (`mask_converged`). `summary.csv` gives the fraction of the
   splits in which this happened (`mask_converged_frac`).
-  - If the fraction falls below 0.5 for `dec_aprendida`, in the `bruto` variant, in any budget,
+  - If the fraction falls below 0.5 for `dec_learned`, in the `raw` variant, in any budget,
     the run is redone with `mask.lr_multiplier` = 30 **before** opening `hypotheses.csv`.
   - The switch is recorded here. It is an optimization decision made from training, not from the
     test.
   - **Applied on 2026-11-11.** In the run with `lr_multiplier = 10` (14:35–21:05 UTC), the
-    `mask_converged_frac` of `dec_aprendida`, raw, was 0.6, 0.4, 0.4 and 0.2 from 1/4 to 1/32.
+    `mask_converged_frac` of `dec_learned`, raw, was 0.6, 0.4, 0.4 and 0.2 from 1/4 to 1/32.
     The run was sealed in `results-lr10/`, without opening `hypotheses.csv` or `comparisons.csv`,
     and the config moved to `lr_multiplier = 30`.
   - **Run with `lr_multiplier = 30`** (started at 21:07 UTC on 2026-11-11). In the raw variant,
-    the `mask_converged_frac` of `dec_aprendida` was 1.0 / 1.0 / **0.4** / 0.6 from 1/4 to 1/32.
+    the `mask_converged_frac` of `dec_learned` was 1.0 / 1.0 / **0.4** / 0.6 from 1/4 to 1/32.
     - The pre-registration provided for a single redo, and it did not fix 1/16.
     - **Deviation declared before opening `hypotheses.csv`:** in this run, H1 at 1/16 is
       **not evaluable** (the mask did not get out of the noise). 1/4, 1/8 and 1/32 are evaluated
@@ -267,11 +267,11 @@ the block after seeing a number invalidates the pre-registration.
     - The decision came before the numbers because the corrected run can only improve the
       result. Deciding to run it only after seeing the 30× run would be choosing the run by its
       result.
-    - The 30× run was interrupted in the `sem_picos` half, which decides nothing, and sealed
-      without analysis in `results-lr30/` (`SELADO.md`, "sealed"). Since it did not reach the
-      end, it did not produce `hypotheses.csv`. Only the training diagnostics came out of it
-      (`convergencia.txt`, "convergence").
-    - The corrected run runs only the `bruto` variant (`despike_variants: [false]`). `sem_picos`
+    - The 30× run was interrupted in the `despiked` half, which decides nothing, and sealed
+      without analysis in `results-lr30/` (`SEALED.md`). Since it did not reach the end, it
+      did not produce `hypotheses.csv`. Only the training diagnostics came out of it
+      (`convergence.txt`).
+    - The corrected run runs only the `raw` variant (`despike_variants: [false]`). `despiked`
       is left for a later secondary run.
   - **Per-budget evaluability, in code** (`evaluable_budgets`; `min_mask_converged_frac` and
     `convergence_arms` in the `preregistration` block):
@@ -279,9 +279,9 @@ the block after seeing a number invalidates the pre-registration.
       got out of the noise in at least 0.5 of the splits.
     - The tests of a non-evaluable budget enter Holm with p = 1, which is conservative, and that
       budget cannot win. `hypotheses.csv` flags `evaluable` and the convergence of each arm.
-    - **H1:** `dec_aprendida` (B5 as pre-registered) and `dec_aprendida_sel` (the mask actually
+    - **H1:** `dec_learned` (B5 as pre-registered) and `dec_learned_sel` (the mask actually
       used in each split, which may come from a sparser trained budget).
-    - **H2:** `dec_aprendida` and `dec_livre_projetada`. In the 30× run, the free mask got out of
+    - **H2:** `dec_learned` and `dec_free_projected`. In the 30× run, the free mask got out of
       the noise in only 1/5, 1/5, 1/5 and 0/5 of the splits (training diagnostic). Without this
       requirement, H2 would measure the projection gap against a baseline stuck in the noise.
 
@@ -300,7 +300,7 @@ the block after seeing a number invalidates the pre-registration.
   the family.
 - **Published baselines are missing:** `han2024undersampledcnn`, `ahmed2018compressedbearing` and
   `zhao2026adaptive`.
-- **`sem_picos` requires the full rate** and is not realizable on the node.
+- **`despiked` requires the full rate** and is not realizable on the node.
 - **No T/H, jitter or conversion is modeled.** The samples are those of the dataset, on the tick
   grid. The `snq-sim` chain is not used.
 - **Origin of the mask and of the gap question:** DPS (`huijben2020dps`) and PILOT
@@ -392,7 +392,7 @@ Run of 2026-11-12, from 01:35 to 05:48 UTC, at commit `314b0c3`.
 
 ### Evaluability (B5), checked before opening the hypotheses
 
-| budget | `dec_aprendida` | `dec_aprendida_sel` | `dec_livre_projetada` |
+| budget | `dec_learned` | `dec_learned_sel` | `dec_free_projected` |
 |---|---|---|---|
 | 1/4 | 1.0 | 1.0 | 0.6 |
 | 1/8 | 1.0 | 1.0 | 0.2 |
@@ -408,30 +408,30 @@ H1 is evaluable in all four budgets; H2, only at 1/4.
 - **H2 is not supported.** It could only be evaluated at 1/4, where the difference was
   0.0 points: [−14.3, +11.4] by the local ruler and [−6.25, +6.25] by the nested one.
 
-Balanced order accuracy (%), `bruto` variant (`summary.csv`):
+Balanced order accuracy (%), `raw` variant (`summary.csv`):
 
 | arm | ruler | 1/4 | 1/8 | 1/16 | 1/32 |
 |---|---|---|---|---|---|
-| `uniforme_treino` (classical, factor chosen in training) | local | 94.8 | 94.8 | 89.7 | 89.7 |
-| `dec_aprendida_sel` | local | 93.1 | 89.7 | 79.3 | 74.2 |
-| `dec_uniforme_treino` | local | 91.4 | 86.3 | 79.3 | 75.9 |
-| `dec_aleatoria` | local | 86.2 | 93.1 | 75.9 | 69.1 |
-| `oraculo_uniforme` (chooses with the test) | local | 98.3 | 98.3 | 98.3 | 98.3 |
-| `uniforme_treino` | nested | 88.3 | 88.3 | 86.7 | 85.0 |
-| `dec_aprendida_sel` | nested | 86.7 | 85.0 | 76.7 | 70.0 |
-| `dec_uniforme_treino` | nested | 90.0 | 86.7 | 78.3 | 75.0 |
-| `dec_aleatoria` | nested | 81.7 | 90.0 | 73.3 | 68.3 |
-| `oraculo_uniforme` | nested | 90.0 | 90.0 | 90.0 | 90.0 |
+| `uniform_trained` (classical, factor chosen in training) | local | 94.8 | 94.8 | 89.7 | 89.7 |
+| `dec_learned_sel` | local | 93.1 | 89.7 | 79.3 | 74.2 |
+| `dec_uniform_trained` | local | 91.4 | 86.3 | 79.3 | 75.9 |
+| `dec_random` | local | 86.2 | 93.1 | 75.9 | 69.1 |
+| `uniform_oracle` (chooses with the test) | local | 98.3 | 98.3 | 98.3 | 98.3 |
+| `uniform_trained` | nested | 88.3 | 88.3 | 86.7 | 85.0 |
+| `dec_learned_sel` | nested | 86.7 | 85.0 | 76.7 | 70.0 |
+| `dec_uniform_trained` | nested | 90.0 | 86.7 | 78.3 | 75.0 |
+| `dec_random` | nested | 81.7 | 90.0 | 73.3 | 68.3 |
+| `uniform_oracle` | nested | 90.0 | 90.0 | 90.0 | 90.0 |
 
 ### Adversarial review (`reviewer-2`, 2026-11-12)
 
 The pre-registered verdict stands, but the statement changes. The result is **absence of evidence
 of a gain in a design without power**. It is not evidence that learning the mask does not help.
 
-1. **The test could not pass.** With a perfect arm in place of `dec_aprendida_sel`, the same rule
+1. **The test could not pass.** With a perfect arm in place of `dec_learned_sel`, the same rule
    gives verdict 0 on both rulers.
 
-   | against `uniforme_treino`, perfect arm | 1/4 | 1/8 | 1/16 | 1/32 |
+   | against `uniform_trained`, perfect arm | 1/4 | 1/8 | 1/16 | 1/32 |
    |---|---|---|---|---|
    | uncorrected p, local ruler | 0.17 | 0.16 | 0.05 | 0.07 |
    | uncorrected p, nested ruler | 0.025 | 0.022 | 0.018 | 0.024 |
@@ -442,39 +442,39 @@ of a gain in a design without power**. It is not evidence that learning the mask
    - The inner race is at the ceiling in almost all arms. Only the 29 outer-race segments
      discriminate.
    - There are 4 clusters per race, of unequal sizes: on the outer race, 1, 5, 6 and 3 pairs.
-   - The detectable difference against `uniforme_treino` lies between 18 and 40 points by the
+   - The detectable difference against `uniform_trained` lies between 18 and 40 points by the
      local ruler and between 11 and 39 by the nested one, above the headroom up to the oracle.
 2. **The deficit against the classical method comes largely from one record, O-C-2.**
    - O-C-2 is in the test set in 4 of the 5 splits and accounts for 8 of the 29 outer-race
      segments.
    - On it, all arms with the learned decoder return order 2.0, which is the lower edge of the
      search (`order_min`).
-   - Without O-C-2 (exploratory), `dec_aprendida_sel − uniforme_treino` becomes +4.6 / +2.3 / 0.0 /
+   - Without O-C-2 (exploratory), `dec_learned_sel − uniform_trained` becomes +4.6 / +2.3 / 0.0 /
      −3.9 points.
    - The probable mechanism, not proven: with the decoder's |y|² envelope, the order-2 line
      competes with the BPFO in this record.
    - The splits are Monte Carlo splits, and 6 of the 24 records never go to test.
 3. **With the same decoder, the mask barely changes the decision.**
-   - Between `dec_aprendida_sel` and `dec_uniforme_treino`, 12 of 236 segments disagree (local
+   - Between `dec_learned_sel` and `dec_uniform_trained`, 12 of 236 segments disagree (local
      ruler).
    - Outside 1/4, the learned masks do not agree across splits more than randomly drawn feasible
      masks do.
-   - Two replicas that differ only in the seed (`dec_uniforme_treino` at 1/4 and at 1/8, with the
+   - Two replicas that differ only in the seed (`dec_uniform_trained` at 1/4 and at 1/8, with the
      same factor) differ by about 5 points.
 4. **There is no leakage, but the baseline has a degree of freedom that the mask does not have.**
-   - `uniforme_treino` chooses the factor in [b, 48] using only training and validation. It came
+   - `uniform_trained` chooses the factor in [b, 48] using only training and validation. It came
      out as 13 or 14 at 1/4 and 1/8, and from 30 to 46 at 1/16 and 1/32, that is, 2 to 3.5 times
      fewer samples than the budget.
    - The mask has L = 4b and K = 4 fixed.
    - That is why the comparison is "up to the budget", and not "at the same rate".
 5. **`stop_after_anneal` did not make the deciding arm worse.**
    - Stage B stops early, and the validation has 8 windows.
-   - The `_sem_ajuste` arms are equal to the refit ones or above them, and none goes beyond
-     `uniforme_treino`.
+   - The `_norefit` arms are equal to the refit ones or above them, and none goes beyond
+     `uniform_trained`.
 6. **The selection across budgets does not explain the negative.**
 7. **H2:** the right term is "not supported", not "refuted". With 3 of 4 budgets not evaluable,
    "the feasible set is not a contribution" is too strong.
-8. **`dec_adaptativa_blocos` is noise until proven otherwise.**
+8. **`dec_adaptive_blocks` is noise until proven otherwise.**
    - It has the highest point values at 1/4 to 1/16.
    - But it is the maximum among 12 arms, it is outside the pre-registration, and it trained more
      than the others.
@@ -542,7 +542,7 @@ H1 rule an arm that is actually better than the baseline? It runs on CPU only, w
 `power_gate.py`, on the `metrics.csv` of the deciding run.
 
 - **Planted arm.**
-  - It starts from the rows of `uniforme_treino`. Each segment it gets wrong becomes a hit with
+  - It starts from the rows of `uniform_trained`. Each segment it gets wrong becomes a hit with
     probability q, with the same draw on both rulers. Where it is right, the planted arm is also
     right.
   - The q of each (budget, ruler) produces the requested effect in balanced accuracy. When the
@@ -564,7 +564,7 @@ H1 rule an arm that is actually better than the baseline? It runs on CPU only, w
 - **Decision rules:**
   - **Pre-registered:** the H1 rule, with the three baselines and Holm over the 12 tests of each
     ruler. Applies in D0 to D3.
-  - **Optimistic:** only the test against `uniforme_treino`. The 8 tests against the learned
+  - **Optimistic:** only the test against `uniform_trained`. The 8 tests against the learned
     baselines enter Holm as significant (p = 0). Applies in all designs and, in DK, is the only
     one.
 - **Deliberate optimism.** The learned baselines stay fixed, with no seed noise, and the planted
@@ -603,14 +603,14 @@ Power of H1, that is, the fraction of the repetitions in which the rule passes o
 designs, the highest power by the optimistic rule with +5 points is 0.03. The criterion required
 0.80.
 
-- **The limit is the number of errors of the classical method.** `uniforme_treino` gets only
+- **The limit is the number of errors of the classical method.** `uniform_trained` gets only
   3 to 9 of the 59 or 60 test segments wrong, depending on the budget and the ruler, all of them
   on the outer race. The inner race has no error in any budget.
   - By the local ruler, at 1/4 and 1/8, the 3 errors are in O-A (the cluster's only valid
     segment) and in O-B.
 - **Why not even the perfect arm passes in D0 to D2.**
   - In the optimistic rule, the 8 tests taken as significant occupy the first ranks of Holm.
-  - Thus, the smallest p against `uniforme_treino` would need to be below 0.05/4 = 0.0125.
+  - Thus, the smallest p against `uniform_trained` would need to be below 0.05/4 = 0.0125.
   - The perfect arm reaches, at best, about 0.02, by the nested ruler.
 - **More seeds do not change this,** because the baseline is deterministic. Nor does testing each
   record once, because there are still few errors to correct.
@@ -654,7 +654,7 @@ only, with `paderborn_gate.py` and `config/paderborn_gate.yaml`.
 - **Nested ruler:** the median of the valid measurement-1 calibrations of the records outside the
   test set, on the same race. It applies to all test segments, including those of bearings
   without a visible line.
-- **Baseline:** `uniforme_treino`, the best uniform rate up to the budget, chosen by the local
+- **Baseline:** `uniform_trained`, the best uniform rate up to the budget, chosen by the local
   ruler on the records outside the test set.
 - **Gate:** that of Ottawa, with arms planted from the baseline (+5 points, +10 points and
   perfect) and 1, 3 or 5 seeds (D0, D1 and D2).
@@ -690,7 +690,7 @@ The classical stage took 3246 s on 28 CPU processes. The outputs are in `results
 **Verdict by the pre-registered criterion: H1 is testable on Paderborn, with at least 3 seeds
 per fold.** On Ottawa, not even the perfect arm passed.
 
-- **There is room for a gain.** `uniforme_treino` gets 41.5 / 44.8 / 49.7 / 26.7% right by the
+- **There is room for a gain.** `uniform_trained` gets 41.5 / 44.8 / 49.7 / 26.7% right by the
   local ruler and 16.8 / 17.4 / 18.6 / 13.2% by the nested one, from 1/4 to 1/32.
 - **Local ruler:** only 6 of the 23 bearings have a visible full-rate line in measurement 1
   (KA01, KA06, KA16, KI01, KI16 and KI18). There are 180 segments out of 1291 with a local
@@ -731,7 +731,7 @@ below.
   of the 23 bearings.
   - The decoder has no learned per-order term, so it cannot return the race's order without a
     line in the spectrum.
-- **Methods:** those of Ottawa, minus `dec_adaptativa` (adaptive) and `wdcnn`, which decide
+- **Methods:** those of Ottawa, minus `dec_adaptive` and `wdcnn`, which decide
   nothing.
 - **Guard:** 1.0 × 64 points per revolution, as in the gate.
 - **Corrections from the adversarial review:**
@@ -751,7 +751,7 @@ pre-registration above. Only the number of processes computing the cells changes
   - According to NVML, the GPU stayed at about 6% utilization, with 3.2 GiB and 76 W.
   - The main process occupies one CPU core (87%), so training is bound by Python, not by the
     GPU.
-  - The first execution on Paderborn (`dec_uniforme`, 1/4, fold 1, seed 1) took 181 s. On
+  - The first execution on Paderborn (`dec_uniform`, 1/4, fold 1, seed 1) took 181 s. On
     Ottawa, the mean for this method was 55 s. The run has 48 cells (4 folds × 3 seeds ×
     4 budgets) of 7 methods.
 - **How.** `shard.py` runs the cells it receives in other processes, on the same GPU.
@@ -760,7 +760,7 @@ pre-registration above. Only the number of processes computing the cells changes
   - The `run_key` covers the config, `run.py`, the package code and the CLI that changes the
     result. `--budgets` and `--workers` are not part of it.
   - The main process, on reaching a cell already stored, resumes it, and its manifest marks it
-    as `"retomado"` (resumed).
+    as `"resumed"`.
 - **What guarantees that the result is the same.**
   - The shards call `run.run_method` with the same context. The data seed comes from
     `derive_seed` per cell, and cudnn is deterministic.
@@ -776,7 +776,7 @@ pre-registration above. Only the number of processes computing the cells changes
     to those of a run without shards.
   - The stored executions differ only in wall-clock time (`info/.../seconds`). This also holds
     for those that the main process computed itself, so it does not come from the shard.
-  - The main process's manifest marks as `"retomado"` the 4 executions computed by the shard.
+  - The main process's manifest marks as `"resumed"` the 4 executions computed by the shard.
   - No temporary file was left behind.
 - **Provenance.**
   - The main process runs in the server checkout created at commit `4e3bf37`. The manifest's
@@ -799,10 +799,10 @@ pre-registration above. Only the number of processes computing the cells changes
 - **Pre-registered verdict: H1 does not pass in any budget, on either ruler.** 0 of 24 tests are
   significant.
   - **Nested ruler:**
-    - against `dec_uniforme_treino`: −1.8, −2.2, −1.0 and −5.2 points;
-    - against `dec_aleatoria`: −3.1, −0.5, +4.4 and −5.2;
-    - against `uniforme_treino`: +8.3, +6.2, +8.8 and +12.6.
-    - The smallest one-sided p is 0.037 (1/32, against `uniforme_treino`, CI from −1.1
+    - against `dec_uniform_trained`: −1.8, −2.2, −1.0 and −5.2 points;
+    - against `dec_random`: −3.1, −0.5, +4.4 and −5.2;
+    - against `uniform_trained`: +8.3, +6.2, +8.8 and +12.6.
+    - The smallest one-sided p is 0.037 (1/32, against `uniform_trained`, CI from −1.1
       to +28.2). Holm takes it to 0.44.
   - **Local ruler** (17 records, 7 clusters): from −16.9 to +18.9 points, with nothing
     significant.
@@ -810,11 +810,11 @@ pre-registration above. Only the number of processes computing the cells changes
 
   | arm | 1/4 | 1/8 | 1/16 | 1/32 |
   |---|---|---|---|---|
-  | `dec_aprendida_sel` | 25.7 | 24.4 | 27.5 | 25.4 |
-  | `dec_uniforme_treino` | 27.5 | 26.7 | 28.5 | 30.5 |
-  | `dec_aleatoria` | 28.7 | 25.0 | 23.1 | 30.6 |
+  | `dec_learned_sel` | 25.7 | 24.4 | 27.5 | 25.4 |
+  | `dec_uniform_trained` | 27.5 | 26.7 | 28.5 | 30.5 |
+  | `dec_random` | 28.7 | 25.0 | 23.1 | 30.6 |
   | `dec_multicoset_vb` | 26.2 | 23.6 | 26.5 | 34.8 |
-  | `uniforme_treino` (classical pipeline) | 17.4 | 18.3 | 18.8 | 12.7 |
+  | `uniform_trained` (classical pipeline) | 17.4 | 18.3 | 18.8 | 12.7 |
 
 - **Reading:**
   - **The margin over the classical pipeline belongs to the decoder, not to the mask.** The
@@ -843,7 +843,7 @@ Requested by the adversarial review of the manuscript. It is not pre-registered.
 - **On the local ruler,** the learned mask is 11.7, 15.6 and 6.4 points below the classical
   method from 1/4 to 1/16, and 18.9 above at 1/32. None of this is significant.
 - **Correction of the previous text:** "evidence against a 5-point gain" does not hold up. The
-  upper limits of the 95% CI against `dec_uniforme_treino` and `dec_aleatoria` range from +3.4
+  upper limits of the 95% CI against `dec_uniform_trained` and `dec_random` range from +3.4
   to +18.2 points. The power gate measured power only against the classical method, which is
   deterministic.
 - **Reading, not tested:** the decoders win where the kurtogram is captured, and they are

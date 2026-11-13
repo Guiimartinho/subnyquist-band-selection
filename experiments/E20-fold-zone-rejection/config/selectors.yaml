@@ -1,6 +1,6 @@
 # E20, robust selectors (pre-registration in the README, 'Robust selectors', 2026-11-12).
 # Derived from config/base.yaml: same factors, ceilings, ruler and E07 control; only the arms
-# change. infograma_ses (SES infogram) = SES negentropy (Antoni 2016); gini = Gini of the
+# change. ses_infogram = SES negentropy (Antoni 2016); gini = Gini of the
 # envelope (Hebda-Sobkowicz et al. 2020); both in snq_recon.selectors.
 seed: 20261110
 data_dir: datasets/raw/ottawa
@@ -51,10 +51,10 @@ interventions:
   despike:
     kind: despike
     k_mad: 10.0
-  infograma_ses:
+  ses_infogram:
     kind: none
     selector: ses_negentropy
-  infograma_ses_despike:
+  ses_infogram_despike:
     kind: despike
     k_mad: 10.0
     selector: ses_negentropy

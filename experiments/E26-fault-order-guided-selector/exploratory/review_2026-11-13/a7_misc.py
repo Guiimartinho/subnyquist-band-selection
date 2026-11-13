@@ -7,7 +7,7 @@ sys.path.insert(0, sys.argv[1])
 from common import *
 
 tau = thresholds(95)
-print("== Per setting: balanced accuracy mediana_guiado / kurtograma (common p95 threshold) ==")
+print("== Per setting: balanced accuracy median_guided / kurtogram (common p95 threshold) ==")
 for st in ("N15_M07_F10", "N15_M01_F10", "N15_M07_F04"):
     s = []
     for f in FACTORS:
@@ -15,9 +15,9 @@ for st in ("N15_M07_F10", "N15_M01_F10", "N15_M07_F04"):
         for r in ROWS:
             if r["setting"] != st or int(r["factor"]) != f or r["race"] not in ("OR", "IR"):
                 continue
-            if r["clean"] == "mediana3":
+            if r["clean"] == "median3":
                 acc["mg"][(r["race"], r["bearing"])].append(pred_guided(r, tau) == r["race"])
-            if r["clean"] == "bruto":
+            if r["clean"] == "raw":
                 acc["k"][(r["race"], r["bearing"])].append(pred_blind(r) == r["race"])
         mg = balanced({k: np.mean(v) for k, v in acc["mg"].items()})
         k = balanced({k: np.mean(v) for k, v in acc["k"].items()})
@@ -26,7 +26,7 @@ for st in ("N15_M07_F10", "N15_M01_F10", "N15_M07_F04"):
 print(
     "\n== On the healthy: which window gives the maximum (BPFO x BPFI) and median of each score =="
 )
-for cl in ("bruto", "mediana3"):
+for cl in ("raw", "median3"):
     for f in FACTORS:
         hh = [r for r in ROWS if r["race"] == "H" and int(r["factor"]) == f and r["clean"] == cl]
         wO = np.mean([sc(r, "BPFO") > sc(r, "BPFI") for r in hh])

@@ -49,9 +49,9 @@ Injecting a controlled interferer into CWRU separates three questions of the pap
   reference.
 - **Direct capture indicator:** the estimate lands on 97.7 Hz or on a harmonic up to the 3rd, that
   is, the selector started looking at the interferer.
-- **Arms:** `uniforme` (uniform; three ceilings), `aaf_ideal` (ideal anti-aliasing filter),
-  `uniforme_teto` (uniform, ceiling set by the TAT) and `taxa_tat` (TAT rate: factor set by the
-  TAT). The uniform oracle comes out in the analysis.
+- **Arms:** `uniform` (three ceilings), `aaf_ideal` (ideal anti-aliasing filter),
+  `uniform_ceiling` (ceiling set by the TAT) and `tat_rate` (factor set by the TAT). The
+  uniform oracle comes out in the analysis.
 
 ### Design revisions before the full run
 
@@ -86,7 +86,7 @@ MAD), not a band-limited burst. The bursts of the original design test a differe
   their mean.
   - **Limitation:** two spikes two samples apart escape, about 3 % at 1300/s and 48 kHz.
 
-**H-picos (H-spikes; pre-registered).** With spikes of Ottawa parameters (1300/s, 16 MAD):
+**H-spikes (pre-registered).** With spikes of Ottawa parameters (1300/s, 16 MAD):
 - the uniform arm, at the reference ceiling, drops at least 20 points against the same factor
   without injection in at least one factor ≥ 2;
 - in the `aaf_ideal` and `despike` arms, the drop is at most 5 points at all factors.
@@ -114,7 +114,7 @@ The criteria are in `config/base.yaml`, in the `analysis` section, and in `analy
   the same cells is less than half that of the impulsive.
 - **H2 (the TAT avoids the capture).** The TAT, as a predictor of a hit, has a balanced accuracy
   of at least 0.8 over all cells (record, condition, factor) of the uniform arm at the reference
-  ceiling. And `taxa_tat` stays, on average, at most 5 points from the uniform oracle.
+  ceiling. And `tat_rate` stays, on average, at most 5 points from the uniform oracle.
 
 ## What would refute
 
@@ -123,7 +123,7 @@ The criteria are in `config/base.yaml`, in the `analysis` section, and in `analy
   - (b) more than 50 % of the folded cells with no predicted capture drop, at some power.
 - **H1'** is refuted if, at P\*, the drop of the surrogate is at least 0.8 times that of the
   impulsive.
-- **H2** is refuted if the balanced accuracy of the TAT is lower than 0.65, or if `taxa_tat`
+- **H2** is refuted if the balanced accuracy of the TAT is lower than 0.65, or if `tat_rate`
   stays more than 5 points below the oracle on average.
 - **Between the support and refutation thresholds, the result is reported as inconclusive.**
 
@@ -157,7 +157,7 @@ and 21 borderline.
 | H1b: ≤ 20 % of the folded cells with no predicted capture drop, at all powers | **0 %** at all | supported, with only **7** evaluable cells |
 | H1': at P\*, surrogate/impulsive < 0.5 | P\* = +20 dB; ratio **0.14**, CI [−0.01; 0.23] | supported |
 | H2: balanced accuracy of the TAT ≥ 0.8 | **0.69**, CI [0.63; 0.79] | inconclusive (between 0.65 and 0.8) |
-| H2: `taxa_tat` at most 5 points below the oracle | **−5.2 points**, CI [−8.4; −2.7] | refuted, narrowly; worst cell −69 |
+| H2: `tat_rate` at most 5 points below the oracle | **−5.2 points**, CI [−8.4; −2.7] | refuted, narrowly; worst cell −69 |
 
 **Dose-response.** The mean drop in the predicted cells is about 0 points at −10 dB and at 0 dB, 9
 points at +10 dB and 41 points at +20 dB. The CWRU 48k faults are strong, and the interferer only
@@ -173,7 +173,7 @@ captures the selector with a power about 100 times that of the fault band.
   interferer, but the hit rate without injection drops 9 points, because it cuts the fault
   resonance that folding would bring into the search. It is the flip side of the argument in favor
   of bandpass sampling: the anti-alias protects, and it charges for it.
-- **TAT rules:** `uniforme_teto` drops to 78 % even without injection, and `taxa_tat` only rises
+- **TAT rules:** `uniform_ceiling` drops to 78 % even without injection, and `tat_rate` only rises
   from 54 % to 63 % at +20 dB.
 
 **Reading.**
@@ -196,7 +196,7 @@ There are 13 records × 10 conditions (130 tasks, no failures, 8060 rows). Verdi
 `results-spikes/analysis.json`, computed by `analyze.py --config config/spikes.yaml`. Each record
 is worth 7.7 points.
 
-**H-picos: inconclusive.** With spikes of Ottawa parameters (1300/s, 16 MAD):
+**H-spikes: inconclusive.** With spikes of Ottawa parameters (1300/s, 16 MAD):
 - the uniform arm drops **31 points at 2×** and **23 at 4×**, which meets the first half;
 - the mitigations do **not** stay at ≤ 5 points: `aaf_ideal` drops up to 15 (4× and 12×), and
   `despike` up to 15 (6× and 12×).
@@ -214,7 +214,7 @@ is worth 7.7 points.
 - **Difference from Ottawa.** On Ottawa the removal recovers everything (26/36 at 4×). Either the
   spikes there are more isolated than a Poisson process, or the CWRU fault signal competes in a
   different way. It has not been isolated.
-- **TAT.** `taxa_tat` does not protect, and `uniforme_teto` makes it worse.
+- **TAT.** `tat_rate` does not protect, and `uniform_ceiling` makes it worse.
 
 **Joint reading of the two runs.**
 - On a dataset without a native interferer, both a band-limited impulsive burst and a
@@ -273,7 +273,7 @@ the most: the dose, the independent units and the predictive power of the folded
   - Measured in the contaminated signal, the amplitude is 13.7 to 16.2 MAD.
   - `despike` lets 6 to 14 % of the spikes escape, not "about 3 %". At Ottawa's density, the
     pairs would fall to about 1.3 %, which explains why the removal recovers everything there.
-- **The "inconclusive" of H-picos was determined by the design.** The 5-point threshold lies below
+- **The "inconclusive" of H-spikes was determined by the design.** The 5-point threshold lies below
   1 record (7.7 points) and includes 1×, where `aaf_ideal` is the identity.
 - **"31 at 16 MAD at the three rates" is wrong:** they are 23, 31 and 23. The pattern across
   factors at 16 MAD is noise of ±1 record.

@@ -30,7 +30,7 @@ def _lines(
 def test_sem_prior_e_o_maximo_global_entre_f_min_e_nyquist():
     """Without the prior there is no ceiling: a shaft harmonic stronger than the fault wins.
 
-    It is the declared behavior of E07's ``sem_prior`` (without prior) mode, and the reason it
+    It is the declared behavior of E07's ``no_prior`` mode, and the reason it
     loses hits on records where the 2nd shaft harmonic dominates the envelope.
     """
     spec = _lines({1.0: 90.0, 2.0: 50.0, 3.4: 40.0})

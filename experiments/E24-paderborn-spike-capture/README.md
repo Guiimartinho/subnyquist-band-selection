@@ -36,7 +36,7 @@ pre-registration.
 
 The classical pipeline of E07 and E22: pure decimation, kurtogram (level 4, 500 Hz floor, ceiling
 at the effective Nyquist), envelope order spectrum and argmax without prior above order 2. It is
-the `kurtograma` (kurtogram) arm.
+the `kurtogram` arm.
 
 ## Ground truth
 
@@ -60,9 +60,8 @@ The tolerance is 0.025 order: the BPFO and the BPFI lie 0.054 from shaft harmoni
     1500 rpm settings.
   - Measurements 2 to 20 are the segments, of 255936 samples. A measurement shorter than that, or
     unreadable, is left out.
-- **Arms** (`config/base.yaml`): `kurtograma`, `kurtograma_sem_picos` (kurtogram without spikes),
-  `infograma_ses` (SES infogram), `infograma_ses_sem_picos` (SES infogram without spikes) and
-  `gini`.
+- **Arms** (`config/base.yaml`): `kurtogram`, `kurtogram_despiked`, `ses_infogram`,
+  `ses_infogram_despiked` and `gini`.
   - Spike removal comes before decimating, at full rate.
 - **Factors:** 1, 4, 8, 16 and 32. Factor 1 is descriptive. The guard is 1.0 × 64 points per
   revolution.
@@ -203,21 +202,21 @@ each record, 68 readable):
 ## E24b: ceiling without folding and notch (pre-registration, 2026-11-12)
 
 Written and committed before running, together with the analysis
-(`exploratory/teto_notch_analysis.py`; `teto` = ceiling). They are checks C1 and C3 of the
+(`exploratory/ceiling_notch_analysis.py`). They are checks C1 and C3 of the
 adversarial review.
 
 The question: on Paderborn, does decimation help because it narrows the search band (ceiling
 effect) or because of what folds? And is the content near 16 kHz what captures the kurtogram at
 full rate?
 
-- **Arms** (`config/teto_notch.yaml`), all without removing the spikes:
-  - **C1:** `kurtograma_teto8k` (kurtogram with an 8 kHz ceiling), `teto4k`, `teto2k` and
-    `teto1k`, plus the same four for the SES infogram. All run at 1×, with the search ceiling at
-    8, 4, 2 and 1 kHz.
+- **Arms** (`config/ceiling_notch.yaml`), all without removing the spikes:
+  - **C1:** `kurtogram_ceiling8k`, `kurtogram_ceiling4k`, `kurtogram_ceiling2k` and
+    `kurtogram_ceiling1k`, plus the same four for the SES infogram. All run at 1×, with the
+    search ceiling at 8, 4, 2 and 1 kHz.
   - The search partition is identical to that of 4×, 8×, 16× and 32×, because it only depends on
     [f_min, min(ceiling, fs/2)]. The difference is the folded content and the envelope rate.
-  - **C3:** `kurtograma_notch` zeroes 15–17 kHz and 30.5–32 kHz at full rate, before decimating,
-    and runs at 1× and 4×. `kurtograma_notch_controle` (control notch) zeroes bands of the same
+  - **C3:** `kurtogram_notch` zeroes 15–17 kHz and 30.5–32 kHz at full rate, before decimating,
+    and runs at 1× and 4×. `kurtogram_notch_control` zeroes bands of the same
     width at 12–14 kHz and 26.5–28 kHz.
   - The reference arms with no ceiling and no notch are read from `results/`. The code is the same
     and is deterministic.
@@ -242,10 +241,11 @@ full rate?
 
 ### E24b result (2026-11-13)
 
-- **Run:** `results-teto-notch/`, 69 records in 20 108 s. The hashes of the config, of `run.py`
+- **Run:** `results-ceiling-notch/`, 69 records in 20 108 s. The hashes of the config, of `run.py`
   and of the README in the manifest match the pre-registration commit (`2fbb1ac`).
-- **Analysis:** `exploratory/teto_notch_analysis.py` wrote `results-teto-notch/analysis.json`. The
-  paper's numbers come from `papers/shared/figures/num_partA_paderborn.py`.
+- **Analysis:** `exploratory/ceiling_notch_analysis.py` wrote
+  `results-ceiling-notch/analysis.json`. The paper's numbers come from
+  `papers/shared/figures/num_partA_paderborn.py`.
 - **Balanced accuracy,** nested ruler:
 
   | arm | 8 kHz ceiling | 4 kHz ceiling | 2 kHz ceiling | 1 kHz ceiling | no ceiling (E24) |

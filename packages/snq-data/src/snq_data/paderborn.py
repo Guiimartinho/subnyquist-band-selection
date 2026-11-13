@@ -174,7 +174,7 @@ def load_measurement(
     vib, spd = sig["vibration_1"][1], sig["speed"][1]
     dur_s = (spd.size - 1) / SPEED_FS_HZ
     if not 3.99 < dur_s < 4.01:
-        raise ValueError(f"{path.name}: rotation with {dur_s:.4f} s, expected 4 s")
+        raise ValueError(f"{path.name}: rotation signal of {dur_s:.4f} s, expected 4 s")
     lo = N_VIB - 2 if min_samples is None else int(min_samples)
     if vib.size < lo:
         raise ValueError(f"{path.name}: vibration with {vib.size} samples, fewer than {lo}")

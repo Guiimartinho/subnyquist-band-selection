@@ -8,28 +8,28 @@
   "readme_sha256": "d70e56cf4273682fdfb21b1f1dc2ab845f602786f68a029214f8118fc070ea3a",
   "preregistration": {
     "dataset": "ottawa",
-    "variant": "bruto",
+    "variant": "raw",
     "rulers": [
       "local",
       "nested"
     ],
-    "metric": "acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)",
+    "metric": "balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)",
     "alpha": 0.05,
     "correction": "holm",
     "min_budgets": 2,
     "min_clusters_per_group": 3,
     "min_splits": 2,
     "h1": {
-      "arm": "dec_aprendida_sel",
+      "arm": "dec_learned_sel",
       "baselines": [
-        "uniforme_treino",
-        "dec_uniforme_treino",
-        "dec_aleatoria"
+        "uniform_trained",
+        "dec_uniform_trained",
+        "dec_random"
       ]
     },
     "h2": {
-      "arm": "dec_aprendida",
-      "baseline": "dec_livre_projetada"
+      "arm": "dec_learned",
+      "baseline": "dec_free_projected"
     }
   },
   "packages": {
@@ -159,8 +159,8 @@
     "docs/adr/0006-artigo-unico-computacional.md",
     "docs/lab-notebook/2026-11-10.md",
     "docs/lab-notebook/2026-11-11.md",
-    "experiments/E07-order-domain-ottawa/config/smoke-regua.yaml",
-    "experiments/E07-order-domain-ottawa/results-smoke-regua/",
+    "experiments/E07-order-domain-ottawa/config/smoke-ruler.yaml",
+    "experiments/E07-order-domain-ottawa/results-smoke-ruler/",
     "experiments/E07-order-domain-ottawa/results/extended/",
     "experiments/E15-learned-sampling-mask/",
     "experiments/E20-fold-zone-rejection/",
@@ -220,8 +220,8 @@
   },
   "device": "cpu",
   "rulers": {
-    "local": "raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao",
-    "nested": "mediana das calibracoes do segmento 0 dos registros fora do teste do grupo"
+    "local": "full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring",
+    "nested": "median of the segment-0 calibrations of the records outside the test set of the group"
   },
   "input_sha256": {
     "ottawa:I-A-1.mat": "496a14c3caf62d28169ff2567e9aaf5c7913c03c648ad73651b410cd09316ea7",
@@ -816,32 +816,32 @@
   },
   "despiked_samples": {
     "ottawa:I-A-1.mat": {
-      "bruto": 0,
-      "sem_picos": 3932
+      "raw": 0,
+      "despiked": 3932
     },
     "ottawa:I-A-2.mat": {
-      "bruto": 0,
-      "sem_picos": 3413
+      "raw": 0,
+      "despiked": 3413
     },
     "ottawa:I-A-3.mat": {
-      "bruto": 0,
-      "sem_picos": 3100
+      "raw": 0,
+      "despiked": 3100
     },
     "ottawa:O-A-1.mat": {
-      "bruto": 0,
-      "sem_picos": 12886
+      "raw": 0,
+      "despiked": 12886
     },
     "ottawa:O-A-2.mat": {
-      "bruto": 0,
-      "sem_picos": 12827
+      "raw": 0,
+      "despiked": 12827
     },
     "ottawa:O-A-3.mat": {
-      "bruto": 0,
-      "sem_picos": 12962
+      "raw": 0,
+      "despiked": 12962
     },
     "ottawa:H-A-1.mat": {
-      "bruto": 0,
-      "sem_picos": 13033
+      "raw": 0,
+      "despiked": 13033
     }
   },
   "splits": {
@@ -886,11 +886,11 @@
     ]
   },
   "chosen_uniform_factor": {
-    "ottawa:bruto:split0": {
+    "ottawa:raw:split0": {
       "16": 16,
       "32": 32
     },
-    "ottawa:sem_picos:split0": {
+    "ottawa:despiked:split0": {
       "16": 16,
       "32": 32
     }
@@ -902,46 +902,46 @@
     ]
   },
   "runs": {
-    "ottawa/bruto/b16/split0/seed0/dec_uniforme.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_aleatoria.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_multicoset.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_multicoset_vb.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_uniforme_treino.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_aprendida.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_livre.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_loupe.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/dec_adaptativa.json": "retomado",
-    "ottawa/bruto/b16/split0/seed0/wdcnn.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_uniforme.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_aleatoria.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_multicoset.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_multicoset_vb.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_uniforme_treino.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_aprendida.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_livre.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_loupe.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/dec_adaptativa.json": "retomado",
-    "ottawa/bruto/b32/split0/seed0/wdcnn.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_uniforme.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_aleatoria.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_multicoset.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_multicoset_vb.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_uniforme_treino.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_aprendida.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_livre.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_loupe.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/dec_adaptativa.json": "retomado",
-    "ottawa/sem_picos/b16/split0/seed0/wdcnn.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_uniforme.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_aleatoria.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_multicoset.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_multicoset_vb.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_uniforme_treino.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_aprendida.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_livre.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_loupe.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/dec_adaptativa.json": "retomado",
-    "ottawa/sem_picos/b32/split0/seed0/wdcnn.json": "retomado"
+    "ottawa/raw/b16/split0/seed0/dec_uniform.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_random.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_multicoset.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_multicoset_vb.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_uniform_trained.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_learned.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_free.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_loupe.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/dec_adaptive.json": "resumed",
+    "ottawa/raw/b16/split0/seed0/wdcnn.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_uniform.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_random.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_multicoset.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_multicoset_vb.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_uniform_trained.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_learned.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_free.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_loupe.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/dec_adaptive.json": "resumed",
+    "ottawa/raw/b32/split0/seed0/wdcnn.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_uniform.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_random.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_multicoset.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_multicoset_vb.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_uniform_trained.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_learned.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_free.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_loupe.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/dec_adaptive.json": "resumed",
+    "ottawa/despiked/b16/split0/seed0/wdcnn.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_uniform.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_random.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_multicoset.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_multicoset_vb.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_uniform_trained.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_learned.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_free.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_loupe.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/dec_adaptive.json": "resumed",
+    "ottawa/despiked/b32/split0/seed0/wdcnn.json": "resumed"
   },
   "n_rows": 480,
   "device_name": "AMD64 Family 25 Model 33 Stepping 2, AuthenticAMD"

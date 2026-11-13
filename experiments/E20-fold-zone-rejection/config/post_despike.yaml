@@ -49,7 +49,7 @@ interventions:
   despike:
     kind: despike
     k_mad: 10.0
-  despike_decimado:
+  despike_after_decimation:
     kind: none
     post: despike
     k_mad: 10.0

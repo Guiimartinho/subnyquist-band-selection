@@ -35,7 +35,7 @@ SOURCES = [  # (label, csv, [(design, design label)])
         [("D0", "1 seed"), ("D1", "3 seeds"), ("D2", "5 seeds")],
     ),
 ]
-EFFECTS = ["5", "10", "perfeito"]
+EFFECTS = ["5", "10", "perfect"]
 
 
 def main() -> None:
@@ -49,7 +49,7 @@ def main() -> None:
             power = {
                 (r["design"], r["effect_points"]): float(r["power_h1"])
                 for r in csv.DictReader(f)
-                if r["rule"] == "otimista"
+                if r["rule"] == "optimistic"
             }
         lines.append(r"\midrule")
         for i, (code, label) in enumerate(designs):

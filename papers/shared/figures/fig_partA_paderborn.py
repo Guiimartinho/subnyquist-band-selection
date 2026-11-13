@@ -3,7 +3,7 @@
 Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
 - **Sources:** E24 (`results/`) and, if present, the H3 run (`results-post-despike/`), which
-  repeats `kurtograma` and `kurtograma_sem_picos`. A repeated arm is read from `results/`.
+  repeats `kurtogram` and `kurtogram_despiked`. A repeated arm is read from `results/`.
 - **Metric:** that of E24, that is, the mean over the races of the mean hit rate per bearing.
 - **Uncertainty:** 95 % band by bootstrap over the bearings within each race, as in the
   `cluster_test` of E24.
@@ -44,17 +44,17 @@ PNG = E24 / "results/figures"
 FS_FULL_KSPS = 64.0
 # arm -> (label, colour, marker, line style, drawing order)
 ARMS = {
-    "kurtograma": ("kurtogram, raw (baseline)", "0.55", "o", "--", 1),
-    "kurtograma_sem_picos": ("kurtogram, spikes removed before decimation", "black", "s", "-", 4),
-    "kurtograma_sem_picos_decimado": (
+    "kurtogram": ("kurtogram, raw (baseline)", "0.55", "o", "--", 1),
+    "kurtogram_despiked": ("kurtogram, spikes removed before decimation", "black", "s", "-", 4),
+    "kurtogram_despiked_after_decimation": (
         "kurtogram, spikes removed after decimation",
         "#B4502B",
         "x",
         "-.",
         5,
     ),
-    "infograma_ses": ("SES infogram, raw", "#0F6E78", "^", ":", 2),
-    "infograma_ses_sem_picos": ("SES infogram, spikes removed", "#0F6E78", "v", "-", 3),
+    "ses_infogram": ("SES infogram, raw", "#0F6E78", "^", ":", 2),
+    "ses_infogram_despiked": ("SES infogram, spikes removed", "#0F6E78", "v", "-", 3),
     "gini": ("spectral Gini, raw", "#7A5C99", "D", ":", 2),
 }
 RULERS = {"nested": "(a) nested ruler", "local": "(b) local ruler"}

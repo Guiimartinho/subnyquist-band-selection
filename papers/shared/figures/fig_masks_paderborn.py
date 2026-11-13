@@ -5,9 +5,9 @@ Project rule: the figure comes from metrics.csv, never from a transcribed number
 - **Source:** `experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv.gz`, raw
   stream, with all folds and seeds.
 - **Arms:** the best uniform rate of the classical pipeline chosen in training
-  (`uniforme_treino`), and the same decoder with the trained uniform decimation
-  (`dec_uniforme_treino`), with the random mask (`dec_aleatoria`) and with the learned mask
-  (`dec_aprendida_sel`).
+  (`uniform_trained`), and the same decoder with the trained uniform decimation
+  (`dec_uniform_trained`), with the random mask (`dec_random`) and with the learned mask
+  (`dec_learned_sel`).
 - **Metric:** that of the pre-registered tests (`per_record` and `cluster_bootstrap` of `run.py`):
   mean hit per (split, record), over segments and seeds; mean per race; mean over the races.
   Under the local ruler, the records have very different numbers of segments with a line, and the
@@ -50,13 +50,13 @@ OUT = ROOT / "papers/mssp-2026/figures/fig_masks_paderborn.pdf"
 PNG = E15 / "figures/e15_masks_paderborn.png"
 FS_FULL_KSPS = 64.0
 BUDGETS = (4, 8, 16, 32)
-LEARNED = "dec_aprendida_sel"
+LEARNED = "dec_learned_sel"
 # palette checked with the validator of the dataviz skill (chroma, colour blindness, contrast)
 GRAY, TEAL, PURPLE = "0.55", "#0089A3", "#7B4CC0"
 ARMS = {
-    "uniforme_treino": ("classical, best uniform rate", GRAY, "o", "--", 1),
-    "dec_uniforme_treino": ("decoder, trained uniform decimation", TEAL, "s", "-.", 2),
-    "dec_aleatoria": ("decoder, random mask", PURPLE, "^", ":", 3),
+    "uniform_trained": ("classical, best uniform rate", GRAY, "o", "--", 1),
+    "dec_uniform_trained": ("decoder, trained uniform decimation", TEAL, "s", "-.", 2),
+    "dec_random": ("decoder, random mask", PURPLE, "^", ":", 3),
     LEARNED: ("decoder, learned mask", "black", "D", "-", 4),
 }
 RULERS = {"nested": "(a) nested ruler, 23 bearings", "local": "(b) local ruler, 7 bearings"}
@@ -74,7 +74,7 @@ def load() -> tuple[dict[tuple[str, str, int], Cell], dict[str, str]]:
     race: dict[str, str] = {}
     with gzip.open(E15 / "metrics.csv.gz", "rt", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["dataset"] != "paderborn" or r["variant"] != "bruto" or r["arm"] not in ARMS:
+            if r["dataset"] != "paderborn" or r["variant"] != "raw" or r["arm"] not in ARMS:
                 continue
             race[r["record"]] = r["family_true"]
             for ru in RULERS:
@@ -131,7 +131,7 @@ def main() -> None:
     for ax, (ru, title) in zip(axes, RULERS.items(), strict=True):
         for b in BUDGETS:
             learned = per_record(cells[(LEARNED, ru, b)])
-            for base in ("uniforme_treino", "dec_uniforme_treino", "dec_aleatoria"):
+            for base in ("uniform_trained", "dec_uniform_trained", "dec_random"):
                 other = per_record(cells[(base, ru, b)])
                 keys = set(learned) & set(other)
                 d = balanced({k: learned[k] for k in keys}, race) - balanced(

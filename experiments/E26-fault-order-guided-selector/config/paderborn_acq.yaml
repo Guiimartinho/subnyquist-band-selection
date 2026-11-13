@@ -36,9 +36,9 @@ analysis:
   signflip_mc: 1000000
   seed: 20261113
 compute: {workers: 28}
-output: {results_dir: results-paderborn-aquisicao}
+output: {results_dir: results-paderborn-acquisition}
 analysis_acq:
-  guided_results: results-paderborn  # for the integrity check of the guided arm in pura
+  guided_results: results-paderborn  # for the integrity check of the guided arm in pure
   alpha: 0.05
   h5_factors: [4, 8, 16, 32]
   h6_factors: [4, 8]

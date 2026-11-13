@@ -81,11 +81,11 @@
     ]
   },
   "verdict": {
-    "H1a_sensibilidade": "apoiada",
-    "H1b_especificidade": "apoiada",
-    "H1_linha_impulsividade": "apoiada",
-    "H2_tat_ba": "inconclusiva",
-    "H2_tat_vs_oraculo": "refutada"
+    "H1a_sensitivity": "supported",
+    "H1b_specificity": "supported",
+    "H1_line_impulsiveness": "supported",
+    "H2_tat_ba": "inconclusive",
+    "H2_tat_vs_oracle": "refuted"
   },
   "descriptive": {
     "interferer_line_rate": {

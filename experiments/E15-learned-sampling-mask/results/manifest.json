@@ -8,12 +8,12 @@
   "readme_sha256": "d76625e3d0c9b69cbb2199ff9f384206043e90e1b158112a27874dab6d6c026f",
   "preregistration": {
     "dataset": "ottawa",
-    "variant": "bruto",
+    "variant": "raw",
     "rulers": [
       "local",
       "nested"
     ],
-    "metric": "acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)",
+    "metric": "balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)",
     "alpha": 0.05,
     "correction": "holm",
     "min_budgets": 2,
@@ -21,23 +21,23 @@
     "min_splits": 2,
     "min_mask_converged_frac": 0.5,
     "h1": {
-      "arm": "dec_aprendida_sel",
+      "arm": "dec_learned_sel",
       "baselines": [
-        "uniforme_treino",
-        "dec_uniforme_treino",
-        "dec_aleatoria"
+        "uniform_trained",
+        "dec_uniform_trained",
+        "dec_random"
       ],
       "convergence_arms": [
-        "dec_aprendida",
-        "dec_aprendida_sel"
+        "dec_learned",
+        "dec_learned_sel"
       ]
     },
     "h2": {
-      "arm": "dec_aprendida",
-      "baseline": "dec_livre_projetada",
+      "arm": "dec_learned",
+      "baseline": "dec_free_projected",
       "convergence_arms": [
-        "dec_aprendida",
-        "dec_livre_projetada"
+        "dec_learned",
+        "dec_free_projected"
       ]
     }
   },
@@ -70,8 +70,8 @@
   },
   "device": "cuda",
   "rulers": {
-    "local": "raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao",
-    "nested": "mediana das calibracoes do segmento 0 dos registros fora do teste do grupo"
+    "local": "full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring",
+    "nested": "median of the segment-0 calibrations of the records outside the test set of the group"
   },
   "input_sha256": {
     "ottawa:I-A-1.mat": "496a14c3caf62d28169ff2567e9aaf5c7913c03c648ad73651b410cd09316ea7",
@@ -4343,112 +4343,112 @@
   },
   "despiked_samples": {
     "ottawa:I-A-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-A-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-A-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-B-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-B-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-B-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-C-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-C-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-C-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-D-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-D-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:I-D-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-A-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-A-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-A-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-B-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-B-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-B-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-C-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-C-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-C-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-D-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-D-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:O-D-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-A-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-A-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-A-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-B-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-B-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-B-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-C-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-C-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-C-3.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-D-1.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-D-2.mat": {
-      "bruto": 0
+      "raw": 0
     },
     "ottawa:H-D-3.mat": {
-      "bruto": 0
+      "raw": 0
     }
   },
   "splits": {
@@ -4679,31 +4679,31 @@
     ]
   },
   "chosen_uniform_factor": {
-    "ottawa:bruto:split0": {
+    "ottawa:raw:split0": {
       "4": 13,
       "8": 13,
       "16": 30,
       "32": 46
     },
-    "ottawa:bruto:split1": {
+    "ottawa:raw:split1": {
       "4": 14,
       "8": 14,
       "16": 46,
       "32": 46
     },
-    "ottawa:bruto:split2": {
+    "ottawa:raw:split2": {
       "4": 13,
       "8": 13,
       "16": 30,
       "32": 33
     },
-    "ottawa:bruto:split3": {
+    "ottawa:raw:split3": {
       "4": 14,
       "8": 14,
       "16": 41,
       "32": 41
     },
-    "ottawa:bruto:split4": {
+    "ottawa:raw:split4": {
       "4": 14,
       "8": 14,
       "16": 46,
@@ -4717,186 +4717,186 @@
     ]
   },
   "runs": {
-    "ottawa/bruto/b4/split0/seed0/dec_uniforme.json": 64.9,
-    "ottawa/bruto/b4/split0/seed0/dec_aleatoria.json": 33.5,
-    "ottawa/bruto/b4/split0/seed0/dec_multicoset.json": 28.5,
-    "ottawa/bruto/b4/split0/seed0/dec_multicoset_vb.json": 35.0,
-    "ottawa/bruto/b4/split0/seed0/dec_uniforme_treino.json": 75.0,
-    "ottawa/bruto/b4/split0/seed0/dec_aprendida.json": 103.9,
-    "ottawa/bruto/b4/split0/seed0/dec_livre.json": 107.3,
-    "ottawa/bruto/b4/split0/seed0/dec_adaptativa.json": 218.2,
-    "ottawa/bruto/b4/split0/seed0/wdcnn.json": 3.1,
-    "ottawa/bruto/b8/split0/seed0/dec_uniforme.json": 58.9,
-    "ottawa/bruto/b8/split0/seed0/dec_aleatoria.json": 90.9,
-    "ottawa/bruto/b8/split0/seed0/dec_multicoset.json": 36.8,
-    "ottawa/bruto/b8/split0/seed0/dec_multicoset_vb.json": 58.0,
-    "ottawa/bruto/b8/split0/seed0/dec_uniforme_treino.json": 69.5,
-    "ottawa/bruto/b8/split0/seed0/dec_aprendida.json": 95.0,
-    "ottawa/bruto/b8/split0/seed0/dec_livre.json": 190.9,
-    "ottawa/bruto/b8/split0/seed0/dec_adaptativa.json": 140.1,
-    "ottawa/bruto/b8/split0/seed0/wdcnn.json": 3.8,
-    "ottawa/bruto/b16/split0/seed0/dec_uniforme.json": 49.1,
-    "ottawa/bruto/b16/split0/seed0/dec_aleatoria.json": 32.0,
-    "ottawa/bruto/b16/split0/seed0/dec_multicoset.json": 41.8,
-    "ottawa/bruto/b16/split0/seed0/dec_multicoset_vb.json": 35.3,
-    "ottawa/bruto/b16/split0/seed0/dec_uniforme_treino.json": 40.3,
-    "ottawa/bruto/b16/split0/seed0/dec_aprendida.json": 159.2,
-    "ottawa/bruto/b16/split0/seed0/dec_livre.json": 141.1,
-    "ottawa/bruto/b16/split0/seed0/dec_adaptativa.json": 202.6,
-    "ottawa/bruto/b16/split0/seed0/wdcnn.json": 6.3,
-    "ottawa/bruto/b32/split0/seed0/dec_uniforme.json": 34.1,
-    "ottawa/bruto/b32/split0/seed0/dec_aleatoria.json": 27.0,
-    "ottawa/bruto/b32/split0/seed0/dec_multicoset.json": 27.1,
-    "ottawa/bruto/b32/split0/seed0/dec_multicoset_vb.json": 44.3,
-    "ottawa/bruto/b32/split0/seed0/dec_uniforme_treino.json": 28.3,
-    "ottawa/bruto/b32/split0/seed0/dec_aprendida.json": 92.7,
-    "ottawa/bruto/b32/split0/seed0/dec_livre.json": 130.4,
-    "ottawa/bruto/b32/split0/seed0/dec_adaptativa.json": 281.0,
-    "ottawa/bruto/b32/split0/seed0/wdcnn.json": 4.3,
-    "ottawa/bruto/b4/split1/seed0/dec_uniforme.json": 40.7,
-    "ottawa/bruto/b4/split1/seed0/dec_aleatoria.json": 26.4,
-    "ottawa/bruto/b4/split1/seed0/dec_multicoset.json": 33.5,
-    "ottawa/bruto/b4/split1/seed0/dec_multicoset_vb.json": 33.9,
-    "ottawa/bruto/b4/split1/seed0/dec_uniforme_treino.json": 60.7,
-    "ottawa/bruto/b4/split1/seed0/dec_aprendida.json": 174.8,
-    "ottawa/bruto/b4/split1/seed0/dec_livre.json": 181.5,
-    "ottawa/bruto/b4/split1/seed0/dec_adaptativa.json": 168.6,
-    "ottawa/bruto/b4/split1/seed0/wdcnn.json": 3.1,
-    "ottawa/bruto/b8/split1/seed0/dec_uniforme.json": 72.8,
-    "ottawa/bruto/b8/split1/seed0/dec_aleatoria.json": 63.8,
-    "ottawa/bruto/b8/split1/seed0/dec_multicoset.json": 29.2,
-    "ottawa/bruto/b8/split1/seed0/dec_multicoset_vb.json": 37.1,
-    "ottawa/bruto/b8/split1/seed0/dec_uniforme_treino.json": 95.1,
-    "ottawa/bruto/b8/split1/seed0/dec_aprendida.json": 110.1,
-    "ottawa/bruto/b8/split1/seed0/dec_livre.json": 102.7,
-    "ottawa/bruto/b8/split1/seed0/dec_adaptativa.json": 143.2,
-    "ottawa/bruto/b8/split1/seed0/wdcnn.json": 4.5,
-    "ottawa/bruto/b16/split1/seed0/dec_uniforme.json": 46.4,
-    "ottawa/bruto/b16/split1/seed0/dec_aleatoria.json": 47.2,
-    "ottawa/bruto/b16/split1/seed0/dec_multicoset.json": 41.9,
-    "ottawa/bruto/b16/split1/seed0/dec_multicoset_vb.json": 24.3,
-    "ottawa/bruto/b16/split1/seed0/dec_uniforme_treino.json": 55.3,
-    "ottawa/bruto/b16/split1/seed0/dec_aprendida.json": 110.9,
-    "ottawa/bruto/b16/split1/seed0/dec_livre.json": 103.3,
-    "ottawa/bruto/b16/split1/seed0/dec_adaptativa.json": 240.2,
-    "ottawa/bruto/b16/split1/seed0/wdcnn.json": 5.9,
-    "ottawa/bruto/b32/split1/seed0/dec_uniforme.json": 38.9,
-    "ottawa/bruto/b32/split1/seed0/dec_aleatoria.json": 28.2,
-    "ottawa/bruto/b32/split1/seed0/dec_multicoset.json": 34.1,
-    "ottawa/bruto/b32/split1/seed0/dec_multicoset_vb.json": 21.7,
-    "ottawa/bruto/b32/split1/seed0/dec_uniforme_treino.json": 36.9,
-    "ottawa/bruto/b32/split1/seed0/dec_aprendida.json": 89.9,
-    "ottawa/bruto/b32/split1/seed0/dec_livre.json": 118.2,
-    "ottawa/bruto/b32/split1/seed0/dec_adaptativa.json": 168.7,
-    "ottawa/bruto/b32/split1/seed0/wdcnn.json": 3.1,
-    "ottawa/bruto/b4/split2/seed0/dec_uniforme.json": 70.3,
-    "ottawa/bruto/b4/split2/seed0/dec_aleatoria.json": 33.2,
-    "ottawa/bruto/b4/split2/seed0/dec_multicoset.json": 31.4,
-    "ottawa/bruto/b4/split2/seed0/dec_multicoset_vb.json": 33.6,
-    "ottawa/bruto/b4/split2/seed0/dec_uniforme_treino.json": 79.2,
-    "ottawa/bruto/b4/split2/seed0/dec_aprendida.json": 176.3,
-    "ottawa/bruto/b4/split2/seed0/dec_livre.json": 161.8,
-    "ottawa/bruto/b4/split2/seed0/dec_adaptativa.json": 262.8,
-    "ottawa/bruto/b4/split2/seed0/wdcnn.json": 5.4,
-    "ottawa/bruto/b8/split2/seed0/dec_uniforme.json": 113.3,
-    "ottawa/bruto/b8/split2/seed0/dec_aleatoria.json": 33.9,
-    "ottawa/bruto/b8/split2/seed0/dec_multicoset.json": 47.2,
-    "ottawa/bruto/b8/split2/seed0/dec_multicoset_vb.json": 42.5,
-    "ottawa/bruto/b8/split2/seed0/dec_uniforme_treino.json": 60.5,
-    "ottawa/bruto/b8/split2/seed0/dec_aprendida.json": 208.5,
-    "ottawa/bruto/b8/split2/seed0/dec_livre.json": 223.2,
-    "ottawa/bruto/b8/split2/seed0/dec_adaptativa.json": 116.0,
-    "ottawa/bruto/b8/split2/seed0/wdcnn.json": 5.1,
-    "ottawa/bruto/b16/split2/seed0/dec_uniforme.json": 33.8,
-    "ottawa/bruto/b16/split2/seed0/dec_aleatoria.json": 33.8,
-    "ottawa/bruto/b16/split2/seed0/dec_multicoset.json": 44.6,
-    "ottawa/bruto/b16/split2/seed0/dec_multicoset_vb.json": 44.6,
-    "ottawa/bruto/b16/split2/seed0/dec_uniforme_treino.json": 28.2,
-    "ottawa/bruto/b16/split2/seed0/dec_aprendida.json": 96.5,
-    "ottawa/bruto/b16/split2/seed0/dec_livre.json": 126.2,
-    "ottawa/bruto/b16/split2/seed0/dec_adaptativa.json": 89.9,
-    "ottawa/bruto/b16/split2/seed0/wdcnn.json": 4.2,
-    "ottawa/bruto/b32/split2/seed0/dec_uniforme.json": 48.9,
-    "ottawa/bruto/b32/split2/seed0/dec_aleatoria.json": 54.7,
-    "ottawa/bruto/b32/split2/seed0/dec_multicoset.json": 40.9,
-    "ottawa/bruto/b32/split2/seed0/dec_multicoset_vb.json": 30.8,
-    "ottawa/bruto/b32/split2/seed0/dec_uniforme_treino.json": 39.8,
-    "ottawa/bruto/b32/split2/seed0/dec_aprendida.json": 116.4,
-    "ottawa/bruto/b32/split2/seed0/dec_livre.json": 178.7,
-    "ottawa/bruto/b32/split2/seed0/dec_adaptativa.json": 406.0,
-    "ottawa/bruto/b32/split2/seed0/wdcnn.json": 2.8,
-    "ottawa/bruto/b4/split3/seed0/dec_uniforme.json": 45.0,
-    "ottawa/bruto/b4/split3/seed0/dec_aleatoria.json": 31.1,
-    "ottawa/bruto/b4/split3/seed0/dec_multicoset.json": 37.2,
-    "ottawa/bruto/b4/split3/seed0/dec_multicoset_vb.json": 37.2,
-    "ottawa/bruto/b4/split3/seed0/dec_uniforme_treino.json": 45.1,
-    "ottawa/bruto/b4/split3/seed0/dec_aprendida.json": 114.7,
-    "ottawa/bruto/b4/split3/seed0/dec_livre.json": 160.1,
-    "ottawa/bruto/b4/split3/seed0/dec_adaptativa.json": 100.5,
-    "ottawa/bruto/b4/split3/seed0/wdcnn.json": 4.9,
-    "ottawa/bruto/b8/split3/seed0/dec_uniforme.json": 34.9,
-    "ottawa/bruto/b8/split3/seed0/dec_aleatoria.json": 40.7,
-    "ottawa/bruto/b8/split3/seed0/dec_multicoset.json": 43.6,
-    "ottawa/bruto/b8/split3/seed0/dec_multicoset_vb.json": 29.3,
-    "ottawa/bruto/b8/split3/seed0/dec_uniforme_treino.json": 28.6,
-    "ottawa/bruto/b8/split3/seed0/dec_aprendida.json": 131.6,
-    "ottawa/bruto/b8/split3/seed0/dec_livre.json": 100.9,
-    "ottawa/bruto/b8/split3/seed0/dec_adaptativa.json": 80.4,
-    "ottawa/bruto/b8/split3/seed0/wdcnn.json": 5.4,
-    "ottawa/bruto/b16/split3/seed0/dec_uniforme.json": 49.1,
-    "ottawa/bruto/b16/split3/seed0/dec_aleatoria.json": 28.1,
-    "ottawa/bruto/b16/split3/seed0/dec_multicoset.json": 37.5,
-    "ottawa/bruto/b16/split3/seed0/dec_multicoset_vb.json": 21.4,
-    "ottawa/bruto/b16/split3/seed0/dec_uniforme_treino.json": 49.7,
-    "ottawa/bruto/b16/split3/seed0/dec_aprendida.json": 93.5,
-    "ottawa/bruto/b16/split3/seed0/dec_livre.json": 111.8,
-    "ottawa/bruto/b16/split3/seed0/dec_adaptativa.json": 173.6,
-    "ottawa/bruto/b16/split3/seed0/wdcnn.json": 4.0,
-    "ottawa/bruto/b32/split3/seed0/dec_uniforme.json": 34.9,
-    "ottawa/bruto/b32/split3/seed0/dec_aleatoria.json": 19.1,
-    "ottawa/bruto/b32/split3/seed0/dec_multicoset.json": 26.6,
-    "ottawa/bruto/b32/split3/seed0/dec_multicoset_vb.json": 34.9,
-    "ottawa/bruto/b32/split3/seed0/dec_uniforme_treino.json": 38.7,
-    "ottawa/bruto/b32/split3/seed0/dec_aprendida.json": 100.8,
-    "ottawa/bruto/b32/split3/seed0/dec_livre.json": 169.3,
-    "ottawa/bruto/b32/split3/seed0/dec_adaptativa.json": 270.1,
-    "ottawa/bruto/b32/split3/seed0/wdcnn.json": 2.2,
-    "ottawa/bruto/b4/split4/seed0/dec_uniforme.json": 78.4,
-    "ottawa/bruto/b4/split4/seed0/dec_aleatoria.json": 49.9,
-    "ottawa/bruto/b4/split4/seed0/dec_multicoset.json": 61.0,
-    "ottawa/bruto/b4/split4/seed0/dec_multicoset_vb.json": 44.1,
-    "ottawa/bruto/b4/split4/seed0/dec_uniforme_treino.json": 105.5,
-    "ottawa/bruto/b4/split4/seed0/dec_aprendida.json": 136.2,
-    "ottawa/bruto/b4/split4/seed0/dec_livre.json": 156.4,
-    "ottawa/bruto/b4/split4/seed0/dec_adaptativa.json": 262.0,
-    "ottawa/bruto/b4/split4/seed0/wdcnn.json": 6.2,
-    "ottawa/bruto/b8/split4/seed0/dec_uniforme.json": 72.7,
-    "ottawa/bruto/b8/split4/seed0/dec_aleatoria.json": 46.7,
-    "ottawa/bruto/b8/split4/seed0/dec_multicoset.json": 52.1,
-    "ottawa/bruto/b8/split4/seed0/dec_multicoset_vb.json": 89.5,
-    "ottawa/bruto/b8/split4/seed0/dec_uniforme_treino.json": 105.3,
-    "ottawa/bruto/b8/split4/seed0/dec_aprendida.json": 163.2,
-    "ottawa/bruto/b8/split4/seed0/dec_livre.json": 200.9,
-    "ottawa/bruto/b8/split4/seed0/dec_adaptativa.json": 193.8,
-    "ottawa/bruto/b8/split4/seed0/wdcnn.json": 5.5,
-    "ottawa/bruto/b16/split4/seed0/dec_uniforme.json": 64.8,
-    "ottawa/bruto/b16/split4/seed0/dec_aleatoria.json": 37.5,
-    "ottawa/bruto/b16/split4/seed0/dec_multicoset.json": 56.2,
-    "ottawa/bruto/b16/split4/seed0/dec_multicoset_vb.json": 27.8,
-    "ottawa/bruto/b16/split4/seed0/dec_uniforme_treino.json": 35.9,
-    "ottawa/bruto/b16/split4/seed0/dec_aprendida.json": 138.9,
-    "ottawa/bruto/b16/split4/seed0/dec_livre.json": 283.6,
-    "ottawa/bruto/b16/split4/seed0/dec_adaptativa.json": 141.5,
-    "ottawa/bruto/b16/split4/seed0/wdcnn.json": 4.5,
-    "ottawa/bruto/b32/split4/seed0/dec_uniforme.json": 52.6,
-    "ottawa/bruto/b32/split4/seed0/dec_aleatoria.json": 28.4,
-    "ottawa/bruto/b32/split4/seed0/dec_multicoset.json": 23.6,
-    "ottawa/bruto/b32/split4/seed0/dec_multicoset_vb.json": 33.7,
-    "ottawa/bruto/b32/split4/seed0/dec_uniforme_treino.json": 31.4,
-    "ottawa/bruto/b32/split4/seed0/dec_aprendida.json": 152.9,
-    "ottawa/bruto/b32/split4/seed0/dec_livre.json": 158.2,
-    "ottawa/bruto/b32/split4/seed0/dec_adaptativa.json": 156.8,
-    "ottawa/bruto/b32/split4/seed0/wdcnn.json": 7.9
+    "ottawa/raw/b4/split0/seed0/dec_uniform.json": 64.9,
+    "ottawa/raw/b4/split0/seed0/dec_random.json": 33.5,
+    "ottawa/raw/b4/split0/seed0/dec_multicoset.json": 28.5,
+    "ottawa/raw/b4/split0/seed0/dec_multicoset_vb.json": 35.0,
+    "ottawa/raw/b4/split0/seed0/dec_uniform_trained.json": 75.0,
+    "ottawa/raw/b4/split0/seed0/dec_learned.json": 103.9,
+    "ottawa/raw/b4/split0/seed0/dec_free.json": 107.3,
+    "ottawa/raw/b4/split0/seed0/dec_adaptive.json": 218.2,
+    "ottawa/raw/b4/split0/seed0/wdcnn.json": 3.1,
+    "ottawa/raw/b8/split0/seed0/dec_uniform.json": 58.9,
+    "ottawa/raw/b8/split0/seed0/dec_random.json": 90.9,
+    "ottawa/raw/b8/split0/seed0/dec_multicoset.json": 36.8,
+    "ottawa/raw/b8/split0/seed0/dec_multicoset_vb.json": 58.0,
+    "ottawa/raw/b8/split0/seed0/dec_uniform_trained.json": 69.5,
+    "ottawa/raw/b8/split0/seed0/dec_learned.json": 95.0,
+    "ottawa/raw/b8/split0/seed0/dec_free.json": 190.9,
+    "ottawa/raw/b8/split0/seed0/dec_adaptive.json": 140.1,
+    "ottawa/raw/b8/split0/seed0/wdcnn.json": 3.8,
+    "ottawa/raw/b16/split0/seed0/dec_uniform.json": 49.1,
+    "ottawa/raw/b16/split0/seed0/dec_random.json": 32.0,
+    "ottawa/raw/b16/split0/seed0/dec_multicoset.json": 41.8,
+    "ottawa/raw/b16/split0/seed0/dec_multicoset_vb.json": 35.3,
+    "ottawa/raw/b16/split0/seed0/dec_uniform_trained.json": 40.3,
+    "ottawa/raw/b16/split0/seed0/dec_learned.json": 159.2,
+    "ottawa/raw/b16/split0/seed0/dec_free.json": 141.1,
+    "ottawa/raw/b16/split0/seed0/dec_adaptive.json": 202.6,
+    "ottawa/raw/b16/split0/seed0/wdcnn.json": 6.3,
+    "ottawa/raw/b32/split0/seed0/dec_uniform.json": 34.1,
+    "ottawa/raw/b32/split0/seed0/dec_random.json": 27.0,
+    "ottawa/raw/b32/split0/seed0/dec_multicoset.json": 27.1,
+    "ottawa/raw/b32/split0/seed0/dec_multicoset_vb.json": 44.3,
+    "ottawa/raw/b32/split0/seed0/dec_uniform_trained.json": 28.3,
+    "ottawa/raw/b32/split0/seed0/dec_learned.json": 92.7,
+    "ottawa/raw/b32/split0/seed0/dec_free.json": 130.4,
+    "ottawa/raw/b32/split0/seed0/dec_adaptive.json": 281.0,
+    "ottawa/raw/b32/split0/seed0/wdcnn.json": 4.3,
+    "ottawa/raw/b4/split1/seed0/dec_uniform.json": 40.7,
+    "ottawa/raw/b4/split1/seed0/dec_random.json": 26.4,
+    "ottawa/raw/b4/split1/seed0/dec_multicoset.json": 33.5,
+    "ottawa/raw/b4/split1/seed0/dec_multicoset_vb.json": 33.9,
+    "ottawa/raw/b4/split1/seed0/dec_uniform_trained.json": 60.7,
+    "ottawa/raw/b4/split1/seed0/dec_learned.json": 174.8,
+    "ottawa/raw/b4/split1/seed0/dec_free.json": 181.5,
+    "ottawa/raw/b4/split1/seed0/dec_adaptive.json": 168.6,
+    "ottawa/raw/b4/split1/seed0/wdcnn.json": 3.1,
+    "ottawa/raw/b8/split1/seed0/dec_uniform.json": 72.8,
+    "ottawa/raw/b8/split1/seed0/dec_random.json": 63.8,
+    "ottawa/raw/b8/split1/seed0/dec_multicoset.json": 29.2,
+    "ottawa/raw/b8/split1/seed0/dec_multicoset_vb.json": 37.1,
+    "ottawa/raw/b8/split1/seed0/dec_uniform_trained.json": 95.1,
+    "ottawa/raw/b8/split1/seed0/dec_learned.json": 110.1,
+    "ottawa/raw/b8/split1/seed0/dec_free.json": 102.7,
+    "ottawa/raw/b8/split1/seed0/dec_adaptive.json": 143.2,
+    "ottawa/raw/b8/split1/seed0/wdcnn.json": 4.5,
+    "ottawa/raw/b16/split1/seed0/dec_uniform.json": 46.4,
+    "ottawa/raw/b16/split1/seed0/dec_random.json": 47.2,
+    "ottawa/raw/b16/split1/seed0/dec_multicoset.json": 41.9,
+    "ottawa/raw/b16/split1/seed0/dec_multicoset_vb.json": 24.3,
+    "ottawa/raw/b16/split1/seed0/dec_uniform_trained.json": 55.3,
+    "ottawa/raw/b16/split1/seed0/dec_learned.json": 110.9,
+    "ottawa/raw/b16/split1/seed0/dec_free.json": 103.3,
+    "ottawa/raw/b16/split1/seed0/dec_adaptive.json": 240.2,
+    "ottawa/raw/b16/split1/seed0/wdcnn.json": 5.9,
+    "ottawa/raw/b32/split1/seed0/dec_uniform.json": 38.9,
+    "ottawa/raw/b32/split1/seed0/dec_random.json": 28.2,
+    "ottawa/raw/b32/split1/seed0/dec_multicoset.json": 34.1,
+    "ottawa/raw/b32/split1/seed0/dec_multicoset_vb.json": 21.7,
+    "ottawa/raw/b32/split1/seed0/dec_uniform_trained.json": 36.9,
+    "ottawa/raw/b32/split1/seed0/dec_learned.json": 89.9,
+    "ottawa/raw/b32/split1/seed0/dec_free.json": 118.2,
+    "ottawa/raw/b32/split1/seed0/dec_adaptive.json": 168.7,
+    "ottawa/raw/b32/split1/seed0/wdcnn.json": 3.1,
+    "ottawa/raw/b4/split2/seed0/dec_uniform.json": 70.3,
+    "ottawa/raw/b4/split2/seed0/dec_random.json": 33.2,
+    "ottawa/raw/b4/split2/seed0/dec_multicoset.json": 31.4,
+    "ottawa/raw/b4/split2/seed0/dec_multicoset_vb.json": 33.6,
+    "ottawa/raw/b4/split2/seed0/dec_uniform_trained.json": 79.2,
+    "ottawa/raw/b4/split2/seed0/dec_learned.json": 176.3,
+    "ottawa/raw/b4/split2/seed0/dec_free.json": 161.8,
+    "ottawa/raw/b4/split2/seed0/dec_adaptive.json": 262.8,
+    "ottawa/raw/b4/split2/seed0/wdcnn.json": 5.4,
+    "ottawa/raw/b8/split2/seed0/dec_uniform.json": 113.3,
+    "ottawa/raw/b8/split2/seed0/dec_random.json": 33.9,
+    "ottawa/raw/b8/split2/seed0/dec_multicoset.json": 47.2,
+    "ottawa/raw/b8/split2/seed0/dec_multicoset_vb.json": 42.5,
+    "ottawa/raw/b8/split2/seed0/dec_uniform_trained.json": 60.5,
+    "ottawa/raw/b8/split2/seed0/dec_learned.json": 208.5,
+    "ottawa/raw/b8/split2/seed0/dec_free.json": 223.2,
+    "ottawa/raw/b8/split2/seed0/dec_adaptive.json": 116.0,
+    "ottawa/raw/b8/split2/seed0/wdcnn.json": 5.1,
+    "ottawa/raw/b16/split2/seed0/dec_uniform.json": 33.8,
+    "ottawa/raw/b16/split2/seed0/dec_random.json": 33.8,
+    "ottawa/raw/b16/split2/seed0/dec_multicoset.json": 44.6,
+    "ottawa/raw/b16/split2/seed0/dec_multicoset_vb.json": 44.6,
+    "ottawa/raw/b16/split2/seed0/dec_uniform_trained.json": 28.2,
+    "ottawa/raw/b16/split2/seed0/dec_learned.json": 96.5,
+    "ottawa/raw/b16/split2/seed0/dec_free.json": 126.2,
+    "ottawa/raw/b16/split2/seed0/dec_adaptive.json": 89.9,
+    "ottawa/raw/b16/split2/seed0/wdcnn.json": 4.2,
+    "ottawa/raw/b32/split2/seed0/dec_uniform.json": 48.9,
+    "ottawa/raw/b32/split2/seed0/dec_random.json": 54.7,
+    "ottawa/raw/b32/split2/seed0/dec_multicoset.json": 40.9,
+    "ottawa/raw/b32/split2/seed0/dec_multicoset_vb.json": 30.8,
+    "ottawa/raw/b32/split2/seed0/dec_uniform_trained.json": 39.8,
+    "ottawa/raw/b32/split2/seed0/dec_learned.json": 116.4,
+    "ottawa/raw/b32/split2/seed0/dec_free.json": 178.7,
+    "ottawa/raw/b32/split2/seed0/dec_adaptive.json": 406.0,
+    "ottawa/raw/b32/split2/seed0/wdcnn.json": 2.8,
+    "ottawa/raw/b4/split3/seed0/dec_uniform.json": 45.0,
+    "ottawa/raw/b4/split3/seed0/dec_random.json": 31.1,
+    "ottawa/raw/b4/split3/seed0/dec_multicoset.json": 37.2,
+    "ottawa/raw/b4/split3/seed0/dec_multicoset_vb.json": 37.2,
+    "ottawa/raw/b4/split3/seed0/dec_uniform_trained.json": 45.1,
+    "ottawa/raw/b4/split3/seed0/dec_learned.json": 114.7,
+    "ottawa/raw/b4/split3/seed0/dec_free.json": 160.1,
+    "ottawa/raw/b4/split3/seed0/dec_adaptive.json": 100.5,
+    "ottawa/raw/b4/split3/seed0/wdcnn.json": 4.9,
+    "ottawa/raw/b8/split3/seed0/dec_uniform.json": 34.9,
+    "ottawa/raw/b8/split3/seed0/dec_random.json": 40.7,
+    "ottawa/raw/b8/split3/seed0/dec_multicoset.json": 43.6,
+    "ottawa/raw/b8/split3/seed0/dec_multicoset_vb.json": 29.3,
+    "ottawa/raw/b8/split3/seed0/dec_uniform_trained.json": 28.6,
+    "ottawa/raw/b8/split3/seed0/dec_learned.json": 131.6,
+    "ottawa/raw/b8/split3/seed0/dec_free.json": 100.9,
+    "ottawa/raw/b8/split3/seed0/dec_adaptive.json": 80.4,
+    "ottawa/raw/b8/split3/seed0/wdcnn.json": 5.4,
+    "ottawa/raw/b16/split3/seed0/dec_uniform.json": 49.1,
+    "ottawa/raw/b16/split3/seed0/dec_random.json": 28.1,
+    "ottawa/raw/b16/split3/seed0/dec_multicoset.json": 37.5,
+    "ottawa/raw/b16/split3/seed0/dec_multicoset_vb.json": 21.4,
+    "ottawa/raw/b16/split3/seed0/dec_uniform_trained.json": 49.7,
+    "ottawa/raw/b16/split3/seed0/dec_learned.json": 93.5,
+    "ottawa/raw/b16/split3/seed0/dec_free.json": 111.8,
+    "ottawa/raw/b16/split3/seed0/dec_adaptive.json": 173.6,
+    "ottawa/raw/b16/split3/seed0/wdcnn.json": 4.0,
+    "ottawa/raw/b32/split3/seed0/dec_uniform.json": 34.9,
+    "ottawa/raw/b32/split3/seed0/dec_random.json": 19.1,
+    "ottawa/raw/b32/split3/seed0/dec_multicoset.json": 26.6,
+    "ottawa/raw/b32/split3/seed0/dec_multicoset_vb.json": 34.9,
+    "ottawa/raw/b32/split3/seed0/dec_uniform_trained.json": 38.7,
+    "ottawa/raw/b32/split3/seed0/dec_learned.json": 100.8,
+    "ottawa/raw/b32/split3/seed0/dec_free.json": 169.3,
+    "ottawa/raw/b32/split3/seed0/dec_adaptive.json": 270.1,
+    "ottawa/raw/b32/split3/seed0/wdcnn.json": 2.2,
+    "ottawa/raw/b4/split4/seed0/dec_uniform.json": 78.4,
+    "ottawa/raw/b4/split4/seed0/dec_random.json": 49.9,
+    "ottawa/raw/b4/split4/seed0/dec_multicoset.json": 61.0,
+    "ottawa/raw/b4/split4/seed0/dec_multicoset_vb.json": 44.1,
+    "ottawa/raw/b4/split4/seed0/dec_uniform_trained.json": 105.5,
+    "ottawa/raw/b4/split4/seed0/dec_learned.json": 136.2,
+    "ottawa/raw/b4/split4/seed0/dec_free.json": 156.4,
+    "ottawa/raw/b4/split4/seed0/dec_adaptive.json": 262.0,
+    "ottawa/raw/b4/split4/seed0/wdcnn.json": 6.2,
+    "ottawa/raw/b8/split4/seed0/dec_uniform.json": 72.7,
+    "ottawa/raw/b8/split4/seed0/dec_random.json": 46.7,
+    "ottawa/raw/b8/split4/seed0/dec_multicoset.json": 52.1,
+    "ottawa/raw/b8/split4/seed0/dec_multicoset_vb.json": 89.5,
+    "ottawa/raw/b8/split4/seed0/dec_uniform_trained.json": 105.3,
+    "ottawa/raw/b8/split4/seed0/dec_learned.json": 163.2,
+    "ottawa/raw/b8/split4/seed0/dec_free.json": 200.9,
+    "ottawa/raw/b8/split4/seed0/dec_adaptive.json": 193.8,
+    "ottawa/raw/b8/split4/seed0/wdcnn.json": 5.5,
+    "ottawa/raw/b16/split4/seed0/dec_uniform.json": 64.8,
+    "ottawa/raw/b16/split4/seed0/dec_random.json": 37.5,
+    "ottawa/raw/b16/split4/seed0/dec_multicoset.json": 56.2,
+    "ottawa/raw/b16/split4/seed0/dec_multicoset_vb.json": 27.8,
+    "ottawa/raw/b16/split4/seed0/dec_uniform_trained.json": 35.9,
+    "ottawa/raw/b16/split4/seed0/dec_learned.json": 138.9,
+    "ottawa/raw/b16/split4/seed0/dec_free.json": 283.6,
+    "ottawa/raw/b16/split4/seed0/dec_adaptive.json": 141.5,
+    "ottawa/raw/b16/split4/seed0/wdcnn.json": 4.5,
+    "ottawa/raw/b32/split4/seed0/dec_uniform.json": 52.6,
+    "ottawa/raw/b32/split4/seed0/dec_random.json": 28.4,
+    "ottawa/raw/b32/split4/seed0/dec_multicoset.json": 23.6,
+    "ottawa/raw/b32/split4/seed0/dec_multicoset_vb.json": 33.7,
+    "ottawa/raw/b32/split4/seed0/dec_uniform_trained.json": 31.4,
+    "ottawa/raw/b32/split4/seed0/dec_learned.json": 152.9,
+    "ottawa/raw/b32/split4/seed0/dec_free.json": 158.2,
+    "ottawa/raw/b32/split4/seed0/dec_adaptive.json": 156.8,
+    "ottawa/raw/b32/split4/seed0/wdcnn.json": 7.9
   },
   "n_rows": 11520,
   "device_name": "NVIDIA GeForce RTX 4090"

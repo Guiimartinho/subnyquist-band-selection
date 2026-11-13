@@ -5,6 +5,8 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 _spec = importlib.util.spec_from_file_location(
     "e22_run", Path(__file__).resolve().parents[1] / "run.py"
 )
@@ -47,7 +49,7 @@ def test_classic_skips_when_ceiling_is_below_kurtogram_floor():
     x = np.random.default_rng(0).standard_normal(8192)
     v = np.full(x.size, 10.0)
     out = e22.classic(x, v, 51_200.0, 16, 400.0, CFG)
-    assert out == {"skipped": "teto abaixo do piso do kurtograma"}
+    assert out == {"skipped": "ceiling below the kurtogram floor"}
 
 
 def test_tat_is_inadmissible_with_empty_search_range():
@@ -63,3 +65,33 @@ def test_tat_is_inadmissible_with_empty_search_range():
 def test_run_record_safe_turns_exceptions_into_error_records():
     out = e22.run_record_safe({"cfg": {}, "dataset": "ottawa", "id": "X"})
     assert out["id"] == "X" and "error" in out
+
+
+def _relabel_tokens() -> dict:
+    """TOKENS of tools/relabel_map.py (old label -> English label), or skip if it is absent."""
+    path = Path(__file__).resolve().parents[3] / "tools" / "relabel_map.py"
+    if not path.exists():
+        pytest.skip("tools/relabel_map.py is not part of this repository")
+    spec = importlib.util.spec_from_file_location("relabel_map", path)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m.TOKENS
+
+
+def test_summary_keeps_the_row_order_of_the_versioned_files():
+    """summary.csv is sorted by the labels the runs wrote, before they were renamed to English."""
+    arms = ("uniform", "tat_rate", "bandpass_lu", "random_cs", "uniform_ceiling", "despike")
+    rows = [
+        {"dataset": "ottawa", "group": "outer_race", "budget": 4, "arm": a, "hit": 1} for a in arms
+    ]
+    order = [r["arm"] for r in e22.summarize(rows)]
+    assert order == [
+        "random_cs",
+        "despike",
+        "bandpass_lu",
+        "tat_rate",
+        "uniform",
+        "uniform_ceiling",
+    ]
+    tokens = _relabel_tokens()
+    assert all(tokens[old] == new for new, old in e22.LEGACY_LABELS.items())

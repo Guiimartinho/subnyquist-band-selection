@@ -20,14 +20,14 @@ min_line_prominence: 5.0
 prominence_window: 0.07
 despike: {k_mad: 10.0}                                # E20 criterion
 arms:
-  kurtograma: {selector: sk, despike: false}          # the classical pipeline (baseline)
-  kurtograma_sem_picos: {selector: sk, despike: true}
-  infograma_ses: {selector: ses_negentropy, despike: false}
-  infograma_ses_sem_picos: {selector: ses_negentropy, despike: true}
+  kurtogram: {selector: sk, despike: false}           # the classical pipeline (baseline)
+  kurtogram_despiked: {selector: sk, despike: true}
+  ses_infogram: {selector: ses_negentropy, despike: false}
+  ses_infogram_despiked: {selector: ses_negentropy, despike: true}
   gini: {selector: gini, despike: false}
 tests:
-  H1: {arm: kurtograma_sem_picos, baseline: kurtograma}
-  H2: {arm: infograma_ses, baseline: kurtograma}
+  H1: {arm: kurtogram_despiked, baseline: kurtogram}
+  H2: {arm: ses_infogram, baseline: kurtogram}
 analysis: {bootstrap_resamples: 4000, alpha: 0.05, decisive_factors: [4, 8, 16, 32], primary_ruler: nested}
 compute: {workers: 6}
 output: {results_dir: results}

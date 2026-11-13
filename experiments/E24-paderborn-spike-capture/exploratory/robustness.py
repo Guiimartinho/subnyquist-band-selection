@@ -33,9 +33,9 @@ e24 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(e24)
 
 TESTS = {
-    "H1": ("results", "kurtograma_sem_picos", "kurtograma"),
-    "H2": ("results", "infograma_ses", "kurtograma"),
-    "H3": ("results-post-despike", "kurtograma_sem_picos_decimado", "kurtograma"),
+    "H1": ("results", "kurtogram_despiked", "kurtogram"),
+    "H2": ("results", "ses_infogram", "kurtogram"),
+    "H3": ("results-post-despike", "kurtogram_despiked_after_decimation", "kurtogram"),
 }
 FACTORS = (4, 8, 16, 32)
 

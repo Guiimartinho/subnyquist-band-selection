@@ -161,7 +161,7 @@
   },
   "mitigations_e20": {
     "selector_bands": {
-      "infograma_ses|1x": {
+      "ses_infogram|1x": {
         "hits": 7,
         "n": 36,
         "top_bands": [
@@ -179,7 +179,7 @@
           ]
         ]
       },
-      "infograma_ses|4x": {
+      "ses_infogram|4x": {
         "hits": 11,
         "n": 36,
         "top_bands": [

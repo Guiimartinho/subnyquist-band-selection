@@ -209,19 +209,19 @@ decoder:
   sk_guard_frac: 0.05
   beta_init: 2.0
 methods:
-- dec_uniforme
-- dec_aleatoria
+- dec_uniform
+- dec_random
 - dec_multicoset
 - dec_multicoset_vb
-- dec_uniforme_treino
-- dec_aprendida
-- dec_livre
+- dec_uniform_trained
+- dec_learned
+- dec_free
 mask:
   init: flat
   init_scale: 0.01
   relaxation: topk_st
   lr_multiplier: 30.0
-livre:
+free:
   period_multiple: 4
 loupe:
   slope: 5.0
@@ -241,12 +241,11 @@ wdcnn:
   max_val_windows_per_segment: 16
 preregistration:
   dataset: paderborn
-  variant: bruto
+  variant: raw
   rulers:
   - local
   - nested
-  metric: acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua|
-    < 0,06)
+  metric: balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)
   alpha: 0.05
   correction: holm
   min_budgets: 2
@@ -254,20 +253,20 @@ preregistration:
   min_splits: 2
   min_mask_converged_frac: 0.5
   h1:
-    arm: dec_aprendida_sel
+    arm: dec_learned_sel
     baselines:
-    - uniforme_treino
-    - dec_uniforme_treino
-    - dec_aleatoria
+    - uniform_trained
+    - dec_uniform_trained
+    - dec_random
     convergence_arms:
-    - dec_aprendida
-    - dec_aprendida_sel
+    - dec_learned
+    - dec_learned_sel
   h2:
-    arm: dec_aprendida
-    baseline: dec_livre_projetada
+    arm: dec_learned
+    baseline: dec_free_projected
     convergence_arms:
-    - dec_aprendida
-    - dec_livre_projetada
+    - dec_learned
+    - dec_free_projected
 analysis:
   bootstrap_resamples: 200
 compute:

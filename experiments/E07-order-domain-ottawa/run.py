@@ -309,11 +309,11 @@ def main() -> int:
                 try:
                     k, spec = analyse(x, fs_eff, v, cfg)
                     est = {
-                        "sem_prior": estimate_without_prior(spec, float(cfg["order_min"])),
-                        "prior_nominal": estimate_from_candidates(
+                        "no_prior": estimate_without_prior(spec, float(cfg["order_min"])),
+                        "nominal_prior": estimate_from_candidates(
                             spec, prior_nominal, n_harmonics=nh_score, tol_hz=tol
                         )[0],
-                        "prior_calibrado": estimate_from_candidates(
+                        "calibrated_prior": estimate_from_candidates(
                             spec, prior_calib, n_harmonics=nh_score, tol_hz=tol
                         )[0],
                     }

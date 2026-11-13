@@ -13,7 +13,7 @@
       ],
       "budgets": {
         "4": {
-          "uniforme": {
+          "uniform": {
             "hits": 27,
             "n": 48,
             "acc": 56.2
@@ -23,27 +23,27 @@
             "n": 48,
             "acc": 91.7
           },
-          "uniforme_teto": {
+          "uniform_ceiling": {
             "hits": 41,
             "n": 48,
             "acc": 85.4
           },
-          "taxa_tat": {
+          "tat_rate": {
             "hits": 37,
             "n": 48,
             "acc": 77.1
           },
-          "aleatorio_cs": {
+          "random_cs": {
             "hits": 1,
             "n": 35,
             "acc": 2.9
           },
-          "passa_faixa_lu": {
+          "bandpass_lu": {
             "hits": 38,
             "n": 48,
             "acc": 79.2
           },
-          "oraculo_uniforme": {
+          "uniform_oracle": {
             "acc": 95.8,
             "n": 48,
             "factor": {
@@ -51,7 +51,7 @@
               "outer_race": 46
             }
           },
-          "uniforme_varredura_cv": {
+          "uniform_sweep_cv": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -65,7 +65,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro_vazamento": {
+          "uniform_sweep_record_leak": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -81,7 +81,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro": {
+          "uniform_sweep_record": {
             "acc": 89.6,
             "n": 48,
             "factor": {
@@ -97,7 +97,7 @@
               ]
             }
           },
-          "H1_cs_minus_teto": {
+          "H1_cs_minus_ceiling": {
             "points": -82.5,
             "ci95": [
               -91.7,
@@ -111,7 +111,7 @@
               -8.3
             ]
           },
-          "posthoc_tat_minus_registro": {
+          "posthoc_tat_minus_record": {
             "points": -12.5,
             "ci95": [
               -18.8,
@@ -126,22 +126,22 @@
             ]
           },
           "mcnemar": {
-            "taxa_tat_vs_uniforme": {
+            "tat_rate_vs_uniform": {
               "only_first": 10,
               "only_second": 0,
               "p": 0.001953125
             },
-            "uniforme_teto_vs_uniforme": {
+            "uniform_ceiling_vs_uniform": {
               "only_first": 14,
               "only_second": 0,
               "p": 0.0001220703125
             },
-            "passa_faixa_lu_vs_uniforme": {
+            "bandpass_lu_vs_uniform": {
               "only_first": 11,
               "only_second": 0,
               "p": 0.0009765625
             },
-            "aleatorio_cs_vs_uniforme": {
+            "random_cs_vs_uniform": {
               "only_first": 0,
               "only_second": 17,
               "p": 1.52587890625e-05
@@ -149,7 +149,7 @@
           }
         },
         "8": {
-          "uniforme": {
+          "uniform": {
             "hits": 42,
             "n": 48,
             "acc": 87.5
@@ -159,27 +159,27 @@
             "n": 48,
             "acc": 93.8
           },
-          "uniforme_teto": {
+          "uniform_ceiling": {
             "hits": 42,
             "n": 48,
             "acc": 87.5
           },
-          "taxa_tat": {
+          "tat_rate": {
             "hits": 42,
             "n": 48,
             "acc": 87.5
           },
-          "aleatorio_cs": {
+          "random_cs": {
             "hits": 2,
             "n": 48,
             "acc": 4.2
           },
-          "passa_faixa_lu": {
+          "bandpass_lu": {
             "hits": 38,
             "n": 48,
             "acc": 79.2
           },
-          "oraculo_uniforme": {
+          "uniform_oracle": {
             "acc": 95.8,
             "n": 48,
             "factor": {
@@ -187,7 +187,7 @@
               "outer_race": 46
             }
           },
-          "uniforme_varredura_cv": {
+          "uniform_sweep_cv": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -201,7 +201,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro_vazamento": {
+          "uniform_sweep_record_leak": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -217,7 +217,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro": {
+          "uniform_sweep_record": {
             "acc": 89.6,
             "n": 48,
             "factor": {
@@ -233,7 +233,7 @@
               ]
             }
           },
-          "H1_cs_minus_teto": {
+          "H1_cs_minus_ceiling": {
             "points": -83.3,
             "ci95": [
               -91.7,
@@ -247,7 +247,7 @@
               -2.1
             ]
           },
-          "posthoc_tat_minus_registro": {
+          "posthoc_tat_minus_record": {
             "points": -2.1,
             "ci95": [
               -4.2,
@@ -262,22 +262,22 @@
             ]
           },
           "mcnemar": {
-            "taxa_tat_vs_uniforme": {
+            "tat_rate_vs_uniform": {
               "only_first": 0,
               "only_second": 0,
               "p": 1.0
             },
-            "uniforme_teto_vs_uniforme": {
+            "uniform_ceiling_vs_uniform": {
               "only_first": 0,
               "only_second": 0,
               "p": 1.0
             },
-            "passa_faixa_lu_vs_uniforme": {
+            "bandpass_lu_vs_uniform": {
               "only_first": 1,
               "only_second": 5,
               "p": 0.21875
             },
-            "aleatorio_cs_vs_uniforme": {
+            "random_cs_vs_uniform": {
               "only_first": 0,
               "only_second": 40,
               "p": 1.8189894035458565e-12
@@ -285,7 +285,7 @@
           }
         },
         "16": {
-          "uniforme": {
+          "uniform": {
             "hits": 40,
             "n": 48,
             "acc": 83.3
@@ -295,27 +295,27 @@
             "n": 48,
             "acc": 89.6
           },
-          "uniforme_teto": {
+          "uniform_ceiling": {
             "hits": 26,
             "n": 48,
             "acc": 54.2
           },
-          "taxa_tat": {
+          "tat_rate": {
             "hits": 40,
             "n": 48,
             "acc": 83.3
           },
-          "aleatorio_cs": {
+          "random_cs": {
             "hits": 3,
             "n": 48,
             "acc": 6.2
           },
-          "passa_faixa_lu": {
+          "bandpass_lu": {
             "hits": 38,
             "n": 48,
             "acc": 79.2
           },
-          "oraculo_uniforme": {
+          "uniform_oracle": {
             "acc": 95.8,
             "n": 48,
             "factor": {
@@ -323,7 +323,7 @@
               "outer_race": 46
             }
           },
-          "uniforme_varredura_cv": {
+          "uniform_sweep_cv": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -337,7 +337,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro_vazamento": {
+          "uniform_sweep_record_leak": {
             "acc": 91.7,
             "n": 48,
             "factor": {
@@ -353,7 +353,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro": {
+          "uniform_sweep_record": {
             "acc": 87.5,
             "n": 48,
             "factor": {
@@ -369,7 +369,7 @@
               ]
             }
           },
-          "H1_cs_minus_teto": {
+          "H1_cs_minus_ceiling": {
             "points": -48.0,
             "ci95": [
               -62.5,
@@ -383,7 +383,7 @@
               -6.2
             ]
           },
-          "posthoc_tat_minus_registro": {
+          "posthoc_tat_minus_record": {
             "points": -4.2,
             "ci95": [
               -8.3,
@@ -398,22 +398,22 @@
             ]
           },
           "mcnemar": {
-            "taxa_tat_vs_uniforme": {
+            "tat_rate_vs_uniform": {
               "only_first": 0,
               "only_second": 0,
               "p": 1.0
             },
-            "uniforme_teto_vs_uniforme": {
+            "uniform_ceiling_vs_uniform": {
               "only_first": 0,
               "only_second": 14,
               "p": 0.0001220703125
             },
-            "passa_faixa_lu_vs_uniforme": {
+            "bandpass_lu_vs_uniform": {
               "only_first": 2,
               "only_second": 4,
               "p": 0.6875
             },
-            "aleatorio_cs_vs_uniforme": {
+            "random_cs_vs_uniform": {
               "only_first": 0,
               "only_second": 37,
               "p": 1.4551915228366852e-11
@@ -421,7 +421,7 @@
           }
         },
         "32": {
-          "uniforme": {
+          "uniform": {
             "hits": 42,
             "n": 48,
             "acc": 87.5
@@ -431,27 +431,27 @@
             "n": 48,
             "acc": 89.6
           },
-          "uniforme_teto": {
+          "uniform_ceiling": {
             "hits": 14,
             "n": 48,
             "acc": 29.2
           },
-          "taxa_tat": {
+          "tat_rate": {
             "hits": 42,
             "n": 48,
             "acc": 87.5
           },
-          "aleatorio_cs": {
+          "random_cs": {
             "hits": 2,
             "n": 48,
             "acc": 4.2
           },
-          "passa_faixa_lu": {
+          "bandpass_lu": {
             "hits": 37,
             "n": 48,
             "acc": 77.1
           },
-          "oraculo_uniforme": {
+          "uniform_oracle": {
             "acc": 95.8,
             "n": 48,
             "factor": {
@@ -459,7 +459,7 @@
               "outer_race": 46
             }
           },
-          "uniforme_varredura_cv": {
+          "uniform_sweep_cv": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -473,7 +473,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro_vazamento": {
+          "uniform_sweep_record_leak": {
             "acc": 93.8,
             "n": 48,
             "factor": {
@@ -489,7 +489,7 @@
               ]
             }
           },
-          "uniforme_varredura_registro": {
+          "uniform_sweep_record": {
             "acc": 89.6,
             "n": 48,
             "factor": {
@@ -505,7 +505,7 @@
               ]
             }
           },
-          "H1_cs_minus_teto": {
+          "H1_cs_minus_ceiling": {
             "points": -25.0,
             "ci95": [
               -37.5,
@@ -519,7 +519,7 @@
               -2.1
             ]
           },
-          "posthoc_tat_minus_registro": {
+          "posthoc_tat_minus_record": {
             "points": -2.1,
             "ci95": [
               -6.2,
@@ -534,22 +534,22 @@
             ]
           },
           "mcnemar": {
-            "taxa_tat_vs_uniforme": {
+            "tat_rate_vs_uniform": {
               "only_first": 1,
               "only_second": 1,
               "p": 1.0
             },
-            "uniforme_teto_vs_uniforme": {
+            "uniform_ceiling_vs_uniform": {
               "only_first": 2,
               "only_second": 30,
               "p": 2.4633482098579407e-07
             },
-            "passa_faixa_lu_vs_uniforme": {
+            "bandpass_lu_vs_uniform": {
               "only_first": 0,
               "only_second": 5,
               "p": 0.0625
             },
-            "aleatorio_cs_vs_uniforme": {
+            "random_cs_vs_uniform": {
               "only_first": 0,
               "only_second": 40,
               "p": 1.8189894035458565e-12
@@ -558,8 +558,8 @@
         }
       },
       "verdict": {
-        "H1": "nao refutada",
-        "H2": "refutada"
+        "H1": "not refuted",
+        "H2": "refuted"
       }
     }
   }

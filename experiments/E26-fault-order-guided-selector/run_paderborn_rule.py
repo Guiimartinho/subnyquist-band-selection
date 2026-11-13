@@ -5,10 +5,10 @@ Here the rule stays fixed: the score of each fault is the mean prominence in the
 harmonics of the geometric order, and the decision uses the healthy threshold. Only the band
 changes:
 
-- ``kurtograma``: the band of the fast kurtogram, up to the effective Nyquist (as in E24);
-- ``infograma_ses``: the band of the SES infogram, on the same partition;
-- ``banda_larga``: [f_min, fs/2], without selection (the classical envelope without a kurtogram);
-- ``sorteada``: a band drawn at random from the partition of the guided selector, with a seed per
+- ``kurtogram``: the band of the fast kurtogram, up to the effective Nyquist (as in E24);
+- ``ses_infogram``: the band of the SES infogram, on the same partition;
+- ``wideband``: [f_min, fs/2], without selection (the classical envelope without a kurtogram);
+- ``random_band``: a band drawn at random from the partition of the guided selector, with a seed per
   segment.
 
 The guided selector of E26 is the maximum of the same score over the 23 bands of the partition. It
@@ -56,6 +56,15 @@ e24 = base.e24
 FS = pb.FS_HZ
 ORDERS = base.ORDERS
 CLEAN = base.CLEAN
+# the cleaning labels as the run wrote them, before they were renamed to English
+# (tools/relabel_map.py): the seed of each segment is derived from them, so a rerun draws the
+# same random bands
+LEGACY_CLEAN = {"raw": "bruto", "median3": "mediana3"}
+
+
+def segment_seed(code: str, setting: str, n: int, factor: int, clean: str) -> int:
+    """Seed of the random band of one segment, from the legacy label of its cleaning."""
+    return zlib.crc32(f"{code}|{setting}|{n}|{factor}|{LEGACY_CLEAN[clean]}".encode())
 
 
 def band_scores(x, v, fs: float, band, cfg: dict) -> dict[str, float]:
@@ -85,12 +94,12 @@ def band_scores(x, v, fs: float, band, cfg: dict) -> dict[str, float]:
 def bands_for(x, fs: float, cfg: dict, seed: int) -> dict[str, tuple[float, float]]:
     f_min = float(cfg["kurtogram"]["f_min_hz"])
     out = {}
-    for name, sel in (("kurtograma", "sk"), ("infograma_ses", "ses_negentropy")):
+    for name, sel in (("kurtogram", "sk"), ("ses_infogram", "ses_negentropy")):
         with contextlib.suppress(ValueError):  # empty search: the strategy gets no row
             out[name] = tuple(float(b) for b in e24.select_band(x, fs, sel, cfg).band_hz)
-    out["banda_larga"] = (f_min, fs / 2.0)
+    out["wideband"] = (f_min, fs / 2.0)
     part = guided.bands(fs, f_min, int(cfg["guided"]["max_level"]))
-    out["sorteada"] = part[int(np.random.default_rng(seed).integers(len(part)))]
+    out["random_band"] = part[int(np.random.default_rng(seed).integers(len(part)))]
     return out
 
 
@@ -117,7 +126,7 @@ def task(job) -> dict:
                 continue
             for clean, fn in CLEAN.items():
                 xc = fn(xd)
-                seed = zlib.crc32(f"{code}|{setting}|{n}|{f}|{clean}".encode())
+                seed = segment_seed(code, setting, n, f, clean)
                 for strat, band in bands_for(xc, fs, cfg, seed).items():
                     sc = band_scores(xc, vd, fs, band, cfg)
                     out["rows"].append(

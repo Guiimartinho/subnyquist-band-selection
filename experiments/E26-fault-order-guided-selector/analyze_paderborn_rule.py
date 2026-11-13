@@ -1,20 +1,20 @@
 """Pre-registered analysis of E26b (README, "E26b: the rule stays fixed, the band changes").
 
 - **Arms with the guided rule fixed.** The band changes between the arms:
-  - ``guiado``: the maximum of the score over the 23 bands, read from
+  - ``guided``: the maximum of the score over the 23 bands, read from
     ``results-paderborn/metrics.csv``;
-  - ``kurtograma_regra``, ``infograma_ses_regra``, ``banda_larga_regra`` and ``sorteada_regra``:
-    the four strategies of ``results-paderborn-regra/metrics.csv``.
-  - Each arm exists for both cleanings, ``bruto`` (raw) and ``mediana3`` (median of 3).
+  - ``kurtogram_rule``, ``ses_infogram_rule``, ``wideband_rule`` and ``random_band_rule``:
+    the four strategies of ``results-paderborn-rule/metrics.csv``.
+  - Each arm exists for both cleanings, ``raw`` and ``median3`` (three-point median).
 - **Identification rule,** the same in all arms: the fault with the highest score, if that score
   exceeds the threshold; otherwise, "none".
   - The threshold is the 95th percentile of the maximum healthy scores, per arm, factor and
     cleaning.
   - To evaluate a healthy bearing, the threshold comes from the other 5.
 - **Tests** (per-bearing sign-flip test, stratified by race, as in E26):
-  - **H3:** the guided arm against ``kurtograma_regra``, on both cleanings and at the 4 decisive
+  - **H3:** the guided arm against ``kurtogram_rule``, on both cleanings and at the 4 decisive
     factors, with Holm over the 8.
-  - **H4:** the guided arm against ``banda_larga_regra``, in the same way.
+  - **H4:** the guided arm against ``wideband_rule``, in the same way.
   - A test passes if the Holm p is below α and the difference is positive.
 - **Integrity check.** Where the random band coincides with the band that the guided arm chose for
   a fault, the score of that fault has to be the same in the two files.
@@ -39,7 +39,7 @@ EXP = Path(__file__).resolve().parent
 _spec = importlib.util.spec_from_file_location("e26an", EXP / "analyze_paderborn.py")
 an = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(an)
-CLEANS = ("bruto", "mediana3")
+CLEANS = ("raw", "median3")
 FAULTS = ("BPFO", "BPFI")
 
 
@@ -63,9 +63,9 @@ def main() -> int:
     # one record per (arm, cleaning): (bearing, race, setting, measurement, factor, scores)
     recs: dict = defaultdict(list)
     for r in g_rows:
-        recs[("guiado", r["clean"])].append(r)
+        recs[("guided", r["clean"])].append(r)
     for r in s_rows:
-        recs[(f"{r['strategy']}_regra", r["clean"])].append(r)
+        recs[(f"{r['strategy']}_rule", r["clean"])].append(r)
     keyed = {
         arm: {(r["bearing"], r["setting"], r["measurement"], r["factor"]): r for r in rows}
         for arm, rows in recs.items()
@@ -74,8 +74,8 @@ def main() -> int:
     # integrity: random band equal to the guided band of the fault -> same score
     diffs = []
     for clean in CLEANS:
-        g = keyed[("guiado", clean)]
-        for k, r in keyed[("sorteada_regra", clean)].items():
+        g = keyed[("guided", clean)]
+        for k, r in keyed[("random_band_rule", clean)].items():
             if k in g:
                 for c in FAULTS:
                     if r["band"] == g[k][f"band_{c}"] and r[f"score_{c}"] and g[k][f"score_{c}"]:
@@ -111,7 +111,7 @@ def main() -> int:
         return {k: float(np.mean(v)) for k, v in acc[(arm, clean, f)].items() if k[0] in races}
 
     summary = {}
-    for arm, clean in sorted(recs):
+    for arm, clean in sorted(recs, key=lambda k: (an.legacy_label(k[0]), an.legacy_label(k[1]))):
         for f in factors:
             fault = an_balanced(per_bearing(arm, clean, f, ("OR", "IR")))
             spec = an_balanced(per_bearing(arm, clean, f, ("H",))).get("H")
@@ -122,16 +122,16 @@ def main() -> int:
             }
 
     tests = []
-    for name, base in (("H3", "kurtograma_regra"), ("H4", "banda_larga_regra")):
+    for name, base in (("H3", "kurtogram_rule"), ("H4", "wideband_rule")):
         cell = []
         for clean in CLEANS:
             for f in (int(x) for x in a["decisive_factors"] if int(x) in factors):
                 t = an.signflip(
-                    per_bearing("guiado", clean, f, ("OR", "IR")),
+                    per_bearing("guided", clean, f, ("OR", "IR")),
                     per_bearing(base, clean, f, ("OR", "IR")),
                     int(a["signflip_exact_max"]),
                     int(a["signflip_mc"]),
-                    int(a["seed"]) + f + (1000 if clean == "mediana3" else 0),
+                    int(a["seed"]) + f + (1000 if clean == "median3" else 0),
                 )
                 cell.append(
                     {"hypothesis": name, "baseline": base, "clean": clean, "factor": f, **t}

@@ -179,8 +179,8 @@ def estimate_from_candidates(
 ) -> tuple[float, float]:
     """Picks, from a discrete set, the candidate best supported by the spectrum.
 
-    It is E02's `com_prior` ("with prior") mode: instead of searching for the global peak, the
-    choice is made within the set that the geometry admits. Returns
+    It is the "with prior" mode of E02: instead of searching for the global peak, the choice
+    is made within the set that the geometry admits. Returns
     ``(frequency, harmonic energy)``.
 
     **Candidates above the Nyquist frequency of the spectrum are discarded.** A
@@ -274,7 +274,7 @@ def refine_order(
 def estimate_without_prior(spec: EnvelopeSpectrum, f_min_hz: float = 5.0) -> float:
     """Largest line of the envelope spectrum above ``f_min_hz``.
 
-    It is the `sem_prior` ("without prior") mode: no restriction on where the fault can be. It
+    It is the "without prior" mode (`no_prior` in E07): no restriction on where the fault can be. It
     serves as a contrast for measuring how much the geometric prior adds.
     """
     sel = spec.freqs_hz >= f_min_hz

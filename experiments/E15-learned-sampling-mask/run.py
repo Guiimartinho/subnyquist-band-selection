@@ -9,25 +9,25 @@ the config.
 Arms (`arm` column of metrics.csv)
 ----------------------------------
 Classical (E07/E22 pipeline: kurtogram -> envelope -> order -> argmax), CPU only:
-  uniforme_orcamento          decimation at the budget factor (the `uniforme` arm of E22)
-  uniforme_treino             factor >= budget with the most hits on the records outside the
+  uniform_budget              decimation at the budget factor (the `uniform` arm of E22)
+  uniform_trained             factor >= budget with the most hits on the records outside the
                               test set, by the local ruler; one factor per dataset; tie ->
                               higher rate
-  uniforme_treino_por_grupo   same, one factor per group (uses the family of the test record)
-  oraculo_uniforme[_por_grupo]  chosen WITH the test label: upper bound, not a method
+  uniform_trained_per_race    same, one factor per group (uses the family of the test record)
+  uniform_oracle[_per_race]   chosen WITH the test label: upper bound, not a method
 Same unrolled decoder (`snq_learn.order_decoder`), fixed mask, one stage:
-  dec_uniforme, dec_aleatoria, dec_multicoset (minimum peak alias),
+  dec_uniform, dec_random, dec_multicoset (minimum peak alias),
   dec_multicoset_vb (known support, venkataramani2001optimal),
-  dec_uniforme_treino         uniform mask at the `uniforme_treino` factor
+  dec_uniform_trained         uniform mask at the `uniform_trained` factor
 Searched mask (stage A, jointly with the decoder) and decoder RETRAINED FROM SCRATCH with the
 final mask fixed (stage B), the same protocol as the fixed arms:
-  dec_aprendida               Gumbel top-K on the feasible set (B); _sem_ajuste: A projected
-  dec_aprendida_sel           the dec_aprendida of the trained budget >= b with the best
+  dec_learned                 Gumbel top-K on the feasible set (B); _norefit: A projected
+  dec_learned_sel             the dec_learned of the trained budget >= b with the best
                               validation
-  dec_livre                   Gumbel top-K WITHOUT the constraint (horizon M.L, no g): A, not
-                              realizable; _projetada (B) and _projetada_sem_ajuste (A projected)
+  dec_free                    Gumbel top-K WITHOUT the constraint (horizon M.L, no g): A, not
+                              realizable; _projected (B) and _projected_norefit (A projected)
   dec_loupe_*                 LOUPE (optional), same structure
-  dec_adaptativa_blocos       block-adaptive, inspired by ADPS (one stage)
+  dec_adaptive_blocks         block-adaptive, inspired by ADPS (one stage)
   wdcnn                       generic network (zhang2017wdcnn), family only, decimated signal
 
 Rulers
@@ -119,35 +119,35 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 README = Path(__file__).resolve().parent / "README.md"
 FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
 GROUP_OF_FAMILY = {"BPFI": "inner_race", "BPFO": "outer_race", "BSF": "ball", "FTF": "cage"}
-HEALTHY = "saudavel"
-NO_FAMILY = "nenhuma"
+HEALTHY = "healthy_bearing"
+NO_FAMILY = "no_fault"
 RULERS = ("local", "nested")
 FIXED_METHODS = (
-    "dec_uniforme",
-    "dec_aleatoria",
+    "dec_uniform",
+    "dec_random",
     "dec_multicoset",
     "dec_multicoset_vb",
-    "dec_uniforme_treino",
+    "dec_uniform_trained",
 )
 ARMS_OF_METHOD = {
     **{m: (m,) for m in FIXED_METHODS},
-    "dec_aprendida": ("dec_aprendida", "dec_aprendida_sem_ajuste"),
-    "dec_livre": ("dec_livre", "dec_livre_projetada", "dec_livre_projetada_sem_ajuste"),
-    "dec_loupe": ("dec_loupe_livre", "dec_loupe_projetada", "dec_loupe_projetada_sem_ajuste"),
-    "dec_adaptativa": ("dec_adaptativa_blocos",),
+    "dec_learned": ("dec_learned", "dec_learned_norefit"),
+    "dec_free": ("dec_free", "dec_free_projected", "dec_free_projected_norefit"),
+    "dec_loupe": ("dec_loupe_free", "dec_loupe_projected", "dec_loupe_projected_norefit"),
+    "dec_adaptive": ("dec_adaptive_blocks",),
     "wdcnn": ("wdcnn",),
 }
 SECONDARY = (  # descriptive comparisons, outside the preregistration: no correction
-    ("dec_aprendida_sel", "oraculo_uniforme"),
-    ("dec_aprendida_sel", "uniforme_orcamento"),
-    ("dec_aprendida", "dec_uniforme"),
-    ("dec_aprendida", "dec_multicoset"),
-    ("dec_aprendida", "dec_multicoset_vb"),
-    ("dec_aprendida", "dec_aprendida_sem_ajuste"),
-    ("dec_livre", "dec_livre_projetada"),
-    ("dec_adaptativa_blocos", "dec_aprendida_sem_ajuste"),
-    ("dec_uniforme_treino", "uniforme_treino"),
-    ("dec_uniforme", "uniforme_orcamento"),
+    ("dec_learned_sel", "uniform_oracle"),
+    ("dec_learned_sel", "uniform_budget"),
+    ("dec_learned", "dec_uniform"),
+    ("dec_learned", "dec_multicoset"),
+    ("dec_learned", "dec_multicoset_vb"),
+    ("dec_learned", "dec_learned_norefit"),
+    ("dec_free", "dec_free_projected"),
+    ("dec_adaptive_blocks", "dec_learned_norefit"),
+    ("dec_uniform_trained", "uniform_trained"),
+    ("dec_uniform", "uniform_budget"),
 )
 
 
@@ -162,8 +162,53 @@ def derive_seed(*parts: object) -> int:
     return int(np.random.SeedSequence(words).generate_state(1)[0])
 
 
+# The labels as the runs wrote them, before they were renamed to English
+# (tools/relabel_map.py). Seeds are derived from these and the output files are sorted by them,
+# so a rerun draws the same random numbers and writes its rows in the order of the versioned files.
+LEGACY_LABELS = {
+    "raw": "bruto",
+    "despiked": "sem_picos",
+    "uniform_budget": "uniforme_orcamento",
+    "uniform_trained": "uniforme_treino",
+    "uniform_trained_per_race": "uniforme_treino_por_grupo",
+    "uniform_oracle": "oraculo_uniforme",
+    "uniform_oracle_per_race": "oraculo_uniforme_por_grupo",
+    "dec_uniform": "dec_uniforme",
+    "dec_uniform_trained": "dec_uniforme_treino",
+    "dec_random": "dec_aleatoria",
+    "dec_learned": "dec_aprendida",
+    "dec_learned_A": "dec_aprendida_A",
+    "dec_learned_sel": "dec_aprendida_sel",
+    "dec_learned_norefit": "dec_aprendida_sem_ajuste",
+    "dec_free": "dec_livre",
+    "dec_free_A": "dec_livre_A",
+    "dec_free_projected": "dec_livre_projetada",
+    "dec_free_projected_norefit": "dec_livre_projetada_sem_ajuste",
+    "dec_loupe_free": "dec_loupe_livre",
+    "dec_loupe_projected": "dec_loupe_projetada",
+    "dec_loupe_projected_norefit": "dec_loupe_projetada_sem_ajuste",
+    "dec_adaptive": "dec_adaptativa",
+    "dec_adaptive_A": "dec_adaptativa_A",
+    "dec_adaptive_blocks": "dec_adaptativa_blocos",
+    "learned": "aprendida",  # mask column of exploratory/mask_stability.csv
+    "free_projected": "livre_projetada",
+}
+
+
+def legacy_label(part: object) -> object:
+    """A label as the runs wrote it; any other part is returned unchanged."""
+    return LEGACY_LABELS.get(part, part) if isinstance(part, str) else part
+
+
+def legacy_path(rel: str) -> str:
+    """A ``runs/`` path (or ``masks.json`` key) with the labels the runs wrote."""
+    *dirs, name = rel.split("/")
+    stem, dot, ext = name.partition(".")
+    return "/".join([*(str(legacy_label(d)) for d in dirs), f"{legacy_label(stem)}{dot}{ext}"])
+
+
 def variant_name(despiked: bool) -> str:
-    return "sem_picos" if despiked else "bruto"
+    return "despiked" if despiked else "raw"
 
 
 def finite(v: Any) -> bool:
@@ -204,7 +249,7 @@ def despike(x: np.ndarray, k_mad: float = 10.0) -> tuple[np.ndarray, int]:
     A deviation above ``k_mad`` MADs from the mean of the neighbors, with both neighbors
     deviating in the opposite direction and by less than 0.8 times as much. Returns the signal
     and how many samples were replaced. Requires the full rate: it is not realizable on the
-    node, and that is why the deciding variant is `bruto`.
+    node, and that is why the deciding variant is `raw`.
     """
     d = x[1:-1] - 0.5 * (x[:-2] + x[2:])
     mad = 1.4826 * np.median(np.abs(d))
@@ -232,7 +277,7 @@ def classic(x, v, fs_hz: float, factor: int, f_max_hz: float, cfg: dict, guard: 
     if verdict:
         return {"skipped": verdict}
     if f_max_hz <= float(cfg["kurtogram"]["f_min_hz"]):
-        return {"skipped": "teto abaixo do piso do kurtograma"}
+        return {"skipped": "ceiling below the kurtogram floor"}
     try:
         k = kurtogram(xd, fs_eff, f_max_hz, cfg)
         spec = envelope_order_spectrum(
@@ -603,11 +648,11 @@ def nested_truths(
     for r in recs:
         peers = [calib[q] for q in pool if q != r and group_of[q] == group_of[r]]
         if peers:
-            out[r] = {"truth": float(np.median(peers)), "source": "aninhada"}
+            out[r] = {"truth": float(np.median(peers)), "source": "nested"}
         elif r not in test and ok[r]:
-            out[r] = {"truth": calib[r], "source": "propria_calibracao"}
+            out[r] = {"truth": calib[r], "source": "own_calibration"}
         else:
-            out[r] = {"truth": math.nan, "source": "indefinida"}
+            out[r] = {"truth": math.nan, "source": "undefined"}
     return out
 
 
@@ -628,7 +673,7 @@ def family_centers(
 
 
 def family_of_estimate(est: float | None, centers: dict[str, float], span: float) -> str:
-    """Family with the nearest central order, within a relative ``±span``; otherwise 'nenhuma'."""
+    """Family with the nearest central order, within a relative ``±span``; otherwise 'no_fault'."""
     if est is None or not np.isfinite(est):
         return NO_FAMILY
     best, dist = NO_FAMILY, math.inf
@@ -732,7 +777,7 @@ def classical_rows(
     segs: dict[str, list[int]],
     healthy: list[str],
 ) -> tuple[list[dict], dict[int, int | None]]:
-    """Classical arms of one (dataset, variant, split), and the `uniforme_treino` factor.
+    """Classical arms of one (dataset, variant, split), and the `uniform_trained` factor.
 
     The choice outside the test set uses the local ruler of the segments of the records outside
     the test set; the oracle uses that of the test records.
@@ -750,14 +795,14 @@ def classical_rows(
 
         chosen[b] = m_train = pick(nontest)
         arms: dict[str, tuple[Any, bool]] = {  # arm -> (factor or per-group factor, healthy?)
-            "uniforme_orcamento": (b, True),
-            "uniforme_treino": (m_train, True),
-            "uniforme_treino_por_grupo": (
+            "uniform_budget": (b, True),
+            "uniform_trained": (m_train, True),
+            "uniform_trained_per_race": (
                 {g: pick([r for r in nontest if group_of[r] == g]) for g in groups},
                 False,
             ),
-            "oraculo_uniforme": (pick(test), False),
-            "oraculo_uniforme_por_grupo": (
+            "uniform_oracle": (pick(test), False),
+            "uniform_oracle_per_race": (
                 {g: pick([r for r in test if group_of[r] == g]) for g in groups},
                 False,
             ),
@@ -771,7 +816,7 @@ def classical_rows(
                     row["chosen_factor"] = f if f is not None else ""
                     est = grid_est.get((rid, seg, f)) if f is not None else None
                     if est is None:
-                        row["skipped"] = grid_est.get(("skip", rid, seg, f), "sem fator escolhido")
+                        row["skipped"] = grid_est.get(("skip", rid, seg, f), "no factor chosen")
                     rows.append(score_row(row, est, rcb, rid, seg))
     return rows, chosen
 
@@ -898,10 +943,10 @@ def window_plan(bank: Bank, rid: str, start: int, n: int, dec: OrderDecoder) -> 
     fs_env = n_env * r.fs_hz / n
     if fs_env / 2.0 < dec.axis.order_max * vmax:
         raise GuardError(
-            f"envelope reduzido nao cobre a ordem {dec.axis.order_max} a {vmax:.1f} Hz"
+            f"reduced envelope does not cover order {dec.axis.order_max} at {vmax:.1f} Hz"
         )
     if dec.axis.samples_per_rev < fs_env / vmin:
-        raise GuardError(f"spr angular {dec.axis.samples_per_rev} < {fs_env / vmin:.0f} pontos/rev")
+        raise GuardError(f"angular spr {dec.axis.samples_per_rev} < {fs_env / vmin:.0f} points/rev")
     pos = start + envelope_sample_positions(n, n_env)
     ph = bank.phase[rid]
     base = np.floor(pos).astype(np.int64)
@@ -1118,7 +1163,7 @@ class OrderTask:
             try:
                 x, plan = self.single(rid, a, n)
             except GuardError as exc:
-                row["skipped"] = f"guarda: {str(exc)[:60]}"
+                row["skipped"] = f"guard: {str(exc)[:60]}"
                 rows.append(score_row(row, None, rc, rid, seg))
                 continue
             with torch.no_grad():
@@ -1166,7 +1211,7 @@ def vb_mask(ctx: Ctx, fs_hz: float) -> tuple[np.ndarray | None, dict]:
     """
     fs_set = ctx.fs_set
     if ctx.known_band is None:
-        return None, {"vb_error": "sem banda conhecida"}
+        return None, {"vb_error": "no known band"}
     try:
         band = shrink_band_to_support(
             ctx.known_band, fs_hz, fs_set.period_ticks, fs_set.active_per_period
@@ -1186,16 +1231,17 @@ def vb_mask(ctx: Ctx, fs_hz: float) -> tuple[np.ndarray | None, dict]:
         "designed_band_hz": [round(v, 1) for v in band],
         "support_cells": [[w, list(s)] for w, s in sup],
         "noise_amplification": noise_amplification(pos, fs_set.period_ticks, sup),
-        "noise_amplification_uniforme": noise_amplification(uni, fs_set.period_ticks, sup),
+        "noise_amplification_uniform": noise_amplification(uni, fs_set.period_ticks, sup),
     }
 
 
 def fixed_positions(method: str, ctx: Ctx, fs_hz: float) -> tuple[Any, ...]:
     """Pattern, feasible set, rate factor and information of a fixed-mask arm."""
     fs_set, b = ctx.fs_set, ctx.rc.budget
-    if method == "dec_uniforme":
+    if method == "dec_uniform":
         return uniform_positions(fs_set), fs_set, b, {}
-    if method == "dec_aleatoria":  # the same mask for all seeds and learning rates
+    if method == "dec_random":  # the same mask for all seeds and learning rates
+        # "aleatoria" (like "dados" below) is a seed tag of the runs and keeps its name
         rng = np.random.default_rng(
             derive_seed(ctx.cfg["seed"], ctx.rc.ds, ctx.rc.split["index"], b, "aleatoria")
         )
@@ -1205,10 +1251,10 @@ def fixed_positions(method: str, ctx: Ctx, fs_hz: float) -> tuple[Any, ...]:
     if method == "dec_multicoset_vb":
         pos, info = vb_mask(ctx, fs_hz)
         return pos, fs_set, b, info
-    if method == "dec_uniforme_treino":
+    if method == "dec_uniform_trained":
         m = ctx.uniform_factor
         if m is None:
-            return None, fs_set, b, {"skipped": "uniforme_treino sem fator"}
+            return None, fs_set, b, {"skipped": "no uniform_trained factor"}
         fs_m = FeasibleSet.for_budget(m, fs_set.active_per_period, fs_set.min_gap_ticks)
         return uniform_positions(fs_m), fs_m, m, {"chosen_factor": m}
     raise ValueError(f"unknown fixed method: {method}")
@@ -1218,7 +1264,7 @@ def search_sampler(method: str, ctx: Ctx, seed: int) -> tuple[torch.nn.Module, i
     """Stage-A sampler and the period the windows are trimmed to."""
     cfg, t, fs_set = ctx.cfg, ctx.cfg["training"], ctx.fs_set
     period, k, g = fs_set.period_ticks, fs_set.active_per_period, fs_set.min_gap_ticks
-    if method == "dec_aprendida":
+    if method == "dec_learned":
         m = cfg["mask"]
         return GumbelTopKMask(
             fs_set,
@@ -1228,8 +1274,8 @@ def search_sampler(method: str, ctx: Ctx, seed: int) -> tuple[torch.nn.Module, i
             straight_through=m["relaxation"] == "topk_st",
             seed=seed,
         ), period
-    if method == "dec_livre":
-        mult = int(cfg["livre"]["period_multiple"])
+    if method == "dec_free":
+        mult = int(cfg["free"]["period_multiple"])
         free = FeasibleSet(period * mult, k * mult, 1)
         m = cfg["mask"]
         return GumbelTopKMask(
@@ -1251,7 +1297,7 @@ def search_sampler(method: str, ctx: Ctx, seed: int) -> tuple[torch.nn.Module, i
             seed=seed,
             eval_seed=derive_seed(seed, "loupe_eval"),
         ), period
-    if method == "dec_adaptativa":
+    if method == "dec_adaptive":
         ap = cfg["adps"]
         return BlockAdaptiveMask(
             fs_set,
@@ -1316,7 +1362,14 @@ def best_over_lr(
     history = []
     for lr_i, lr in enumerate(ctx.cfg["training"]["lr_grid"]):
         seed = derive_seed(
-            ctx.cfg["seed"], rc.ds, rc.variant, rc.split["index"], rc.seed, rc.budget, label, lr_i
+            ctx.cfg["seed"],
+            rc.ds,
+            legacy_label(rc.variant),
+            rc.split["index"],
+            rc.seed,
+            rc.budget,
+            legacy_label(label),
+            lr_i,
         )
         torch.manual_seed(seed)
         model, task = build(seed)
@@ -1401,16 +1454,16 @@ def run_method(method: str, ctx: Ctx) -> dict:
         return {"rows": rows, "info": {method: info}, "history": hist}
 
     model_a, task_a, info_a, hist = search(ctx, method, fs_hz)
-    if method == "dec_adaptativa":
+    if method == "dec_adaptive":
         info_a["block_positions_last_window"] = getattr(model_a.sampler, "last_block_positions", [])
-        rows += task_a.evaluate(model_a, "dec_adaptativa_blocos", _extra(info_a))
-        return {"rows": rows, "info": {"dec_adaptativa_blocos": info_a}, "history": hist}
+        rows += task_a.evaluate(model_a, "dec_adaptive_blocks", _extra(info_a))
+        return {"rows": rows, "info": {"dec_adaptive_blocks": info_a}, "history": hist}
 
     fs_set, period = ctx.fs_set, ctx.fs_set.period_ticks
-    if method == "dec_aprendida":
+    if method == "dec_learned":
         pos = model_a.sampler.positions()
-        arm_a, arm_b = "dec_aprendida_sem_ajuste", "dec_aprendida"
-    elif method == "dec_livre":
+        arm_a, arm_b = "dec_learned_norefit", "dec_learned"
+    elif method == "dec_free":
         free = model_a.sampler
         assert isinstance(free, GumbelTopKMask)
         k_h = free.fs.active_per_period
@@ -1422,16 +1475,16 @@ def run_method(method: str, ctx: Ctx) -> dict:
             projected_positions_final=pos.tolist(),
             projected_moved=pos.tolist() != pos0.tolist(),
         )
-        rows += task_a.evaluate(model_a, "dec_livre", _extra(info_a))
-        infos["dec_livre"] = info_a
-        arm_a, arm_b = "dec_livre_projetada_sem_ajuste", "dec_livre_projetada"
+        rows += task_a.evaluate(model_a, "dec_free", _extra(info_a))
+        infos["dec_free"] = info_a
+        arm_a, arm_b = "dec_free_projected_norefit", "dec_free_projected"
     elif method == "dec_loupe":
         loupe = model_a.sampler
         assert isinstance(loupe, LoupeMask)
-        rows += task_a.evaluate(model_a, "dec_loupe_livre", {**_extra(info_a)})
-        infos["dec_loupe_livre"] = {**info_a, "realizable": False}
+        rows += task_a.evaluate(model_a, "dec_loupe_free", {**_extra(info_a)})
+        infos["dec_loupe_free"] = {**info_a, "realizable": False}
         pos = loupe.project(fs_set)
-        arm_a, arm_b = "dec_loupe_projetada_sem_ajuste", "dec_loupe_projetada"
+        arm_a, arm_b = "dec_loupe_projected_norefit", "dec_loupe_projected"
     else:
         raise ValueError(f"unknown method: {method}")
     # without fine-tuning: the stage-A decoder with the projected mask, no training at all
@@ -1450,16 +1503,16 @@ def run_method(method: str, ctx: Ctx) -> dict:
 
 
 def select_across_budgets(outs: dict[int, dict], budgets: list[int]) -> list[dict]:
-    """`dec_aprendida_sel`: at each b, the `dec_aprendida` of trained budget >= b with the best
+    """`dec_learned_sel`: at each b, the `dec_learned` of trained budget >= b with the best
     validation (balanced order accuracy by the local ruler; tie: lowest loss; then the highest
     rate). No test label is used."""
     rows = []
     for b in budgets:
         cands = []
         for bb, out in outs.items():
-            if bb < b or "dec_aprendida" not in out["info"]:
+            if bb < b or "dec_learned" not in out["info"]:
                 continue
-            info = out["info"]["dec_aprendida"]
+            info = out["info"]["dec_learned"]
             bal = info.get("val_bal_acc", math.nan)
             key = (-(bal if np.isfinite(bal) else -1.0), info.get("val_loss", math.inf), bb)
             cands.append((key, bb))
@@ -1467,8 +1520,8 @@ def select_across_budgets(outs: dict[int, dict], budgets: list[int]) -> list[dic
             continue
         chosen = min(cands)[1]
         for r in outs[chosen]["rows"]:
-            if r["arm"] == "dec_aprendida":
-                rows.append({**r, "arm": "dec_aprendida_sel", "budget": b, "chosen_budget": chosen})
+            if r["arm"] == "dec_learned":
+                rows.append({**r, "arm": "dec_learned_sel", "budget": b, "chosen_budget": chosen})
     return rows
 
 
@@ -1525,7 +1578,14 @@ def run_wdcnn(ctx: Ctx) -> dict:
     history = []
     for lr_i, lr in enumerate(t["lr_grid"]):
         seed = derive_seed(
-            cfg["seed"], rc.ds, rc.variant, rc.split["index"], rc.seed, b, "wdcnn", lr_i
+            cfg["seed"],
+            rc.ds,
+            legacy_label(rc.variant),
+            rc.split["index"],
+            rc.seed,
+            b,
+            "wdcnn",
+            lr_i,
         )
         torch.manual_seed(seed)
         model = WDCNN(len(ctx.groups), length).to(ctx.device)
@@ -1548,7 +1608,7 @@ def run_wdcnn(ctx: Ctx) -> dict:
             row = row_base(rc, "wdcnn", rid, r.group, seg)
             starts = starts_of(a, e, None)
             if not starts:  # counts as a miss: the segment enters the denominator
-                row.update(skipped="segmento menor que uma janela", family_pred=NO_FAMILY)
+                row.update(skipped="segment shorter than one window", family_pred=NO_FAMILY)
                 rows.append({**row, "family_true": fam_true})
                 continue
             with torch.no_grad():
@@ -1576,7 +1636,10 @@ def summarize(rows: list[dict], groups_of_ds: dict[str, list[str]]) -> list[dict
     for r in rows:
         cells[(r["dataset"], r["variant"], int(r["budget"]), r["arm"])].append(r)
     out = []
-    for (ds, var, b, arm), rs in sorted(cells.items()):
+    for (ds, var, b, arm), rs in sorted(
+        cells.items(),
+        key=lambda kv: (kv[0][0], legacy_label(kv[0][1]), kv[0][2], legacy_label(kv[0][3])),
+    ):
         fault = [r for r in rs if r.get("family_true") not in (HEALTHY, None, "")]
         healthy = [r for r in rs if r.get("family_true") == HEALTHY]
         row: dict[str, Any] = {"dataset": ds, "variant": var, "budget": b, "arm": arm}
@@ -1782,7 +1845,7 @@ def hypotheses(
                 a_rec = per_record(arm_rows(rows, ds, var, b, arm), ruler)
                 for base in baselines:
                     b_rec = per_record(arm_rows(rows, ds, var, b, base), ruler)
-                    s = derive_seed(seed, name, ruler, b, arm, base)
+                    s = derive_seed(seed, name, ruler, b, legacy_label(arm), legacy_label(base))
                     res = cluster_bootstrap(
                         a_rec,
                         b_rec,
@@ -1838,7 +1901,10 @@ def comparisons(
 ) -> list[dict]:
     """Secondary comparisons (outside the preregistration), same bootstrap and no correction."""
     n_boot, seed = int(cfg["analysis"]["bootstrap_resamples"]), int(cfg["seed"])
-    cells = sorted({(r["dataset"], r["variant"], int(r["budget"])) for r in rows})
+    cells = sorted(
+        {(r["dataset"], r["variant"], int(r["budget"])) for r in rows},
+        key=lambda c: (c[0], legacy_label(c[1]), c[2]),
+    )
     out = []
     for ds, var, b in cells:
         present = {
@@ -1854,7 +1920,15 @@ def comparisons(
                     group_of,
                     cluster_of,
                     n_boot,
-                    derive_seed(seed, ds, var, b, arm_a, arm_b, ruler),
+                    derive_seed(
+                        seed,
+                        ds,
+                        legacy_label(var),
+                        b,
+                        legacy_label(arm_a),
+                        legacy_label(arm_b),
+                        ruler,
+                    ),
                 )
                 if res:
                     cell = {"dataset": ds, "variant": var, "budget": b, "ruler": ruler}
@@ -1893,7 +1967,7 @@ def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> 
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     src_sha, src_n = source_sha256()
     dirty = _git("status", "--porcelain")
     manifest = {
@@ -1947,7 +2021,7 @@ def execute(
     if run_file.exists() and not no_resume:
         saved = json.loads(run_file.read_text(encoding="utf-8"))
         if saved.get("run_key") == run_key:
-            manifest["runs"][rel.as_posix()] = "retomado"
+            manifest["runs"][rel.as_posix()] = "resumed"
             return saved
     t0 = time.time()
     out = run_wdcnn(ctx) if method == "wdcnn" else run_method(method, ctx)
@@ -2024,9 +2098,10 @@ def main() -> int:
         "cli": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
         "device": str(device),
         "rulers": {
-            "local": "raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do "
-            "plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao",
-            "nested": "mediana das calibracoes do segmento 0 dos registros fora do teste do grupo",
+            "local": "full-rate line of the segment itself (snq_recon.refine_order, centre of the "
+            "plateau); sliding grid for training and validation, segment for selection and scoring",
+            "nested": "median of the segment-0 calibrations of the records outside the test set "
+            "of the group",
         },
         "input_sha256": {},
         "calibrated_order": {},
@@ -2184,7 +2259,7 @@ def main() -> int:
                             groups=groups,
                             healthy=healthy_ids,
                             device=device,
-                            data_seed=derive_seed(
+                            data_seed=derive_seed(  # "dados": the seed tag of the runs
                                 cfg["seed"], ds, split["index"], seed_i, b, "dados"
                             ),
                             max_epochs=args.max_epochs,
@@ -2194,7 +2269,7 @@ def main() -> int:
                         for method in methods:
                             out = execute(method, ctx, runs_dir, run_key, args.no_resume, manifest)
                             all_rows += out["rows"]
-                            if method == "dec_aprendida":
+                            if method == "dec_learned":
                                 learned[b] = out
                     all_rows += select_across_budgets(learned, budgets)
             del bank
@@ -2212,7 +2287,7 @@ def main() -> int:
     write_csv(results / "comparisons.csv", comps)
     masks = {}
     # only the runs of this invocation: old files in runs/ (another key) are not included
-    for rel in sorted(manifest["runs"]):
+    for rel in sorted(manifest["runs"], key=legacy_path):
         saved = json.loads((runs_dir / rel).read_text(encoding="utf-8"))
         masks[Path(rel).with_suffix("").as_posix()] = saved.get("info", {})
     text = json.dumps(masks, indent=2, default=str)

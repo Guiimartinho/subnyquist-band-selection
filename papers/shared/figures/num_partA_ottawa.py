@@ -5,7 +5,7 @@ Project rule: a number in the paper comes from metrics.csv, never from transcrip
 - **Chosen band (E20).** Outer race, 25 kHz ceiling, at 1× and 4×, per intervention: how many
   segments end up with a band above 12.75 kHz, exactly in [12.75; 25] kHz, and between 2.0 and
   4.6 kHz.
-- **Rate wall (extended E07, `sem_prior`).** Per factor: accuracy under both rulers, median width
+- **Rate wall (extended E07, `no_prior`).** Per factor: accuracy under both rulers, median width
   of the chosen band, median fault frequency (true order x rotation speed) and fraction of the
   estimates in [2.0; 2.2) order, next to the lower limit of the search.
 
@@ -61,7 +61,7 @@ def rate_wall() -> dict:
     ff: dict = defaultdict(list)
     with E07.open(encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            if r["mode"] != "sem_prior":
+            if r["mode"] != "no_prior":
                 continue
             m = int(r["factor"])
             if r["hit_local"] != "":
@@ -103,7 +103,7 @@ def mitigations() -> dict:
     """Selector bands, 12.5 kHz ceiling against cleaning, and cleaning on the inner race."""
     base, sel, post = _rows("results"), _rows("results-selectors"), _rows("results-post-despike")
     out: dict = {"selector_bands": {}, "ceiling_vs_cleaning": {}, "inner_cleaning": {}}
-    for arm in ("infograma_ses", "gini"):
+    for arm in ("ses_infogram", "gini"):
         for m in (1, 4):
             cell = [
                 r
@@ -136,7 +136,7 @@ def mitigations() -> dict:
 
     for col in ("hit", "hit_local"):
         for m in (4, 5, 6):
-            a = hits(post, "despike_decimado", 25000.0, m, col)
+            a = hits(post, "despike_after_decimation", 25000.0, m, col)
             t = hits(base, "none", 12500.0, m, col)
             k = sorted(set(a) & set(t))
             out["ceiling_vs_cleaning"][f"{col}|{m}x"] = {
@@ -155,7 +155,7 @@ def mitigations() -> dict:
             key(r): r
             for r in post
             if r["condition"] == "inner_race"
-            and r["intervention"] == "despike_decimado"
+            and r["intervention"] == "despike_after_decimation"
             and int(r["factor"]) == m
             and float(r["ceiling_hz"]) == 25000.0
         }

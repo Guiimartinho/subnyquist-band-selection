@@ -34,9 +34,8 @@ analysis:
   signflip_mc: 1000000
   seed: 20261113
 compute: {workers: 28}
-# compute_note, in English: the bands and the rule come from E26; only the band choice changes
-compute_note: as bandas e a regra vem do E26; so a escolha de banda muda
-output: {results_dir: results-paderborn-regra}
+compute_note: the bands and the rule come from E26; only the band choice changes
+output: {results_dir: results-paderborn-rule}
 analysis_rule:
   guided_results: results-paderborn  # the guided arm of E26, not recomputed
   alpha: 0.05

@@ -4,7 +4,7 @@ Runs on CPU only and trains nothing. It does three things in sequence.
 
 1. **Classical stage of E15 on Paderborn:** full-rate rulers and the uniform grid of pure
    decimation, with ``classic``, ``calibrate`` and ``choose_factor`` from ``run.py``.
-2. **Baseline:** ``uniforme_treino``, with the factor chosen on the bearings outside the test
+2. **Baseline:** ``uniform_trained``, with the factor chosen on the bearings outside the test
    set, in K-fold by bearing.
 3. **Power gate:** the Ottawa one (``power_gate.py``), with cluster = bearing and only the
    optimistic rule, because there is no learned arm.
@@ -104,7 +104,7 @@ def classical_task(task: tuple[dict, str, str]) -> dict:
                     "center": math.nan,
                     "at_edge": True,
                     "ok": False,
-                    "error": "ilegivel",
+                    "error": "unreadable",
                 }
             continue
         x, v = m.vibration, m.speed_profile_hz()
@@ -168,11 +168,11 @@ def build_rows(cfg, ids, cls, splits) -> list[dict]:
         nested = e15.nested_truths(ids, group_of, calib0, ok0, test)
         for b in cfg["budgets"]:
             arms = {
-                "uniforme_treino": e15.choose_factor(
+                "uniform_trained": e15.choose_factor(
                     b, factors, nontest, seg_truth, grid_est, segs, tol
                 ),
-                "uniforme_orcamento": b,
-                "oraculo_uniforme": e15.choose_factor(
+                "uniform_budget": b,
+                "uniform_oracle": e15.choose_factor(
                     b, factors, sorted(test), seg_truth, grid_est, segs, tol
                 ),
             }
@@ -186,7 +186,7 @@ def build_rows(cfg, ids, cls, splits) -> list[dict]:
                         rows.append(
                             {
                                 "dataset": "paderborn",
-                                "variant": "bruto",
+                                "variant": "raw",
                                 "budget": b,
                                 "arm": arm,
                                 "split": sp["index"],
@@ -211,13 +211,13 @@ def build_rows(cfg, ids, cls, splits) -> list[dict]:
 
 
 def gate(cfg, rows, seed) -> list[dict]:
-    """Power gate with the optimistic rule: only the test against ``uniforme_treino``."""
+    """Power gate with the optimistic rule: only the test against ``uniform_trained``."""
     pgc = cfg["power_gate"]
     group_of = {r["record"]: r["group"] for r in rows}
     cluster_of = {r["record"]: r["record"].split("_", 1)[0] for r in rows}
     cells, n_rows = {}, {}
     for b in cfg["budgets"]:
-        base = [r for r in rows if r["arm"] == "uniforme_treino" and r["budget"] == b]
+        base = [r for r in rows if r["arm"] == "uniform_trained" and r["budget"] == b]
         n_rows[b] = len(base)
         for ru in RULERS:
             per_b = e15.per_record(base, ru)
@@ -236,7 +236,7 @@ def gate(cfg, rows, seed) -> list[dict]:
             bal = 100.0 * float(np.mean([np.mean(v) for v in gacc.values()]))
             pr = pg.make_pairs(keys, group_of, cluster_of)
             tests = {
-                "uniforme_treino": (
+                "uniform_trained": (
                     pr,
                     np.array([kidx[k] for k in pr.keys]),
                     np.array([per_b[k] for k in pr.keys]),
@@ -246,10 +246,12 @@ def gate(cfg, rows, seed) -> list[dict]:
     out = []
     for effect in pgc["effects"]:
         for name, n_seeds in pgc["designs"].items():
-            n_sim = int(pgc["n_sim_perfect"] if effect == "perfeito" else pgc["n_sim"])
-            rng = np.random.default_rng(e15.derive_seed(seed, "paderborn_gate", name, effect))
+            n_sim = int(pgc["n_sim_perfect"] if effect == "perfect" else pgc["n_sim"])
+            rng = np.random.default_rng(
+                e15.derive_seed(seed, "paderborn_gate", name, pg.legacy_label(effect))
+            )
             qs = {
-                k: (1.0 if effect == "perfeito" else min(1.0, float(effect) / (100.0 - c.bal)))
+                k: (1.0 if effect == "perfect" else min(1.0, float(effect) / (100.0 - c.bal)))
                 if c.bal < 100.0
                 else 0.0
                 for k, c in cells.items()
@@ -263,7 +265,7 @@ def gate(cfg, rows, seed) -> list[dict]:
                     for b in cfg["budgets"]:
                         c = cells[(b, ru)]
                         a = pg.planted_means(c, u[b], qs[(b, ru)])
-                        pr, ai, bv = c.tests["uniforme_treino"]
+                        pr, ai, bv = c.tests["uniform_trained"]
                         diff, p = pg.boot_p(a[ai] - bv, pr, int(pgc["n_boot"]), rng)
                         tests += [(b, diff, p), (b, 1.0, 0.0), (b, 1.0, 0.0)]
                     ok, w = pg.decide(tests)
@@ -275,7 +277,7 @@ def gate(cfg, rows, seed) -> list[dict]:
             row = {
                 "design": name,
                 "effect_points": effect,
-                "rule": "otimista",
+                "rule": "optimistic",
                 "n_sim": n_sim,
                 "power_h1": round(h1 / n_sim, 3),
                 "power_local": round(ruler_ok["local"] / n_sim, 3),
@@ -344,7 +346,7 @@ def main() -> None:
         "unreadable": {c["rid"]: c["unreadable"] for c in cls if c["unreadable"]},
         "criterion": crit,
         "best_power_at_criterion": best,
-        "verdict": "testavel" if best >= float(crit["power"]) else "nao_testavel",
+        "verdict": "testable" if best >= float(crit["power"]) else "not_testable",
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     print(

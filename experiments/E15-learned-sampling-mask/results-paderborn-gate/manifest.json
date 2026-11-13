@@ -1730,69 +1730,69 @@
  },
  "unreadable": {
   "KA01_N15_M01_F10": {
-   "9": "N15_M01_F10_KA01_9.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "9": "N15_M01_F10_KA01_9.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KA05_N15_M07_F10": {
-   "16": "N15_M07_F10_KA05_16.mat: vibra\u00e7\u00e3o com 250604 amostras, menos de 4 s a 64 kHz"
+   "16": "N15_M07_F10_KA05_16.mat: vibration with 250604 samples, less than 4 s at 64 kHz"
   },
   "KA05_N15_M01_F10": {
-   "9": "N15_M01_F10_KA05_9.mat: rota\u00e7\u00e3o com 4.0135 s, esperado 4 s"
+   "9": "N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s"
   },
   "KA08_N15_M07_F10": {
-   "11": "N15_M07_F10_KA08_11.mat: vibra\u00e7\u00e3o com 249940 amostras, menos de 4 s a 64 kHz"
+   "11": "N15_M07_F10_KA08_11.mat: vibration with 249940 samples, less than 4 s at 64 kHz"
   },
   "KA08_N15_M01_F10": {
-   "2": "N15_M01_F10_KA08_2.mat: ileg\u00edvel pelo scipy (Expecting matrix here)"
+   "2": "N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)"
   },
   "KA09_N15_M07_F04": {
-   "7": "N15_M07_F04_KA09_7.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "7": "N15_M07_F04_KA09_7.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KA15_N15_M07_F10": {
-   "16": "N15_M07_F10_KA15_16.mat: vibra\u00e7\u00e3o com 255996 amostras, menos de 4 s a 64 kHz"
+   "16": "N15_M07_F10_KA15_16.mat: vibration with 255996 samples, less than 4 s at 64 kHz"
   },
   "KA15_N15_M01_F10": {
-   "13": "N15_M01_F10_KA15_13.mat: vibra\u00e7\u00e3o com 255997 amostras, menos de 4 s a 64 kHz"
+   "13": "N15_M01_F10_KA15_13.mat: vibration with 255997 samples, less than 4 s at 64 kHz"
   },
   "KA22_N15_M01_F10": {
-   "13": "N15_M01_F10_KA22_13.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "13": "N15_M01_F10_KA22_13.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KA22_N15_M07_F04": {
-   "10": "N15_M07_F04_KA22_10.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz",
-   "15": "N15_M07_F04_KA22_15.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "10": "N15_M07_F04_KA22_10.mat: vibration with 255998 samples, less than 4 s at 64 kHz",
+   "15": "N15_M07_F04_KA22_15.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KI05_N15_M01_F10": {
-   "18": "N15_M01_F10_KI05_18.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "18": "N15_M01_F10_KI05_18.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KI07_N15_M01_F10": {
-   "5": "N15_M01_F10_KI07_5.mat: vibra\u00e7\u00e3o com 255997 amostras, menos de 4 s a 64 kHz"
+   "5": "N15_M01_F10_KI07_5.mat: vibration with 255997 samples, less than 4 s at 64 kHz"
   },
   "KI08_N15_M07_F10": {
-   "17": "N15_M07_F10_KI08_17.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "17": "N15_M07_F10_KI08_17.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KI08_N15_M07_F04": {
-   "13": "N15_M07_F04_KI08_13.mat: vibra\u00e7\u00e3o com 255997 amostras, menos de 4 s a 64 kHz"
+   "13": "N15_M07_F04_KI08_13.mat: vibration with 255997 samples, less than 4 s at 64 kHz"
   },
   "KI16_N15_M07_F10": {
-   "9": "N15_M07_F10_KI16_9.mat: rota\u00e7\u00e3o com 4.2835 s, esperado 4 s"
+   "9": "N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s"
   },
   "KI16_N15_M01_F10": {
-   "4": "N15_M01_F10_KI16_4.mat: rota\u00e7\u00e3o com 4.6725 s, esperado 4 s"
+   "4": "N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s"
   },
   "KI17_N15_M07_F10": {
-   "10": "N15_M07_F10_KI17_10.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "10": "N15_M07_F10_KI17_10.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   },
   "KI18_N15_M01_F10": {
-   "20": "N15_M01_F10_KI18_20.mat: vibra\u00e7\u00e3o com 255997 amostras, menos de 4 s a 64 kHz"
+   "20": "N15_M01_F10_KI18_20.mat: vibration with 255997 samples, less than 4 s at 64 kHz"
   },
   "KI21_N15_M07_F10": {
-   "8": "N15_M07_F10_KI21_8.mat: vibra\u00e7\u00e3o com 255998 amostras, menos de 4 s a 64 kHz"
+   "8": "N15_M07_F10_KI21_8.mat: vibration with 255998 samples, less than 4 s at 64 kHz"
   }
  },
  "criterion": {
   "effect": 5,
   "power": 0.8,
-  "rule": "otimista"
+  "rule": "optimistic"
  },
  "best_power_at_criterion": 1.0,
- "verdict": "testavel"
+ "verdict": "testable"
 }

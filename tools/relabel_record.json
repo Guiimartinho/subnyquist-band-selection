@@ -1,0 +1,5771 @@
+{
+ "about": "Relabelling of the result files by tools/relabel_results.py with tools/relabel_map.py; see the docstring of the tool for the format.",
+ "map_sha256": "28142e461a6ee79b087614d7bb99b6973ee4cdd363e18dd72fcb341eca72e6f6",
+ "passes": [
+  "sentences",
+  "tokens",
+  "path_tokens"
+ ],
+ "files": {
+  "experiments/E07-order-domain-ottawa/results-smoke-ruler/manifest.json": {
+   "original_path": "experiments/E07-order-domain-ottawa/results-smoke-regua/manifest.json",
+   "sha256_before": "088b60b3082a9dc972ca0104ab6f34fc65b2037e4a2772b2b6963e3d397cc5ee",
+   "sha256_before_lf": "7c25380b556e0bba07a98b8c3d67d8c5c6466fbfd61dc48a075ca8a242f3dd48",
+   "sha256_after": "ddd08895c89aeaccbc7431ec832cef9ce76455738be898128277bda62f78499f",
+   "sha256_after_lf": "839357db0b847bbbb01c5d7224d2a976261574ee585d7929d91bb2d21f16ca58",
+   "sentences": {
+    "\"determined empirically; not documented by the authors\"": {
+     "from": {
+      "\"determinado empiricamente; nao documentado pelos autores\"": 1
+     }
+    },
+    "\"sha256 over the concatenation, in POSIX path order, of '<path relative to the repository>\\\\n<sha256 of the file content>\\\\n' for each packages/*/src/**/*.py\"": {
+     "from": {
+      "\"sha256 sobre a concatenacao, em ordem de caminho POSIX, de '<caminho relativo ao repositorio>\\\\n<sha256 do conteudo do arquivo>\\\\n' para cada packages/*/src/**/*.py\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "ruler": {
+     "from": {
+      "regua": 2
+     }
+    }
+   }
+  },
+  "experiments/E07-order-domain-ottawa/results-smoke-ruler/metrics.csv": {
+   "original_path": "experiments/E07-order-domain-ottawa/results-smoke-regua/metrics.csv",
+   "sha256_before": "55f4b36fb146fdb8fd3ea2467a21a6c86f923ba9974cf12f3d3655c6d2888dab",
+   "sha256_before_lf": "38a977777331617ead38bf4bfbac3d56d3b51137d898f51f52def5acdf6abe43",
+   "sha256_after": "e174e58c573675eb20744ba35b4c6860ed1bd0706bfd0eb26cada27f850c71e9",
+   "sha256_after_lf": "8d7fc497d2d3266748b4ef819d1600c51b85d6e85333e5c26d2d7428b7966783",
+   "tokens": {
+    "no_prior": {
+     "from": {
+      "sem_prior": 12
+     }
+    },
+    "nominal_prior": {
+     "from": {
+      "prior_nominal": 12
+     }
+    },
+    "calibrated_prior": {
+     "from": {
+      "prior_calibrado": 12
+     }
+    }
+   }
+  },
+  "experiments/E07-order-domain-ottawa/results/extended/manifest.json": {
+   "sha256_before": "ecb139e9fa83c89080d63c5f265f7d0ddea739498be3db99e7cabdf839eed1d5",
+   "sha256_after": "5b4e0dbd0358e3791d13df7792c188d2c4165645a2c38311d61d4e13a5d3c54d",
+   "sentences": {
+    "\"determined empirically; not documented by the authors\"": {
+     "from": {
+      "\"determinado empiricamente; nao documentado pelos autores\"": 1
+     }
+    },
+    "\"sha256 over the concatenation, in POSIX path order, of '<path relative to the repository>\\\\n<sha256 of the file content>\\\\n' for each packages/*/src/**/*.py\"": {
+     "from": {
+      "\"sha256 sobre a concatenacao, em ordem de caminho POSIX, de '<caminho relativo ao repositorio>\\\\n<sha256 do conteudo do arquivo>\\\\n' para cada packages/*/src/**/*.py\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E07-order-domain-ottawa/results/extended/metrics.csv": {
+   "sha256_before": "7fe586d70e3dbb3cf3c4ae6a09c1e9ee3bc3bf4b9ef539eb21fa9ac328e3ca92",
+   "sha256_before_lf": "ebc27109c7a0d9e8f900dd3a05ff63efbe7f64e2fcb05fbd3fe11a29e1b37e59",
+   "sha256_after": "7132f56acbe095a31e4cd3148de7dcd8210b63d0026394ef1e9d2eac59d1e210",
+   "sha256_after_lf": "a0d4c6e258af779cc6bd21bf9ef0ac2bd2353fcbf9a5d26c8eaea8d1503b7641",
+   "tokens": {
+    "no_prior": {
+     "from": {
+      "sem_prior": 864
+     }
+    },
+    "nominal_prior": {
+     "from": {
+      "prior_nominal": 864
+     }
+    },
+    "calibrated_prior": {
+     "from": {
+      "prior_calibrado": 864
+     }
+    }
+   }
+  },
+  "experiments/E07-order-domain-ottawa/results/healthy_control.csv": {
+   "sha256_before": "9d6f75200d4eaf795e64e8a5fb2250c18e9807ea619fb8a5eb040bfdd9636ba0",
+   "sha256_before_lf": "1518dd24dce5efe145ab174a5634bb2280af2379cd698797e636561983b9f2a5",
+   "sha256_after": "9d6f75200d4eaf795e64e8a5fb2250c18e9807ea619fb8a5eb040bfdd9636ba0",
+   "sha256_after_lf": "1518dd24dce5efe145ab174a5634bb2280af2379cd698797e636561983b9f2a5"
+  },
+  "experiments/E07-order-domain-ottawa/results/manifest.json": {
+   "sha256_before": "0d4b71c2d3d427955467b98025b295b777c05d85c43af8d10e7c7ef51c43e169",
+   "sha256_after": "8645bd4f0629818680afd59a154c2559a6391b36e823c03185c08a9e14e9c3c5",
+   "sentences": {
+    "\"determined empirically; not documented by the authors\"": {
+     "from": {
+      "\"determinado empiricamente; nao documentado pelos autores\"": 1
+     }
+    },
+    "\"sha256 over the concatenation, in POSIX path order, of '<path relative to the repository>\\\\n<sha256 of the file content>\\\\n' for each packages/*/src/**/*.py\"": {
+     "from": {
+      "\"sha256 sobre a concatenacao, em ordem de caminho POSIX, de '<caminho relativo ao repositorio>\\\\n<sha256 do conteudo do arquivo>\\\\n' para cada packages/*/src/**/*.py\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E07-order-domain-ottawa/results/metrics.csv": {
+   "sha256_before": "8c40395f411b4c30b6e0c6f0f062ee4bbc62ae0df5077e71cb0222c1247d35f4",
+   "sha256_before_lf": "d3f773885c82916244619dc5b72425aa0d98c29a8a28d54cc26d9c4438b591c6",
+   "sha256_after": "40ab0d58910851f6a650113a849a0049c27ccc70cddefa58d3feec7c778205d1",
+   "sha256_after_lf": "d2b1ca25323d95ee3cbb72d5312dc8d480fb64002ab34f1a9dd609edcff6f19d",
+   "tokens": {
+    "no_prior": {
+     "from": {
+      "sem_prior": 621
+     }
+    },
+    "nominal_prior": {
+     "from": {
+      "prior_nominal": 621
+     }
+    },
+    "calibrated_prior": {
+     "from": {
+      "prior_calibrado": 621
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/SEALED.md": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-lr10/SELADO.md",
+   "sha256_before": "4115649b3db55f1de1ff4db10a33a686f286319be2a1342e7ff3685507368d57",
+   "sha256_after": "347d0b41fbdc440fab89cd49c57baee259808a883437860d475c5cbe1c898dc6",
+   "tokens": {
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/comparisons.csv": {
+   "sha256_before": "ce0d7b0cd32313b647c863e0a65858fbf0d7780a53e5a1f3a7e9293bb095da41",
+   "sha256_before_lf": "bc8738053443719436617b09a7a32a3175bb0df4f351825e14a6ed46348ad4e2",
+   "sha256_after": "8ffdafedb176ee4413f32cf9d205b6738a626ebaefc3ca39c5e21d3bf6b6226a",
+   "sha256_after_lf": "868d1d61ed49ce83245817df511a874a0ff510b923128ebd3afbd24147c9fd62",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 80
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 32
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 16
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 32
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 64
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 32
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 32
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 16
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 16
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 16
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 16
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 16
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 80
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/hypotheses.csv": {
+   "sha256_before": "a857d0918e8205dbc42ddb4fe09c883af6be04e240b5e1d530a6cd1dd2e41140",
+   "sha256_before_lf": "75398cff5ba9c3548bd248b5a5ee466b89fd1ec13e5e343b1463f00895617241",
+   "sha256_after": "bede70080bc895dfc0b9b4ab62bc96ea7a99779fe46eea88cb5b6ec68c5ab425",
+   "sha256_after_lf": "b37e9606513eecbea5278ce85487b53d09a5b43c40ee27785f506ee59e047f53",
+   "tokens": {
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 27
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 11
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/manifest.json": {
+   "sha256_before": "a3e883a20a5e7f72768a0b8038afb5edc139c9ad4b760f5ef8b46c1aded45297",
+   "sha256_after": "601d232032be56e9c9e079bf1b85933a941bd96c9c2b9c265efa6fd9fee1adde",
+   "sentences": {
+    "\"balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)\"": {
+     "from": {
+      "\"acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)\"": 1
+     }
+    },
+    "\"full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring\"": {
+     "from": {
+      "\"raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao\"": 1
+     }
+    },
+    "\"median of the segment-0 calibrations of the records outside the test set of the group\"": {
+     "from": {
+      "\"mediana das calibracoes do segmento 0 dos registros fora do teste do grupo\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 222
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 1
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 1
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 41
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 41
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 41
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 1
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 221
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 40
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 40
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 40
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/masks.json": {
+   "sha256_before": "3d51a1ed4e7fea25c30e3a2271227fa4586a87c05ab9ce6ddbb58d78b73a5717",
+   "sha256_after": "348aac13c8dfb05e87cc46ac06579b8c3d36e9e02ad4fc02a74ffae72757a09e",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 180
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 40
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 40
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 80
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 80
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 40
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 80
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 40
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 40
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 40
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 80
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 80
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 180
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/metrics.csv": {
+   "sha256_before": "e1a3b38d7d54d55637baf4faed521e4f8e944ddf2f36a0590224d4e2612a1e25",
+   "sha256_before_lf": "6563dee12c1b371f93f5291ec53e5aa88e8ed0266e2865df7d2aa73b1026b3a5",
+   "sha256_after": "08518e292a348d80125fad62defb4cea579184fc9a0171410f52caa554b29f81",
+   "sha256_after_lf": "18c49059002a5c1973f1cf5c32bbc6fdc1255afc8f55dc02e7f40ef2a962079e",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 11520
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 1440
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 8160
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 12081
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 14400
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 1440
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 480
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 480
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 480
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 1440
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 1440
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 1440
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 1440
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 1440
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 1440
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 1440
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 1440
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 1440
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 1440
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 11520
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr10/summary.csv": {
+   "sha256_before": "d80e88ccfd2bd62b81f18c5e594eff50cc3e4e1d907c868955d143934eea9aca",
+   "sha256_before_lf": "b70908303d351b3ea8223ec046d54610ab880135c76b842b51639e6cd7032c1f",
+   "sha256_after": "07a0c40ae4e9a218d94a535bde656ae28d868bb936abbedaebeb373260e13e64",
+   "sha256_after_lf": "40bde1076b4119d0a72e10db530c30358d6c632a4f0cba4635d1793e741d7b5f",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 72
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 8
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 8
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 8
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 8
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 8
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 8
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 8
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 8
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 72
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr30/SEALED.md": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-lr30/SELADO.md",
+   "sha256_before": "e7ebcd8b5ea0796d19110adfafcd3c8d4b9e2fbd68792ac1463140b1e52b0838",
+   "sha256_after": "c5d70586be9b33d082d5091824f57cda002ed21547d1c4fa742b3d9658132501",
+   "tokens": {
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 1
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 1
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 1
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 1
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 1
+     }
+    }
+   },
+   "path_tokens": {
+    "convergence.txt": {
+     "from": {
+      "convergencia.txt": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-lr30/convergence.txt": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-lr30/convergencia.txt",
+   "sha256_before": "9282eed50367c3719839cb31f8dfd5a506f78293289620d127a8ab2195e9bba2",
+   "sha256_after": "815cfc6fe684c79706ac95bca487d298867086c6714b82917abc2309d0cf7f7a",
+   "tokens": {
+    "variant": {
+     "from": {
+      "variante": 1
+     }
+    },
+    "budget": {
+     "from": {
+      "orcamento": 1
+     }
+    },
+    "split": {
+     "from": {
+      "divisao": 1
+     }
+    },
+    "converged": {
+     "from": {
+      "convergiu": 1
+     }
+    },
+    "margin": {
+     "from": {
+      "margem": 1
+     }
+    },
+    "best_epoch": {
+     "from": {
+      "melhor_epoca": 1
+     }
+    },
+    "epochs": {
+     "from": {
+      "epocas": 1
+     }
+    },
+    "positions": {
+     "from": {
+      "posicoes": 1
+     }
+    },
+    "raw": {
+     "from": {
+      "bruto": 20
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 5
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn-gate/manifest.json": {
+   "sha256_before": "2316060a0e57204e5568501cdb7565d0698c743b6fd885f894a3a55877b69a37",
+   "sha256_after": "39846a481734f625807c576f187cfb2016bcbac760b318d203493e561d954aac",
+   "sentences": {
+    "\"N15_M01_F10_KA01_9.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KA01_9.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F04_KA09_7.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F04_KA09_7.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA15_16.mat: vibration with 255996 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KA15_16.mat: vibra\\u00e7\\u00e3o com 255996 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA15_13.mat: vibration with 255997 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KA15_13.mat: vibra\\u00e7\\u00e3o com 255997 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA22_13.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KA22_13.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F04_KA22_10.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F04_KA22_10.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F04_KA22_15.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F04_KA22_15.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI05_18.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KI05_18.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI07_5.mat: vibration with 255997 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KI07_5.mat: vibra\\u00e7\\u00e3o com 255997 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI08_17.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KI08_17.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F04_KI08_13.mat: vibration with 255997 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F04_KI08_13.mat: vibra\\u00e7\\u00e3o com 255997 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI17_10.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KI17_10.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI18_20.mat: vibration with 255997 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M01_F10_KI18_20.mat: vibra\\u00e7\\u00e3o com 255997 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI21_8.mat: vibration with 255998 samples, less than 4 s at 64 kHz\"": {
+     "from": {
+      "\"N15_M07_F10_KI21_8.mat: vibra\\u00e7\\u00e3o com 255998 amostras, menos de 4 s a 64 kHz\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "optimistic": {
+     "from": {
+      "otimista": 1
+     }
+    },
+    "testable": {
+     "from": {
+      "testavel": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn-gate/metrics.csv": {
+   "sha256_before": "bbf8d225ac62b1cb56f099dee6176ca49e4586b19b51383d3d6179f2faffe64e",
+   "sha256_before_lf": "f32e9ac8f42c16df96bbb21ac4429d84619dd2fe52e6955940fd0e8c518dbcfc",
+   "sha256_after": "ae713597205bb021de49601d3e99a20457232e8b866c5af4f14e503affc31dad",
+   "sha256_after_lf": "593d25956822a90d0d15fd0b31a86978f503f1fa3da6331d6624b7bdae206e86",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 15492
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 5164
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 5164
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 5164
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn-gate/power.csv": {
+   "sha256_before": "90b997c3d5bb07057c4126fa826ba898ff69bb588a9862770bd801f18453582d",
+   "sha256_before_lf": "82ff6d1c8fc0a9d8ad1cc8ebfa8382a7686b00c03c54f87d5fec92a44bba6622",
+   "sha256_after": "d85cad236eb4a445d8d2afe32c6b106a733b87f2d369c6553dae775e7c5ccf0e",
+   "sha256_after_lf": "95024262de0759ce12a0f6da9765edc2695ff9ce23384404d1bf69ede2fd8cb4",
+   "tokens": {
+    "optimistic": {
+     "from": {
+      "otimista": 9
+     }
+    },
+    "perfect": {
+     "from": {
+      "perfeito": 3
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn-gate/truths.json": {
+   "sha256_before": "ea5cd9f81c06a9e0f4f2e3fc81fb55a0a26335cdea30c63b029dc1d954aecec9",
+   "sha256_after": "ea5cd9f81c06a9e0f4f2e3fc81fb55a0a26335cdea30c63b029dc1d954aecec9"
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/comparisons.csv": {
+   "sha256_before": "4e364b70535645f3065f2c6735a7333079c90e6df685ab10038f310832850352",
+   "sha256_before_lf": "538f175720512dff702d446c1e2b794340bed9a64e0bfaf4f1f16d5e17fa5d47",
+   "sha256_after": "ec67d9197bdab16389658bdeb4ac899caa8af4354324503d46e2dce9558aad56",
+   "sha256_after_lf": "6bed72d15b1a0d3355ef6e45ab094cc5b0aeb65a8f5585628ce34f81a15239bf",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 72
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 16
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 8
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 16
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 32
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 16
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 8
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/exploratory/line_split.csv": {
+   "sha256_before": "2ccd9094f12d3592a8b0604323cd4017015be447c63a81b65efdc1266bcd6bfe",
+   "sha256_before_lf": "2c52a189d43eaa75a25a8844cb58e4de54f320c26ff04ae30e019959e9902023",
+   "sha256_after": "9a61224526c3713f7c56269551e84d9142369521e09bfab32b753d53e9076535",
+   "sha256_after_lf": "4074c8ca98a552ce09f9b0cac8e1f441917da98d2473adb9bded3b75303dfd3e",
+   "tokens": {
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 12
+     }
+    },
+    "all": {
+     "from": {
+      "todos": 16
+     }
+    },
+    "with_line": {
+     "from": {
+      "com_raia": 16
+     }
+    },
+    "without_line": {
+     "from": {
+      "sem_raia": 16
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 12
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 12
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 12
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/hypotheses.csv": {
+   "sha256_before": "0210062a71ba8c226192a5c2458da8e2f56da964ef4941bbb88374875ba4c642",
+   "sha256_before_lf": "fd6a78ed9df2284a41e24a4c90ac0d92c217db9662955acd096edf0f77f7db01",
+   "sha256_after": "804b4e9f7a18c718a6229be8b869f455937f62d87598f74ec09a458643e23722",
+   "sha256_after_lf": "f23f9fdcf74b6ec9b81777a593c9347f4ea853e2eb7a4f33fc70e4b7c4b9dc01",
+   "tokens": {
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 51
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 43
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 16
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/manifest.json": {
+   "sha256_before": "ce838cbd702fc83944c1b08f41a536a2698dc8ce724b2f6bc0537d52fae0c58f",
+   "sha256_after": "6662ef405286afbdd39828d249e3e7f582f601171ccc3be4fab6d0cd152a3ba1",
+   "sentences": {
+    "\"balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)\"": {
+     "from": {
+      "\"acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)\"": 1
+     }
+    },
+    "\"full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring\"": {
+     "from": {
+      "\"raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao\"": 1
+     }
+    },
+    "\"median of the segment-0 calibrations of the records outside the test set of the group\"": {
+     "from": {
+      "\"mediana das calibracoes do segmento 0 dos registros fora do teste do grupo\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 410
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 2
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 1
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 49
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 49
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 51
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 2
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 48
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 48
+     }
+    },
+    "resumed": {
+     "from": {
+      "retomado": 245
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/masks.json": {
+   "sha256_before": "29b87b02f7f5a0159a30859354ac258709b10a1e3c5a0eea981b312a50134ca0",
+   "sha256_after": "1e926e1274f9f6fae42d28eef0438831f5d8aa181adc21cbbef434d818a911f1",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 336
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 96
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 96
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 48
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 96
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 48
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 48
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 48
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 96
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 96
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv.gz": {
+   "sha256_before": "9de92f856e42443fdddd5f2138ab343405915b2b6b79a90e8a6018becf41b5bd",
+   "sha256_before_lf": "5f11223c7f9dbcac7797bd63f55854efddc65b1e69d7c4d5c8d635e41e69e3ca",
+   "sha256_after": "5591d4d9d562688070213766d450e5b6a38a9a0398bba2b0cecdc921cfabd71a",
+   "sha256_after_lf": "a4531ecfc38f52a0746a494409eef19196cfaeb5f42e4d8c51ddd80274899c11",
+   "gzip_sha256_before": "588c4bdc7cfe1de531081c9f260d03fc0d32bcee8812bf9a27b2a9fde252d447",
+   "gzip_sha256_after": "39c75e264e71d6f3979cd8902c026eea250a1e6e97e341baa89b18efaf54c308",
+   "sentences": {
+    "no factor chosen": {
+     "from": {
+      "sem fator escolhido": 2736
+     }
+    }
+   },
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 198360
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 5220
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 141029
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 198360
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 5220
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 5220
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 5220
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 5220
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 15660
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 15660
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 15660
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 15660
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 15660
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 15660
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 15660
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 15660
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 15660
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-paderborn/summary.csv": {
+   "sha256_before": "e205eacf2cbb98d5a9efa9ba7117ab29cd6e51e28bcd80614a13b337710e893e",
+   "sha256_before_lf": "63d025e5012384351e9559ce81f01b026659436bf2377e00ceea9be63b9485cc",
+   "sha256_after": "361f8d8df7ac40ab715ff9f104d148b3b7e5172da75605047d112ba04bf3e3cd",
+   "sha256_after_lf": "0ec569d3ef2da29d6eea6defdddd2fa893d807db883a26aa3dda5689739d99d4",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 64
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 4
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 4
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 4
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 4
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 4
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 4
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 4
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 4
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 4
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 4
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 4
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 4
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/comparisons.csv": {
+   "sha256_before": "6020fcdb0fef0c40bdb3b8da1b5803e5d2947976b868e284bc558d2f502289df",
+   "sha256_before_lf": "ac0c5651c64e0c1075602343cc26466ba30e706d1090726ca195876ed61157fb",
+   "sha256_after": "2238bcc399361f28617bef808aea4311caa3d33b9e5ce01468d2197d37c08534",
+   "sha256_after_lf": "2c6a6bcffac3aa3a38b82fedbba8e9975a94ac80ed311b59196de9e6c39497c4",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 40
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 16
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 8
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 16
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 32
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 16
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 16
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 40
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/hypotheses.csv": {
+   "sha256_before": "981c6dbf11e192c659b3348205ba85d37aab124125ba6e59b1a4645954929157",
+   "sha256_before_lf": "a537a80b707cf9cdb7cb511d94d9cdc85264471b69e6b4980670c38eb4e0bf87",
+   "sha256_after": "6ae10181eed8dc17a1cfffd8e15d2b64b929b9c1ad053644156383245a9d04ae",
+   "sha256_after_lf": "5a9e87d113de3b9a5022d33afe072bf0069991b72730f7db9e8f0bd2813ad19c",
+   "tokens": {
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 15
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 4
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 4
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 7
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 4
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/manifest.json": {
+   "sha256_before": "04ff42dd9dd7e184af004d3a4a7a4ea3beecc2e473593ceec1a24897553fb994",
+   "sha256_before_lf": "ca0236b58e744e0f641790edca0c21f168123952b5b5a0d105a82f9a33ba59fa",
+   "sha256_after": "b15f666f6ae3e0999e611e6036a3da4a8132adecf46f0c9a7edafd91b85db128",
+   "sha256_after_lf": "7502d089822b2f2944710742576904fa4d82f1ae265ae1e90978ee7ad0294ef6",
+   "sentences": {
+    "\"balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)\"": {
+     "from": {
+      "\"acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)\"": 1
+     }
+    },
+    "\"full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring\"": {
+     "from": {
+      "\"raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao\"": 1
+     }
+    },
+    "\"median of the segment-0 calibrations of the records outside the test set of the group\"": {
+     "from": {
+      "\"mediana das calibracoes do segmento 0 dos registros fora do teste do grupo\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 29
+     },
+     "seq": "1*1 0*36 1*28"
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 1
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 1
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 5
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 5
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 5
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 1
+     }
+    },
+    "ruler": {
+     "from": {
+      "regua": 2
+     },
+     "seq": "0*1 1*2"
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 28
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 4
+     }
+    },
+    "resumed": {
+     "from": {
+      "retomado": 40
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 4
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 4
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/masks.json": {
+   "sha256_before": "8ebf4df3a3bd1ed144113e50f1026e23d9b7c50bcd0b16398501d47351b45dbc",
+   "sha256_before_lf": "25679f1a5daae8787582cfd78cfad70d93671a9a1c295637ce6c68958cf585a2",
+   "sha256_after": "3d66bd22aafc68dbe152617897a8b367c7fc14a90b22e588da9e1c39b7b2413e",
+   "sha256_after_lf": "86f1b5da49c3231eb2bb40382940cc2842e4dccc51fbfdbd0606fafe570b95ef",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 20
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 4
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 4
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 4
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 8
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 4
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 4
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 4
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 4
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 20
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/metrics.csv": {
+   "sha256_before": "f0ec87d4eda4f65ec0ce5bbe363208282af5fd38ace27096b84e86eef6e18009",
+   "sha256_before_lf": "d1513374c04d7763d6c2a15dc71e8cbdebda36d84885fc91ab02bf6846a532b7",
+   "sha256_after": "f2fa066d8f67b3ddd7c470d19747951f6843aa9b08472389083048cbd8aa0d8e",
+   "sha256_after_lf": "2c29d3641f4769284deb037c0e4e130e73818a53e62cd7938f0ef6be1efd2bc6",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 240
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 24
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 320
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 144
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 177
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 24
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 16
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 16
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 16
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 24
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 24
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 24
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 24
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 24
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 24
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 24
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 24
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 24
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 24
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 24
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 24
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 24
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 240
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_adaptive.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_adaptativa.json",
+   "sha256_before": "610246f7906c655fd228c11ac3c225d3941c4380353b72edaa61e1948b21855b",
+   "sha256_after": "ac4d6d9aafc435e8a5d38d528df38a0aa0019c72c20a9772f22bd788dac524ab",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "dec_adaptive_A": {
+     "from": {
+      "dec_adaptativa_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_free.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_livre.json",
+   "sha256_before": "494716b4c5788c9210d0aab5e0c3b7dfcb3fd3e201066ed1415ff65508ce1215",
+   "sha256_after": "b716633cdc568fcf84734b6555f29aa6ed2c16b520080eac7f2840c88cb6f1dc",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 18
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 7
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_free_A": {
+     "from": {
+      "dec_livre_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_learned.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_aprendida.json",
+   "sha256_before": "1117cb7d3b833f3b8a846e9d502f435318361b51e1be7d497974f5c806594c09",
+   "sha256_after": "3bcd1828231e984618713ef986f29fd98d5ae0382bf046b184901c205dcce1c0",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 12
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 8
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_A": {
+     "from": {
+      "dec_aprendida_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_loupe.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_loupe.json",
+   "sha256_before": "59b1b03aea898a537dab741d7953976b4f19bbef1876e923172c9d7d942855cb",
+   "sha256_after": "d4b71927d19059e58080d0a923f8ddba194d7e4deb18b39930b31fd6ef929d80",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 18
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 7
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_multicoset.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_multicoset.json",
+   "sha256_before": "26a4229ed8cf9c5f45f24ba54cf116d34e73ba123fb2694af8a51be81fd2c1cb",
+   "sha256_after": "e7f906acea4a20a03da1b5b3130aa393432d7003fb2f263aa12fd1b3edcc865b",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_multicoset_vb.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_multicoset_vb.json",
+   "sha256_before": "67dd441d3bfa40e155191d9a0b407b03365f45488377f52147acd89b1d56e4bd",
+   "sha256_after": "d8f9a3049a684e9658eac236ba1827df8f243876cfd5392305a766e32f23e70c",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_random.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_aleatoria.json",
+   "sha256_before": "606be3f33013e4c6e6ef20328f3871d019f425d01664f1c19b1bebc31a92c4b1",
+   "sha256_after": "60bbd62d493a42532bcf9f648226d2970f65b0e30fa509d869d16eca84b0fa52",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_uniform.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_uniforme.json",
+   "sha256_before": "6b17d67c7252ccd3031e6ae05464566e77a754f7d95c581bec0b3466cfcdad10",
+   "sha256_after": "2c0c29e99c689dbe4ebb822133024256828a1971fb0ba899192d27d0ef072ecd",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/dec_uniform_trained.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/dec_uniforme_treino.json",
+   "sha256_before": "e8701e247d537799be82e1e561d1fc71918b1fd3e23d2b33d119cfb0f3848e41",
+   "sha256_after": "a68e19e001da30a39ac867a96084dd5a679fd4180be322fe780aad631dcdf2e7",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b16/split0/seed0/wdcnn.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b16/split0/seed0/wdcnn.json",
+   "sha256_before": "60ca12d663b0a3a6f81de443db039edd382ae83f5d50b7f99f0aa969fc621b6e",
+   "sha256_after": "f503f022455190591caad81029d6cdb4a0232ae98f404a9e7759a8383853a688",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_adaptive.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_adaptativa.json",
+   "sha256_before": "1bc17638bb6071a129e352d55127e81f156d53909332b13365ed05855770596f",
+   "sha256_after": "9f4967cb9f323cb15a1e303addab88bebc984804b5a297db7837a9528e42d25a",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "dec_adaptive_A": {
+     "from": {
+      "dec_adaptativa_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_free.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_livre.json",
+   "sha256_before": "14ec0096b55e3ba1ea9e8cecc603d300f7699f19a3baa95ad4979acc622655e2",
+   "sha256_after": "22fc67bf40c0f2f646ef08b6ab5052c1ff28c6e016218649f7dc24b3d0562b11",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 18
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 7
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 10
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_free_A": {
+     "from": {
+      "dec_livre_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_learned.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_aprendida.json",
+   "sha256_before": "c3d9d4a9eb02447b929e7fb6e6b224b7a4680d275a9aee53a950e9d865f91825",
+   "sha256_after": "df0446f7467bf891af15e3ab5c0946269d28716468e4e809f7cedb1636386065",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 12
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 8
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_A": {
+     "from": {
+      "dec_aprendida_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_loupe.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_loupe.json",
+   "sha256_before": "7c21bbbdc9195d33b95b7c7ba1d5b1627531acf1f33cf07f04f77726089de7af",
+   "sha256_after": "03ec88f7aa455bc8aa81510c90344af02c3a7ff1272a02d7f3438cae47807d9a",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 18
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 7
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 12
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_multicoset.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_multicoset.json",
+   "sha256_before": "9e65188d2344847e31f3b844532f6e2bf928fdd664286189da02df934c458e4d",
+   "sha256_after": "6946984720ee067f78203c3a3db424aac3b6bbeb660c6ebcc7dd670827598fc9",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_multicoset_vb.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_multicoset_vb.json",
+   "sha256_before": "436dcb3cd74a85b23efe520be0a7c958d7bb14da454fb09b3e44532c7016b03a",
+   "sha256_after": "201fb7f50f433b6ee650b18790d860ad55f655ed8c3fcfaa3bbed42652ee150d",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_random.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_aleatoria.json",
+   "sha256_before": "55a8ad386ef2d0c78c2bace13438de34996d0857681f982cd7d0d77a16deaf32",
+   "sha256_after": "79abecc1d97d1f37027d33b87c66525f129c9ff2b000c5cc13735d99fd91aedf",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_uniform.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_uniforme.json",
+   "sha256_before": "988c5c137e0283bd43472b61fde6d81951a8d5b1c0410351e92ffc0ca64e0387",
+   "sha256_after": "c7e7ef2c8edf8d6cc426dab98105cdd4ccd0deece353d2cc664b6e2f50cad8a5",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/dec_uniform_trained.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/dec_uniforme_treino.json",
+   "sha256_before": "9a0bea4b0d19787cbd4b1973364e731765bb693a8e50484cd1a9cf8e029310be",
+   "sha256_after": "78bd5d99c5e78d6eafe6da0f9200008eab20120818b9589a20434828af0fc5fd",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/despiked/b32/split0/seed0/wdcnn.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/sem_picos/b32/split0/seed0/wdcnn.json",
+   "sha256_before": "cfee09d51d0eeabd547d881538a573c45f2dcb4b61b1e10820359e997ffc3132",
+   "sha256_after": "348df0cb530b70c1935b323ebe9a8c51c2bc78ec87a476d356a4d09705388ec7",
+   "tokens": {
+    "despiked": {
+     "from": {
+      "sem_picos": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_adaptive.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_adaptativa.json",
+   "sha256_before": "68a5351dc02e9e511e171308ed3b43a27c3900ec51e81a0a2e86209db3453f8e",
+   "sha256_after": "0467bc2737b35f5c11567ccc633a57f57267656f8cd86246287b92d72ec5ce12",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "dec_adaptive_A": {
+     "from": {
+      "dec_adaptativa_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_free.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_livre.json",
+   "sha256_before": "79a55d427752bd8951728c06ce36db9ffcaed14fb4062e0b2c4a7933fb9315b2",
+   "sha256_after": "5f2b621cc96bbf8ea32b3bb22f7440f720e0fe899f01735798ed88100f396a4f",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 18
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 10
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_free_A": {
+     "from": {
+      "dec_livre_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_learned.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_aprendida.json",
+   "sha256_before": "cb6b473e9686715f36a64060d3bb9c758af7df478f4343c1159fc42912a136f5",
+   "sha256_after": "d5a0bfe6f63a1cf207412891d9f49d8b8baf7fd59b0f08a9ed5c34d04e980518",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 12
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 8
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_A": {
+     "from": {
+      "dec_aprendida_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_loupe.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_loupe.json",
+   "sha256_before": "5e8367fae669d05fe88b0182677d19fcd05874ee93f4b7899d96825e6033d505",
+   "sha256_after": "07db8cdf4a2aa224065255f31c83e95739c839c906b0455bc9471dc802de347d",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 18
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 7
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_multicoset.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_multicoset.json",
+   "sha256_before": "7e681d3545cec40f0a351f7faba37a4411fadc16a3afed3161fd78281db87007",
+   "sha256_after": "72a95909b28870a5098a4781c41df79d850017dcfc9e47cc62b32cbfe807f182",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_multicoset_vb.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_multicoset_vb.json",
+   "sha256_before": "940dc9679de9b758e80cb033cbe96f86d0225b3c770cb4c6ea3bea39beae232e",
+   "sha256_after": "b64d2b4d7282f54de427efa3c487a6cae2803db0e005fd36ed2d1ab88607c222",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 1
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_random.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_aleatoria.json",
+   "sha256_before": "3aa44a9dfc15d6c49fc58867fb5a90055f30912e33253d5a9c21841c30e1abd4",
+   "sha256_after": "82b8cd1faae08a95d2ead1217ffa38204132c301df12c61ce336edae2d5b57aa",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_uniform.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_uniforme.json",
+   "sha256_before": "0f7f9b9d92d19c5c2fd5a6fbb233f68eb560276e33299b1f4dea36c89365cc16",
+   "sha256_after": "1d54c5cea855a048b62039b917ab3e45a7f05774df98709d016440716d9187e3",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/dec_uniform_trained.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/dec_uniforme_treino.json",
+   "sha256_before": "b4e0c20caa931aa524c8b00f0563696c618dba370ffbeb7e53669c9e18346fb1",
+   "sha256_after": "ccd85e307a04232f608464c24d208df9c4007c62aaab1f8cb6df99e968c945c5",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b16/split0/seed0/wdcnn.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b16/split0/seed0/wdcnn.json",
+   "sha256_before": "0634daad00c2d87168c27f3f8bab60d0876e56df713d8fa2c66343b18eda5f5d",
+   "sha256_after": "58441dc3d88dfb9c762d923e87ad7205bd93a4d4f2da15427c4237e90ac87ca9",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_adaptive.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_adaptativa.json",
+   "sha256_before": "377c010addf32f467db85fc84dc824e93d55668b11d87c147889a85ce9565084",
+   "sha256_after": "f26ae61aa51218671fa7a3227c3e1560a1d6decf68b3dda082a0ca50a3d57392",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "dec_adaptive_A": {
+     "from": {
+      "dec_adaptativa_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_free.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_livre.json",
+   "sha256_before": "d1fad20b694e8b8c4737e9fe544fcac7a8fd4d8af9f4585ab0d9cf0f3abae2ff",
+   "sha256_after": "f809a2f5133251cc6af9f6d8c3f13543d9c82623d0fc1dde0df2978ef2b39359",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 18
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 7
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 10
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_free_A": {
+     "from": {
+      "dec_livre_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_learned.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_aprendida.json",
+   "sha256_before": "3500a39cccc7d61b4c216750f6b3092b00578506e028c6748db76190683afefe",
+   "sha256_after": "d156a29dec2500ce7018c7512dd4154ec8b67128501cf63b8b852715b3b1dab6",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 12
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 8
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 8
+     }
+    },
+    "dec_learned_A": {
+     "from": {
+      "dec_aprendida_A": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_loupe.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_loupe.json",
+   "sha256_before": "5dd8d212fc74e982c38b8f8f32a97ba6092eee55886b0c8d87e9c9b87f8e3816",
+   "sha256_after": "8d04c2b45251c3c4b8af74cf993245e9ba7e405fe3919df5d9f702b7c60f67d1",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 18
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 7
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 12
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 11
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 6
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 7
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_multicoset.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_multicoset.json",
+   "sha256_before": "03145491a34b6e754486e378a58249643d5c8b89767393b2ec8bcaa8f4fd0ea4",
+   "sha256_after": "b8fbe764656a5bb2b9fcf4a9787b3141ffa7db8dfa06d55afbc9a239c1993684",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_multicoset_vb.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_multicoset_vb.json",
+   "sha256_before": "18f69870f789714c4d543419534855128bbdb91c510e90ceebda9ff73f497bbe",
+   "sha256_after": "5ef67fc73d5607a72e6155a1fe6e109c1420a7162d70c46579a4d2b2d797fffb",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 1
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_random.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_aleatoria.json",
+   "sha256_before": "f6c0dbc77246779789082f2279b48d6a57c363628138817d9098ffdb64479eb4",
+   "sha256_after": "41129cd696d7195128d6ec8924b942d0c58e6b0b23cbdacfaa8ad3aab55c4e0c",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 3
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_uniform.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_uniforme.json",
+   "sha256_before": "a45743b7e920935b1ec1a05737b076f1cce5e3553ca9dcc797ce42e2bb77954d",
+   "sha256_after": "81a2c43d36795a2ddc5a6f52111598a96030744229085b14087b2caf69601277",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/dec_uniform_trained.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/dec_uniforme_treino.json",
+   "sha256_before": "03a2ae7be9422a08467dc82eed4d13fba4169d12e00ae2b47ab7cb26896de3c0",
+   "sha256_after": "bb383da363fc071cae8c7bf519a3eef99acddbeeccc018e6d6751d8a88a3e0e4",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 2
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/raw/b32/split0/seed0/wdcnn.json": {
+   "original_path": "experiments/E15-learned-sampling-mask/results-smoke/runs/ottawa/bruto/b32/split0/seed0/wdcnn.json",
+   "sha256_before": "61118140a1404ee853fd82917c12b43ef49e3af489980699ff81110552b584af",
+   "sha256_after": "44db314a9c3091e488becd0306fd3fa27376b00a29ef388168b8f714560432c4",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 6
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 2
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results-smoke/summary.csv": {
+   "sha256_before": "602b4f3610f502db1a037b80ae246fcc6ff0e78700e0afcafa34b20d0e5722e1",
+   "sha256_before_lf": "3978c8c7bd45e498fdb23c0493ea38673609b35ad1fef9f8f89d9439bdc62477",
+   "sha256_after": "d4fa4e927ac2bcac580f6f69d6730996105b05591dfe8a57d31019658d0921f1",
+   "sha256_after_lf": "d72ee4657dcf05a144cdf5d5906c59519d1876b25eb957efa57c92acb8c555f4",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 42
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 4
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 4
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 4
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 4
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 4
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 4
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_loupe_free": {
+     "from": {
+      "dec_loupe_livre": 4
+     }
+    },
+    "dec_loupe_projected": {
+     "from": {
+      "dec_loupe_projetada": 4
+     }
+    },
+    "dec_loupe_projected_norefit": {
+     "from": {
+      "dec_loupe_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 4
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 4
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 4
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 4
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 4
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 4
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 4
+     }
+    },
+    "despiked": {
+     "from": {
+      "sem_picos": 42
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/comparisons.csv": {
+   "sha256_before": "d442f57d3be8a71a64fc58815a4cac6b45520ec63232260b4082c732fe04aac4",
+   "sha256_before_lf": "99a70b81a674e0375882b90081a49e994a9155cf6cdd63a9d4344b76a4e6202d",
+   "sha256_after": "bbaf7ddefab0a929c0ae7e653385b0588e527d83c3b155af4bcc6f4b27611178",
+   "sha256_after_lf": "246e164516e27fdc2cc1c8db5f0d8d5d829068c934b0b02626155303592e802b",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 80
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 16
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 8
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 16
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 32
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 16
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 16
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 8
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/exploratory/mask_stability.csv": {
+   "sha256_before": "3bbd0dc0f3d595afd61561f2ed5957369d4d65b1e584519068a8b6de5aa69858",
+   "sha256_before_lf": "d803e8d6c7a829302bfc48e413686393f849654a0bc7f1f994bcb612fa04acc0",
+   "sha256_after": "cc02ef085343e49eb139a9226730e8f2818f81c92501b38a1a2631f1fd507ad7",
+   "sha256_after_lf": "ff9cfabb9b7c6b946a1f3a9ecf3fe32b59c83c655fcafeac8fef12e6d20eaab7",
+   "tokens": {
+    "learned": {
+     "from": {
+      "aprendida": 20
+     }
+    },
+    "free_projected": {
+     "from": {
+      "livre_projetada": 20
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/hypotheses.csv": {
+   "sha256_before": "e7aa648a2c7255a018a7e19ffe650fef9281c0842fc06abdc01ac90c7b95fb64",
+   "sha256_before_lf": "7078bdebe72c64cdc8b986a463ff2bd369d1343225444f43f99576b6b63a7656",
+   "sha256_after": "4c2b6d14f098e0ffd7ca986154dbf517da36785c739e6312d1411f8c3b74f2db",
+   "sha256_after_lf": "ea1282bf77bb60613d4fad1fcb751e480403aed46b700f5b92689ffd9540007b",
+   "tokens": {
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 51
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 43
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 16
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/manifest.json": {
+   "sha256_before": "db535f0d4f82b1deb1a35cfbc514d3884578efaec1c27e48768df5dfdf1aaf58",
+   "sha256_after": "fac60b18ee5ad44d20b59c86b1a92012d18cc1c6117e71e2a4c8949ff4aa2af5",
+   "sentences": {
+    "\"balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)\"": {
+     "from": {
+      "\"acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)\"": 1
+     }
+    },
+    "\"full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring\"": {
+     "from": {
+      "\"raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao\"": 1
+     }
+    },
+    "\"median of the segment-0 calibrations of the records outside the test set of the group\"": {
+     "from": {
+      "\"mediana das calibracoes do segmento 0 dos registros fora do teste do grupo\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 222
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 2
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 1
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 21
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 21
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 23
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 2
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 20
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 20
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 20
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/masks.json": {
+   "sha256_before": "459afad7786c1c31fbdc9e65eaa3534c91ea7ce3a19e968d0bb43a39d08801bb",
+   "sha256_after": "3f73e0c2a8dbd785ab73363ff126392931e32a586ae723a64fdfdbd12ef2062d",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 180
+     }
+    },
+    "dec_adaptive": {
+     "from": {
+      "dec_adaptativa": 20
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 20
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 40
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 40
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 20
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 40
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 20
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 20
+     }
+    },
+    "noise_amplification_uniform": {
+     "from": {
+      "noise_amplification_uniforme": 20
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 40
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 40
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/metrics.csv": {
+   "sha256_before": "c976e8df68ebbff9784f7ca93302fa7983ca677bd201da8e7bad4b4054cd7a47",
+   "sha256_before_lf": "ddd508cde8f3d9e1892e92effa2a27ad026c09f0d0c092734dd4aecc56a9f0a1",
+   "sha256_after": "a57ae8edbbcdba1aa8ca6a4545c5c0aa53c4b441b71e6a639a52ea4209ac2cfa",
+   "sha256_after_lf": "54be994dedae3b1d1ae8716dc37d7da05d5df979c02a9cc11e81f058e477dd0a",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 11520
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 720
+     }
+    },
+    "nested": {
+     "from": {
+      "aninhada": 4080
+     }
+    },
+    "no_fault": {
+     "from": {
+      "nenhuma": 6068
+     }
+    },
+    "healthy_bearing": {
+     "from": {
+      "saudavel": 7200
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 720
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 240
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 240
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 240
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 720
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 720
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 720
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 720
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 720
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 720
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 720
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 720
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 720
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 720
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/power_gate/baseline.json": {
+   "sha256_before": "057ea89dafd0b343de7a08aab3133d3a80948d335d0c4a76cb9162a74c74ad24",
+   "sha256_before_lf": "c5def13cc9887f489deaf459999f44ea859f1271de0723e20c103fbf2a9a7a17",
+   "sha256_after": "057ea89dafd0b343de7a08aab3133d3a80948d335d0c4a76cb9162a74c74ad24",
+   "sha256_after_lf": "c5def13cc9887f489deaf459999f44ea859f1271de0723e20c103fbf2a9a7a17"
+  },
+  "experiments/E15-learned-sampling-mask/results/power_gate/power.csv": {
+   "sha256_before": "5d78339cc134fcbcf32430f1f008eec377c91c81330bebe2361d4f919cae79e7",
+   "sha256_before_lf": "fcf8d1a687c4e17bb959be37b7fc74b9c08ce34d87f841b53a22ee4776b94b1a",
+   "sha256_after": "025355b2bd9489a1641f0398f0ee6c5e5647cdecdc38c6573b5aaab2c19498a1",
+   "sha256_after_lf": "65ddc79eb444b8f6f00ac7ce161295926daffe47cf4683fe978aa834e2d0e81f",
+   "tokens": {
+    "preregistered": {
+     "from": {
+      "pre_registrada": 12
+     }
+    },
+    "optimistic": {
+     "from": {
+      "otimista": 15
+     }
+    },
+    "D3_record_anticonservative": {
+     "from": {
+      "D3_registro_anticonservador": 6
+     }
+    },
+    "perfect": {
+     "from": {
+      "perfeito": 9
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/power_gate/validation.json": {
+   "sha256_before": "bb65a40a26f1838ee0e71207320ea27eeee8ba59be15db48ae1983e14101fad7",
+   "sha256_before_lf": "31840aea078326012bd0885ac81dc5ed73ed4f547ed075dde7174e0cc8a262e7",
+   "sha256_after": "1e627ff39b7a0c3d8675273383c70ce5d295bd0fe1b0a239728f42e133ef3575",
+   "sha256_after_lf": "78daf588682aeed1ae4a84ebf7d34a453fe57081dfa0dac211aa3c0c3ee5dc49",
+   "tokens": {
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 8
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 8
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 8
+     }
+    }
+   }
+  },
+  "experiments/E15-learned-sampling-mask/results/summary.csv": {
+   "sha256_before": "577c158b26fc4a4126ea53f0da024affa10db4c11f0abe50cd77cecdd4c8382f",
+   "sha256_before_lf": "63b14071af4d21d643ffbf43e4b954bfd5685a086ef6ab032213b579559d414d",
+   "sha256_after": "8930f20e06691f30d083cbf3474a9da28775345c115f56ea831225feed9a56c7",
+   "sha256_after_lf": "0ee91bcd8bdbed680538ef52b85c848c65f2fec37cafbb68a6f2590a40d742a2",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 72
+     }
+    },
+    "dec_adaptive_blocks": {
+     "from": {
+      "dec_adaptativa_blocos": 4
+     }
+    },
+    "dec_random": {
+     "from": {
+      "dec_aleatoria": 4
+     }
+    },
+    "dec_learned": {
+     "from": {
+      "dec_aprendida": 4
+     }
+    },
+    "dec_learned_sel": {
+     "from": {
+      "dec_aprendida_sel": 4
+     }
+    },
+    "dec_learned_norefit": {
+     "from": {
+      "dec_aprendida_sem_ajuste": 4
+     }
+    },
+    "dec_free": {
+     "from": {
+      "dec_livre": 4
+     }
+    },
+    "dec_free_projected": {
+     "from": {
+      "dec_livre_projetada": 4
+     }
+    },
+    "dec_free_projected_norefit": {
+     "from": {
+      "dec_livre_projetada_sem_ajuste": 4
+     }
+    },
+    "dec_uniform": {
+     "from": {
+      "dec_uniforme": 4
+     }
+    },
+    "dec_uniform_trained": {
+     "from": {
+      "dec_uniforme_treino": 4
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 4
+     }
+    },
+    "uniform_oracle_per_race": {
+     "from": {
+      "oraculo_uniforme_por_grupo": 4
+     }
+    },
+    "uniform_budget": {
+     "from": {
+      "uniforme_orcamento": 4
+     }
+    },
+    "uniform_trained": {
+     "from": {
+      "uniforme_treino": 4
+     }
+    },
+    "uniform_trained_per_race": {
+     "from": {
+      "uniforme_treino_por_grupo": 4
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/exploratory/phaselock_inner_race.csv": {
+   "sha256_before": "8adfc9c8136d8052299f4aed2e8628852ab9850d7bd8e477c3a9484185a56512",
+   "sha256_before_lf": "8e56da0d1d359d4d202cabbf2a5d9adcf52dfa7dc5bb85f007126c3ed9add01e",
+   "sha256_after": "8adfc9c8136d8052299f4aed2e8628852ab9850d7bd8e477c3a9484185a56512",
+   "sha256_after_lf": "8e56da0d1d359d4d202cabbf2a5d9adcf52dfa7dc5bb85f007126c3ed9add01e"
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/exploratory/spike_train.csv": {
+   "sha256_before": "2499742136e64e4fe86f4ceabfca0a81e5109054de184023936658302a31fa73",
+   "sha256_before_lf": "0abba395d808fcebc41e53c94a912ce943e5b91e094baec379c5075dcaaef312",
+   "sha256_after": "2499742136e64e4fe86f4ceabfca0a81e5109054de184023936658302a31fa73",
+   "sha256_after_lf": "0abba395d808fcebc41e53c94a912ce943e5b91e094baec379c5075dcaaef312"
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/manifest.json": {
+   "sha256_before": "4d053c1af91a40cf34581e116268e0d19bc16aba242be41db82e5dde22aa019b",
+   "sha256_after": "4d053c1af91a40cf34581e116268e0d19bc16aba242be41db82e5dde22aa019b"
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/metrics.csv": {
+   "sha256_before": "4594bf00439d759cfe03656c13c5670358ea4a08ca212928bd06445937319819",
+   "sha256_before_lf": "4176d6877bae38dd8ea16c582901599ffc30c33b33c15487e4e990576af0051b",
+   "sha256_after": "18f342df5e756b4d4544797344c61bc087b8c4477f08da05046e177d187f0a8c",
+   "sha256_after_lf": "524f1c3cf4d9e6f84bf5ca8c906026f931008b3cd6239e2dca682039e624122f",
+   "tokens": {
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 1008
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/recovery.csv": {
+   "sha256_before": "1c6398d276198e07fe5db2ee84eba58d25dadba18acb1c0ebfb089f010c82d6a",
+   "sha256_before_lf": "c4dcc246cad248f22b319cb6881b6a08a215856e39c5e4731f313bb08fc335d9",
+   "sha256_after": "8919b9038a458d56de8e51f31b345bc7aed25287e3eb122b50dfe01b996de7ce",
+   "sha256_after_lf": "619bb043b436c9ea01971d797be75673025247c401384c603212a10716e13401",
+   "tokens": {
+    "recovers": {
+     "from": {
+      "recupera": 4
+     }
+    },
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 2
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-despike/summary.csv": {
+   "sha256_before": "79b7a36aa5a2e46a64b9a9636ce7dce077b8920fe0c2f40d2d073dd68c830894",
+   "sha256_before_lf": "b2d2978b37fd09cf3284b51bf0a02702a7a44b46e04135d30289399a4a47190a",
+   "sha256_after": "5287f170b3bb24593d8f891e2c1a62a4b57e58736d86f038cf77c689785add9d",
+   "sha256_after_lf": "55fcf1e7dd902205ab71a1a99abe489a0ea26e7086b4ba1e76d218a174808b25",
+   "tokens": {
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 28
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-median/manifest.json": {
+   "sha256_before": "032e715fb8b7b292889bbc9e6c29a7dab44d018a2457dc71a101998aab05aa70",
+   "sha256_after": "032e715fb8b7b292889bbc9e6c29a7dab44d018a2457dc71a101998aab05aa70"
+  },
+  "experiments/E20-fold-zone-rejection/results-post-median/metrics.csv": {
+   "sha256_before": "d4077f5b9d607903110fbd01de0d2052dc6174798c007a89764b90b7d803af92",
+   "sha256_before_lf": "264f8fd303aadfb0fc00d43fb1b9c24d17528381543997c677c19741ffd2586f",
+   "sha256_after": "920058bfe8b93a2badd1f10af20c35785809b98504717c16474b34a6fb1b8277",
+   "sha256_after_lf": "9e9e4fec5377df4930b5f88ceb8b750222d0985b706356915d72fb113d264a6a",
+   "tokens": {
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 1008
+     }
+    },
+    "median3_after_decimation": {
+     "from": {
+      "mediana3_decimado": 1008
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-median/recovery.csv": {
+   "sha256_before": "2fd09615630f48124d22d76a23e86e2933ce20a8d17d0006ea155c688df6ced5",
+   "sha256_before_lf": "157433d5f415e10c1e960e967545e58c6413609ccb557a0550e001f067edbca9",
+   "sha256_after": "4b7328b18691ea1c45f182df34c4244af7104ce5885e1d2fc1636780fca22c77",
+   "sha256_after_lf": "a4dc8a43a433e35e4a15307ac26ca383a199bc432862bfb558b94f740bcefc32",
+   "tokens": {
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 2
+     }
+    },
+    "recovers": {
+     "from": {
+      "recupera": 4
+     }
+    },
+    "median3_after_decimation": {
+     "from": {
+      "mediana3_decimado": 2
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-post-median/summary.csv": {
+   "sha256_before": "56ab61ee357c1443ec941daf192116066d902d213ec76cd57a0c0969381641a5",
+   "sha256_before_lf": "52e85d2c1d8e822086bb5b365dba763ae376a9b966919c6ebb50434f45c88e54",
+   "sha256_after": "8c1a398c8dff196c5ebc760652460e4fff009771f538e1ed3f0edb98a0329206",
+   "sha256_after_lf": "475f3355ce8f1082808c0d800351cff5b8e776d6c17e9816dba555b3ef52c098",
+   "tokens": {
+    "despike_after_decimation": {
+     "from": {
+      "despike_decimado": 28
+     }
+    },
+    "median3_after_decimation": {
+     "from": {
+      "mediana3_decimado": 28
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-selectors/manifest.json": {
+   "sha256_before": "b0647adae048c9e5d13875d0af8fe932d81f9f23017165ba7a3bfce885cb16e8",
+   "sha256_after": "b0647adae048c9e5d13875d0af8fe932d81f9f23017165ba7a3bfce885cb16e8"
+  },
+  "experiments/E20-fold-zone-rejection/results-selectors/metrics.csv": {
+   "sha256_before": "b2ecae88179473b5d82bc5870901748b206b7be4eeef0def836ab80a3c60e991",
+   "sha256_before_lf": "a834a69839d14b29721a241e0b5202bfa3424ac2c210bce29434efcbcfeefaf8",
+   "sha256_after": "dde4ba6456ff4448d674480c81c1d8af24d67cd030e362874ca80ca3f9566605",
+   "sha256_after_lf": "5b8d57580deb012ae0f2db86504a94e50cace4fbb54a2b7d5d634e8a605e49b2",
+   "tokens": {
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 1008
+     }
+    },
+    "ses_infogram_despike": {
+     "from": {
+      "infograma_ses_despike": 1008
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-selectors/recovery.csv": {
+   "sha256_before": "7114865e76ae52a831d0fbd7b9e9d868b1e4513a1317da5e78f570bc3bc778bb",
+   "sha256_before_lf": "ee2b9e59c2eb3fb990a1e981573dff0233c0e2762aef853e3618675b07ae9c59",
+   "sha256_after": "553f8b49a3a58dd554d41972759f376c6ccf92e2370044df86cfbb3cf8c75233",
+   "sha256_after_lf": "b0421b318a273426329a56a2ff0f36f0120ec91475b0a837ab0a36be90ae3680",
+   "sentences": {
+    "does not recover": {
+     "from": {
+      "nao recupera": 4
+     }
+    }
+   },
+   "tokens": {
+    "recovers": {
+     "from": {
+      "recupera": 2
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 2
+     }
+    },
+    "inconclusive": {
+     "from": {
+      "inconclusivo": 2
+     }
+    },
+    "ses_infogram_despike": {
+     "from": {
+      "infograma_ses_despike": 2
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-selectors/summary.csv": {
+   "sha256_before": "00eaae289d3835b01d2b545c9e7b87ef7fe98173979cd6437db41733b6ec7a8d",
+   "sha256_before_lf": "fbddf45012e7c786672ed99cf3abf57b2845971468d3ed944660e1104ecc464c",
+   "sha256_after": "d02210dbe999f67ac82463d6c4b52b9c0f5f92f8d3bdfcc784b173af7072e25e",
+   "sha256_after_lf": "40dd07d2f90d9862bcd061b6272d36870cfbabd5c2050843486b4da5f407b75e",
+   "tokens": {
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 28
+     }
+    },
+    "ses_infogram_despike": {
+     "from": {
+      "infograma_ses_despike": 28
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-smoke-ruler/manifest.json": {
+   "original_path": "experiments/E20-fold-zone-rejection/results-smoke-regua/manifest.json",
+   "sha256_before": "3795c9f81ccef5561fdbd0551f1f2e70aa0da230f580df573942ec0cd9ae6a0a",
+   "sha256_before_lf": "83fd3ba495d13abb9544bae85888328140b0cdfc14d19284c63d84d541cdb671",
+   "sha256_after": "6ed13d45f56abb05d79bfe6397de728ffef99b77c02c170b8587425e362fa5b4",
+   "sha256_after_lf": "1630755717b398c3238ee9bd1da36be46981089452e61e293e2c7becf94def7d",
+   "tokens": {
+    "ruler": {
+     "from": {
+      "regua": 3
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results-smoke-ruler/metrics.csv": {
+   "original_path": "experiments/E20-fold-zone-rejection/results-smoke-regua/metrics.csv",
+   "sha256_before": "c28aca90686653d57866fffdc168613c1d08c933af7c7ddf739772aac21bc458",
+   "sha256_before_lf": "9fae7b0bba8510febbb7e1c8abe63fd0e4b55eb22a4135eefaa448bdae1892a0",
+   "sha256_after": "c28aca90686653d57866fffdc168613c1d08c933af7c7ddf739772aac21bc458",
+   "sha256_after_lf": "9fae7b0bba8510febbb7e1c8abe63fd0e4b55eb22a4135eefaa448bdae1892a0"
+  },
+  "experiments/E20-fold-zone-rejection/results-smoke-ruler/summary.csv": {
+   "original_path": "experiments/E20-fold-zone-rejection/results-smoke-regua/summary.csv",
+   "sha256_before": "23e7ff15f836f416b62e97206c0dcea41245ed5d5e3d5e0fe90fb97cf3b1681e",
+   "sha256_before_lf": "ff31f329a4d4cecbdb8a2c8291a98fa60e2cdc13e0e58242a07f8100b9c234fa",
+   "sha256_after": "23e7ff15f836f416b62e97206c0dcea41245ed5d5e3d5e0fe90fb97cf3b1681e",
+   "sha256_after_lf": "ff31f329a4d4cecbdb8a2c8291a98fa60e2cdc13e0e58242a07f8100b9c234fa"
+  },
+  "experiments/E20-fold-zone-rejection/results/manifest.json": {
+   "sha256_before": "b185976717a84e643721cccf3f3e6c0bdedf410c57cd0f655c08104cf0743b10",
+   "sha256_after": "b185976717a84e643721cccf3f3e6c0bdedf410c57cd0f655c08104cf0743b10"
+  },
+  "experiments/E20-fold-zone-rejection/results/metrics.csv": {
+   "sha256_before": "2176aecd5a4ef2586c90913b8498d09ed3a6dcff1e6e6724e7077650417cc8cc",
+   "sha256_before_lf": "acf80d7df92986bec7e5c1d2ade46df2ede1db947ae9079ddf19882d355f186d",
+   "sha256_after": "2176aecd5a4ef2586c90913b8498d09ed3a6dcff1e6e6724e7077650417cc8cc",
+   "sha256_after_lf": "acf80d7df92986bec7e5c1d2ade46df2ede1db947ae9079ddf19882d355f186d"
+  },
+  "experiments/E20-fold-zone-rejection/results/recovery.csv": {
+   "sha256_before": "ce6886e8e319f7efea001117f3a9e61839fb664400d57746f1ed55e05c72d708",
+   "sha256_before_lf": "35e3c6b438913ce160129ac4911c49ec1be5c9abc4b63aca9d8a633a65d01178",
+   "sha256_after": "d0ff5ab1bbe44cc3513f8545a764ad7717f01be9ecf68b4262160e0324ed5f77",
+   "sha256_after_lf": "11d5f385358c56cebe9637d77b7e2d2dea24736911cc0eb94c59c8d54100e67a",
+   "sentences": {
+    "does not recover": {
+     "from": {
+      "nao recupera": 2
+     }
+    }
+   },
+   "tokens": {
+    "recovers": {
+     "from": {
+      "recupera": 12
+     }
+    }
+   }
+  },
+  "experiments/E20-fold-zone-rejection/results/summary.csv": {
+   "sha256_before": "2f5ed48dbf2f863be576cef602e9a4119a4afb5733821ff8a86ad840e348a80c",
+   "sha256_before_lf": "49cc0c11ffb7f34b05a44acb66b6ff750fe3ab5b227ef9b0fedc26b1327a9d9e",
+   "sha256_after": "2f5ed48dbf2f863be576cef602e9a4119a4afb5733821ff8a86ad840e348a80c",
+   "sha256_after_lf": "49cc0c11ffb7f34b05a44acb66b6ff750fe3ab5b227ef9b0fedc26b1327a9d9e"
+  },
+  "experiments/E21-mafaulda-capture-prediction/results/manifest.json": {
+   "sha256_before": "c742e79d40fb30a7b5ff46f8972441c8a3820b29036f27bfc417c6318cd4578b",
+   "sha256_after": "9fee84c5f32c2e63e837f76f31b3bc9ba6e81bac71d9289bce5781267cea0d2f",
+   "sentences": {
+    "\"MAFAULDA (UFRJ), license not declared; inferred fs 51.2 kHz (see the dataset manifest)\"": {
+     "from": {
+      "\"MAFAULDA (UFRJ), licenca nao declarada; fs inferida 51,2 kHz (ver manifest do dataset)\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E21-mafaulda-capture-prediction/results/metrics.csv": {
+   "sha256_before": "800ab01e9f47d44ec1c254f128c526eaf56f6e9baa86b7a88f7562dcb233ca33",
+   "sha256_before_lf": "2131698fe7a7123db3492cde3f6467536d018d11990586018a5e379fe29c04ca",
+   "sha256_after": "800ab01e9f47d44ec1c254f128c526eaf56f6e9baa86b7a88f7562dcb233ca33",
+   "sha256_after_lf": "2131698fe7a7123db3492cde3f6467536d018d11990586018a5e379fe29c04ca"
+  },
+  "experiments/E21-mafaulda-capture-prediction/results/summary.csv": {
+   "sha256_before": "8fed58c82e28bad611ed59da73978740fabdb57ab457f3215d941a2d08f696d0",
+   "sha256_before_lf": "63b38731b246d2b2587eb0273ae1deeebd72916999bced18fe91a94003fa4ff9",
+   "sha256_after": "8fed58c82e28bad611ed59da73978740fabdb57ab457f3215d941a2d08f696d0",
+   "sha256_after_lf": "63b38731b246d2b2587eb0273ae1deeebd72916999bced18fe91a94003fa4ff9"
+  },
+  "experiments/E22-equal-rate-baselines/results-smoke/manifest.json": {
+   "sha256_before": "67d5fe66e306ac774bcf657236aae2ebb87e782622a6a69e1c44f39ffca48965",
+   "sha256_before_lf": "c81649c084698c460a027966ca9a1f79dedf81499e84be7fd76b1612951b7edd",
+   "sha256_after": "d45a89769a788811d28aff6fbd2f1ca2f3e4ee862443ed0d94aa79b8c5c8eb79",
+   "sha256_after_lf": "2609b678f89cae671dd3b134ef9ee8f5cd917baf3fbf8a7d73647ea7b6577866",
+   "tokens": {
+    "ruler": {
+     "from": {
+      "regua": 2
+     }
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results-smoke/metrics.csv": {
+   "sha256_before": "d875d0bb94b648dae1832f8cd2036336658c5ebcf5e88110209c57be8c50880d",
+   "sha256_before_lf": "2931ff31f392df1f6d3cc244d2075563df3e2d0c506e0819cea1ac52f38fafa7",
+   "sha256_after": "ae82e9298d679eaa77461503c1e8610e22fb3394749f377a1941934b0707015a",
+   "sha256_after_lf": "6c2170aade74740eb6a9d2bcb672eea813a5060c8ea52ccb5aa1e02145df53e0",
+   "tokens": {
+    "uniform_grid": {
+     "from": {
+      "uniforme_grid": 76
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 8
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 8
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 8
+     }
+    },
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 8
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 8
+     }
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results-smoke/summary.csv": {
+   "sha256_before": "6e446d085ada7056908997b9cf754343d2ec846afb8824af18991573db906783",
+   "sha256_before_lf": "e62befcb375ad94e4dee4164fb0c04003ab5df7a2793d35972cbae2a125443d1",
+   "sha256_after": "98277c3c4f4f33cfd5895eb8a41ff0de769d78bfb7931987bb8dd9bdef37b015",
+   "sha256_after_lf": "c72d9fe47759c18cd5167d0e32b6b475cdbbe5b288bbb97f46da1123300c2037",
+   "tokens": {
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 2
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 2
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 2
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 2
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 2
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 2
+     }
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results/analysis-local.json": {
+   "sha256_before": "c7517a06639d3acffd6302cf43b5782d17bf1c7c1658d863e01fbb42eca4afd5",
+   "sha256_before_lf": "b2b145a2401f106d7cbe6d7eb7e4cf4c666407e0873260f51ae0ff0a6bcaca10",
+   "sha256_after": "9e6d8cd6d0fd1e6bdd013b6e13e840ea98d7b2088da2cb114fc11d818b4b8f07",
+   "sha256_after_lf": "a2aa242196192e14bf4dd23e5843d8fe0695f5bee2060c95bb947a4e9745df5f",
+   "sentences": {
+    "\"not refuted\"": {
+     "from": {
+      "\"nao refutada\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 4
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 4
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 4
+     }
+    },
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 4
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 4
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 4
+     }
+    },
+    "uniform_sweep_cv": {
+     "from": {
+      "uniforme_varredura_cv": 4
+     }
+    },
+    "uniform_sweep_record": {
+     "from": {
+      "uniforme_varredura_registro": 4
+     }
+    },
+    "H1_cs_minus_ceiling": {
+     "from": {
+      "H1_cs_minus_teto": 4
+     }
+    },
+    "posthoc_tat_minus_record": {
+     "from": {
+      "posthoc_tat_minus_registro": 4
+     }
+    },
+    "tat_rate_vs_uniform": {
+     "from": {
+      "taxa_tat_vs_uniforme": 4
+     }
+    },
+    "uniform_ceiling_vs_uniform": {
+     "from": {
+      "uniforme_teto_vs_uniforme": 4
+     }
+    },
+    "bandpass_lu_vs_uniform": {
+     "from": {
+      "passa_faixa_lu_vs_uniforme": 4
+     }
+    },
+    "random_cs_vs_uniform": {
+     "from": {
+      "aleatorio_cs_vs_uniforme": 4
+     }
+    },
+    "refuted": {
+     "from": {
+      "refutada": 1
+     },
+     "seq": "0*1 1*1"
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results/analysis.json": {
+   "sha256_before": "e6038871159831608e3038ff02a58372516782389ca35aaeeafb45b631d9cd9f",
+   "sha256_before_lf": "21cfdb80944ceff27d802c4469c611ec934e316430dd56b058beb4462e0bb12a",
+   "sha256_after": "54cd612e2016fe7f7a1a1ab9d619a318ed575325792cba5b75059932c94d21a2",
+   "sha256_after_lf": "5e42f7e1fbb2738858b9f1063a26fe30cf6a66cbd3bfe9e275acc4d1d1936d1c",
+   "sentences": {
+    "\"not refuted\"": {
+     "from": {
+      "\"nao refutada\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 4
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 4
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 4
+     }
+    },
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 4
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 4
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 4
+     }
+    },
+    "uniform_sweep_cv": {
+     "from": {
+      "uniforme_varredura_cv": 4
+     }
+    },
+    "uniform_sweep_record_leak": {
+     "from": {
+      "uniforme_varredura_registro_vazamento": 4
+     }
+    },
+    "uniform_sweep_record": {
+     "from": {
+      "uniforme_varredura_registro": 4
+     }
+    },
+    "H1_cs_minus_ceiling": {
+     "from": {
+      "H1_cs_minus_teto": 4
+     }
+    },
+    "posthoc_tat_minus_record": {
+     "from": {
+      "posthoc_tat_minus_registro": 4
+     }
+    },
+    "tat_rate_vs_uniform": {
+     "from": {
+      "taxa_tat_vs_uniforme": 4
+     }
+    },
+    "uniform_ceiling_vs_uniform": {
+     "from": {
+      "uniforme_teto_vs_uniforme": 4
+     }
+    },
+    "bandpass_lu_vs_uniform": {
+     "from": {
+      "passa_faixa_lu_vs_uniforme": 4
+     }
+    },
+    "random_cs_vs_uniform": {
+     "from": {
+      "aleatorio_cs_vs_uniforme": 4
+     }
+    },
+    "refuted": {
+     "from": {
+      "refutada": 1
+     },
+     "seq": "0*1 1*1"
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results/manifest.json": {
+   "sha256_before": "6766fd243be9ae52245f6a43302c77db49e0982ba67c53f233638eac66fb7814",
+   "sha256_after": "6766fd243be9ae52245f6a43302c77db49e0982ba67c53f233638eac66fb7814"
+  },
+  "experiments/E22-equal-rate-baselines/results/metrics.csv": {
+   "sha256_before": "c4e53881df30f64d421fac097ef41dc6514009c1f931e779ba9478c04b8c29dc",
+   "sha256_before_lf": "0d69d82acd7c9b983ce632a31744662122a7ae1e783008fc007c296d06a743f7",
+   "sha256_after": "3d8c8afc916a07877a89ac7474b10e5c50a59568ba4655ca9cbd313d68967ee1",
+   "sha256_after_lf": "9b8c4e18fb7f8fd304c77fbe0a0467e41ae0cccf2f1d445f01a41591f8fd0cb1",
+   "sentences": {
+    "dictionary 125000x2574 above the ceiling": {
+     "from": {
+      "dicionario 125000x2574 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2596 above the ceiling": {
+     "from": {
+      "dicionario 125000x2596 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2690 above the ceiling": {
+     "from": {
+      "dicionario 125000x2690 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2516 above the ceiling": {
+     "from": {
+      "dicionario 125000x2516 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2430 above the ceiling": {
+     "from": {
+      "dicionario 125000x2430 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2754 above the ceiling": {
+     "from": {
+      "dicionario 125000x2754 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2658 above the ceiling": {
+     "from": {
+      "dicionario 125000x2658 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2406 above the ceiling": {
+     "from": {
+      "dicionario 125000x2406 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2792 above the ceiling": {
+     "from": {
+      "dicionario 125000x2792 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2644 above the ceiling": {
+     "from": {
+      "dicionario 125000x2644 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2740 above the ceiling": {
+     "from": {
+      "dicionario 125000x2740 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2646 above the ceiling": {
+     "from": {
+      "dicionario 125000x2646 acima do teto": 1
+     }
+    },
+    "dictionary 125000x2478 above the ceiling": {
+     "from": {
+      "dicionario 125000x2478 acima do teto": 1
+     }
+    }
+   },
+   "tokens": {
+    "uniform_grid": {
+     "from": {
+      "uniforme_grid": 2160
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 192
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 192
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 192
+     }
+    },
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 192
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 192
+     }
+    }
+   }
+  },
+  "experiments/E22-equal-rate-baselines/results/summary.csv": {
+   "sha256_before": "a3532a0296af7da7374ab6a68fb62953a19536c7e7d3e2cfdeaf9f11333d5862",
+   "sha256_before_lf": "85fb30dc88c048e98514cb103faf4e79978d552ccbdd5866bdf78963857bccbd",
+   "sha256_after": "60d3b493599f2482997b79d178f2823d5d92bfa6ec4085d2d517df84ee67914d",
+   "sha256_after_lf": "276cbc463451e3a024f2a9586dd03cddb7e19403d8754c72bfcedd4ccc00e1fc",
+   "tokens": {
+    "random_cs": {
+     "from": {
+      "aleatorio_cs": 8
+     }
+    },
+    "bandpass_lu": {
+     "from": {
+      "passa_faixa_lu": 8
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 8
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 8
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 8
+     }
+    },
+    "uniform_oracle": {
+     "from": {
+      "oraculo_uniforme": 8
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke-spikes/manifest.json": {
+   "sha256_before": "efefd4dc0724196473a467720f83685b3288cb22a0cebb9695bbc82cd1aa4e89",
+   "sha256_before_lf": "ff7f46b4f19af7bafd26fbe7b76238d9c36b3d1547db2bb6fae13f7ed7fe7d68",
+   "sha256_after": "efefd4dc0724196473a467720f83685b3288cb22a0cebb9695bbc82cd1aa4e89",
+   "sha256_after_lf": "ff7f46b4f19af7bafd26fbe7b76238d9c36b3d1547db2bb6fae13f7ed7fe7d68"
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke-spikes/metrics.csv": {
+   "sha256_before": "b8117bc276623a0f7c9088288c786797afadd8de1abf639251686540e4aa0254",
+   "sha256_before_lf": "393da01014871f1f771923ba26e13160bcd616a71cc958e9edd3e2c2ffe6b410",
+   "sha256_after": "1bd20221ff051de2d231caed11ff22523dac19d5f2202c41b1ae68eaa089c514",
+   "sha256_after_lf": "5c315f58863fad4c3fa6d1d64251d6872ced57b60598ee7c95de8cb55901d6ff",
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 12
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 4
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 4
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke-spikes/summary.csv": {
+   "sha256_before": "fb790d8d9fffc791224aceb7129422b5269f91789050a9b33168fbd0b5184fa1",
+   "sha256_before_lf": "b675b8e952d6332101785cfc735d571645d031e1ba31d270585aebd43adc2657",
+   "sha256_after": "4b76797ec5255c4a67b261af32fa139edeee492244028e7374774201a40303cc",
+   "sha256_after_lf": "4bcfeec1bfd99df22c0158e57be51f87e53deebdf50e032b3c9c5cba9af331ec",
+   "tokens": {
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 4
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 12
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 4
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke/analysis.json": {
+   "sha256_before": "96e5570c791c0b09469ba9f01753aecd04aa3f714601279472dea321ac5f6272",
+   "sha256_before_lf": "1ef885c7138b214ceaea185e71b9dd2d8b591683f08c29dae23b7debdc20803d",
+   "sha256_after": "8d43087b972f4678c57035a2b91db9b0a8be802998331ccfaa13341461ff8449",
+   "sha256_after_lf": "61b2b400d1c5b468e8985a1061a9bb5acb2e3ada80ece18d29cfc37b2391ddb3",
+   "sentences": {
+    "\"not evaluable (no P*)\"": {
+     "from": {
+      "\"nao avaliavel (sem P*)\"": 1
+     }
+    },
+    "\"not evaluable (no hit or no miss)\"": {
+     "from": {
+      "\"nao avaliavel (sem acerto ou sem erro)\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "H1a_sensitivity": {
+     "from": {
+      "H1a_sensibilidade": 1
+     }
+    },
+    "refuted": {
+     "from": {
+      "refutada": 1
+     }
+    },
+    "H1b_specificity": {
+     "from": {
+      "H1b_especificidade": 1
+     }
+    },
+    "supported": {
+     "from": {
+      "apoiada": 2
+     }
+    },
+    "H1_line_impulsiveness": {
+     "from": {
+      "H1_linha_impulsividade": 1
+     }
+    },
+    "H2_tat_vs_oracle": {
+     "from": {
+      "H2_tat_vs_oraculo": 1
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke/manifest.json": {
+   "sha256_before": "a78151136210c097f641beddaa46c8d66201a4e7c8c91aef99f5c8df35668c7f",
+   "sha256_before_lf": "b4e0b8f642e1924b0dacddc8f7f694964a3fe9b6694301aa607321427ce55c4f",
+   "sha256_after": "a78151136210c097f641beddaa46c8d66201a4e7c8c91aef99f5c8df35668c7f",
+   "sha256_after_lf": "b4e0b8f642e1924b0dacddc8f7f694964a3fe9b6694301aa607321427ce55c4f"
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke/metrics.csv": {
+   "sha256_before": "ca1ff5fb0055c97b8802a56a9ce8847b0e605c33521a201ca868907d0228dcfd",
+   "sha256_before_lf": "051029b0858bdad1287ccb4982ad09d48d169c2eafc97a2980cb1c8db6b13fee",
+   "sha256_after": "585b16743170cac731f4e241cdcfc38ba0732ed85b2046f1ca7ffbc1d7211ddd",
+   "sha256_after_lf": "fd90941716d3dee31e95870f45009653e98513abd369e8d841136a09084f90bc",
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 54
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 18
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 18
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-smoke/summary.csv": {
+   "sha256_before": "d6522215cc4bc78ad48be1d5dfe194d5a22b931675d30e159f34eed45ee3df4d",
+   "sha256_before_lf": "80702bb00fcb8bbed11baa2b128cfd3edd6554c3fbcf07e0a5e24e7ee8aedb4f",
+   "sha256_after": "49e21ff22d7825187fd5695acacd8e20ca699ee59cfcecacc7da668b14d25942",
+   "sha256_after_lf": "7949913f53f61f2b8b1a5a23271033d0e6d349150923388cd30e5ff337dbc918",
+   "tokens": {
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 9
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 27
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 9
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-spikes/analysis.json": {
+   "sha256_before": "5bc49df857d1c0f61aaa71906ef1ab90e4f56e94e65c03a891d11df4c9309be7",
+   "sha256_before_lf": "253b8ad940bf547f6f8142ab306c4cc4aa36712856ac26657e746f46aa056a80",
+   "sha256_after": "c6b632a2941a6c0ebb6619d889f4edc0fbf62fc539600d33e288d123ebf24556",
+   "sha256_after_lf": "638ef0d9d6bdbd11151bffd127e5f74e167e7ccd03d21d6d258d28dc810a2203",
+   "tokens": {
+    "verdict_H_spikes": {
+     "from": {
+      "verdict_H_picos": 1
+     }
+    },
+    "inconclusive": {
+     "from": {
+      "inconclusiva": 1
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 1
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 1
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 1
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-spikes/manifest.json": {
+   "sha256_before": "3643318de94be30a6477676a0a3684b5c22cbbaad884c377f370e81307adacac",
+   "sha256_after": "3643318de94be30a6477676a0a3684b5c22cbbaad884c377f370e81307adacac"
+  },
+  "experiments/E23-injected-interferer-cwru/results-spikes/metrics.csv": {
+   "sha256_before": "3936f3adb49c491f47e33d7dca7338f91daf4d25f81dc4458bc2bfee868e4157",
+   "sha256_before_lf": "42408af48e0f88464b96f651480e4fbed6a671661432cd19d7a00428dfc0d266",
+   "sha256_after": "51afa454bcd0714c239c6d96fb60c077e497e284878daf22a72ceac2a415d725",
+   "sha256_after_lf": "ec83883c808f9344a8cf42ee3f6aa343152dff0441d4c4198a1c1e579e7f8716",
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 2860
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 1300
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 1300
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results-spikes/summary.csv": {
+   "sha256_before": "6f6b9245e3027aac55d506a276db1512a2c02fcd6407d4b3c37aa6d423a6f853",
+   "sha256_before_lf": "2f121638488be5577da19d1ee28c2377c8293bc4d3fdf3b54191e793de87df39",
+   "sha256_after": "6afd11c8823bb483772022f419b40ffebb9f62fe0c16e2caa9d44b9d2300bc30",
+   "sha256_after_lf": "bdac6f5465e60dd68fde3f669dbb4aff0eaaf27e86364c3391b9f26621de58e2",
+   "tokens": {
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 42
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 44
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 39
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results/analysis.json": {
+   "sha256_before": "7e975dacadbbd6a41f248dcbdbfb1dfe8fb21aec470a009aca39b5c77cf53315",
+   "sha256_before_lf": "aa47192eb52e327724387b744b310aa45ba04d875067baa1b871610d7ff9d6d2",
+   "sha256_after": "7f850d95c2d7a9bcd08abfd608e9ef645bbe8f636447ed1450f8c7580a39b0d5",
+   "sha256_after_lf": "83e3a3dad15c399a5e6e9ddbc99ef9bc25d363483ba40bddf962bd98cb39190d",
+   "tokens": {
+    "H1a_sensitivity": {
+     "from": {
+      "H1a_sensibilidade": 1
+     }
+    },
+    "supported": {
+     "from": {
+      "apoiada": 3
+     }
+    },
+    "H1b_specificity": {
+     "from": {
+      "H1b_especificidade": 1
+     }
+    },
+    "H1_line_impulsiveness": {
+     "from": {
+      "H1_linha_impulsividade": 1
+     }
+    },
+    "inconclusive": {
+     "from": {
+      "inconclusiva": 1
+     }
+    },
+    "H2_tat_vs_oracle": {
+     "from": {
+      "H2_tat_vs_oraculo": 1
+     }
+    },
+    "refuted": {
+     "from": {
+      "refutada": 1
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results/manifest.json": {
+   "sha256_before": "8bcea0097d492cc9050f846e152c920456590966c7e94552853291172217d6e0",
+   "sha256_after": "8bcea0097d492cc9050f846e152c920456590966c7e94552853291172217d6e0"
+  },
+  "experiments/E23-injected-interferer-cwru/results/metrics.csv": {
+   "sha256_before": "ac69e9a59cbd294a16b80201e8fd33d6e7f8ac219816d3cb0a352ca2416e1bba",
+   "sha256_before_lf": "877239b572b9adde15cf31554c3b6ae06551f49c89a4e31c30f078b911334e42",
+   "sha256_after": "aadad2f596a32360ea46ee522096f6085148f7325c9e0e226633c330645165f1",
+   "sha256_after_lf": "39392b8ffa4aa1d1555219705164067c57e40853ce8509697f934b9660039710",
+   "tokens": {
+    "uniform": {
+     "from": {
+      "uniforme": 9438
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 4290
+     }
+    },
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 4290
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results/paper_numbers.json": {
+   "sha256_before": "74e80149759ed62eef5f6490a7ff12a4333c47072ba7d028c79df9257523eec5",
+   "sha256_before_lf": "3fade7b78cb7d2ac8ab4dc2004d6aa31bbd9dd9327aea1984a4e7bc7a2db66af",
+   "sha256_after": "470f04d83e8e9c5a94dff74106c56fb0af719ec8e9425341f349ff3179f77c78",
+   "sha256_after_lf": "3086713af5c3e1d89e3f1801ef5f540932ce26208e917cdd779b75aebf08e2a9",
+   "tokens": {
+    "centred": {
+     "from": {
+      "centrada": 1
+     }
+    },
+    "opposite": {
+     "from": {
+      "oposta": 1
+     }
+    },
+    "orthogonal": {
+     "from": {
+      "ortogonal": 1
+     }
+    }
+   }
+  },
+  "experiments/E23-injected-interferer-cwru/results/summary.csv": {
+   "sha256_before": "8293531281992b72a0702785cb24d4c8fc8b6fd0c0725ee2e33ede653b875804",
+   "sha256_before_lf": "61bcf96500d7702827e24b1b04f35f70d399bd33935a2f8d6743db6a673dd7cd",
+   "sha256_after": "463a3b529f103ea2ea283d2257e19cd05c11493a82b81dea389e230ac9dab46d",
+   "sha256_after_lf": "ad6c7de44ec0f7cf88a62fd0840ed4a7dba25012090549823dddc7785a782952",
+   "tokens": {
+    "tat_rate": {
+     "from": {
+      "taxa_tat": 444
+     }
+    },
+    "uniform": {
+     "from": {
+      "uniforme": 742
+     }
+    },
+    "uniform_ceiling": {
+     "from": {
+      "uniforme_teto": 522
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-ceiling-notch/analysis.json": {
+   "original_path": "experiments/E24-paderborn-spike-capture/results-teto-notch/analysis.json",
+   "sha256_before": "727aaadd554b7228194c3cddd69ba615ccdfa48202c287c7bf688af4a9f06d85",
+   "sha256_before_lf": "c01f8f6a39e8ddd6d16c8229a3e1133d465d3983b6de8249860184beab4966ca",
+   "sha256_after": "abddcd84004e8b147600449d7804e177d74da18aed33080d5a62e15857cd6c43",
+   "sha256_after_lf": "1639e308a3cce02a28c3bae5bb7b813964aa03c75faa5b07de7e6d2f9c266613",
+   "sentences": {
+    "\"folding refuted as the cause of the floor choice\"": {
+     "from": {
+      "\"dobra refutada como causa do piso\"": 1
+     }
+    },
+    "\"the ceiling does not relieve the capture\"": {
+     "from": {
+      "\"teto nao alivia\"": 1
+     }
+    },
+    "\"invalid control\"": {
+     "from": {
+      "\"controle invalido\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "kurtogram": {
+     "from": {
+      "kurtograma": 8
+     }
+    },
+    "ceiling8k_vs_no_ceiling": {
+     "from": {
+      "teto8k_vs_sem_teto": 2
+     }
+    },
+    "ceiling4k_vs_no_ceiling": {
+     "from": {
+      "teto4k_vs_sem_teto": 2
+     }
+    },
+    "ceiling2k_vs_no_ceiling": {
+     "from": {
+      "teto2k_vs_sem_teto": 2
+     }
+    },
+    "ceiling1k_vs_no_ceiling": {
+     "from": {
+      "teto1k_vs_sem_teto": 2
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 8
+     }
+    },
+    "ceiling8k_vs_4x": {
+     "from": {
+      "teto8k_vs_4x": 2
+     }
+    },
+    "ceiling4k_vs_8x": {
+     "from": {
+      "teto4k_vs_8x": 2
+     }
+    },
+    "ceiling2k_vs_16x": {
+     "from": {
+      "teto2k_vs_16x": 2
+     }
+    },
+    "ceiling1k_vs_32x": {
+     "from": {
+      "teto1k_vs_32x": 2
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-ceiling-notch/hypotheses.csv": {
+   "original_path": "experiments/E24-paderborn-spike-capture/results-teto-notch/hypotheses.csv",
+   "sha256_before": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "sha256_before_lf": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+   "sha256_after": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+   "sha256_after_lf": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "experiments/E24-paderborn-spike-capture/results-ceiling-notch/manifest.json": {
+   "original_path": "experiments/E24-paderborn-spike-capture/results-teto-notch/manifest.json",
+   "sha256_before": "cc9b5802d1dfcbf5b8006e8cf6fe72ebec1fd677a508133071d3b02d015db936",
+   "sha256_after": "093f507b790c6bbbe3874a5b56d8845a7d8d0fb9c4645db53ba736ecfdf30314",
+   "sentences": {
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-ceiling-notch/metrics.csv": {
+   "original_path": "experiments/E24-paderborn-spike-capture/results-teto-notch/metrics.csv",
+   "sha256_before": "27fa624941d6cd3844d6090c96f3997a67083c3ab9b305f6158e5c26fbbf64e2",
+   "sha256_before_lf": "9c958b994120efc4861c848b1b2daef6a908b74001ae19baa387fa0a68a50412",
+   "sha256_after": "0e2a86ffc6ac86faa70b653677409e29628e37eca1da371cf7906869b1fca831",
+   "sha256_after_lf": "c85bcd25c3c712f19e1b5c2adbd5a0756bdabc2a538b3ca010719280e933d104",
+   "tokens": {
+    "kurtogram_ceiling8k": {
+     "from": {
+      "kurtograma_teto8k": 1305
+     }
+    },
+    "kurtogram_ceiling4k": {
+     "from": {
+      "kurtograma_teto4k": 1305
+     }
+    },
+    "kurtogram_ceiling2k": {
+     "from": {
+      "kurtograma_teto2k": 1305
+     }
+    },
+    "kurtogram_ceiling1k": {
+     "from": {
+      "kurtograma_teto1k": 1305
+     }
+    },
+    "ses_infogram_ceiling8k": {
+     "from": {
+      "infograma_ses_teto8k": 1305
+     }
+    },
+    "ses_infogram_ceiling4k": {
+     "from": {
+      "infograma_ses_teto4k": 1305
+     }
+    },
+    "ses_infogram_ceiling2k": {
+     "from": {
+      "infograma_ses_teto2k": 1305
+     }
+    },
+    "ses_infogram_ceiling1k": {
+     "from": {
+      "infograma_ses_teto1k": 1305
+     }
+    },
+    "kurtogram_notch": {
+     "from": {
+      "kurtograma_notch": 2610
+     }
+    },
+    "kurtogram_notch_control": {
+     "from": {
+      "kurtograma_notch_controle": 2610
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-ceiling-notch/summary.csv": {
+   "original_path": "experiments/E24-paderborn-spike-capture/results-teto-notch/summary.csv",
+   "sha256_before": "336c033f1695f28c4324584e8039c8aa123fc0d545d20ba4597ff31865812654",
+   "sha256_before_lf": "93ea2adc3841c4a5568ab95d84f3d494d1a016b50472bd776548b55e514c0900",
+   "sha256_after": "837f4db5986f9c46f551a83d2e0fba48c84728037fbcc7df744349a22e7fc1fe",
+   "sha256_after_lf": "04820e4bf7169f53c5a3c3a4b499af9804af0467ed8da7b0638b30c4f66d43c0",
+   "tokens": {
+    "kurtogram_ceiling8k": {
+     "from": {
+      "kurtograma_teto8k": 1
+     }
+    },
+    "kurtogram_ceiling4k": {
+     "from": {
+      "kurtograma_teto4k": 1
+     }
+    },
+    "kurtogram_ceiling2k": {
+     "from": {
+      "kurtograma_teto2k": 1
+     }
+    },
+    "kurtogram_ceiling1k": {
+     "from": {
+      "kurtograma_teto1k": 1
+     }
+    },
+    "ses_infogram_ceiling8k": {
+     "from": {
+      "infograma_ses_teto8k": 1
+     }
+    },
+    "ses_infogram_ceiling4k": {
+     "from": {
+      "infograma_ses_teto4k": 1
+     }
+    },
+    "ses_infogram_ceiling2k": {
+     "from": {
+      "infograma_ses_teto2k": 1
+     }
+    },
+    "ses_infogram_ceiling1k": {
+     "from": {
+      "infograma_ses_teto1k": 1
+     }
+    },
+    "kurtogram_notch": {
+     "from": {
+      "kurtograma_notch": 2
+     }
+    },
+    "kurtogram_notch_control": {
+     "from": {
+      "kurtograma_notch_controle": 2
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-post-despike/hypotheses.csv": {
+   "sha256_before": "b3c0691c6264e5edb95b7804f8c27922daa0d89cc02218e793701e45aa6aafff",
+   "sha256_before_lf": "5c5acf8f5fc9d2fbee76288c64ffb9f603440dd7fed6f3f980daf27aa18fd6c4",
+   "sha256_after": "7b5fefd11cec02d89ffd5dd979f11ebcb66611468c7c1af9e013f685361e57cc",
+   "sha256_after_lf": "9b809533c85d6ea1c6bac0dcf264fccf16249301e84d512f99c3d33a06c8966b",
+   "tokens": {
+    "kurtogram_despiked_after_decimation": {
+     "from": {
+      "kurtograma_sem_picos_decimado": 8
+     }
+    },
+    "kurtogram": {
+     "from": {
+      "kurtograma": 8
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-post-despike/manifest.json": {
+   "sha256_before": "51eb725062c55dd925e563cb84d9a4879ed78553c84810018ec8e5e9e0cc261f",
+   "sha256_after": "489365108441b0cfce98a3eddbb8700a9b6bdeb9bb9edcd357652e91aed45479",
+   "sentences": {
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-post-despike/metrics.csv": {
+   "sha256_before": "df9035b118b99c6e949d5172b352c4c960292192b0f1668775d2ede2e7fa3799",
+   "sha256_before_lf": "502184030c3d101d7a26c2f83769e3cfce94749a4082ba61617c04c54f3afa7b",
+   "sha256_after": "8f536afac21f6435ae5e16437e8b0ec8610ac9f6e5647ca7ca45ba0ed7273939",
+   "sha256_after_lf": "6e1e3301b1e540e277217a34d12c09e4a79879c044f1cf151bb8c3227622577d",
+   "tokens": {
+    "kurtogram": {
+     "from": {
+      "kurtograma": 6525
+     }
+    },
+    "kurtogram_despiked": {
+     "from": {
+      "kurtograma_sem_picos": 6525
+     }
+    },
+    "kurtogram_despiked_after_decimation": {
+     "from": {
+      "kurtograma_sem_picos_decimado": 6525
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results-post-despike/summary.csv": {
+   "sha256_before": "0ceb65a8ac19aa8bae5bcf7ef8271b1148452423a81f4da43b0ff679883e454c",
+   "sha256_before_lf": "04a7e76a2db2aea996111f8fe2cc90de18f3c2f5e8bb8d55ee3d735c522dbd53",
+   "sha256_after": "8adfdac928dad72815a16dfc4eb48100628fc01731a6bbe459991629bc109eb4",
+   "sha256_after_lf": "c7b8c400dfcbd8d673418ff444e233dfc1b472280fb8a65a310e4f58c2353591",
+   "tokens": {
+    "kurtogram": {
+     "from": {
+      "kurtograma": 5
+     }
+    },
+    "kurtogram_despiked": {
+     "from": {
+      "kurtograma_sem_picos": 5
+     }
+    },
+    "kurtogram_despiked_after_decimation": {
+     "from": {
+      "kurtograma_sem_picos_decimado": 5
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results/exploratory/inverter_lines.csv": {
+   "sha256_before": "f40c396e40d720582126f6275cbda540c9b963d38eef1b353659d9c61f71d2c7",
+   "sha256_before_lf": "a5b5535e8333796406e4c79fd81e674a25bf162dd8eff8fb5f77c16364139889",
+   "sha256_after": "f40c396e40d720582126f6275cbda540c9b963d38eef1b353659d9c61f71d2c7",
+   "sha256_after_lf": "a5b5535e8333796406e4c79fd81e674a25bf162dd8eff8fb5f77c16364139889"
+  },
+  "experiments/E24-paderborn-spike-capture/results/exploratory/inverter_lines.json": {
+   "sha256_before": "7fb19f3f83acdea262e0f4465cc3d6e3edf0679bb63cf020d16f77fdb8d6120b",
+   "sha256_after": "7fb19f3f83acdea262e0f4465cc3d6e3edf0679bb63cf020d16f77fdb8d6120b"
+  },
+  "experiments/E24-paderborn-spike-capture/results/exploratory/robustness.json": {
+   "sha256_before": "86ca160811defbd5c0c0bc9e2c5e4954b82161d7169fbd1e24c9d1a10b82ae96",
+   "sha256_before_lf": "ac707d079620d83f07143f13d67a9e1725e69a50f6f999f63ffca42d79996266",
+   "sha256_after": "86ca160811defbd5c0c0bc9e2c5e4954b82161d7169fbd1e24c9d1a10b82ae96",
+   "sha256_after_lf": "ac707d079620d83f07143f13d67a9e1725e69a50f6f999f63ffca42d79996266"
+  },
+  "experiments/E24-paderborn-spike-capture/results/hypotheses.csv": {
+   "sha256_before": "b1bf88a41731276f695f4206424506f19bd7f8a6aba144b4cefdfd8e8e237f61",
+   "sha256_before_lf": "c38302011c265cb240fa48407519340d24e0260bb93b148c8beb2df7e36b9a48",
+   "sha256_after": "be27e7e4f247cde40160335ca6efe17e60549479a241e7d491faa72057e3763d",
+   "sha256_after_lf": "630edc9b52e70e62de6784fa3ab16c09de1fe8a50ebfa769a02b3b19f36f182f",
+   "tokens": {
+    "kurtogram_despiked": {
+     "from": {
+      "kurtograma_sem_picos": 8
+     }
+    },
+    "kurtogram": {
+     "from": {
+      "kurtograma": 16
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 8
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results/manifest.json": {
+   "sha256_before": "e36ec4b11a51c20491dc9aa8ef86ff1b03815b39f9fd4996b6a33a4d6cc62750",
+   "sha256_after": "d3b35a7c51e4399b491d2ab0a2df9a6f4956c63f84be863fcfb9b0273ee7d293",
+   "sentences": {
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results/metrics.csv": {
+   "sha256_before": "0641912ead75c488b06e8021fda7c693402d0aca5be66399904bc4bf28591aff",
+   "sha256_before_lf": "5e6f616dfe72502deb156aea6d4a446799db669529dc49f7bf6b1b55b96e0f6c",
+   "sha256_after": "2edeee5694f3d72f0bb2c78ad1ea7f3908c73098dadb916acbb8786f1d79dc91",
+   "sha256_after_lf": "05f2d6df38a509f41f2ae7dbcf3aedbee8117e67fd5f1dd0fc40a73e099663d5",
+   "tokens": {
+    "kurtogram": {
+     "from": {
+      "kurtograma": 6525
+     }
+    },
+    "kurtogram_despiked": {
+     "from": {
+      "kurtograma_sem_picos": 6525
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 6525
+     }
+    },
+    "ses_infogram_despiked": {
+     "from": {
+      "infograma_ses_sem_picos": 6525
+     }
+    }
+   }
+  },
+  "experiments/E24-paderborn-spike-capture/results/summary.csv": {
+   "sha256_before": "307ec71d9bf7d5c2847d3d7ed239fa5df6293f5cee5ab2cb0f66e1edff101b1d",
+   "sha256_before_lf": "d0ae7c3a2b1bc87f06a40f4562faf0a27537df61a2612d4feaeff484885823ae",
+   "sha256_after": "c0b800417580a10b77bcc17f749c88c77ffb433e53384f9abe3434a3faae9ad1",
+   "sha256_after_lf": "ead4b683a4699b6977d739ac5f8136e91b31f174d87975a5938f0a11e878d5c8",
+   "tokens": {
+    "kurtogram": {
+     "from": {
+      "kurtograma": 5
+     }
+    },
+    "kurtogram_despiked": {
+     "from": {
+      "kurtograma_sem_picos": 5
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 5
+     }
+    },
+    "ses_infogram_despiked": {
+     "from": {
+      "infograma_ses_sem_picos": 5
+     }
+    }
+   }
+  },
+  "experiments/E25-coprime-coarray/results-pilot/metrics.csv": {
+   "sha256_before": "6be84d2791a033e5736588ff76501be0b030431b35f881082672271c1b539e14",
+   "sha256_before_lf": "942790cae2de54cf46c7c6658779ea5ece807299140e3f1b1bfd1816cfb8c087",
+   "sha256_after": "cba418cca9facd95542b7081db63e74ae2b30c4bf652fc67433e7ae245cccae6",
+   "sha256_after_lf": "9969b0830e0bd4b855a888ab53c55a25bf21846f896345229a0944e0edb1b36e",
+   "tokens": {
+    "full_rate": {
+     "from": {
+      "taxa_cheia": 65
+     }
+    },
+    "uniform_4": {
+     "from": {
+      "uniforme_4": 65
+     }
+    },
+    "coprime_8_9": {
+     "from": {
+      "coprimo_8_9": 65
+     }
+    }
+   }
+  },
+  "experiments/E25-coprime-coarray/results-pilot/summary.json": {
+   "sha256_before": "2986433dbde07abbba8388d1fb4ef70a02047829d9f711c0fa56947f79810397",
+   "sha256_before_lf": "8ce97a983fae9710a335cd72d130dff47b6b33625ddd78d3a0216d8338dc9ef1",
+   "sha256_after": "fe3ec3b5dea8b5e4c84595e9a4c08d0444d5fc879cb6c1f0e8f210a8ae4953f2",
+   "sha256_after_lf": "882b19960c536fe7c8bd931a932c34a1df7fc719fb98dac2c294808ec636fb5f",
+   "sentences": {
+    "\"no injection|taxa_cheia\"": {
+     "from": {
+      "\"sem injeção|taxa_cheia\"": 1
+     }
+    },
+    "\"no injection|uniforme_4\"": {
+     "from": {
+      "\"sem injeção|uniforme_4\"": 1
+     }
+    },
+    "\"no injection|coprimo_8_9\"": {
+     "from": {
+      "\"sem injeção|coprimo_8_9\"": 1
+     }
+    },
+    "\"no injection\"": {
+     "from": {
+      "\"sem injeção\"": 1
+     }
+    }
+   },
+   "tokens": {
+    "full_rate": {
+     "from": {
+      "taxa_cheia": 5
+     }
+    },
+    "uniform_4": {
+     "from": {
+      "uniforme_4": 5
+     }
+    },
+    "coprime_8_9": {
+     "from": {
+      "coprimo_8_9": 5
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-acquisition/analysis.json": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-aquisicao/analysis.json",
+   "sha256_before": "cee0f8fe473bbfc8bb50f8c861211ad658ba956332f40eab32294007a48b0aa6",
+   "sha256_after": "7dc6a16f36f7ebd37e09f1cd25bf852e8cff28b38284b945373c8a1773b77199",
+   "tokens": {
+    "wideband_rule": {
+     "from": {
+      "banda_larga_regra": 24
+     }
+    },
+    "guided": {
+     "from": {
+      "guiado": 18
+     }
+    },
+    "kurtogram_rule": {
+     "from": {
+      "kurtograma_regra": 8
+     }
+    },
+    "pure": {
+     "from": {
+      "pura": 18
+     }
+    },
+    "zone1": {
+     "from": {
+      "zona1": 2
+     }
+    },
+    "zone2": {
+     "from": {
+      "zona2": 2
+     }
+    },
+    "zone3": {
+     "from": {
+      "zona3": 2
+     }
+    },
+    "zone4": {
+     "from": {
+      "zona4": 1
+     }
+    },
+    "zone5": {
+     "from": {
+      "zona5": 1
+     }
+    },
+    "zone6": {
+     "from": {
+      "zona6": 1
+     }
+    },
+    "zone7": {
+     "from": {
+      "zona7": 1
+     }
+    },
+    "fleet_zone": {
+     "from": {
+      "zona_frota": 4
+     }
+    },
+    "kurtogram_zone": {
+     "from": {
+      "zona_kurtograma": 2
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-acquisition/commission.csv": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-aquisicao/commission.csv",
+   "sha256_before": "c6df1caa5d51ce3c633e797c5213c9f83b88a7b431427d77dc79c81b07671c58",
+   "sha256_before_lf": "8b5ce3154ad3ad01b36902b3b04b7ae2f6ae6aae692b16eea673bbcd9e139ba5",
+   "sha256_after": "c6df1caa5d51ce3c633e797c5213c9f83b88a7b431427d77dc79c81b07671c58",
+   "sha256_after_lf": "8b5ce3154ad3ad01b36902b3b04b7ae2f6ae6aae692b16eea673bbcd9e139ba5"
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-acquisition/manifest.json": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-aquisicao/manifest.json",
+   "sha256_before": "b0459fce50eded49ae979768e057ee513070392ea7a8bee59847d300a947eee4",
+   "sha256_after": "592e2a62e678d9328babe4fb97c9206f457ce9eec7e0b1f66e1209b7bcf0b4f7",
+   "sentences": {
+    "\"E26c-fault-order-guided-selector (Paderborn, acquisition)\"": {
+     "from": {
+      "\"E26c-fault-order-guided-selector (Paderborn, aquisicao)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-acquisition/metrics.csv": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-aquisicao/metrics.csv",
+   "sha256_before": "f3444b4d3b5697dfd8919f0d779fe253c9733c707893e64973d4479a2c01f7c3",
+   "sha256_before_lf": "60d85129f9e3aebd2675bba113317050e07a939632cc26fff4fc927176094b4f",
+   "sha256_after": "7b8c1f4ac4c6cb284f982b267258fff793c4f0c2871afad32b4e3b1220fe63d0",
+   "sha256_after_lf": "87977d6ca92b1954e0031adf1a4f1d576e6d1536250a1a31b87f6c693cd60040",
+   "tokens": {
+    "pure": {
+     "from": {
+      "pura": 19764
+     }
+    },
+    "wideband_rule": {
+     "from": {
+      "banda_larga_regra": 29646
+     }
+    },
+    "guided": {
+     "from": {
+      "guiado": 13176
+     }
+    },
+    "kurtogram_rule": {
+     "from": {
+      "kurtograma_regra": 13176
+     }
+    },
+    "zone1": {
+     "from": {
+      "zona1": 3294
+     }
+    },
+    "zone2": {
+     "from": {
+      "zona2": 3294
+     }
+    },
+    "zone3": {
+     "from": {
+      "zona3": 3294
+     }
+    },
+    "zone4": {
+     "from": {
+      "zona4": 1647
+     }
+    },
+    "zone5": {
+     "from": {
+      "zona5": 1647
+     }
+    },
+    "zone6": {
+     "from": {
+      "zona6": 1647
+     }
+    },
+    "zone7": {
+     "from": {
+      "zona7": 1647
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-rule/analysis.json": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-regra/analysis.json",
+   "sha256_before": "1e022cc99ceb96ba1e22f97d50059196fa9fb37db064fe52d946b73a784169c3",
+   "sha256_after": "45f085dd111c36478b7c3c62b7855ffd94abb23284543a1295bfb18bc7accebc",
+   "tokens": {
+    "guided": {
+     "from": {
+      "guiado": 20
+     }
+    },
+    "raw": {
+     "from": {
+      "bruto": 63
+     }
+    },
+    "median3": {
+     "from": {
+      "mediana3": 61
+     }
+    },
+    "kurtogram_rule": {
+     "from": {
+      "kurtograma_regra": 28
+     }
+    },
+    "ses_infogram_rule": {
+     "from": {
+      "infograma_ses_regra": 20
+     }
+    },
+    "wideband_rule": {
+     "from": {
+      "banda_larga_regra": 28
+     }
+    },
+    "random_band_rule": {
+     "from": {
+      "sorteada_regra": 20
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-rule/manifest.json": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-regra/manifest.json",
+   "sha256_before": "b7383f4a9cd85347fb57daec627b58d94f688999878520935da28267da14f962",
+   "sha256_after": "bfc8bf59faf1c50a9a897f620ec015635d78873d85b70fde281516dee7c37737",
+   "sentences": {
+    "\"E26b-fault-order-guided-selector (Paderborn, fixed rule)\"": {
+     "from": {
+      "\"E26b-fault-order-guided-selector (Paderborn, regra fixa)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn-rule/metrics.csv": {
+   "original_path": "experiments/E26-fault-order-guided-selector/results-paderborn-regra/metrics.csv",
+   "sha256_before": "b3f25452639081f2997060b18e9454ec2dac9b54ffb75f8d665193f07c2b94dd",
+   "sha256_before_lf": "72dc63499f2299fb080903f763f830ca88b121cf71a1cd775965cc03262603d1",
+   "sha256_after": "9f3449a606ec7482e268d6a49d39ecb2722783ff1a27c7cc26be76d61dd23b73",
+   "sha256_after_lf": "f2af92330682a09f07593e2c52bc1292e506ba7bdcffe050f470ac00076624f9",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 32940
+     }
+    },
+    "kurtogram": {
+     "from": {
+      "kurtograma": 16470
+     }
+    },
+    "ses_infogram": {
+     "from": {
+      "infograma_ses": 16470
+     }
+    },
+    "wideband": {
+     "from": {
+      "banda_larga": 16470
+     }
+    },
+    "random_band": {
+     "from": {
+      "sorteada": 16470
+     }
+    },
+    "median3": {
+     "from": {
+      "mediana3": 32940
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn/analysis.json": {
+   "sha256_before": "c57d1b4286f9e464f0fd699a83b99d1d2039f1e91631630cd32f702a83c250ee",
+   "sha256_after": "671da35df9b2f08787e8f448c25ec59756e84648533bfa1e5a1e2d9b358f1ddf",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 5
+     }
+    },
+    "median3": {
+     "from": {
+      "mediana3": 5
+     }
+    },
+    "kurtogram": {
+     "from": {
+      "kurtograma": 9
+     }
+    },
+    "median_kurtogram": {
+     "from": {
+      "mediana_kurtograma": 9
+     }
+    },
+    "guided": {
+     "from": {
+      "guiado": 5
+     }
+    },
+    "median_guided": {
+     "from": {
+      "mediana_guiado": 13
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn/calib.csv": {
+   "sha256_before": "a06571b417ac0936978cd09eece725b1d176c4446f89caa02599f90479e9a593",
+   "sha256_before_lf": "77a02b7667c4da63541a18fec9b8d686fa7bd2c4c7f473ea887002ddbca72f84",
+   "sha256_after": "a06571b417ac0936978cd09eece725b1d176c4446f89caa02599f90479e9a593",
+   "sha256_after_lf": "77a02b7667c4da63541a18fec9b8d686fa7bd2c4c7f473ea887002ddbca72f84"
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn/manifest.json": {
+   "sha256_before": "67a4edb3a57ae5a319cdc4a8c62f34674718154346a8824a8287e14d0b77ed7b",
+   "sha256_after": "6564590871f0b942276175b636125d03ddb4940b4c93c23a847663e1215d104e",
+   "sentences": {
+    "\"N15_M07_F10_KA05_16.mat: vibration with 250604 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA05_16.mat: vibra\\u00e7\\u00e3o com 250604 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA05_9.mat: rotation signal of 4.0135 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KA05_9.mat: rota\\u00e7\\u00e3o com 4.0135 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M07_F10_KA08_11.mat: vibration with 249940 samples, fewer than 255936\"": {
+     "from": {
+      "\"N15_M07_F10_KA08_11.mat: vibra\\u00e7\\u00e3o com 249940 amostras, menos de 255936\"": 1
+     }
+    },
+    "\"N15_M01_F10_KA08_2.mat: unreadable by scipy (Expecting matrix here)\"": {
+     "from": {
+      "\"N15_M01_F10_KA08_2.mat: ileg\\u00edvel pelo scipy (Expecting matrix here)\"": 1
+     }
+    },
+    "\"N15_M07_F10_KI16_9.mat: rotation signal of 4.2835 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M07_F10_KI16_9.mat: rota\\u00e7\\u00e3o com 4.2835 s, esperado 4 s\"": 1
+     }
+    },
+    "\"N15_M01_F10_KI16_4.mat: rotation signal of 4.6725 s, expected 4 s\"": {
+     "from": {
+      "\"N15_M01_F10_KI16_4.mat: rota\\u00e7\\u00e3o com 4.6725 s, esperado 4 s\"": 1
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-paderborn/metrics.csv": {
+   "sha256_before": "9160d629db67eb3dbd1a7f85c53e8752fd8209a709d31831799f292e1ee7765c",
+   "sha256_before_lf": "1213a7170c0b71228e6d28b3ed44f3097daad2d013377ed26ce49c8fc3ecbc43",
+   "sha256_after": "9c445d4e7ddb095af0ea60da6c9ab3bb2bf551586b8614f5550eb9ac457152d4",
+   "sha256_after_lf": "5adf8f50beba69cb8e380c4c77cf9cc7eb48e2de7065acc5dc4fcd9306805fb0",
+   "tokens": {
+    "raw": {
+     "from": {
+      "bruto": 8235
+     }
+    },
+    "median3": {
+     "from": {
+      "mediana3": 8235
+     }
+    }
+   }
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot-w12-median3/metrics.csv": {
+   "sha256_before": "8c72217da1acaaa28bceaa2e47109e0fa889336a0550eb791d4ae0471a8888a0",
+   "sha256_before_lf": "502b184f977e98d5d127f988669fd6ff5b3501f1f4b85d5d5492b8ec35a55954",
+   "sha256_after": "8c72217da1acaaa28bceaa2e47109e0fa889336a0550eb791d4ae0471a8888a0",
+   "sha256_after_lf": "502b184f977e98d5d127f988669fd6ff5b3501f1f4b85d5d5492b8ec35a55954"
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot-w12-median3/summary.json": {
+   "sha256_before": "d810ae68b7377653dcfe85a984a2c003c1baeff55c3c5e8033293cab5c1a04af",
+   "sha256_before_lf": "759ccb608b86c0c80570a5ac0231f7e7d38a31eac5eb4aef672040fc5fd4bbce",
+   "sha256_after": "d810ae68b7377653dcfe85a984a2c003c1baeff55c3c5e8033293cab5c1a04af",
+   "sha256_after_lf": "759ccb608b86c0c80570a5ac0231f7e7d38a31eac5eb4aef672040fc5fd4bbce"
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot-w12/metrics.csv": {
+   "sha256_before": "c506f7cd5bb3b7c09f8a852968b580d6532817ac0baf86fa725cccb1593535ef",
+   "sha256_before_lf": "66515f92988be0fb431e08f520ebe3571519dd7588f29a5ac1183cffe10283ba",
+   "sha256_after": "c506f7cd5bb3b7c09f8a852968b580d6532817ac0baf86fa725cccb1593535ef",
+   "sha256_after_lf": "66515f92988be0fb431e08f520ebe3571519dd7588f29a5ac1183cffe10283ba"
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot-w12/summary.json": {
+   "sha256_before": "b1fbac6c7b6c1c90e87ba8e91c5463b920a079c22bb35b6e5e2a38b86d6be2c8",
+   "sha256_before_lf": "1afb456112fd7f608523081b14fc9a6d803a952484a5323ba549c885c7c334db",
+   "sha256_after": "b1fbac6c7b6c1c90e87ba8e91c5463b920a079c22bb35b6e5e2a38b86d6be2c8",
+   "sha256_after_lf": "1afb456112fd7f608523081b14fc9a6d803a952484a5323ba549c885c7c334db"
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot/metrics.csv": {
+   "sha256_before": "4301b655f02013656659fac9109e4ef3fb5789934f22d7977c510facc3321eb9",
+   "sha256_before_lf": "814e212539b36756fe40ef299919d7c42792a03567b17a982dd051281af6bf9f",
+   "sha256_after": "4301b655f02013656659fac9109e4ef3fb5789934f22d7977c510facc3321eb9",
+   "sha256_after_lf": "814e212539b36756fe40ef299919d7c42792a03567b17a982dd051281af6bf9f"
+  },
+  "experiments/E26-fault-order-guided-selector/results-pilot/summary.json": {
+   "sha256_before": "bc1dff270982fdf99542f0cfb794ef85f66a1e4c395578a60b2d2861b8cd34ec",
+   "sha256_before_lf": "931d8f587ea1edfeacbe9766ac2960027b83cdb40fe324192c56a55946e8b299",
+   "sha256_after": "bc1dff270982fdf99542f0cfb794ef85f66a1e4c395578a60b2d2861b8cd34ec",
+   "sha256_after_lf": "931d8f587ea1edfeacbe9766ac2960027b83cdb40fe324192c56a55946e8b299"
+  }
+ }
+}

@@ -104,7 +104,7 @@ def test_folga_de_envelope():
 # ----------------------------------------------------------------------
 def test_diagnostico_escolhe_a_falha_certa():
     """Impacts generated at the BPFO of the geometry have to be diagnosed as BPFO."""
-    geom = BearingGeometry(n_elements=9, d_ball_m=7.94e-3, d_pitch_m=39.04e-3, name="teste")
+    geom = BearingGeometry(n_elements=9, d_ball_m=7.94e-3, d_pitch_m=39.04e-3, name="test")
     shaft = 29.0
     bpfo = fault_frequencies_hz(geom, shaft)["BPFO"]
 

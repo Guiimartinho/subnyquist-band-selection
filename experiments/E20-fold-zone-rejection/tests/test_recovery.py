@@ -11,11 +11,11 @@ _spec.loader.exec_module(rec)
 
 
 def test_verdict_follows_the_preregistered_thresholds():
-    assert rec.verdict(20, 0.009) == "recupera"
-    assert rec.verdict(20, 0.01) == "inconclusivo"  # p < 0.01, strict
-    assert rec.verdict(25, 0.02) == "inconclusivo"
-    assert rec.verdict(15, 1e-6) == "inconclusivo"
-    assert rec.verdict(10, 1e-6) == "nao recupera"
+    assert rec.verdict(20, 0.009) == "recovers"
+    assert rec.verdict(20, 0.01) == "inconclusive"  # p < 0.01, strict
+    assert rec.verdict(25, 0.02) == "inconclusive"
+    assert rec.verdict(15, 1e-6) == "inconclusive"
+    assert rec.verdict(10, 1e-6) == "does not recover"
 
 
 def test_mcnemar_matches_the_binomial_tail():

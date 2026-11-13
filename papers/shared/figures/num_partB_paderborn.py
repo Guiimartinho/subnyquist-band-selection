@@ -36,7 +36,7 @@ def main() -> None:
     best = min(h1, key=lambda r: float(r["p_one_sided"]))
     conv = {
         arm: {b: float(summ[(arm, b)]["mask_converged_frac"]) for b in BUDGETS}
-        for arm in ("dec_aprendida", "dec_aprendida_sel", "dec_livre_projetada")
+        for arm in ("dec_learned", "dec_learned_sel", "dec_free_projected")
     }
     rep = {
         "h1_evaluable_budgets": sorted({r["budget"] for r in h1 if r["evaluable"] == "1"}, key=int),
@@ -69,11 +69,11 @@ def main() -> None:
         "bal_acc_nested_pct": {
             arm: {b: round(100 * float(summ[(arm, b)]["bal_acc_nested"]), 1) for b in BUDGETS}
             for arm in (
-                "dec_aprendida_sel",
-                "dec_uniforme_treino",
-                "dec_aleatoria",
+                "dec_learned_sel",
+                "dec_uniform_trained",
+                "dec_random",
                 "dec_multicoset_vb",
-                "uniforme_treino",
+                "uniform_trained",
             )
         },
     }

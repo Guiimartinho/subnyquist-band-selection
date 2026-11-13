@@ -34,11 +34,11 @@ min_line_prominence: 5.0
 prominence_window: 0.07
 splits: {kind: kfold_bearing, n_folds: 4}
 power_gate:
-  effects: [5, 10, perfeito]
+  effects: [5, 10, perfect]
   designs: {D0: 1, D1: 3, D2: 5}     # seeds of the planted arm
   n_sim: 200
   n_sim_perfect: 20
   n_boot: 2000
   alpha: 0.05
   min_budgets: 2
-  criterion: {effect: 5, power: 0.80, rule: otimista}
+  criterion: {effect: 5, power: 0.80, rule: optimistic}

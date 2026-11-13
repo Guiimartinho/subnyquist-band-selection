@@ -7,26 +7,26 @@ sys.path.insert(0, sys.argv[1])
 from common import *
 
 print(
-    "== Sensitivity to the percentile of the healthy threshold (LOO on the healthy): bal / spec ; H1 = mediana_guiado - kurtograma =="
+    "== Sensitivity to the percentile of the healthy threshold (LOO on the healthy): bal / spec ; H1 = median_guided - kurtogram =="
 )
 base = acc_table(lambda r, sel: pred_blind(r))
 for q in (90, 95, 97.5, 99, 100):
     tau = thresholds(q)
-    A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
+    A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r))
     s = []
     for f in FACTORS:
-        a = {k: v for k, v in A[("mediana_guiado", f)].items() if k[0] in ("OR", "IR")}
-        b = {k: v for k, v in A[("kurtograma", f)].items() if k[0] in ("OR", "IR")}
+        a = {k: v for k, v in A[("median_guided", f)].items() if k[0] in ("OR", "IR")}
+        b = {k: v for k, v in A[("kurtogram", f)].items() if k[0] in ("OR", "IR")}
         o, p, n, u = signflip(a, b, mc=100000)
         s.append(
-            f"{f}x {balanced(A[('mediana_guiado', f)]):4.1f}/{balanced(A[('mediana_guiado', f)], races=('H',)):5.1f} H1={o:+5.1f}"
+            f"{f}x {balanced(A[('median_guided', f)]):4.1f}/{balanced(A[('median_guided', f)], races=('H',)):5.1f} H1={o:+5.1f}"
         )
     print(f"  p{q:<5} " + " | ".join(s))
 print("\n== Pooled specificity with CI (t, 5 df, over the 6 healthy), p95 ==")
 tau = thresholds(95)
-A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
+A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guided" else pred_blind(r))
 t5 = 2.5706
-for arm in ("guiado", "mediana_guiado"):
+for arm in ("guided", "median_guided"):
     s = []
     for f in FACTORS:
         v = np.array([A[(arm, f)][("H", h)] for h in HEALTHY]) * 100
@@ -36,7 +36,7 @@ for arm in ("guiado", "mediana_guiado"):
 print(
     "\n== Healthy thresholds per factor (p95) and median score of the damaged on the right candidate =="
 )
-for cl in ("bruto", "mediana3"):
+for cl in ("raw", "median3"):
     s = []
     for f in FACTORS:
         rr = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == cl]

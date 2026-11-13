@@ -30,8 +30,8 @@ datasets:
     factor_grid_max: 48
     guard_points_per_rev_factor: 2.0 # the E22 guard
     min_gap_ticks: 2                 # 10 us at 200 kSPS; the value achievable on the SAADC is a bench measurement not yet made
-    # Corrected run (user's decision, 2026-11-12): only the deciding variant, `bruto`. The
-    # `sem_picos` one (requires full rate, decides nothing) is left for a later secondary run.
+    # Corrected run (user's decision, 2026-11-12): only the deciding variant, `raw`. The
+    # `despiked` one (requires full rate, decides nothing) is left for a later secondary run.
     despike_variants: [false]
     healthy_control: {enabled: true, conditions: [H]}
     window_samples: 500000           # training window = segment (2.5 s), and the local ruler's excerpt
@@ -129,16 +129,16 @@ decoder:
   beta_init: 2.0
 
 methods:
-  - dec_uniforme
-  - dec_aleatoria
+  - dec_uniform
+  - dec_random
   - dec_multicoset
   - dec_multicoset_vb
-  - dec_uniforme_treino
-  - dec_aprendida
-  - dec_livre
-  - dec_adaptativa
+  - dec_uniform_trained
+  - dec_learned
+  - dec_free
+  - dec_adaptive
   - wdcnn
-  # dec_loupe: optional (LOUPE with straight-through); the H2 projection gap uses dec_livre
+  # dec_loupe: optional (LOUPE with straight-through); the H2 projection gap uses dec_free
 
 mask:
   init: flat
@@ -147,10 +147,10 @@ mask:
   # The mask has its own learning rate: with the decoder's (0.003) and 8 steps per epoch, the
   # logits do not get out of the Gumbel noise (std ~1.28). The output diagnostics are in
   # masks.json (top-K margin, initial and final positions).
-  # Rule B5 applied on 2026-11-11: in the run with 10, mask_converged_frac of dec_aprendida
-  # (bruto) was 0.6 / 0.4 / 0.4 / 0.2 at 1/4 to 1/32 -> redo with 30 (see README).
+  # Rule B5 applied on 2026-11-11: in the run with 10, mask_converged_frac of dec_learned
+  # (raw) was 0.6 / 0.4 / 0.4 / 0.2 at 1/4 to 1/32 -> redo with 30 (see README).
   lr_multiplier: 30.0
-livre: {period_multiple: 4}          # horizon of the unconstrained mask: 4 periods, 4K positions
+free: {period_multiple: 4}           # horizon of the unconstrained mask: 4 periods, 4K positions
 loupe: {slope: 5.0, sample_slope: 12.0, period_multiple: 1}
 adps: {n_blocks: 4, n_features: 16, hidden: 32}
 multicoset: {criterion: min_peak_alias, max_enumeration: 3000000}
@@ -159,9 +159,9 @@ wdcnn: {input_length: 2048, batch_size: 64, windows_per_epoch: 512, max_val_wind
 # PREREGISTRATION (mirror of the README; the README is the reference record)
 preregistration:
   dataset: ottawa
-  variant: bruto
+  variant: raw
   rulers: [local, nested]            # H1 and H2 only hold if the two rulers agree
-  metric: acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)
+  metric: balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)
   alpha: 0.05
   correction: holm                   # over the tests of each hypothesis, per ruler
   min_budgets: 2
@@ -172,13 +172,13 @@ preregistration:
   # in at least this fraction of the splits; otherwise, its tests enter Holm with p = 1.
   min_mask_converged_frac: 0.5
   h1:
-    arm: dec_aprendida_sel
-    baselines: [uniforme_treino, dec_uniforme_treino, dec_aleatoria]
-    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 as preregistered + mask used
+    arm: dec_learned_sel
+    baselines: [uniform_trained, dec_uniform_trained, dec_random]
+    convergence_arms: [dec_learned, dec_learned_sel]  # B5 as preregistered + mask used
   h2:
-    arm: dec_aprendida
-    baseline: dec_livre_projetada
-    convergence_arms: [dec_aprendida, dec_livre_projetada]  # without this, a baseline stuck in the noise
+    arm: dec_learned
+    baseline: dec_free_projected
+    convergence_arms: [dec_learned, dec_free_projected]  # without this, a baseline stuck in the noise
 
 analysis: {bootstrap_resamples: 4000}
 

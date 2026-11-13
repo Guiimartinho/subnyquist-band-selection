@@ -1,136 +1,136 @@
 {
   "thresholds": {
-    "1x|bruto": 10.555,
-    "1x|mediana3": 9.839,
-    "4x|bruto": 6.383,
-    "4x|mediana3": 5.496,
-    "8x|bruto": 5.265,
-    "8x|mediana3": 4.56,
-    "16x|bruto": 4.5,
-    "16x|mediana3": 3.814,
-    "32x|bruto": 3.822,
-    "32x|mediana3": 3.601
+    "1x|raw": 10.555,
+    "1x|median3": 9.839,
+    "4x|raw": 6.383,
+    "4x|median3": 5.496,
+    "8x|raw": 5.265,
+    "8x|median3": 4.56,
+    "16x|raw": 4.5,
+    "16x|median3": 3.814,
+    "32x|raw": 3.822,
+    "32x|median3": 3.601
   },
   "nested_all_median": {
     "OR": 3.063747810858143,
     "IR": 4.938752189141855
   },
   "summary": {
-    "kurtograma|1x": {
+    "kurtogram|1x": {
       "IR": 10.0,
       "OR": 5.4,
       "balanced": 7.7,
       "specificity": 100.0
     },
-    "kurtograma|4x": {
+    "kurtogram|4x": {
       "IR": 7.3,
       "OR": 24.9,
       "balanced": 16.1,
       "specificity": 100.0
     },
-    "kurtograma|8x": {
+    "kurtogram|8x": {
       "IR": 8.1,
       "OR": 29.1,
       "balanced": 18.6,
       "specificity": 100.0
     },
-    "kurtograma|16x": {
+    "kurtogram|16x": {
       "IR": 4.6,
       "OR": 33.8,
       "balanced": 19.2,
       "specificity": 100.0
     },
-    "kurtograma|32x": {
+    "kurtogram|32x": {
       "IR": 0.3,
       "OR": 25.7,
       "balanced": 13.0,
       "specificity": 100.0
     },
-    "mediana_kurtograma|1x": {
+    "median_kurtogram|1x": {
       "IR": 9.4,
       "OR": 21.9,
       "balanced": 15.6,
       "specificity": 100.0
     },
-    "mediana_kurtograma|4x": {
+    "median_kurtogram|4x": {
       "IR": 9.1,
       "OR": 28.5,
       "balanced": 18.8,
       "specificity": 100.0
     },
-    "mediana_kurtograma|8x": {
+    "median_kurtogram|8x": {
       "IR": 4.3,
       "OR": 51.3,
       "balanced": 27.8,
       "specificity": 100.0
     },
-    "mediana_kurtograma|16x": {
+    "median_kurtogram|16x": {
       "IR": 5.4,
       "OR": 36.3,
       "balanced": 20.8,
       "specificity": 99.4
     },
-    "mediana_kurtograma|32x": {
+    "median_kurtogram|32x": {
       "IR": 0.3,
       "OR": 34.5,
       "balanced": 17.4,
       "specificity": 99.7
     },
-    "guiado|1x": {
+    "guided|1x": {
       "IR": 23.1,
       "OR": 49.2,
       "balanced": 36.2,
       "specificity": 94.2
     },
-    "guiado|4x": {
+    "guided|4x": {
       "IR": 42.2,
       "OR": 62.2,
       "balanced": 52.2,
       "specificity": 93.9
     },
-    "guiado|8x": {
+    "guided|8x": {
       "IR": 41.4,
       "OR": 64.5,
       "balanced": 53.0,
       "specificity": 94.4
     },
-    "guiado|16x": {
+    "guided|16x": {
       "IR": 35.8,
       "OR": 55.0,
       "balanced": 45.4,
       "specificity": 94.2
     },
-    "guiado|32x": {
+    "guided|32x": {
       "IR": 20.8,
       "OR": 43.7,
       "balanced": 32.2,
       "specificity": 95.0
     },
-    "mediana_guiado|1x": {
+    "median_guided|1x": {
       "IR": 26.5,
       "OR": 50.1,
       "balanced": 38.3,
       "specificity": 94.4
     },
-    "mediana_guiado|4x": {
+    "median_guided|4x": {
       "IR": 40.2,
       "OR": 57.8,
       "balanced": 49.0,
       "specificity": 94.2
     },
-    "mediana_guiado|8x": {
+    "median_guided|8x": {
       "IR": 39.1,
       "OR": 62.7,
       "balanced": 50.9,
       "specificity": 94.4
     },
-    "mediana_guiado|16x": {
+    "median_guided|16x": {
       "IR": 34.0,
       "OR": 56.4,
       "balanced": 45.2,
       "specificity": 94.2
     },
-    "mediana_guiado|32x": {
+    "median_guided|32x": {
       "IR": 15.5,
       "OR": 34.9,
       "balanced": 25.2,
@@ -140,8 +140,8 @@
   "tests": [
     {
       "hypothesis": "H1",
-      "arm": "mediana_guiado",
-      "baseline": "kurtograma",
+      "arm": "median_guided",
+      "baseline": "kurtogram",
       "factor": 4,
       "diff_points": 32.9,
       "bearings_differing": 17,
@@ -153,8 +153,8 @@
     },
     {
       "hypothesis": "H1",
-      "arm": "mediana_guiado",
-      "baseline": "kurtograma",
+      "arm": "median_guided",
+      "baseline": "kurtogram",
       "factor": 8,
       "diff_points": 32.27,
       "bearings_differing": 18,
@@ -166,8 +166,8 @@
     },
     {
       "hypothesis": "H1",
-      "arm": "mediana_guiado",
-      "baseline": "kurtograma",
+      "arm": "median_guided",
+      "baseline": "kurtogram",
       "factor": 16,
       "diff_points": 25.99,
       "bearings_differing": 19,
@@ -179,8 +179,8 @@
     },
     {
       "hypothesis": "H1",
-      "arm": "mediana_guiado",
-      "baseline": "kurtograma",
+      "arm": "median_guided",
+      "baseline": "kurtogram",
       "factor": 32,
       "diff_points": 12.16,
       "bearings_differing": 22,
@@ -192,8 +192,8 @@
     },
     {
       "hypothesis": "H2",
-      "arm": "mediana_guiado",
-      "baseline": "mediana_kurtograma",
+      "arm": "median_guided",
+      "baseline": "median_kurtogram",
       "factor": 4,
       "diff_points": 30.2,
       "bearings_differing": 15,
@@ -205,8 +205,8 @@
     },
     {
       "hypothesis": "H2",
-      "arm": "mediana_guiado",
-      "baseline": "mediana_kurtograma",
+      "arm": "median_guided",
+      "baseline": "median_kurtogram",
       "factor": 8,
       "diff_points": 23.09,
       "bearings_differing": 18,
@@ -218,8 +218,8 @@
     },
     {
       "hypothesis": "H2",
-      "arm": "mediana_guiado",
-      "baseline": "mediana_kurtograma",
+      "arm": "median_guided",
+      "baseline": "median_kurtogram",
       "factor": 16,
       "diff_points": 24.33,
       "bearings_differing": 19,
@@ -231,8 +231,8 @@
     },
     {
       "hypothesis": "H2",
-      "arm": "mediana_guiado",
-      "baseline": "mediana_kurtograma",
+      "arm": "median_guided",
+      "baseline": "median_kurtogram",
       "factor": 32,
       "diff_points": 7.77,
       "bearings_differing": 21,

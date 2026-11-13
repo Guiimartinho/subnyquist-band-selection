@@ -25,11 +25,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
 from snq_learn.masks import FeasibleSet, fold_project, project_to_feasible
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from run import legacy_label, legacy_path  # noqa: E402
 
 
 def overlap(a: np.ndarray, b: np.ndarray) -> float:
@@ -46,7 +50,7 @@ def main() -> None:
     ap.add_argument("masks_json", type=Path)
     ap.add_argument("--gap-ticks", type=int, default=2, help="min_gap_ticks from the config")
     ap.add_argument("--samples", type=int, default=500)
-    ap.add_argument("--variant", default="bruto")
+    ap.add_argument("--variant", default="raw")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", type=Path, default=None, help="output CSV")
     args = ap.parse_args()
@@ -54,20 +58,21 @@ def main() -> None:
     masks = json.loads(args.masks_json.read_text(encoding="utf-8"))
 
     rows = []
-    for key, arms in sorted(masks.items()):
+    # in the order of the labels the runs wrote: each mask then draws the same Gumbel noises
+    for key, arms in sorted(masks.items(), key=lambda kv: legacy_path(kv[0])):
         parts = key.split("/")
         if len(parts) != 6 or parts[1] != args.variant:
             continue
         _, var, b_tag, split, seed, method = parts
-        if method == "dec_aprendida" and "dec_aprendida" in arms:
-            d = arms["dec_aprendida"]
+        if method == "dec_learned" and "dec_learned" in arms:
+            d = arms["dec_learned"]
             period, k = int(d["period_ticks"]), len(d["diagnostics"]["positions_final"])
             fs = FeasibleSet(period, k, args.gap_ticks)
             w = np.asarray(d["diagnostics"]["logits_final"], dtype=np.float64)
             used = project_to_feasible(w, fs)
             st = stability(lambda s, fs=fs: project_to_feasible(s, fs), w, used, args.samples, rng)
-        elif method == "dec_livre" and "dec_livre" in arms and "dec_livre_projetada" in arms:
-            d, dp = arms["dec_livre"], arms["dec_livre_projetada"]
+        elif method == "dec_free" and "dec_free" in arms and "dec_free_projected" in arms:
+            d, dp = arms["dec_free"], arms["dec_free_projected"]
             period = int(dp["period_ticks"])
             k = (
                 len(dp["positions"])
@@ -90,9 +95,9 @@ def main() -> None:
                 "budget": int(b_tag[1:]),
                 "split": split,
                 "seed": seed,
-                "mask": "aprendida" if method == "dec_aprendida" else "livre_projetada",
+                "mask": "learned" if method == "dec_learned" else "free_projected",
                 "candidates": w.size,
-                "k_selected": k if method == "dec_aprendida" else k * (w.size // period),
+                "k_selected": k if method == "dec_learned" else k * (w.size // period),
                 "margin_over_gumbel_std": round(
                     float(d["diagnostics"]["margin_over_gumbel_std"]), 4
                 ),
@@ -111,7 +116,7 @@ def main() -> None:
     for r in rows:
         by[(r["budget"], r["mask"])].append(r)
     print("budget    mask             candidates  converged  stability (median, min)")
-    for (b, mk), rr in sorted(by.items()):
+    for (b, mk), rr in sorted(by.items(), key=lambda kv: (kv[0][0], legacy_label(kv[0][1]))):
         s = [r["stability_used_mask"] for r in rr]
         c = sum(r["converged"] for r in rr)
         print(

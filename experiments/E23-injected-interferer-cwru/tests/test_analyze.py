@@ -48,7 +48,7 @@ def synthetic(tmp_path: Path, surrogate_drops: bool) -> list[dict]:
     rows = []
     for rec in ("A", "B", "C", "D"):
         for f, ceil in ((2, 10000.0), (2, 5000.0)):
-            rows.append(row(rec, "none", "", "", f, "uniforme", ceil, 1, "", 1))
+            rows.append(row(rec, "none", "", "", f, "uniform", ceil, 1, "", 1))
             pred = 1 if ceil == 10000.0 else 0  # image at 8 kHz: inside with 10k, above with 5k
             hit_imp = 0 if pred == 1 else 1
             rows.append(
@@ -58,7 +58,7 @@ def synthetic(tmp_path: Path, surrogate_drops: bool) -> list[dict]:
                     16000.0,
                     20.0,
                     f,
-                    "uniforme",
+                    "uniform",
                     ceil,
                     hit_imp,
                     pred,
@@ -67,7 +67,7 @@ def synthetic(tmp_path: Path, surrogate_drops: bool) -> list[dict]:
             )
             hit_sur = 0 if (surrogate_drops and pred == 1) else 1
             rows.append(
-                row(rec, "surrogate", 16000.0, 20.0, f, "uniforme", ceil, hit_sur, pred, hit_sur)
+                row(rec, "surrogate", 16000.0, 20.0, f, "uniform", ceil, hit_sur, pred, hit_sur)
             )
     p = tmp_path / "metrics.csv"
     with p.open("w", newline="", encoding="utf-8") as fh:
@@ -85,9 +85,9 @@ def test_capture_only_where_predicted_and_not_by_the_surrogate(tmp_path):
     assert h1["p_star_db"] == 20.0
     assert h1["surrogate_ratio_at_p_star"] == 0.0
     v = an.verdict(h1, data.h2(data.records), CFG["analysis"])
-    assert v["H1a_sensibilidade"] == "apoiada"
-    assert v["H1b_especificidade"] == "apoiada"
-    assert v["H1_linha_impulsividade"] == "apoiada"
+    assert v["H1a_sensitivity"] == "supported"
+    assert v["H1b_specificity"] == "supported"
+    assert v["H1_line_impulsiveness"] == "supported"
 
 
 def test_surrogate_dropping_as_much_refutes_the_impulsiveness_line(tmp_path):
@@ -95,7 +95,7 @@ def test_surrogate_dropping_as_much_refutes_the_impulsiveness_line(tmp_path):
     h1 = data.h1(data.records)
     assert h1["surrogate_ratio_at_p_star"] == 1.0
     v = an.verdict(h1, data.h2(data.records), CFG["analysis"])
-    assert v["H1_linha_impulsividade"] == "refutada"
+    assert v["H1_line_impulsiveness"] == "refuted"
 
 
 def test_tat_balanced_accuracy_is_perfect_when_tat_tracks_the_hits(tmp_path):

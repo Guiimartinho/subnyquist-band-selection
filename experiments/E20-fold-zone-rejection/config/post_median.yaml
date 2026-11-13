@@ -47,11 +47,11 @@ sweep:
 interventions:
   none:
     kind: none
-  despike_decimado:
+  despike_after_decimation:
     kind: none
     post: despike
     k_mad: 10.0
-  mediana3_decimado:
+  median3_after_decimation:
     kind: none
     post: median3
 analysis:

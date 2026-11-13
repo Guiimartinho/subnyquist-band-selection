@@ -3,8 +3,8 @@
 Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
 - **Sources:** E20 (`results/`) for `none` and `despike`. The arms present in
-  `results-selectors/` (`infograma_ses`, `gini`) and in `results-post-despike/`
-  (`despike_decimado`) come in on their own.
+  `results-selectors/` (`ses_infogram`, `gini`) and in `results-post-despike/`
+  (`despike_after_decimation`) come in on their own.
 - **Selection:** 25 kHz ceiling and the local ruler, or the nested one (leave-one-record-out
   median, the one of E07) with ``--ruler nested``.
 - **Uncertainty:** 95 % band by bootstrap over the condition × scenario clusters (4 per race),
@@ -42,8 +42,8 @@ ROOT = Path(__file__).resolve().parents[3]
 E20 = ROOT / "experiments/E20-fold-zone-rejection"
 SOURCES = [
     (E20 / "results/metrics.csv", ("none", "despike")),
-    (E20 / "results-selectors/metrics.csv", ("infograma_ses", "gini")),
-    (E20 / "results-post-despike/metrics.csv", ("despike_decimado",)),
+    (E20 / "results-selectors/metrics.csv", ("ses_infogram", "gini")),
+    (E20 / "results-post-despike/metrics.csv", ("despike_after_decimation",)),
 ]
 OUT = ROOT / "papers/mssp-2026/figures"
 PNG = E20 / "results/figures"
@@ -53,8 +53,8 @@ CEILING_HZ = 25000.0
 ARMS = {
     "none": ("raw (baseline)", "0.55", "o", "--", 1),
     "despike": ("spikes removed before decimation", "black", "s", "-", 3),
-    "despike_decimado": ("spikes removed after decimation", "#B4502B", "x", "-.", 4),
-    "infograma_ses": ("SES infogram, raw", "#0F6E78", "^", ":", 2),
+    "despike_after_decimation": ("spikes removed after decimation", "#B4502B", "x", "-.", 4),
+    "ses_infogram": ("SES infogram, raw", "#0F6E78", "^", ":", 2),
     "gini": ("spectral Gini, raw", "#7A5C99", "D", ":", 2),
 }
 RACES = {"outer_race": "(a) outer race", "inner_race": "(b) inner race"}

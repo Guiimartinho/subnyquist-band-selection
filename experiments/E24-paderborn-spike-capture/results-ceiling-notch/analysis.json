@@ -1,0 +1,175 @@
+{
+  "C1a": {
+    "8k_vs_4x": {
+      "floor_share_ceiling": 0.454,
+      "floor_share_decimation": 0.284
+    },
+    "4k_vs_8x": {
+      "floor_share_ceiling": 0.513,
+      "floor_share_decimation": 0.484
+    },
+    "2k_vs_16x": {
+      "floor_share_ceiling": 0.608,
+      "floor_share_decimation": 0.094
+    },
+    "1k_vs_32x": {
+      "floor_share_ceiling": 0.643,
+      "floor_share_decimation": 0.16
+    },
+    "verdict": "folding refuted as the cause of the floor choice"
+  },
+  "C1b": {
+    "kurtogram|ceiling8k_vs_no_ceiling": {
+      "diff_points": 17.32,
+      "bearings_differing": 14,
+      "bearings_up": 12,
+      "p_one_sided": 0.0321044921875,
+      "p_two_sided": 0.064208984375,
+      "p_holm": 0.0642
+    },
+    "kurtogram|ceiling4k_vs_no_ceiling": {
+      "diff_points": 21.02,
+      "bearings_differing": 14,
+      "bearings_up": 13,
+      "p_one_sided": 0.01605224609375,
+      "p_two_sided": 0.0321044921875,
+      "p_holm": 0.0642
+    },
+    "kurtogram|ceiling2k_vs_no_ceiling": {
+      "diff_points": 18.95,
+      "bearings_differing": 13,
+      "bearings_up": 11,
+      "p_one_sided": 0.016357421875,
+      "p_two_sided": 0.03271484375,
+      "p_holm": 0.0642
+    },
+    "kurtogram|ceiling1k_vs_no_ceiling": {
+      "diff_points": 10.4,
+      "bearings_differing": 15,
+      "bearings_up": 13,
+      "p_one_sided": 0.090362548828125,
+      "p_two_sided": 0.18072509765625,
+      "p_holm": 0.0904
+    },
+    "ses_infogram|ceiling8k_vs_no_ceiling": {
+      "diff_points": 2.27,
+      "bearings_differing": 7,
+      "bearings_up": 6,
+      "p_one_sided": 0.2578125,
+      "p_two_sided": 0.515625,
+      "p_holm": 1.0
+    },
+    "ses_infogram|ceiling4k_vs_no_ceiling": {
+      "diff_points": 2.52,
+      "bearings_differing": 4,
+      "bearings_up": 3,
+      "p_one_sided": 0.3125,
+      "p_two_sided": 0.625,
+      "p_holm": 1.0
+    },
+    "ses_infogram|ceiling2k_vs_no_ceiling": {
+      "diff_points": -4.39,
+      "bearings_differing": 8,
+      "bearings_up": 3,
+      "p_one_sided": 0.74609375,
+      "p_two_sided": 0.515625,
+      "p_holm": 1.0
+    },
+    "ses_infogram|ceiling1k_vs_no_ceiling": {
+      "diff_points": -1.3,
+      "bearings_differing": 11,
+      "bearings_up": 6,
+      "p_one_sided": 0.58056640625,
+      "p_two_sided": 0.841796875,
+      "p_holm": 1.0
+    },
+    "verdict": "the ceiling does not relieve the capture",
+    "ceilings_won": []
+  },
+  "C1c": {
+    "kurtogram|ceiling8k_vs_4x": {
+      "diff_points": 8.95,
+      "bearings_differing": 11,
+      "bearings_up": 10,
+      "p_one_sided": 0.1064453125,
+      "p_two_sided": 0.212890625
+    },
+    "kurtogram|ceiling4k_vs_8x": {
+      "diff_points": 10.14,
+      "bearings_differing": 11,
+      "bearings_up": 9,
+      "p_one_sided": 0.080078125,
+      "p_two_sided": 0.16015625
+    },
+    "kurtogram|ceiling2k_vs_16x": {
+      "diff_points": 7.48,
+      "bearings_differing": 12,
+      "bearings_up": 7,
+      "p_one_sided": 0.046630859375,
+      "p_two_sided": 0.09326171875
+    },
+    "kurtogram|ceiling1k_vs_32x": {
+      "diff_points": 5.1,
+      "bearings_differing": 15,
+      "bearings_up": 10,
+      "p_one_sided": 0.14276123046875,
+      "p_two_sided": 0.2855224609375
+    },
+    "ses_infogram|ceiling8k_vs_4x": {
+      "diff_points": 2.74,
+      "bearings_differing": 7,
+      "bearings_up": 5,
+      "p_one_sided": 0.3125,
+      "p_two_sided": 0.625
+    },
+    "ses_infogram|ceiling4k_vs_8x": {
+      "diff_points": 3.98,
+      "bearings_differing": 9,
+      "bearings_up": 5,
+      "p_one_sided": 0.173828125,
+      "p_two_sided": 0.34765625
+    },
+    "ses_infogram|ceiling2k_vs_16x": {
+      "diff_points": 1.18,
+      "bearings_differing": 10,
+      "bearings_up": 4,
+      "p_one_sided": 0.455078125,
+      "p_two_sided": 0.91015625
+    },
+    "ses_infogram|ceiling1k_vs_32x": {
+      "diff_points": 7.97,
+      "bearings_differing": 10,
+      "bearings_up": 6,
+      "p_one_sided": 0.0361328125,
+      "p_two_sided": 0.072265625
+    }
+  },
+  "C3": {
+    "captured_segments": 909,
+    "left_band_with_notch": 0.194,
+    "control_changed_any_band": 0.273,
+    "control_valid": false,
+    "verdict": "invalid control",
+    "accuracy_1x": {
+      "diff_points": 1.17,
+      "bearings_differing": 1,
+      "bearings_up": 1,
+      "p_one_sided": 0.5,
+      "p_two_sided": 1.0
+    },
+    "accuracy_4x": {
+      "diff_points": 0.95,
+      "bearings_differing": 1,
+      "bearings_up": 1,
+      "p_one_sided": 0.5,
+      "p_two_sided": 1.0
+    },
+    "control_accuracy_1x": {
+      "diff_points": 1.17,
+      "bearings_differing": 1,
+      "bearings_up": 1,
+      "p_one_sided": 0.5,
+      "p_two_sided": 1.0
+    }
+  }
+}

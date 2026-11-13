@@ -8,12 +8,12 @@
   "readme_sha256": "c42de3d2b41b001abaa49df594549bde3cf2d55cb6bf0b6c237520eec6870837",
   "preregistration": {
     "dataset": "paderborn",
-    "variant": "bruto",
+    "variant": "raw",
     "rulers": [
       "local",
       "nested"
     ],
-    "metric": "acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)",
+    "metric": "balanced order accuracy (mean over races of the hit |est - ruler| < 0.06)",
     "alpha": 0.05,
     "correction": "holm",
     "min_budgets": 2,
@@ -21,23 +21,23 @@
     "min_splits": 2,
     "min_mask_converged_frac": 0.5,
     "h1": {
-      "arm": "dec_aprendida_sel",
+      "arm": "dec_learned_sel",
       "baselines": [
-        "uniforme_treino",
-        "dec_uniforme_treino",
-        "dec_aleatoria"
+        "uniform_trained",
+        "dec_uniform_trained",
+        "dec_random"
       ],
       "convergence_arms": [
-        "dec_aprendida",
-        "dec_aprendida_sel"
+        "dec_learned",
+        "dec_learned_sel"
       ]
     },
     "h2": {
-      "arm": "dec_aprendida",
-      "baseline": "dec_livre_projetada",
+      "arm": "dec_learned",
+      "baseline": "dec_free_projected",
       "convergence_arms": [
-        "dec_aprendida",
-        "dec_livre_projetada"
+        "dec_learned",
+        "dec_free_projected"
       ]
     }
   },
@@ -70,8 +70,8 @@
   },
   "device": "cuda",
   "rulers": {
-    "local": "raia do proprio trecho em taxa cheia (snq_recon.refine_order, centro do plato); grade deslizante para treino e validacao, segmento para escolha e pontuacao",
-    "nested": "mediana das calibracoes do segmento 0 dos registros fora do teste do grupo"
+    "local": "full-rate line of the segment itself (snq_recon.refine_order, centre of the plateau); sliding grid for training and validation, segment for selection and scoring",
+    "nested": "median of the segment-0 calibrations of the records outside the test set of the group"
   },
   "input_sha256": {
     "paderborn:KA01_N15_M07_F10": "f4197cf0d0634df1dabf39fc476a22f9a654c0615e643d14f3f4262a1865ccf0",
@@ -13208,211 +13208,211 @@
   },
   "despiked_samples": {
     "paderborn:KA01_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA01_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA01_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA03_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA03_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA03_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA05_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA05_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA05_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA06_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA06_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA06_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA07_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA07_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA07_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA08_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA08_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA08_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA09_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA09_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA09_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA04_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA04_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA04_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA15_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA15_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA15_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA16_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA16_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA16_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA22_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA22_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA22_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA30_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA30_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KA30_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI01_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI01_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI01_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI03_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI03_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI03_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI05_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI05_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI05_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI07_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI07_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI07_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI08_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI08_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI08_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI04_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI04_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI04_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI14_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI14_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI14_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI16_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI16_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI16_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI17_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI17_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI17_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI18_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI18_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI18_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI21_N15_M07_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI21_N15_M01_F10": {
-      "bruto": 0
+      "raw": 0
     },
     "paderborn:KI21_N15_M07_F04": {
-      "bruto": 0
+      "raw": 0
     }
   },
   "splits": {
@@ -13839,25 +13839,25 @@
     ]
   },
   "chosen_uniform_factor": {
-    "paderborn:bruto:split0": {
+    "paderborn:raw:split0": {
       "4": 9,
       "8": 9,
       "16": 18,
       "32": 35
     },
-    "paderborn:bruto:split1": {
+    "paderborn:raw:split1": {
       "4": 9,
       "8": 9,
       "16": 18,
       "32": 35
     },
-    "paderborn:bruto:split2": {
+    "paderborn:raw:split2": {
       "4": 9,
       "8": 9,
       "16": 18,
       "32": 36
     },
-    "paderborn:bruto:split3": {
+    "paderborn:raw:split3": {
       "4": 4,
       "8": 8,
       "16": 18,
@@ -13871,342 +13871,342 @@
     ]
   },
   "runs": {
-    "paderborn/bruto/b4/split0/seed0/dec_uniforme.json": 181.5,
-    "paderborn/bruto/b4/split0/seed0/dec_aleatoria.json": 451.4,
-    "paderborn/bruto/b4/split0/seed0/dec_multicoset.json": 358.0,
-    "paderborn/bruto/b4/split0/seed0/dec_multicoset_vb.json": 634.6,
-    "paderborn/bruto/b4/split0/seed0/dec_uniforme_treino.json": 839.1,
-    "paderborn/bruto/b4/split0/seed0/dec_aprendida.json": 1703.0,
-    "paderborn/bruto/b4/split0/seed0/dec_livre.json": 1897.9,
-    "paderborn/bruto/b8/split0/seed0/dec_uniforme.json": 600.7,
-    "paderborn/bruto/b8/split0/seed0/dec_aleatoria.json": 498.1,
-    "paderborn/bruto/b8/split0/seed0/dec_multicoset.json": 418.1,
-    "paderborn/bruto/b8/split0/seed0/dec_multicoset_vb.json": 556.2,
-    "paderborn/bruto/b8/split0/seed0/dec_uniforme_treino.json": 448.9,
-    "paderborn/bruto/b8/split0/seed0/dec_aprendida.json": 1365.9,
-    "paderborn/bruto/b8/split0/seed0/dec_livre.json": 1255.2,
-    "paderborn/bruto/b16/split0/seed0/dec_uniforme.json": 479.5,
-    "paderborn/bruto/b16/split0/seed0/dec_aleatoria.json": 385.7,
-    "paderborn/bruto/b16/split0/seed0/dec_multicoset.json": 312.4,
-    "paderborn/bruto/b16/split0/seed0/dec_multicoset_vb.json": 209.6,
-    "paderborn/bruto/b16/split0/seed0/dec_uniforme_treino.json": 318.6,
-    "paderborn/bruto/b16/split0/seed0/dec_aprendida.json": 811.5,
-    "paderborn/bruto/b16/split0/seed0/dec_livre.json": 889.4,
-    "paderborn/bruto/b32/split0/seed0/dec_uniforme.json": 330.2,
-    "paderborn/bruto/b32/split0/seed0/dec_aleatoria.json": 373.2,
-    "paderborn/bruto/b32/split0/seed0/dec_multicoset.json": 419.1,
-    "paderborn/bruto/b32/split0/seed0/dec_multicoset_vb.json": 451.7,
-    "paderborn/bruto/b32/split0/seed0/dec_uniforme_treino.json": 511.8,
-    "paderborn/bruto/b32/split0/seed0/dec_aprendida.json": 1117.0,
-    "paderborn/bruto/b32/split0/seed0/dec_livre.json": 1349.7,
-    "paderborn/bruto/b4/split0/seed1/dec_uniforme.json": 380.7,
-    "paderborn/bruto/b4/split0/seed1/dec_aleatoria.json": 330.1,
-    "paderborn/bruto/b4/split0/seed1/dec_multicoset.json": 285.0,
-    "paderborn/bruto/b4/split0/seed1/dec_multicoset_vb.json": 335.6,
-    "paderborn/bruto/b4/split0/seed1/dec_uniforme_treino.json": 256.6,
-    "paderborn/bruto/b4/split0/seed1/dec_aprendida.json": 548.4,
-    "paderborn/bruto/b4/split0/seed1/dec_livre.json": 546.9,
-    "paderborn/bruto/b8/split0/seed1/dec_uniforme.json": 192.7,
-    "paderborn/bruto/b8/split0/seed1/dec_aleatoria.json": 203.1,
-    "paderborn/bruto/b8/split0/seed1/dec_multicoset.json": 321.8,
-    "paderborn/bruto/b8/split0/seed1/dec_multicoset_vb.json": 198.1,
-    "paderborn/bruto/b8/split0/seed1/dec_uniforme_treino.json": 227.9,
-    "paderborn/bruto/b8/split0/seed1/dec_aprendida.json": 512.7,
-    "paderborn/bruto/b8/split0/seed1/dec_livre.json": 635.3,
-    "paderborn/bruto/b16/split0/seed1/dec_uniforme.json": 178.4,
-    "paderborn/bruto/b16/split0/seed1/dec_aleatoria.json": 227.6,
-    "paderborn/bruto/b16/split0/seed1/dec_multicoset.json": 213.3,
-    "paderborn/bruto/b16/split0/seed1/dec_multicoset_vb.json": 312.8,
-    "paderborn/bruto/b16/split0/seed1/dec_uniforme_treino.json": 293.7,
-    "paderborn/bruto/b16/split0/seed1/dec_aprendida.json": 1135.7,
-    "paderborn/bruto/b16/split0/seed1/dec_livre.json": 1053.5,
-    "paderborn/bruto/b32/split0/seed1/dec_uniforme.json": 481.3,
-    "paderborn/bruto/b32/split0/seed1/dec_aleatoria.json": 478.0,
-    "paderborn/bruto/b32/split0/seed1/dec_multicoset.json": 463.5,
-    "paderborn/bruto/b32/split0/seed1/dec_multicoset_vb.json": 418.2,
-    "paderborn/bruto/b32/split0/seed1/dec_uniforme_treino.json": 498.0,
-    "paderborn/bruto/b32/split0/seed1/dec_aprendida.json": 1256.6,
-    "paderborn/bruto/b32/split0/seed1/dec_livre.json": 1560.6,
-    "paderborn/bruto/b4/split0/seed2/dec_uniforme.json": 462.6,
-    "paderborn/bruto/b4/split0/seed2/dec_aleatoria.json": 476.8,
-    "paderborn/bruto/b4/split0/seed2/dec_multicoset.json": 396.8,
-    "paderborn/bruto/b4/split0/seed2/dec_multicoset_vb.json": 330.6,
-    "paderborn/bruto/b4/split0/seed2/dec_uniforme_treino.json": 511.2,
-    "paderborn/bruto/b4/split0/seed2/dec_aprendida.json": 1222.6,
-    "paderborn/bruto/b4/split0/seed2/dec_livre.json": 1056.1,
-    "paderborn/bruto/b8/split0/seed2/dec_uniforme.json": 373.3,
-    "paderborn/bruto/b8/split0/seed2/dec_aleatoria.json": 466.1,
-    "paderborn/bruto/b8/split0/seed2/dec_multicoset.json": 427.1,
-    "paderborn/bruto/b8/split0/seed2/dec_multicoset_vb.json": 385.8,
-    "paderborn/bruto/b8/split0/seed2/dec_uniforme_treino.json": 460.0,
-    "paderborn/bruto/b8/split0/seed2/dec_aprendida.json": 1149.9,
-    "paderborn/bruto/b8/split0/seed2/dec_livre.json": 965.6,
-    "paderborn/bruto/b16/split0/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split0/seed2/dec_livre.json": 1307.1,
-    "paderborn/bruto/b32/split0/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split0/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split0/seed2/dec_multicoset.json": 489.6,
-    "paderborn/bruto/b32/split0/seed2/dec_multicoset_vb.json": 479.1,
-    "paderborn/bruto/b32/split0/seed2/dec_uniforme_treino.json": 514.3,
-    "paderborn/bruto/b32/split0/seed2/dec_aprendida.json": 1158.1,
-    "paderborn/bruto/b32/split0/seed2/dec_livre.json": 1228.6,
-    "paderborn/bruto/b4/split1/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split1/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split1/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split1/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split1/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split1/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split1/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split1/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split1/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split1/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split1/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split1/seed2/dec_multicoset.json": 415.1,
-    "paderborn/bruto/b4/split1/seed2/dec_multicoset_vb.json": 316.3,
-    "paderborn/bruto/b4/split1/seed2/dec_uniforme_treino.json": 311.1,
-    "paderborn/bruto/b4/split1/seed2/dec_aprendida.json": 749.6,
-    "paderborn/bruto/b4/split1/seed2/dec_livre.json": 820.0,
-    "paderborn/bruto/b8/split1/seed2/dec_uniforme.json": 658.8,
-    "paderborn/bruto/b8/split1/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split1/seed2/dec_multicoset.json": 289.0,
-    "paderborn/bruto/b8/split1/seed2/dec_multicoset_vb.json": 260.7,
-    "paderborn/bruto/b8/split1/seed2/dec_uniforme_treino.json": 178.4,
-    "paderborn/bruto/b8/split1/seed2/dec_aprendida.json": 648.2,
-    "paderborn/bruto/b8/split1/seed2/dec_livre.json": 1012.0,
-    "paderborn/bruto/b16/split1/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split1/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split1/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split2/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split2/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split2/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split2/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split2/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split2/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split2/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split2/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split2/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split2/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split2/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split2/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split3/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split3/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split3/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split3/seed0/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split3/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split3/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split3/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split3/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split3/seed1/dec_multicoset_vb.json": 592.8,
-    "paderborn/bruto/b8/split3/seed1/dec_uniforme_treino.json": 632.3,
-    "paderborn/bruto/b8/split3/seed1/dec_aprendida.json": 1193.0,
-    "paderborn/bruto/b8/split3/seed1/dec_livre.json": 1144.3,
-    "paderborn/bruto/b16/split3/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split3/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split3/seed1/dec_livre.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b4/split3/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b8/split3/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b16/split3/seed2/dec_livre.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_uniforme.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_aleatoria.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_multicoset.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_multicoset_vb.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_uniforme_treino.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_aprendida.json": "retomado",
-    "paderborn/bruto/b32/split3/seed2/dec_livre.json": "retomado"
+    "paderborn/raw/b4/split0/seed0/dec_uniform.json": 181.5,
+    "paderborn/raw/b4/split0/seed0/dec_random.json": 451.4,
+    "paderborn/raw/b4/split0/seed0/dec_multicoset.json": 358.0,
+    "paderborn/raw/b4/split0/seed0/dec_multicoset_vb.json": 634.6,
+    "paderborn/raw/b4/split0/seed0/dec_uniform_trained.json": 839.1,
+    "paderborn/raw/b4/split0/seed0/dec_learned.json": 1703.0,
+    "paderborn/raw/b4/split0/seed0/dec_free.json": 1897.9,
+    "paderborn/raw/b8/split0/seed0/dec_uniform.json": 600.7,
+    "paderborn/raw/b8/split0/seed0/dec_random.json": 498.1,
+    "paderborn/raw/b8/split0/seed0/dec_multicoset.json": 418.1,
+    "paderborn/raw/b8/split0/seed0/dec_multicoset_vb.json": 556.2,
+    "paderborn/raw/b8/split0/seed0/dec_uniform_trained.json": 448.9,
+    "paderborn/raw/b8/split0/seed0/dec_learned.json": 1365.9,
+    "paderborn/raw/b8/split0/seed0/dec_free.json": 1255.2,
+    "paderborn/raw/b16/split0/seed0/dec_uniform.json": 479.5,
+    "paderborn/raw/b16/split0/seed0/dec_random.json": 385.7,
+    "paderborn/raw/b16/split0/seed0/dec_multicoset.json": 312.4,
+    "paderborn/raw/b16/split0/seed0/dec_multicoset_vb.json": 209.6,
+    "paderborn/raw/b16/split0/seed0/dec_uniform_trained.json": 318.6,
+    "paderborn/raw/b16/split0/seed0/dec_learned.json": 811.5,
+    "paderborn/raw/b16/split0/seed0/dec_free.json": 889.4,
+    "paderborn/raw/b32/split0/seed0/dec_uniform.json": 330.2,
+    "paderborn/raw/b32/split0/seed0/dec_random.json": 373.2,
+    "paderborn/raw/b32/split0/seed0/dec_multicoset.json": 419.1,
+    "paderborn/raw/b32/split0/seed0/dec_multicoset_vb.json": 451.7,
+    "paderborn/raw/b32/split0/seed0/dec_uniform_trained.json": 511.8,
+    "paderborn/raw/b32/split0/seed0/dec_learned.json": 1117.0,
+    "paderborn/raw/b32/split0/seed0/dec_free.json": 1349.7,
+    "paderborn/raw/b4/split0/seed1/dec_uniform.json": 380.7,
+    "paderborn/raw/b4/split0/seed1/dec_random.json": 330.1,
+    "paderborn/raw/b4/split0/seed1/dec_multicoset.json": 285.0,
+    "paderborn/raw/b4/split0/seed1/dec_multicoset_vb.json": 335.6,
+    "paderborn/raw/b4/split0/seed1/dec_uniform_trained.json": 256.6,
+    "paderborn/raw/b4/split0/seed1/dec_learned.json": 548.4,
+    "paderborn/raw/b4/split0/seed1/dec_free.json": 546.9,
+    "paderborn/raw/b8/split0/seed1/dec_uniform.json": 192.7,
+    "paderborn/raw/b8/split0/seed1/dec_random.json": 203.1,
+    "paderborn/raw/b8/split0/seed1/dec_multicoset.json": 321.8,
+    "paderborn/raw/b8/split0/seed1/dec_multicoset_vb.json": 198.1,
+    "paderborn/raw/b8/split0/seed1/dec_uniform_trained.json": 227.9,
+    "paderborn/raw/b8/split0/seed1/dec_learned.json": 512.7,
+    "paderborn/raw/b8/split0/seed1/dec_free.json": 635.3,
+    "paderborn/raw/b16/split0/seed1/dec_uniform.json": 178.4,
+    "paderborn/raw/b16/split0/seed1/dec_random.json": 227.6,
+    "paderborn/raw/b16/split0/seed1/dec_multicoset.json": 213.3,
+    "paderborn/raw/b16/split0/seed1/dec_multicoset_vb.json": 312.8,
+    "paderborn/raw/b16/split0/seed1/dec_uniform_trained.json": 293.7,
+    "paderborn/raw/b16/split0/seed1/dec_learned.json": 1135.7,
+    "paderborn/raw/b16/split0/seed1/dec_free.json": 1053.5,
+    "paderborn/raw/b32/split0/seed1/dec_uniform.json": 481.3,
+    "paderborn/raw/b32/split0/seed1/dec_random.json": 478.0,
+    "paderborn/raw/b32/split0/seed1/dec_multicoset.json": 463.5,
+    "paderborn/raw/b32/split0/seed1/dec_multicoset_vb.json": 418.2,
+    "paderborn/raw/b32/split0/seed1/dec_uniform_trained.json": 498.0,
+    "paderborn/raw/b32/split0/seed1/dec_learned.json": 1256.6,
+    "paderborn/raw/b32/split0/seed1/dec_free.json": 1560.6,
+    "paderborn/raw/b4/split0/seed2/dec_uniform.json": 462.6,
+    "paderborn/raw/b4/split0/seed2/dec_random.json": 476.8,
+    "paderborn/raw/b4/split0/seed2/dec_multicoset.json": 396.8,
+    "paderborn/raw/b4/split0/seed2/dec_multicoset_vb.json": 330.6,
+    "paderborn/raw/b4/split0/seed2/dec_uniform_trained.json": 511.2,
+    "paderborn/raw/b4/split0/seed2/dec_learned.json": 1222.6,
+    "paderborn/raw/b4/split0/seed2/dec_free.json": 1056.1,
+    "paderborn/raw/b8/split0/seed2/dec_uniform.json": 373.3,
+    "paderborn/raw/b8/split0/seed2/dec_random.json": 466.1,
+    "paderborn/raw/b8/split0/seed2/dec_multicoset.json": 427.1,
+    "paderborn/raw/b8/split0/seed2/dec_multicoset_vb.json": 385.8,
+    "paderborn/raw/b8/split0/seed2/dec_uniform_trained.json": 460.0,
+    "paderborn/raw/b8/split0/seed2/dec_learned.json": 1149.9,
+    "paderborn/raw/b8/split0/seed2/dec_free.json": 965.6,
+    "paderborn/raw/b16/split0/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split0/seed2/dec_free.json": 1307.1,
+    "paderborn/raw/b32/split0/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split0/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b32/split0/seed2/dec_multicoset.json": 489.6,
+    "paderborn/raw/b32/split0/seed2/dec_multicoset_vb.json": 479.1,
+    "paderborn/raw/b32/split0/seed2/dec_uniform_trained.json": 514.3,
+    "paderborn/raw/b32/split0/seed2/dec_learned.json": 1158.1,
+    "paderborn/raw/b32/split0/seed2/dec_free.json": 1228.6,
+    "paderborn/raw/b4/split1/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split1/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split1/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split1/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split1/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split1/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split1/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split1/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split1/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b4/split1/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split1/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b4/split1/seed2/dec_multicoset.json": 415.1,
+    "paderborn/raw/b4/split1/seed2/dec_multicoset_vb.json": 316.3,
+    "paderborn/raw/b4/split1/seed2/dec_uniform_trained.json": 311.1,
+    "paderborn/raw/b4/split1/seed2/dec_learned.json": 749.6,
+    "paderborn/raw/b4/split1/seed2/dec_free.json": 820.0,
+    "paderborn/raw/b8/split1/seed2/dec_uniform.json": 658.8,
+    "paderborn/raw/b8/split1/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b8/split1/seed2/dec_multicoset.json": 289.0,
+    "paderborn/raw/b8/split1/seed2/dec_multicoset_vb.json": 260.7,
+    "paderborn/raw/b8/split1/seed2/dec_uniform_trained.json": 178.4,
+    "paderborn/raw/b8/split1/seed2/dec_learned.json": 648.2,
+    "paderborn/raw/b8/split1/seed2/dec_free.json": 1012.0,
+    "paderborn/raw/b16/split1/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split1/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split1/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split2/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split2/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split2/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split2/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split2/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split2/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split2/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split2/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split2/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split2/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split2/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split2/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split3/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split3/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split3/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_random.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split3/seed0/dec_free.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split3/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b8/split3/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split3/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b8/split3/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split3/seed1/dec_multicoset_vb.json": 592.8,
+    "paderborn/raw/b8/split3/seed1/dec_uniform_trained.json": 632.3,
+    "paderborn/raw/b8/split3/seed1/dec_learned.json": 1193.0,
+    "paderborn/raw/b8/split3/seed1/dec_free.json": 1144.3,
+    "paderborn/raw/b16/split3/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split3/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_random.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split3/seed1/dec_free.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b4/split3/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b8/split3/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b16/split3/seed2/dec_free.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_uniform.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_random.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_multicoset.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_multicoset_vb.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_uniform_trained.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_learned.json": "resumed",
+    "paderborn/raw/b32/split3/seed2/dec_free.json": "resumed"
   },
   "n_rows": 198360,
   "device_name": "NVIDIA GeForce RTX 4090"

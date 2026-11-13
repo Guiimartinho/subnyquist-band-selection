@@ -10,7 +10,7 @@ here holds, and the README is corrected.
    at factors ≥ 2 and with the impulsive at the highest dose. Among the cases (record, carrier,
    factor) in which the arm hits without injection and misses with it, it is the fraction whose
    estimate falls on the burst rate or on a harmonic up to the 3rd (`interferer_line`).
-2. **Cost of the ideal anti-alias without injection.** It is the hit rate of `uniforme` at the
+2. **Cost of the ideal anti-alias without injection.** It is the hit rate of `uniform` at the
    reference ceiling minus that of `aaf_ideal`, both without injection, in points: at 10× and 12×
    (what the README attributes to the reviewer) and at all factors ≥ 2 (what the base run reports).
 3. **Surrogate/impulsive ratio at P\*.** It is the pre-registered statistic of H1', from
@@ -42,12 +42,11 @@ an = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(an)
 
 # The 12 BPFO records are one 0.007" fault in 3 positions x 4 loads; 213 is the BPFI (README,
-# adversarial review, "Independent units"). The keys are data labels: centrada = centered,
-# ortogonal = orthogonal, oposta = opposite.
+# adversarial review, "Independent units").
 CLUSTERS = {
-    "centrada": range(135, 139),
-    "ortogonal": range(148, 152),
-    "oposta": range(161, 165),
+    "centred": range(135, 139),
+    "orthogonal": range(148, 152),
+    "opposite": range(161, 165),
     "bpfi_213": range(213, 214),
 }
 
@@ -81,7 +80,7 @@ def aaf_cost(rows: list[dict], cfg: dict, factors=(10, 12)) -> dict:
     uni = [
         r["hit"]
         for r in rows
-        if r["arm"] == "uniforme"
+        if r["arm"] == "uniform"
         and r["kind"] == "none"
         and r["factor"] in factors
         and r["search_ceiling_hz"] == an.ceiling0(cfg, r["factor"])
@@ -149,7 +148,7 @@ def folded_share_vs_drop(data) -> dict:
 def spike_dose_response(path: Path, cfg: dict) -> dict:
     hit: dict = defaultdict(dict)
     for r in csv.DictReader(path.open(encoding="utf-8")):
-        if r["hit"] == "" or r["arm"] != "uniforme":
+        if r["hit"] == "" or r["arm"] != "uniform":
             continue
         f = int(r["factor"])
         if float(r["search_ceiling_hz"]) != an.ceiling0(cfg, f):

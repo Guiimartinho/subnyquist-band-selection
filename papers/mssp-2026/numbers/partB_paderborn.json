@@ -9,19 +9,19 @@
   "h1_tests": 24,
   "h1_diff_points": {
     "local": {
-      "dec_aleatoria": {
+      "dec_random": {
         "4": -5.11,
         "8": -5.08,
         "16": 9.16,
         "32": -16.92
       },
-      "dec_uniforme_treino": {
+      "dec_uniform_trained": {
         "4": -7.18,
         "8": -4.59,
         "16": -14.48,
         "32": -14.17
       },
-      "uniforme_treino": {
+      "uniform_trained": {
         "4": -11.66,
         "8": -15.62,
         "16": -6.42,
@@ -29,19 +29,19 @@
       }
     },
     "nested": {
-      "dec_aleatoria": {
+      "dec_random": {
         "4": -3.11,
         "8": -0.54,
         "16": 4.41,
         "32": -5.19
       },
-      "dec_uniforme_treino": {
+      "dec_uniform_trained": {
         "4": -1.83,
         "8": -2.21,
         "16": -0.99,
         "32": -5.16
       },
-      "uniforme_treino": {
+      "uniform_trained": {
         "4": 8.3,
         "8": 6.19,
         "16": 8.77,
@@ -52,7 +52,7 @@
   "h1_smallest_p": {
     "ruler": "nested",
     "budget": "32",
-    "baseline": "uniforme_treino",
+    "baseline": "uniform_trained",
     "diff_points": "12.64",
     "ci_lo": "-1.1",
     "ci_hi": "28.2",
@@ -66,19 +66,19 @@
     "32"
   ],
   "mask_converged_frac": {
-    "dec_aprendida": {
+    "dec_learned": {
       "4": 0.917,
       "8": 0.833,
       "16": 0.75,
       "32": 0.917
     },
-    "dec_aprendida_sel": {
+    "dec_learned_sel": {
       "4": 0.833,
       "8": 0.75,
       "16": 0.833,
       "32": 0.917
     },
-    "dec_livre_projetada": {
+    "dec_free_projected": {
       "4": 0.333,
       "8": 0.0,
       "16": 0.167,
@@ -86,19 +86,19 @@
     }
   },
   "bal_acc_nested_pct": {
-    "dec_aprendida_sel": {
+    "dec_learned_sel": {
       "4": 25.7,
       "8": 24.4,
       "16": 27.5,
       "32": 25.4
     },
-    "dec_uniforme_treino": {
+    "dec_uniform_trained": {
       "4": 27.5,
       "8": 26.7,
       "16": 28.5,
       "32": 30.5
     },
-    "dec_aleatoria": {
+    "dec_random": {
       "4": 28.7,
       "8": 25.0,
       "16": 23.1,
@@ -110,7 +110,7 @@
       "16": 26.5,
       "32": 34.8
     },
-    "uniforme_treino": {
+    "uniform_trained": {
       "4": 17.4,
       "8": 18.3,
       "16": 18.8,

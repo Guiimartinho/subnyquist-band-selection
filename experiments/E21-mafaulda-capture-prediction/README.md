@@ -75,7 +75,7 @@ The 51.2 kHz rate is the one inferred at ingestion. The order analysis is immune
 
 ## Metrics
 
-- order accuracy, `sem_prior` (without prior), by factor × ceiling × intervention, with `n`;
+- order accuracy, `no_prior`, by factor × ceiling × intervention, with `n`;
 - TAT: folded share, prediction, and balanced accuracy against the observed error;
 - measurement/prior attribution: not applicable (no linear operator).
 

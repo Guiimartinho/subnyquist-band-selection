@@ -5,7 +5,7 @@
   "config_path": "experiments/E21-mafaulda-capture-prediction/config/base.yaml",
   "config_sha256": "78213aa491e5a0d712cf1c38a23350bc87c747a7f59b6418343b0449c689b41c",
   "entrypoint_sha256": "c5d5516190dc8e7b76aec7d3cba340998b95f8055909dee4e341f452cdbe1357",
-  "dataset": "MAFAULDA (UFRJ), licenca nao declarada; fs inferida 51,2 kHz (ver manifest do dataset)",
+  "dataset": "MAFAULDA (UFRJ), license not declared; inferred fs 51.2 kHz (see the dataset manifest)",
   "fs_hz": 51200.0,
   "packages": {
     "snq-core": "0.1.0",
