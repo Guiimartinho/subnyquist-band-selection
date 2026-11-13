@@ -227,3 +227,43 @@ por causa do que dobra? E o conteúdo perto de 16 kHz é o que captura o kurtogr
     1×. Se mudar mais, a C3a não é interpretável.
 - **Fora do escopo:** a C2 (fatores 5, 7 e 9) e a C5 (régua independente do braço).
 
+### Resultado do E24b (2026-11-13)
+
+- **Rodada:** `results-teto-notch/`, 69 registros em 20 108 s. Os hashes do config, do `run.py`
+  e do README no manifest batem com o commit do pré-registro (`2fbb1ac`).
+- **Análise:** `exploratory/teto_notch_analysis.py` gravou `results-teto-notch/analysis.json`. Os
+  números do artigo saem de `papers/shared/figures/num_partA_paderborn.py`.
+- **Acurácia balanceada,** régua aninhada:
+
+  | braço | teto 8 kHz | teto 4 kHz | teto 2 kHz | teto 1 kHz | sem teto (E24) |
+  |---|---|---|---|---|---|
+  | kurtograma em 1× | 25,1 | 28,8 | 26,7 | 18,1 | 7,7 |
+  | infograma SES em 1× | 27,7 | 27,9 | 21,0 | 24,1 | 25,4 |
+
+- **C1a, dobra: refutada como causa do piso.** Com teto de 8 kHz em 1×, sem nada dobrado, o
+  kurtograma escolhe a banda do piso em 45,4 % dos segmentos. Em 4× são 28,4 %.
+  - A escolha do piso é conteúdo de banda base.
+  - Nos outros pares a fração também é maior sem dobra: 51 % contra 48 % (4 kHz e 8×), 61 %
+    contra 9 % (2 kHz e 16×) e 64 % contra 16 % (1 kHz e 32×).
+- **C1b, teto: não passou.** Nenhum teto passa o Holm sobre os 4.
+  - No kurtograma, as diferenças são de +17,3, +21,0, +19,0 e +10,4 pontos (8, 4, 2 e 1 kHz). Os
+    rolamentos a favor são 12 de 14, 13 de 14, 11 de 13 e 13 de 15.
+  - O p unilateral vai de 0,016 a 0,090, e o de Holm fica em 0,064, 0,064, 0,064 e 0,090.
+  - É ausência de evidência, não evidência de ausência. Com 13 a 15 rolamentos discordantes e
+    Holm sobre 4, o teste exato só passa com quase todos a favor em mais de um teto.
+  - No infograma SES o teto não muda nada: de −4,4 a +2,5 pontos, Holm 1,0.
+- **C1c (descritivo).** O teto em 1× fica acima da decimação de mesma partição no kurtograma:
+  +9,0 (8 kHz contra 4×), +10,1 (4 kHz contra 8×), +7,5 (2 kHz contra 16×) e +5,1 pontos (1 kHz
+  contra 32×), com p bilateral de 0,09 a 0,29.
+  - No Paderborn, a decimação ajuda por estreitar a busca, não pelo que dobra.
+- **C3, notch: não interpretável.** O notch de controle (12–14 e 26,5–28 kHz) mudou a banda em
+  27,3 % dos segmentos em 1×, acima do limite de 10 %.
+  - O notch de 15–17 e 30,5–32 kHz tirou da faixa de 11,0–21,5 kHz 19,4 % dos 909 segmentos
+    capturados.
+  - A acurácia mudou +1,2 ponto em 1× e +1,0 em 4×, com 1 rolamento discordante.
+  - A escolha do kurtograma é frágil a qualquer notch nessa região, e a C3a não isola o captor.
+- **Consequência para o artigo:**
+  - A leitura de que a decimação alivia a captura por estreitar a busca fica sustentada
+    descritivamente, mas não pelo teste pré-registrado.
+  - O captor de 15–17 kHz segue não estabelecido.
+

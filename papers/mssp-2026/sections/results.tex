@@ -179,6 +179,24 @@ bearings, under the nested ruler and, for the 7 bearings with a valid full-rate 
   \item \emph{The SES infogram is better than the kurtogram at 1/32,} by 3.1 points, with all 8
   differing bearings in favour (exact sign-flip test, Holm $p = 0.016$), almost all of them on the
   outer race. Its 8.8-point advantage at 1/4 does not pass (Holm $p = 0.20$).
+  \item \emph{A lower search ceiling at full rate gives the largest gain, short of significance.}
+  With the ceiling at 8, 4, 2 or 1~kHz and no decimation, the kurtogram reaches 25.1, 28.8, 26.7
+  and 18.1\% under the nested ruler, against 7.7\% without a ceiling.
+  \begin{itemize}
+    \item The pre-registered exact sign-flip test, with Holm over the four ceilings, stays above
+    5\%: the smallest adjusted $p$ is 0.064, with 11 to 13 of the 13 to 15 differing bearings in
+    favour.
+    \item The ceiling at full rate is 5 to 10 points above decimation with the same band
+    partition (two-sided $p \geq 0.09$). On Paderborn, decimation helps by narrowing the search,
+    not through what folds.
+    \item With the 8~kHz ceiling and no folding, the kurtogram picks the lowest band (from 500~Hz
+    to at most 1.2~kHz) in 45\% of the segments, against 28\% at $4\times$. That choice is
+    base-band content.
+    \item The SES infogram does not respond to the ceiling ($-4.4$ to $+2.5$ points).
+    \item A notch at 15--17 and 30.5--32~kHz gave no interpretable answer: a control notch of the
+    same width at 12--14 and 26.5--28~kHz moved the selected band in 27\% of the segments, above
+    the pre-registered 10\% bound.
+  \end{itemize}
 \end{itemize}
 
 Paderborn therefore does not test the Ottawa mechanism, which presupposes a selector that is right

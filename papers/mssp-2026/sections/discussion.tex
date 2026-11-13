@@ -52,10 +52,13 @@ The source of the impulses differs between the two benchmarks, and neither is es
   \item On Paderborn the drive is fed by a 16~kHz PWM inverter, and the 15--17~kHz band is the most
   impulsive one, but no switching line appears in the vibration spectrum.
 \end{itemize}
-On Paderborn, removing the spikes does not release the selector, and decimation seems to relieve
-the full-rate capture by narrowing the search range. That reading was not isolated: a full-rate
-run with the same lower ceilings would separate it from folding. A sub-Nyquist node shares its rig
-with such sources, and the band choice has to be protected from them whatever their origin.
+On Paderborn, removing the spikes does not release the selector. A full-rate run with the same
+lower ceilings gains more than decimation, so there decimation relieves the capture by narrowing
+the search range, not through what folds, although the pre-registered test of the ceiling falls
+just short of significance (Section~\ref{sec:res-paderborn}). A notch on the 15--17~kHz band did
+not settle whether that band is the captor, because its control moved the band choice as well. A
+sub-Nyquist node shares its rig with such sources, and the band choice has to be protected from
+them whatever their origin.
 
 \todo[inline]{Write after E15 on Paderborn:
 (v) relation to MRI, where learned masks match equidistant ones at moderate acceleration

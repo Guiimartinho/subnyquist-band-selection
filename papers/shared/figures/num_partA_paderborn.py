@@ -47,6 +47,15 @@ def ses_without_line(rows: list[dict]) -> dict:
     }
 
 
+def ceiling_notch() -> dict:
+    """E24b: teto sem dobra e notch, do summary.csv e da análise pré-registrada."""
+    res = E24 / "results-teto-notch"
+    with (res / "summary.csv").open(encoding="utf-8") as f:
+        acc = {f"{r['arm']}|{r['factor']}x": float(r["bal_acc_nested"]) for r in csv.DictReader(f)}
+    a = json.loads((res / "analysis.json").read_text(encoding="utf-8"))
+    return {"bal_acc_nested": acc, "C1a": a["C1a"], "C1b": a["C1b"], "C1c": a["C1c"], "C3": a["C3"]}
+
+
 def main() -> None:
     with (E24 / "results/metrics.csv").open(encoding="utf-8") as f:
         rows = list(csv.DictReader(f))
@@ -68,6 +77,7 @@ def main() -> None:
         "ses_on_bearings_without_visible_line": ses_without_line(rows),
         "robustness": json.loads((E24 / "results/exploratory/robustness.json").read_text()),
         "inverter_lines": json.loads((E24 / "results/exploratory/inverter_lines.json").read_text()),
+        "ceiling_notch": ceiling_notch(),
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(rep, indent=2), encoding="utf-8")
