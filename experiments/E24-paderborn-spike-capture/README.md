@@ -79,8 +79,8 @@ The tolerance is 0.025 order: the BPFO and the BPFI lie 0.054 from shaft harmoni
 ## Result (2026-11-12)
 
 **Provenance.**
-- Base run: `config/base.yaml`, commit `fb091b8`, from 14:13 to 20:52 UTC.
-- H3: `config/post_despike.yaml`, commit `6a95a72`, from 15:24 to 20:52 UTC, in a separate
+- Base run: `config/base.yaml`, commit `f6f21f4`, from 14:13 to 20:52 UTC.
+- H3: `config/post_despike.yaml`, commit `4c01706`, from 15:24 to 20:52 UTC, in a separate
   checkout.
 - The hashes of `run.py`, config, README and source (`8491841f…`) in the manifest match those
   commits.
@@ -242,7 +242,7 @@ full rate?
 ### E24b result (2026-11-13)
 
 - **Run:** `results-ceiling-notch/`, 69 records in 20 108 s. The hashes of the config, of `run.py`
-  and of the README in the manifest match the pre-registration commit (`2fbb1ac`).
+  and of the README in the manifest match the pre-registration commit (`4c107ba`).
 - **Analysis:** `exploratory/ceiling_notch_analysis.py` wrote
   `results-ceiling-notch/analysis.json`. The paper's numbers come from
   `papers/shared/figures/num_partA_paderborn.py`.

@@ -324,8 +324,8 @@ two runs):
 
 The two runs finished at 18:27 and 18:28 UTC on the server.
 - **Provenance.**
-  - Selectors: `config/selectors.yaml` and `run.py` from commit `4a67eae`.
-  - Removal after decimating: `config/post_despike.yaml` and `run.py` from commit `6a95a72`. It ran
+  - Selectors: `config/selectors.yaml` and `run.py` from commit `7902b99`.
+  - Removal after decimating: `config/post_despike.yaml` and `run.py` from commit `4c01706`. It ran
     in a separate checkout, so as not to change `run.py` under the selectors run.
   - The `input_sha256` is the same as in the base run, with the 24 records.
   - The E07 control matches exactly in both: 62, 55, 41 and 61 of 72.
@@ -471,7 +471,7 @@ comes from committed code and from a `metrics.csv` in the E20 format.
 
 ### Result of the median of 3 on the decimated stream (2026-11-12)
 
-- **Provenance.** The run was from the separate checkout `~/snq/post2`, at commit `e5ceb4e`.
+- **Provenance.** The run was from the separate checkout `~/snq/post2`, at commit `8e53b0b`.
   - The hashes of `run.py` and of the config in the manifest match the commit.
   - The E07 control matches exactly.
 - **Criterion** (`results-post-median/recovery.csv`). `median3_after_decimation` at 4×

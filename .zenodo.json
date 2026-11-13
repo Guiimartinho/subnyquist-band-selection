@@ -1,0 +1,31 @@
+{
+  "upload_type": "software",
+  "title": "Blind band selection under pure decimation of bearing vibration: code and results",
+  "description": "<p>Code, configurations and result files that reproduce the experiments of the manuscript <em>Blind band selection under pure decimation of bearing vibration: aliased impulses, fault-order decisions and a power check for learned sampling</em>, submitted to Mechanical Systems and Signal Processing.</p><p>The archive holds the Python packages, one directory per experiment (configuration, entry scripts, pre-registered README and versioned result files), the scripts that regenerate the figures, tables and numbers of the paper, and the dataset manifests. The raw datasets (University of Ottawa, Case Western Reserve University and Paderborn University bearing data) are not included; REPRODUCE.md explains how to download them and rerun each experiment. The manuscript text is not part of this archive.</p><p>The git history of these files, which holds the pre-registration commits, is in the GitHub repository. The labels in the result files were renamed from Portuguese to English after the runs; tools/relabel_results.py rebuilds the files as the runs wrote them and checks the hashes that the analyses recorded.</p>",
+  "creators": [
+    {
+      "name": "Ito, Luiz Guilherme Martinho Sampaio",
+      "affiliation": "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+    },
+    {
+      "name": "de Carvalho, Lucas Saraiva",
+      "affiliation": "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+    },
+    {
+      "name": "Azambuja, José Rodrigo Furlanetto",
+      "affiliation": "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+    }
+  ],
+  "keywords": [
+    "bandpass sampling",
+    "aliasing",
+    "spectral kurtosis",
+    "kurtogram",
+    "impulsive noise",
+    "learned sampling",
+    "rolling element bearings"
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "language": "eng"
+}

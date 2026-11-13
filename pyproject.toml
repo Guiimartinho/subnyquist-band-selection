@@ -1,7 +1,7 @@
 [project]
 name = "subnyquist"
 version = "0.1.0"
-description = "Aquisicao sub-Nyquist para monitoramento de condicao embarcado"
+description = "Sub-Nyquist acquisition for embedded condition monitoring: code for the MSSP paper"
 requires-python = ">=3.11"
 dependencies = [
     "snq-core",
@@ -35,19 +35,19 @@ target-version = "py311"
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "NPY"]
 
 [tool.ruff.lint.per-file-ignores]
-# Nos testes, "from snq_core import sampling as S" e uma convencao deliberada:
-# deixa explicito de qual modulo vem cada identidade sob teste.
+# In the tests, "from snq_core import sampling as S" is a deliberate convention:
+# it makes explicit which module each identity under test comes from.
 "**/tests/*" = ["N812"]
 "**/test_*.py" = ["N812"]
 
 [tool.mypy]
-# 3.12 e o alvo de *parsing* do mypy, nao o runtime: os stubs do numpy >= 2.4 usam
-# a sintaxe "type X = ..." de PEP 695, que o mypy so aceita a partir de 3.12.
-# O runtime do projeto continua sendo 3.11 (ver requires-python).
+# 3.12 is mypy's *parsing* target, not the runtime: the numpy >= 2.4 stubs use the
+# PEP 695 "type X = ..." syntax, which mypy accepts only from 3.12 on.
+# The project runtime is still 3.11 (see requires-python).
 python_version = "3.12"
 strict = true
 files = ["packages/snq-core/src", "packages/snq-eval/src"]
 
 [tool.pytest.ini_options]
-testpaths = ["packages", "firmware/host-tools"]
+testpaths = ["packages"]
 addopts = "-q --strict-markers"

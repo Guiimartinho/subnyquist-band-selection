@@ -1,5 +1,5 @@
 # E15 on Paderborn (preregistration in the README, 'E15 on Paderborn'). Derived from
-# config/base.yaml (commit 6729f59) with: Paderborn only; K-fold by bearing with the gate's folds;
+# config/base.yaml (commit 0ae6250) with: Paderborn only; K-fold by bearing with the gate's folds;
 # 3 seeds per fold; training labels from the nested ruler; tolerance 0.025, 1 % search and
 # visible line (overrides); no dec_adaptive or wdcnn, which decide nothing. The comments of the
 # base config are not carried over.

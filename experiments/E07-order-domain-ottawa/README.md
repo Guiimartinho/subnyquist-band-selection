@@ -516,7 +516,7 @@ record without changing anything that was measured.
 > **Update 2026-11-13 (public release).** The comments of `config/base.yaml` were translated into
 > English, so the file no longer has the SHA-256 recorded in `results/manifest.json`. The parsed
 > configuration is unchanged, and the exact bytes that the manifest refers to are those of commit
-> `54cd5c6`, its last change before the translation, which the repository history keeps. Its
+> `c3cd057`, its last change before the translation, which the repository history keeps. Its
 > comments still carry the two wrong energy figures corrected above.
 
 ## Reproduction of the extension

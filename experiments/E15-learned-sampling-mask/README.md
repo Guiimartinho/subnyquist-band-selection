@@ -384,11 +384,11 @@ in both variants, with one split and at most 6 epochs. What it proves is mechani
 
 ## Result of the deciding run (2026-11-12)
 
-Run of 2026-11-12, from 01:35 to 05:48 UTC, at commit `314b0c3`.
+Run of 2026-11-12, from 01:35 to 05:48 UTC, at commit `76b0eb8`.
 - The four hashes in the manifest (source, config, `run.py` and README) match the commit.
 - `git_sha` comes out null because the server tree is not a git checkout. The hashes cover that.
 - This README gained this section after the run. The manifest's `readme_sha256` is that of
-  commit `314b0c3`.
+  commit `76b0eb8`.
 
 ### Evaluability (B5), checked before opening the hypotheses
 
@@ -779,7 +779,7 @@ pre-registration above. Only the number of processes computing the cells changes
   - The main process's manifest marks as `"resumed"` the 4 executions computed by the shard.
   - No temporary file was left behind.
 - **Provenance.**
-  - The main process runs in the server checkout created at commit `4e3bf37`. The manifest's
+  - The main process runs in the server checkout created at commit `76de671`. The manifest's
     `readme_sha256` will be that of this commit, because this README only changes in the local
     repository.
   - `shard.py` entered the server checkout as a new file, and it does not change any hash of the

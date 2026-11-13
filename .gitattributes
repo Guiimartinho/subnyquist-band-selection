@@ -1,0 +1,12 @@
+# line endings and binaries, as in the working repository
+* text=auto eol=lf
+*.png binary
+*.pdf binary
+
+# The source archive of each release, which is what its Zenodo record keeps, leaves out the
+# manuscript text. The repository keeps it; the generated figures, tables and numbers stay in both.
+papers/mssp-2026/main.tex export-ignore
+papers/mssp-2026/highlights.txt export-ignore
+papers/mssp-2026/README.md export-ignore
+papers/mssp-2026/sections export-ignore
+papers/mssp-2026/sections/** export-ignore

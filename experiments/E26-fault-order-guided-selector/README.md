@@ -210,7 +210,7 @@ criterion changed, and the numbers of the smoke run were not looked at.
 
 - **Run:** `results-paderborn/`, from 00:25 to 05:21 UTC, 16 470 rows.
   - The hashes of the config, of `run_paderborn.py`, of `guided.py`, of the README and of the E24
-    `run.py` match commit `57a6a89`. No smoke-run subsetting was applied.
+    `run.py` match commit `e8aaa8d`. No smoke-run subsetting was applied.
   - 6 measurements were left out because of a short file, a rotation signal that is not 4 s long
     or an unreadable `.mat`. The list is in the manifest.
 - **Pre-registered verdict** (`analysis.json`): H1 and H2 pass at the four decisive factors.
@@ -425,7 +425,7 @@ the review.
 ### Result of E26b (2026-11-13): mixed
 
 - **Run:** `results-paderborn-rule/`, 65 880 rows, without smoke-run subsetting. The hashes match
-  `14c68d9`.
+  `b2bec23`.
 - **Integrity:** 1474 matches between the random band and the guided band, with a maximum
   difference of 0.0. The scores of the two files are the same computation.
 - **Balanced accuracy (%), fixed rule and healthy threshold.** Specificity of 89.8 to 95.0 % in all
@@ -470,7 +470,7 @@ the review.
 ### Result of E26c (2026-11-13): on Paderborn, anti-alias beats pure decimation
 
 - **Run:** `results-paderborn-acquisition/`, 55 998 rows, without smoke-run subsetting. The hashes
-  match `996e4ed`.
+  match `534d995`.
 - **Integrity:** 13 176 matches between `pure|guided` and the raw guided arm of E26, with a
   difference of 0.0.
 - **Balanced accuracy (%), raw stream, E26 rule.** Specificity of 89.8 to 95.0 %:

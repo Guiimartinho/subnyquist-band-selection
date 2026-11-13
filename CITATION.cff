@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite the paper below."
+title: "Blind band selection under pure decimation of bearing vibration: code and results"
+type: software
+license: MIT
+repository-code: "https://github.com/Guiimartinho/subnyquist-band-selection"
+authors:
+  - family-names: Ito
+    given-names: Luiz Guilherme Martinho Sampaio
+    email: luiz.ito@inf.ufrgs.br
+    affiliation: "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+  - family-names: Carvalho
+    name-particle: de
+    given-names: Lucas Saraiva
+    email: lucas.carvalho@inf.ufrgs.br
+    affiliation: "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+  - family-names: Azambuja
+    given-names: José Rodrigo Furlanetto
+    email: jose.azambuja@inf.ufrgs.br
+    affiliation: "CEDRA Research Group, Graduate Program in Microelectronics (PGMICRO), Institute of Informatics, Federal University of Rio Grande do Sul (UFRGS)"
+preferred-citation:
+  type: article
+  status: submitted
+  title: "Blind band selection under pure decimation of bearing vibration: aliased impulses, fault-order decisions and a power check for learned sampling"
+  journal: "Mechanical Systems and Signal Processing"
+  year: 2026
+  authors:
+    - family-names: Ito
+      given-names: Luiz Guilherme Martinho Sampaio
+    - family-names: Carvalho
+      name-particle: de
+      given-names: Lucas Saraiva
+    - family-names: Azambuja
+      given-names: José Rodrigo Furlanetto
