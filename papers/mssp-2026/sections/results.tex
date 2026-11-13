@@ -263,9 +263,27 @@ smallest one-sided $p$ before correction was 0.20. The projection gap of H2, at 
 ($[-14.3, +11.4]$ under the local ruler). Given the power analysis above, this is absence of
 evidence, not evidence of absence.
 
-\paragraph{Paderborn}
-\todo[inline]{Pending: \texttt{E15/results-paderborn}, with three seeds per fold; convergence rule
-first, then H1 and H2.}
+\paragraph{Paderborn} With three seeds in each of four folds by bearing, the constrained mask
+converged in 75 to 92\% of the twelve runs per budget, so H1 was evaluable at all four budgets.
+The mask learned without the constraint and projected onto it converged in at most 42\% of the
+runs, and in none at 1/8, so H2 was not evaluable at any budget.
+
+The learned mask did not outperform any of the three references at any budget, and none of the 24
+pre-registered tests was significant.
+\begin{itemize}
+  \item Under the nested ruler it stayed within $-5.2$ and $+4.4$ points of the uniform decimation
+  trained on the same records and of the random mask, at 24.4--27.5\% balanced accuracy against
+  23.1--30.6\% for those two.
+  \item It was $+6.2$ to $+12.6$ points above the best uniform rate of the classical pipeline. The
+  smallest one-sided $p$ was 0.037, at 1/32, with a 95\% interval of $[-1.1, +28.2]$ points and a
+  Holm $p$ of 0.44.
+  \item That margin belongs to the decoder, not to the mask: the trained uniform decimation and the
+  random mask share the decoder and are as far above the classical pipeline.
+\end{itemize}
+With a power of 1.00 for $+5$ points, this is evidence against a gain of that size over the
+trained uniform decimation and the random mask. The evidence is bounded by the classical pipeline,
+which is already captured at full rate on Paderborn (Section~\ref{sec:res-paderborn}), and by the
+nested ruler that labels the training data.
 
 \subsection{Where the method fails}
 \label{sec:res-fail}

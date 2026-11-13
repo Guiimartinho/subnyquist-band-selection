@@ -47,3 +47,9 @@ firmware/**/build/
 # so
 .DS_Store
 Thumbs.db
+
+# E15 no Paderborn: o metrics.csv (31 MB) vai comprimido em metrics.csv.gz, com o mesmo conteúdo;
+# os runs/ (um JSON por execucao, ~95 MB) ficam no servidor
+experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv
+experiments/E15-learned-sampling-mask/results-paderborn/runs/
+

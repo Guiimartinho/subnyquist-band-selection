@@ -760,3 +760,44 @@ quantos processos calculam as células.
     local.
   - `shard.py` entrou no checkout do servidor como arquivo novo, e não muda nenhum hash do
     `run_key`.
+
+## Resultado no Paderborn (2026-11-13)
+
+- **Rodada:** `results-paderborn/`, com 336 execuções, 4 dobras por rolamento × 3 sementes × 4
+  orçamentos × 7 métodos.
+  - O estágio clássico rodou uma vez e serviu de cache para os pedaços (`shard.py`).
+  - O `metrics.csv` vai comprimido (`metrics.csv.gz`); os `runs/` ficam no servidor.
+- **Avaliabilidade (B5), conferida antes das hipóteses:**
+  - A máscara restrita convergiu em 92, 83, 75 e 92 % das 12 execuções por orçamento, de 1/4 a
+    1/32. A selecionada convergiu em 83, 75, 83 e 92 %. **A H1 é avaliável nos quatro.**
+  - A livre projetada convergiu em 33, 0, 17 e 42 %. **A H2 não é avaliável em nenhum.**
+- **Veredito pré-registrado: a H1 não passa em nenhum orçamento, em nenhuma régua.** São 0 de 24
+  testes significativos.
+  - **Régua aninhada:**
+    - contra `dec_uniforme_treino`: −1,8, −2,2, −1,0 e −5,2 pontos;
+    - contra `dec_aleatoria`: −3,1, −0,5, +4,4 e −5,2;
+    - contra `uniforme_treino`: +8,3, +6,2, +8,8 e +12,6.
+    - O menor p unilateral é 0,037 (1/32, contra `uniforme_treino`, IC de −1,1 a +28,2). O Holm
+      o leva a 0,44.
+  - **Régua local** (17 registros, 7 aglomerados): de −16,9 a +18,9 pontos, sem nada
+    significativo.
+- **Acurácia balanceada, régua aninhada (%):**
+
+  | braço | 1/4 | 1/8 | 1/16 | 1/32 |
+  |---|---|---|---|---|
+  | `dec_aprendida_sel` | 25,7 | 24,4 | 27,5 | 25,4 |
+  | `dec_uniforme_treino` | 27,5 | 26,7 | 28,5 | 30,5 |
+  | `dec_aleatoria` | 28,7 | 25,0 | 23,1 | 30,6 |
+  | `dec_multicoset_vb` | 26,2 | 23,6 | 26,5 | 34,8 |
+  | `uniforme_treino` (pipeline clássico) | 17,4 | 18,3 | 18,8 | 12,7 |
+
+- **Leitura:**
+  - **A margem sobre o pipeline clássico é do decodificador, não da máscara.** A uniforme
+    treinada e a aleatória usam o mesmo decodificador e ficam tão à frente quanto a aprendida.
+  - **Com poder de 1,00 para +5 pontos** (porta no Paderborn), é evidência contra um ganho dessa
+    ordem da máscara aprendida sobre a decimação uniforme treinada e sobre a aleatória.
+  - **O limite é o pipeline clássico,** já capturado em taxa cheia no Paderborn (E24), e a régua
+    aninhada que rotula o treino.
+- **Números do artigo:** `papers/shared/figures/num_partB_paderborn.py` →
+  `papers/mssp-2026/numbers/partB_paderborn.json`.
+
