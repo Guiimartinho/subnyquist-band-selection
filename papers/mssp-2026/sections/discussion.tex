@@ -60,9 +60,17 @@ not settle whether that band is the captor, because its control moved the band c
 sub-Nyquist node shares its rig with such sources, and the band choice has to be protected from
 them whatever their origin.
 
-\todo[inline]{Write after E15 on Paderborn:
-(v) relation to MRI, where learned masks match equidistant ones at moderate acceleration
-\citep{bakker2022adaptive} (E15 on Paderborn).}
+\paragraph{Learned masks and the medical-imaging precedent}
+On both benchmarks, the learned mask did not outperform the uniform decimation trained on the same
+records or a random mask; on Paderborn the test had the power to detect $+5$ points. Magnetic
+resonance imaging reached a similar point. At $4\times$, learned acquisition policies tie with
+non-adaptive learned and equidistant patterns, an adaptive policy gains at $8\times$, and the best
+policies learn to be non-adaptive \citep{bakker2022adaptive}. The gains reported there for learned
+or task-driven sampling come at higher acceleration or against fixed Cartesian patterns
+\citep{bakker2022adaptive,xu2026hierasample}, with masks shaped by a downstream task rather than by
+the image \citep{weber2024prom}. Here the margin over the classical pipeline came from the decoder
+that all masks shared. At these budgets, the benefit of learning lies in the processing after the
+samples, not in the sampling pattern.
 
 \paragraph{Limitations}
 The study simulates sub-Nyquist acquisition by decimating records acquired at 200 and 64~kS/s. It
