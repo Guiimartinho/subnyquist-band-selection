@@ -42,6 +42,7 @@ PACKAGES = [
     "amsmath",
     "amsfonts",
     "graphics",
+    "grfext",
     "tools",
     "lineno",
     "geometry",
