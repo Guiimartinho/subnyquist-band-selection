@@ -501,3 +501,14 @@ Escrito e commitado antes de rodar, junto com `run_paderborn_acq.py`, `analyze_p
   - **A melhor aquisição do Paderborn, na mesma taxa, é a clássica:** anti-alias, taxa baixa e
     envelope com a regra das ordens de falha. Chega a 71,2 % em 32× (2 kS/s) com a banda larga.
 
+
+## Figura (2026-11-13)
+
+![Regra, aquisição e perfil por zona](results-paderborn-aquisicao/figures/e26_rule_paderborn.png)
+
+Gerada por `papers/shared/figures/fig_rule_paderborn.py`, que refaz a decisão a partir dos três
+`metrics.csv`. O script confere cada ponto contra o `analysis.json` da rodada (±0,1 ponto) e para se
+algo divergir. As bandas são IC de 95 % por bootstrap dos rolamentos dentro de cada pista.
+- (a) decisão e banda sob decimação pura;
+- (b) decimação pura contra anti-alias na mesma taxa;
+- (c) perfil por zona de Nyquist em 4× e 8×.

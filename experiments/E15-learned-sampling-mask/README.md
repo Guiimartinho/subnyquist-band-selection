@@ -821,3 +821,16 @@ Pedido pela revisão adversarial do manuscrito. Não é pré-registrado. Script:
 - **Leitura, não testada:** os decodificadores ganham onde o kurtograma está capturado, e são
   treinados com rótulos que dizem que ordem procurar. Isso é compatível com escolha de banda guiada
   pelos rótulos, o efeito da regra do E26 sem aprendizado. Não houve controle com rolamentos sãos.
+
+## Figura do Paderborn (2026-11-13)
+
+![Máscaras aprendidas nas duas réguas](results-paderborn/figures/e15_masks_paderborn.png)
+
+Gerada por `papers/shared/figures/fig_masks_paderborn.py`, com a estatística dos testes
+pré-registrados: média por (divisão, registro), depois média por pista, depois média das pistas.
+O script confere as diferenças entre a máscara aprendida e cada referência contra o `diff_points`
+do `hypotheses.csv` e para se algo divergir.
+
+Na régua local, essa média por registro difere bastante do acerto agrupado por segmento do
+`summary.csv`, porque os registros têm números muito diferentes de segmentos com raia. Os números
+do artigo seguem a estatística dos testes.
