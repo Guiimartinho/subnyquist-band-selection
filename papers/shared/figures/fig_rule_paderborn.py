@@ -255,9 +255,10 @@ def main() -> None:
             prof.append((k, pt))
         zones[m] = prof
 
-    fig, axes = plt.subplots(
-        1, 3, figsize=(7.16, 3.0), gridspec_kw={"width_ratios": [1.15, 1.0, 1.1]}
-    )
+    # largura do texto do elsarticle (390 pt); (a) e (b) em cima, (c) embaixo na largura toda
+    fig = plt.figure(figsize=(5.4, 5.6))
+    grid = fig.add_gridspec(2, 2, height_ratios=[1.15, 0.85])
+    axes = [fig.add_subplot(grid[0, 0]), fig.add_subplot(grid[0, 1]), fig.add_subplot(grid[1, :])]
     ax = axes[0]
     for cells, label, color, marker, ls, z in (
         (blind, "blind order estimation", GRAY, "o", "--", 1),
@@ -308,10 +309,11 @@ def main() -> None:
     ax.legend(loc="upper right", frameon=False, bbox_to_anchor=(1.0, 0.93))
     ax.text(0.02, 0.98, "(c) whole band + rule by zone", transform=ax.transAxes, va="top")
 
+    axes[2].set_ylabel("balanced accuracy [%]")
     for ax in axes:
         ax.set_ylim(-3, 103)
         ax.grid(alpha=0.25, lw=0.5)
-    fig.tight_layout(w_pad=0.6)
+    fig.tight_layout(w_pad=0.8, h_pad=1.0)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT)
     PNG.parent.mkdir(parents=True, exist_ok=True)

@@ -5,7 +5,8 @@
   aplicada; o que mudou está no caderno `docs/lab-notebook/2026-11-13.md`.
 - O apêndice (`sections/appendix_ledger.tex`) lista as 35 hipóteses pré-registradas, com veredito
   e com a informação de que cada uma foi commitada antes de rodar ou não.
-- Os `\todo` que restam aparecem no topo do PDF: autores, link do código e declarações.
+- Os `\todo` que restam aparecem no topo do PDF: afiliações, e-mail, declarações e a visibilidade
+  do repositório.
 
 **Estrutura:**
 
@@ -31,15 +32,17 @@ Toda curva tem banda de 95 % por bootstrap das unidades independentes. Cada scri
 PNG no diretório `figures/` do experimento, para o relatório em Markdown. Os dois scripts novos
 conferem os pontos contra os arquivos de análise da rodada e param se algo divergir.
 
-**Como compilar:**
+**Como compilar,** com uma TeX Live mínima (TinyTeX) instalada só neste repositório, em `.tools/`,
+fora do git e fora do PATH do sistema:
 
 ```
-latexmk -pdf main.tex
+uv run python papers/shared/build_pdf.py install                 # uma vez: TinyTeX e pacotes
+uv run python papers/shared/build_pdf.py build papers/mssp-2026  # gera main.pdf
 ```
 
-Não há toolchain de LaTeX nesta máquina nem no servidor, então o PDF ainda não foi compilado. A
-checagem estática (rótulos, `\input`, figuras e ambientes) passa. A bibliografia é a fonte única,
-`../../literature/refs.bib`, e o texto só cita entradas com campo `verified`.
+O `main.pdf` é gerado e não é versionado. A bibliografia é a fonte única,
+`../../literature/refs.bib`, e o texto só cita entradas com campo `verified`. As anotações
+internas das entradas ficam no campo `annote`, que o estilo da Elsevier não imprime.
 
 **Antes de submeter:**
 - [x] nenhuma referência `unverified` no texto (`ci_checks.py refs`);
@@ -47,8 +50,11 @@ checagem estática (rótulos, `\input`, figuras e ambientes) passa. A bibliograf
 - [x] caso de falha documentado (seção "Where the method fails" e apêndice);
 - [x] `reviewer-2` no manuscrito inteiro;
 - [ ] `literature/scout.py --anchors` rodado de novo, com as âncoras novas sugeridas pela revisão;
-- [ ] autores, CRediT, conflito de interesses, financiamento e disponibilidade de dados;
-- [ ] declaração de uso de IA generativa na redação (política da Elsevier);
-- [ ] link do código e dos dados, com DOI arquivado;
-- [ ] compilação, e conferência visual do PDF;
+- [x] autores (Luiz Guilherme Martinho Sampaio Ito e José Rodrigo Furlanetto Azambuja);
+- [x] seção de disponibilidade de dados e código, apontando para este repositório;
+- [ ] repositório público, ou cópia arquivada com DOI, antes de submeter (tirar do histórico os PDFs de editora de `literature/pdf`);
+- [ ] afiliações conferidas, e-mail do autor correspondente, CRediT, conflito de interesses e financiamento;
+- [ ] texto reescrito pelo autor;
+- [x] compilação (TinyTeX local, 44 páginas, sem referência indefinida nem caixa fora da margem);
+- [ ] conferência visual do PDF pelo autor;
 - [ ] escolha do periódico.

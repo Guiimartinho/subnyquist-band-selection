@@ -43,6 +43,10 @@ firmware/**/build/
 *.out
 *.synctex.gz
 *.toc
+*.spl
+*.tdo
+# PDF do paper: gerado por papers/shared/build_pdf.py a partir das fontes versionadas
+papers/*/main.pdf
 
 # so
 .DS_Store
@@ -53,3 +57,6 @@ Thumbs.db
 experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv
 experiments/E15-learned-sampling-mask/results-paderborn/runs/
 
+
+# TinyTeX local do repositorio (papers/shared/build_pdf.py install); nada vai para o PATH do sistema
+.tools/

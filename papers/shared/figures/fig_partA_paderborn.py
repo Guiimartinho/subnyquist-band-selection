@@ -103,7 +103,9 @@ def main() -> None:
     hits = load(args.results)
     present = sorted({k[0] for k in hits}, key=lambda a: ARMS[a][4])
     factors = sorted({k[2] for k in hits})
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.3), sharey=False)
+    fig, axes = plt.subplots(
+        1, 2, figsize=(5.4, 3.7), sharey=False
+    )  # largura do texto do elsarticle
     for ax, (ru, label) in zip(axes, RULERS.items(), strict=True):
         for arm in present:
             name, color, marker, ls, z = ARMS[arm]
@@ -135,8 +137,8 @@ def main() -> None:
         top.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
         top.set_xlabel("effective rate $f_s/M$ [kS/s]", fontsize=7)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False)
-    fig.tight_layout(rect=(0, 0.13, 1, 1))  # legenda embaixo, fora dos paineis
+    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0.22, 1, 1))  # legenda embaixo, fora dos paineis
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out)
     # copia PNG para o relatorio em Markdown (docs/resultados-subnyquist.md)

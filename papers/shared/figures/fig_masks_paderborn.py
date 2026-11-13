@@ -126,7 +126,7 @@ def reference_diffs() -> dict[tuple[str, str, int], float]:
 def main() -> None:
     cells, race = load()
     ref = reference_diffs()
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 3.1))
+    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.4))  # largura do texto do elsarticle
     for ax, (ru, title) in zip(axes, RULERS.items(), strict=True):
         for b in BUDGETS:
             learned = per_record(cells[(LEARNED, ru, b)])
@@ -165,8 +165,8 @@ def main() -> None:
         top.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
         top.set_xlabel("average rate [kS/s]", fontsize=7)
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0.13, 1, 1))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT)
     PNG.parent.mkdir(parents=True, exist_ok=True)

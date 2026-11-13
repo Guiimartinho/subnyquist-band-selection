@@ -1,7 +1,9 @@
 % Artigo unico do ADR 0006 (MSSP). Rascunho de 2026-11-13, revisado contra a revisao adversarial do
 % manuscrito inteiro (reviewer-2, mesmo dia): pre-registro por experimento, livro-razao das hipoteses
-% no apendice, manchete do Paderborn com IC e especificidades. Faltam autores, link do codigo,
-% declaracoes da Elsevier e compilacao. Referencias so do literature/refs.bib (campo verified).
+% no apendice, manchete do Paderborn com IC e especificidades. Autores e link do codigo no texto;
+% faltam afiliacoes conferidas, e-mail, declaracoes e o repositorio publico. Compila com o TinyTeX
+% local: papers/shared/build_pdf.py. Referencias so do literature/refs.bib (campo verified).
+\PassOptionsToPackage{hyphens}{url}
 \documentclass[preprint,12pt,authoryear]{elsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -10,6 +12,8 @@
 \usepackage{siunitx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
+% caminhos e URLs longos: deixa o TeX esticar os espacos em vez de estourar a margem
+\setlength{\emergencystretch}{3em}
 
 \journal{Mechanical Systems and Signal Processing}
 
@@ -20,7 +24,11 @@
 \title{Blind band selection under pure decimation of bearing vibration: aliased impulses,
 fault-order decisions and a power check for learned sampling}
 
-\author{\todo[inline]{Author list and affiliations: decided by the student and the advisor.}}
+\author[ufrgs]{Luiz Guilherme Martinho Sampaio Ito\corref{cor1}}
+\author[ufrgs]{Jos\'e Rodrigo Furlanetto Azambuja}
+\cortext[cor1]{Corresponding author.}
+\affiliation[ufrgs]{organization={Graduate Program in Microelectronics (PGMICRO), Federal
+University of Rio Grande do Sul (UFRGS)}, city={Porto Alegre}, country={Brazil}}
 
 \begin{abstract}
 A node that lowers its sampling rate behind a front end fixed for the highest rate cannot band-pass
@@ -57,9 +65,18 @@ bandpass sampling \sep aliasing \sep spectral kurtosis \sep kurtogram \sep impul
 \input{sections/discussion}
 \input{sections/conclusion}
 
-\todo[inline]{Before submission: CRediT statement, declaration of competing interest, funding,
-data availability (Ottawa CC BY 4.0, Paderborn CC BY-NC 4.0, CWRU), and the Elsevier declaration
-of generative AI use in the writing process.}
+\section*{Data and code availability}
+The three benchmarks are public: the University of Ottawa bearing data \citep{huang2018ottawa},
+under CC BY 4.0; the Paderborn bearing data \citep{lessmeier2016paderborn}, under CC BY-NC 4.0;
+and the Case Western Reserve University bearing data \citep{smith2015cwru}. The code, the
+experiment configurations with their pre-registrations, the result files and the scripts that
+generate every number, table and figure of this paper are in the repository
+\url{https://github.com/Guiimartinho/research-project-sub-Nyquist}.
+\todo[inline]{The repository is private: make it public, or publish an archived snapshot with a
+DOI, before submission. Publisher PDFs in \texttt{literature/pdf} must leave the history first.}
+
+\todo[inline]{Before submission: confirm the affiliations, add the corresponding author's
+e-mail, the CRediT statement, the declaration of competing interest and the funding.}
 
 \appendix
 \input{sections/appendix_ledger}

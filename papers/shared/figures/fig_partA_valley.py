@@ -96,7 +96,9 @@ def main() -> None:
     ap.add_argument("--ruler", choices=("local", "nested"), default="local")
     args = ap.parse_args()
     hits = load(args.ruler)
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.6), sharey=True)
+    fig, axes = plt.subplots(
+        1, 2, figsize=(5.4, 2.6), sharey=True
+    )  # largura do texto do elsarticle
     present = sorted({k[1] for k in hits}, key=lambda a: ARMS[a][4])
     for ax, (race, label) in zip(axes, RACES.items(), strict=True):
         for arm in present:
