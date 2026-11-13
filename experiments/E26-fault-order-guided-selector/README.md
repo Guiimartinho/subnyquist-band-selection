@@ -346,3 +346,58 @@ diferenças (`a2_did.py`) e a contagem por rolamento (`a10_bearinglevel.py`).
   - Isso pede o E26b, mais uma rodada com o anti-alias, a ordem do pico e a exclusão de ±0,03,
     e o baseline passa-faixa.
 
+## E26c: decimação pura contra anti-alias e passa-faixa (pré-registro, 2026-11-13)
+
+Escrito e commitado antes de rodar, junto com `run_paderborn_acq.py`, `analyze_paderborn_acq.py` e
+`config/paderborn_acq.yaml`. É a resposta aos ataques 3 e 6 da revisão.
+
+- **Pergunta.** Na mesma taxa FS/M, deixar tudo dobrar (`x[::M]`) perde ou ganha informação para a
+  regra guiada, frente a filtrar antes de decimar? Este é o controle decisivo para qualquer frase
+  sobre decimação pura.
+- **Escopo:**
+  - só o fluxo bruto, porque a mediana não contribuiu no E26;
+  - fatores 4, 8, 16 e 32;
+  - os mesmos rolamentos, ajustes e medições de teste.
+- **Aquisições,** com filtros ideais por máscara na FFT da taxa cheia:
+  - `pura`: `x[::M]`;
+  - `antialias`: passa-baixas em FS/(2M), depois `[::M]`;
+  - `zona{k}`: passa-faixa em [k, k+1]·FS/(2M), depois `[::M]`, só em 4× e 8×. É a amostragem
+    passa-faixa clássica (`lu2018undersampled`, `vaughan1991`); a `zona0` é o anti-alias.
+- **Bandas,** sempre com a regra do E26:
+  - `guiado` (máximo sobre a partição) e `kurtograma_regra`, em `pura` e `antialias`;
+  - `banda_larga_regra` ([500 Hz, fs/2]), em todas as aquisições.
+- **Escolha da zona no passa-faixa:**
+  - `zona_kurtograma`: a zona do centro da banda do kurtograma em taxa cheia na medição 1 do
+    próprio rolamento e ajuste. É o comissionamento que um praticante faria.
+  - `zona_frota`: a zona de maior acurácia balanceada nos outros rolamentos danificados,
+    deixando o próprio rolamento de fora.
+- **Hipóteses** (troca de sinal por rolamento, estratificada por pista, unilateral):
+  - **H5:** `pura|guiado` > `antialias|guiado` em 4×, 8×, 16× e 32×, com Holm sobre 4.
+  - **H6:** `pura|guiado` > `zona_frota|banda_larga_regra` em 4× e 8×, com Holm sobre 2.
+  - Um fator passa se o p de Holm ficar abaixo de 0,05 e a diferença for positiva.
+- **Leitura combinada antes do resultado:**
+  - **H5 passa:** a dobra carrega informação que o anti-alias joga fora. É a frase de decimação
+    pura que o artigo pode escrever.
+  - **H5 falha com diferença ≤ 0:** o que a regra usa está abaixo de FS/(2M). No Paderborn, a
+    decimação pura não traz vantagem sobre filtrar.
+  - **H6 falha com o passa-faixa acima:** a amostragem passa-faixa com uma zona escolhida na frota
+    é o melhor desenho na mesma taxa.
+- **Descritivos:**
+  - o kurtograma e a banda larga, `pura` contra `antialias`;
+  - o perfil de acurácia por zona;
+  - `zona_kurtograma`.
+- **Vazamento (ataque 6),** no `pura|guiado`:
+  - entre as detecções nos danificados, a fração com o pico da 1ª harmônica a até 0,03 de uma
+    ordem inteira;
+  - a acurácia com a exclusão de ±0,03.
+- **Iscas:**
+  - a fração de segmentos em que a maior de 4 janelas-isca, em 0,9 e 1,1 vez a BPFO e a BPFI,
+    passa do limiar, nos danificados e nos sãos;
+  - a mesma fração para a falha verdadeira, para comparar.
+- **Integridade.** Os escores do `pura|guiado` têm de ser idênticos aos do guiado bruto do E26.
+- **Limites declarados:**
+  - o Paderborn já foi visto no E26, no E26b e na revisão;
+  - os filtros são ideais, não analógicos;
+  - `x[::M]` dobra só o que passou pela cadeia analógica do banco, não a banda do track-and-hold
+    de um amostrador real (revisão, ataque 9).
+
