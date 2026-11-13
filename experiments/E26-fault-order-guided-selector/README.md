@@ -104,3 +104,39 @@ Os sãos ficam corretos em 94 % dos segmentos, em todos os fatores.
 raias falsas dos sãos (`pilot.py --clean median3`, `results-pilot-w12-median3/`). Também é
 exploratória e foi decidida depois de ver a segunda rodada.
 
+### Resultado da terceira variante (`results-pilot-w12-median3/`)
+
+| fator | mediana + guiado: externa | interna | limiar (sãos) | sem mediana: externa | cego (E20): externa |
+|---|---|---|---|---|---|
+| 1× | 19 % | 100 % | **13,9** | 100 % | 75 % |
+| 2× | **89 %** | 100 % | 10,4 | 72 % | 56 % |
+| 3× | **100 %** | 100 % | 5,9 | 100 % | 11 % |
+| 4× | **97 %** | 100 % | 8,7 | 11 % | 17 % |
+| 5× | **100 %** | 100 % | 7,1 | 6 % | 6 % |
+| 6× | **100 %** | 100 % | 5,8 | 97 % | 31 % |
+| 8× | **100 %** | 100 % | 7,1 | 97 % | 69 % |
+
+Os sãos ficam corretos em 94 % dos segmentos, em todos os fatores. É dentro da amostra.
+
+**Leitura** (exploratória):
+- **De 2× a 8×, a combinação identifica a pista externa em 89–100 % dos segmentos,** contra 6–69 %
+  do kurtograma cego, com a pista interna em 100 %.
+  - Em 4× e 5×, o limiar dos sãos volta a 7–9. Os picos dobrados eram a fonte das raias falsas.
+  - Como referência indireta, a mediana seguida do kurtograma (E20, `results-post-median`) acerta
+    a **ordem** em 75–81 % de 4× a 8×. A métrica aqui é de identificação, então a comparação não é
+    exata.
+- **Em 1× a combinação cai para 19 %:** o limiar dos sãos sobe para 13,9, sem explicação por ora.
+  Não é o regime sub-Nyquist, mas precisa ser entendido.
+
+**Limites:**
+- O desenho foi revisado duas vezes depois de ver os dados.
+- O limiar é calibrado nos mesmos sãos em que se mede o alarme falso.
+- O kurtograma cego não tem limiar de alarme falso nesta comparação. O controle de sãos do E07
+  (`healthy_control.csv`) é a referência para isso.
+
+**Antes do artigo:** é preciso uma rodada **pré-registrada** em dados que não serviram para ajustar
+o desenho (o Paderborn), com:
+- janela de busca fixada a priori pela incerteza de ordem do conjunto;
+- limiar em rolamentos sãos com validação cruzada;
+- os mesmos baselines: kurtograma cego, mediana + kurtograma e teto baixo.
+
