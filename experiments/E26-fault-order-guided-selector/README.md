@@ -232,3 +232,41 @@ números da fumaça não foram olhados.
     - O ganho pode vir da regra de identificação, não da banda. Isso foi declarado no
       pré-registro como limite, mas não foi separado.
 
+## E26b: a regra fixa, a banda muda (pré-registro, 2026-11-13)
+
+Escrito e commitado antes de rodar, junto com `run_paderborn_rule.py`, `analyze_paderborn_rule.py`
+e `config/paderborn_rule.yaml`.
+
+- **Pergunta.** A confirmação mudou duas coisas ao mesmo tempo: a banda e a regra de
+  identificação. O ganho vem do seletor de banda guiado ou da regra guiada?
+  - A regra: as janelas das ordens da geometria e o limiar dos sãos.
+- **O que fica igual ao E26:**
+  - os dados, os fatores, as duas limpezas e as janelas;
+  - o escore de cada falha;
+  - o limiar: percentil 95 dos escores máximos dos sãos, por braço, fator e limpeza, deixando o
+    próprio são de fora quando ele é o avaliado;
+  - a decisão: a falha de maior escore, ou "nenhuma".
+- **O que muda: só a banda em que o escore é medido.**
+  - `guiado`: o máximo sobre as 23 bandas da partição, do `results-paderborn/metrics.csv` do E26,
+    sem recalcular.
+  - `kurtograma_regra`: a banda do kurtograma rápido até o Nyquist efetivo, a mesma do braço cego.
+  - `banda_larga_regra`: [500 Hz, fs/2], sem seleção. É o envelope clássico.
+  - `infograma_ses_regra`: a banda do infograma SES (descritivo).
+  - `sorteada_regra`: uma banda sorteada da partição, com semente por segmento (descritivo).
+- **Hipóteses** (troca de sinal por rolamento, estratificada por pista, como no E26):
+  - **H3:** o `guiado` fica acima do `kurtograma_regra`. O teste é feito nas duas limpezas e em
+    4×, 8×, 16× e 32×, com Holm sobre os 8.
+  - **H4:** o `guiado` fica acima do `banda_larga_regra`, do mesmo jeito.
+  - Um teste passa se o p de Holm ficar abaixo de 0,05 e a diferença for positiva. A
+    especificidade é a mesma por construção nos braços, perto de 95 %, e é reportada.
+- **Leitura combinada antes do resultado:**
+  - **H3 e H4 passam:** a escolha de banda guiada soma à regra, e o seletor é a contribuição.
+  - **As duas falham:** o ganho do E26 vem da regra, isto é, do prior e do limiar dos sãos. A
+    alegação do artigo fica sobre a regra, não sobre o seletor de banda.
+  - **Resultado misto:** reportado como misto, por fator e limpeza.
+- **Checagem de integridade.** Onde a banda sorteada coincide com a banda guiada de uma falha, o
+  escore tem de ser idêntico nos dois arquivos. Se não for, a comparação não vale.
+- **Limite declarado.** O Paderborn já foi visto no E26, e este pré-registro foi motivado pelo
+  resultado dele. Os escores das quatro estratégias novas ainda não foram calculados. O braço de
+  referência fica fixo como saiu do E26.
+
