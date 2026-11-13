@@ -197,3 +197,38 @@ medições e os fatores 1 e 4, rodou, mas a análise quebrou ao procurar o fator
 A análise passou a testar só os fatores decisivos presentes nos dados. Nenhum critério mudou, e os
 números da fumaça não foram olhados.
 
+## Resultado da confirmação no Paderborn (2026-11-13; sob revisão adversarial)
+
+- **Rodada:** `results-paderborn/`, de 00:25 a 05:21 UTC, 16 470 linhas.
+  - Os hashes do config, do `run_paderborn.py`, do `guided.py`, do README e do `run.py` do E24
+    batem com o commit `57a6a89`. Não houve recorte de fumaça.
+  - 6 medições ficaram de fora por arquivo curto, rotação fora de 4 s ou `.mat` ilegível. A
+    lista está no manifest.
+- **Veredito pré-registrado** (`analysis.json`): a H1 e a H2 passam nos quatro fatores decisivos.
+- **Acurácia balanceada (%), régua aninhada no cego e limiar dos sãos no guiado:**
+
+  | braço | 1× | 4× | 8× | 16× | 32× |
+  |---|---|---|---|---|---|
+  | `kurtograma` | 7,7 | 16,1 | 18,6 | 19,2 | 13,0 |
+  | `mediana_kurtograma` | 15,6 | 18,8 | 27,8 | 20,8 | 17,4 |
+  | `guiado` | 36,2 | 52,2 | 53,0 | 45,4 | 32,2 |
+  | `mediana_guiado` | 38,3 | 49,0 | 50,9 | 45,2 | 25,2 |
+
+  - A especificidade nos sãos é de 93,9 a 95,0 % nos braços guiados e de 99,4 a 100 % nos cegos.
+- **Testes** (troca de sinal por rolamento, estratificada por pista, Holm sobre 4, 4× a 32×):
+  - **H1** (`mediana_guiado` contra `kurtograma`): +32,9, +32,3, +26,0 e +12,2 pontos, com 16 de
+    17, 17 de 18, 18 de 19 e 21 de 22 rolamentos discordantes a favor. O p de Holm fica abaixo de
+    0,001 nos quatro.
+  - **H2** (`mediana_guiado` contra `mediana_kurtograma`): +30,2, +23,1, +24,3 e +7,8 pontos, com
+    p de Holm de 0,0004, 0,0014, 0,0006 e 0,031.
+- **O que o veredito não diz, e que a revisão precisa atacar:**
+  - **A mediana não contribui no Paderborn.** O `guiado`, sem limpeza, empata com o
+    `mediana_guiado` ou fica acima dele. Em 32× fica 7 pontos acima.
+  - **O ganho já existe em 1×,** com 36,2 % contra 7,7 %. Então não é específico da decimação:
+    no Paderborn o kurtograma já é capturado na taxa cheia (E24).
+  - **Os braços mudam duas coisas ao mesmo tempo:** a banda e a regra de identificação.
+    - O guiado escolhe entre as duas ordens da geometria, com limiar calibrado nos sãos.
+    - O cego estima a ordem sem prior e precisa acertar a ±0,025.
+    - O ganho pode vir da regra de identificação, não da banda. Isso foi declarado no
+      pré-registro como limite, mas não foi separado.
+
