@@ -1,12 +1,13 @@
-# The single paper of ADR 0006 (MSSP)
+# Manuscript for Mechanical Systems and Signal Processing (MSSP)
 
-**Status on 2026-11-13:** the draft is complete, in English, because the journal is MSSP.
-- The adversarial review of the whole manuscript (`reviewer-2`) asked for a major revision, and it
-  was applied; what changed is in the notebook `docs/lab-notebook/2026-11-13.md`.
-- The appendix (`sections/appendix_ledger.tex`) lists the 35 pre-registered hypotheses, with the
-  verdict and with whether or not each one was committed before running.
-- The remaining `\todo` items appear at the top of the PDF: affiliations, e-mail, declarations and
-  the visibility of the repository.
+LaTeX sources of the manuscript *Blind band selection under pure decimation of bearing vibration:
+aliased impulses, fault-order decisions and a power check for learned sampling*. The appendix
+(`sections/appendix_ledger.tex`) lists the 35 pre-registered hypotheses, with the verdict and with
+whether or not each one was committed before running.
+
+The source archive of each release, which is what its Zenodo record keeps, leaves out the
+manuscript text (`main.tex`, `sections/`, `highlights.txt` and this file). It keeps the generated
+figures, tables and numbers.
 
 **Structure:**
 
@@ -29,8 +30,9 @@
 | `fig_masks_paderborn.pdf` | `fig_masks_paderborn.py` | learned masks under the two rulers (E15) |
 
 Every curve has a 95 % bootstrap band over the independent units. Each script also writes a PNG to
-the experiment's `figures/` directory, for the Markdown report. The two new scripts check the
-points against the analysis files of the run and stop if anything diverges.
+the experiment's `figures/` directory, for the Markdown reports. `fig_rule_paderborn.py` and
+`fig_masks_paderborn.py` check the points against the analysis files of the run and stop if
+anything diverges.
 
 **How to compile,** with a minimal TeX Live (TinyTeX) installed only in this repository, in
 `.tools/`, outside git and outside the system PATH:
@@ -45,22 +47,4 @@ Both PDFs are generated and are not versioned. `main-submission.pdf` is the vers
 journal: without the list of pending items and without the `todonotes` boxes. The references are
 numbered in order of citation (`elsarticle-num-names`), the MSSP style. The bibliography is the
 single source, `../../literature/refs.bib`, and the text only cites entries with a `verified`
-field. The internal notes of the entries go in the `annote` field, which the Elsevier style does
-not print.
-
-**Before submitting:**
-- [x] no `unverified` reference in the text (`ci_checks.py refs`);
-- [x] every figure regenerable from `metrics.csv`;
-- [x] failure case documented (section "Where the method fails" and appendix);
-- [x] `reviewer-2` on the whole manuscript;
-- [ ] `literature/scout.py --anchors` run again, with the new anchors suggested by the review;
-- [x] authors and e-mails (Luiz Guilherme Martinho Sampaio Ito, Lucas Saraiva de Carvalho and José
-  Rodrigo Furlanetto Azambuja; the first one is the corresponding author);
-- [x] data and code availability section, pointing to this repository;
-- [ ] public repository, or an archived copy with a DOI, before submitting (remove the publisher
-  PDFs in `literature/pdf` from the history);
-- [ ] affiliations checked, CRediT, conflict of interest and funding;
-- [ ] text rewritten by the author;
-- [x] compilation (local TinyTeX, 44 pages, no undefined reference and no box outside the margin);
-- [ ] visual check of the PDF by the author;
-- [ ] choice of the journal.
+field.
