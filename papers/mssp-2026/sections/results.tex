@@ -212,6 +212,78 @@ and 98\% in KI01; in the others it reaches at most 12\%.
   \label{fig:paderborn}
 \end{figure}
 
+\subsection{A fault-order rule and the acquisition on Paderborn}
+\label{sec:res-rule}
+
+Table~\ref{tab:rule} gives the balanced accuracy of the fault-order rule (Section~\ref{sec:met-rule})
+on Paderborn, for three band choices and two acquisitions, with the blind pipeline for reference.
+The specificity of the rule ranges from 89.8 to 95.0\% over all arms and factors.
+
+\paragraph{The rule identifies what the blind pipeline misses} In the pre-registered confirmation,
+the guided band with the rule, after a three-point median, identified the faulty race in 49.0 to
+50.9\% of the segments at $4\times$ and $8\times$, against 16.1 to 18.6\% for the blind pipeline.
+The advantage was $+12.2$ to $+32.9$ points from $4\times$ to $32\times$, with Holm $p < 0.001$ at
+all four factors.
+\begin{itemize}
+  \item At $4\times$ and $8\times$ the rule identifies 12 of the 23 bearings by majority of
+  segments, and the blind pipeline 4. Eight bearings are identified only by the rule and none only
+  by the blind pipeline (McNemar, $p = 0.004$).
+  \item The advantage does not come from decimation. It is $+30.6$ points at full rate, and its
+  difference to the full-rate advantage, bearing by bearing, is between $-4.6$ and $+2.3$ points
+  from $4\times$ to $16\times$ and $-18.4$ points at $32\times$ (two-sided $p = 0.012$).
+  \item The median adds nothing: without it, the rule is as accurate or better.
+\end{itemize}
+
+\paragraph{The rule matters more than the band} With the rule fixed and the band varied:
+\begin{itemize}
+  \item in the band that the kurtogram selects, the rule alone raises the accuracy from 16.1 to
+  30.9\% at $4\times$;
+  \item the guided band adds $+12.3$ to $+21.4$ points over the kurtogram band from $4\times$ to
+  $16\times$ (Holm $p \le 0.003$);
+  \item over the whole band without selection, the guided band adds $+13.5$ and $+9.3$ points at
+  $4\times$ and $8\times$, nothing significant at $16\times$, and loses 8.9 points at $32\times$.
+\end{itemize}
+The whole band with the rule, which is plain envelope analysis with a fault-order decision, reaches
+38.8 to 43.7\% from $4\times$ to $32\times$.
+
+\paragraph{Folding costs accuracy on Paderborn} At the same rate, an ideal anti-alias filter
+before decimation is better than pure decimation for every band choice (Table~\ref{tab:rule}).
+\begin{itemize}
+  \item With the guided band, pure decimation is 7.3, 11.5, 8.7 and 29.7 points below the
+  anti-alias filter from $4\times$ to $32\times$, with 2 to 4 of 15 to 18 differing bearings in its
+  favour. The pre-registered test that pure decimation is better fails at every factor.
+  \item By Nyquist zone, the whole band with the rule reaches 47.0\% in the base band at $4\times$
+  and 2.5 to 27.5\% in the three zones above it. At $8\times$ the base band reaches 51.9\%, and the
+  zones from 12~kHz up reach 2.0 to 8.1\%.
+  \item Classical band-pass sampling with the zone chosen on the other bearings picks the base band
+  for every bearing, so it equals the anti-alias filter. With the zone chosen by the full-rate
+  kurtogram of a commissioning record, it picks the captured zone and reaches 14.7 to 16.0\%.
+  \item The best result is the whole band with the rule after the anti-alias filter at $32\times$
+  (2~kS/s): 71.2\%.
+\end{itemize}
+On Paderborn the diagnostic content lies in the base band, and the high zones carry the impulsive
+content that captures the kurtogram (Section~\ref{sec:res-paderborn}). Pure decimation folds it
+onto the band that matters.
+
+\paragraph{Controls for the rule} Leakage from the shaft harmonics does not explain the detections.
+Only 1.0 to 2.5\% of them have their peak within 0.03 of an integer order, and widening the
+exclusion to $\pm0.03$ changes the accuracy by 0.9 to 2.4 points. Four decoy windows, at 0.9 and
+1.1 times each fault order, exceed the threshold in 7.6 to 15.4\% of the damaged segments, against
+33.0 to 53.9\% for the true fault. Heterogeneity is large: at $4\times$, with the median and the
+guided band, eight bearings are identified in more than 80\% of their segments and eight in less
+than 10\%.
+
+\begin{table}[t]
+  \centering
+  \caption{Balanced accuracy (\%) of race identification on Paderborn (23 damaged and 6 healthy
+  bearings, raw stream), by acquisition, band and decision. The fault-order rule uses a threshold
+  from the healthy bearings, with a specificity of 89.8 to 95.0\%. The anti-alias filter is ideal
+  and sits at $f_s/(2M)$.}
+  \label{tab:rule}
+  \small
+  \input{tables/tab_guided_paderborn.tex}
+\end{table}
+
 \subsection{Can a benchmark detect a learned improvement?}
 \label{sec:res-power}
 

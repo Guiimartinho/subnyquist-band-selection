@@ -1,0 +1,16 @@
+% gerado por papers/shared/figures/tab_guided_paderborn.py a partir dos analysis.json do
+% E26, E26b e E26c no Paderborn; nao editar a mao. Fluxo bruto, acuracia balanceada (%).
+\begin{tabular}{llccccc}
+\toprule
+acquisition & band and decision & 1$\times$ & 4$\times$ & 8$\times$ & 16$\times$ & 32$\times$ \\
+\midrule
+pure decimation & kurtogram band, blind order estimate & 7.7 & 16.1 & 18.6 & 19.2 & 13.0 \\
+ & kurtogram band, fault-order rule & 14.1 & 30.9 & 34.0 & 33.1 & 25.1 \\
+ & wide band, fault-order rule & 32.2 & 38.8 & 43.7 & 41.5 & 41.1 \\
+ & guided band, fault-order rule & 36.2 & 52.2 & 53.0 & 45.4 & 32.2 \\
+\midrule
+anti-alias filter & kurtogram band, fault-order rule & -- & 60.7 & 62.6 & 63.8 & 50.3 \\
+ & wide band, fault-order rule & -- & 47.0 & 51.9 & 50.5 & 71.2 \\
+ & guided band, fault-order rule & -- & 59.5 & 64.5 & 54.1 & 62.0 \\
+\bottomrule
+\end{tabular}

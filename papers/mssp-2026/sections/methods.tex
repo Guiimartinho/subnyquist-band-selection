@@ -122,6 +122,42 @@ values that \citet{antoni2016infogram} gives for stationary Gaussian noise (1.15
 time-domain and 0.4228 for the spectral negentropy). The spectral Gini index
 \citep{hebdasobkowicz2020nongaussian} replaces the kurtosis by the Gini index of the band envelope.
 
+\subsection{Fault-order rule and acquisition variants}
+\label{sec:met-rule}
+
+On Paderborn we also replace the blind order estimate by a rule that looks only at the fault
+orders of the bearing geometry, as in band selectors that target known cyclic frequencies
+\citep{smith2019demodband,mauricio2020iesfogram,schmidt2020ifbigram}.
+\begin{itemize}
+  \item \emph{Score.} For each candidate fault (BPFO or BPFI) and band, the score is the
+  prominence of the envelope order spectrum, its peak divided by its median, in a window of
+  $\pm2\%$ around the first and the second harmonic of the geometric order, averaged over the two.
+  Orders within $\pm0.015$ of an integer are excluded from the windows, because on Paderborn the
+  fault orders lie 0.054 from the third and the fifth shaft harmonic.
+  \item \emph{Decision.} The fault with the larger score is reported if that score exceeds the 95th
+  percentile of the larger score on the healthy bearings (K001 to K006) at the same factor;
+  otherwise the segment is declared healthy. A healthy bearing is evaluated with the threshold of
+  the other five.
+  \item \emph{Band.} The rule is applied to the band chosen by the kurtogram, to the whole band
+  from 500~Hz to the effective Nyquist frequency, or to the band of the kurtogram partition
+  (levels 1 to 3) that maximizes the score, which we call the guided band.
+\end{itemize}
+Accuracy is balanced over the two races on the damaged bearings, and specificity is the fraction
+of healthy segments declared healthy.
+
+The acquisition is varied at the same rate $f_s/M$:
+\begin{itemize}
+  \item pure decimation, $x[::M]$;
+  \item an ideal anti-alias filter at $f_s/(2M)$ before decimation;
+  \item an ideal band-pass filter on one Nyquist zone, $[k, k+1] \cdot f_s/(2M)$, before
+  decimation, which is classical band-pass sampling \citep{vaughan1991,lu2018undersampled}. The
+  zone is chosen either on the other bearings or from the full-rate kurtogram of a commissioning
+  record.
+\end{itemize}
+The confirmation run, the run with the rule fixed and the band varied, and the acquisition run
+were each pre-registered before they ran. The Ottawa runs of the same rule were exploratory and
+were revised after seeing the data, so they enter only as motivation.
+
 \subsection{Statistical protocol}
 \label{sec:stats}
 

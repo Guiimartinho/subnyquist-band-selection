@@ -1,6 +1,6 @@
-% Artigo unico do ADR 0006 (MSSP). Esqueleto de 2026-11-12: introducao, trabalhos relacionados e
-% metodos escritos; resultados, discussao e conclusao esperam o E20 (seletores), o E24 e o E15 no
-% Paderborn. Referencias so do literature/refs.bib (fonte unica, campo verified).
+% Artigo unico do ADR 0006 (MSSP). Rascunho completo de 2026-11-13: resultados do E07/E20/E23/E24/
+% E24b/E26/E26b/E26c/E15; falta a revisao adversarial do manuscrito inteiro, os autores e o link do
+% codigo. Referencias so do literature/refs.bib (fonte unica, campo verified).
 \documentclass[preprint,12pt,authoryear]{elsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -22,10 +22,23 @@ the Nyquist rate}
 \author{\todo[inline]{Author list and affiliations: decided by the student and the advisor.}}
 
 \begin{abstract}
-\todo[inline]{Write after E20 (robust selectors), E24 (Paderborn replication) and E15 on
-Paderborn. Keep the contribution sentence: capture of the band selector by non-fault impulses is
-known at full rate; what is new is the folding of out-of-band impulsive content under pure
-decimation.}
+Condition-monitoring nodes that sample vibration below the Nyquist rate rely on folding to bring a
+fault resonance into a narrow band. Folding also brings interference, and blind band selection is
+the step it reaches first. We study this interaction under pure decimation of three public bearing
+benchmarks. On Ottawa, single-sample spikes present in the raw records, healthy ones included,
+capture the kurtogram under decimation, and order-estimation accuracy drops non-monotonically with
+the decimation factor. Removing the spikes before decimation restores it in a pre-registered test,
+and three steps that need no access to the full-rate record do the same at $4\times$. Injecting
+impulsive interference into CWRU reproduces the capture against a phase-randomized surrogate. On
+Paderborn the kurtogram is already captured at full rate. There, a decision restricted to the fault
+orders of the bearing geometry, with a threshold from healthy bearings, identifies the faulty race
+about three times as often as the blind pipeline at 1/4 and 1/8 of the rate, at 94\% specificity.
+Most of the gain comes from the decision rather than from the band, and none from decimation. At
+the same rate, an anti-alias filter is 7 to 30 points better than pure decimation, because the
+diagnostic content lies in the base band: whether folding helps is a property of the machine,
+measurable by Nyquist zone. A pre-registered power gate shows that one benchmark cannot detect any
+improvement from learned acquisition while the other can. On the latter, learned sampling masks do
+not outperform trained uniform decimation or random masks.
 \end{abstract}
 
 \begin{keyword}

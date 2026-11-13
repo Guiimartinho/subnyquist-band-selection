@@ -1,0 +1,351 @@
+{
+  "confirmation": {
+    "blind_kurtogram": {
+      "1": 7.7,
+      "4": 16.1,
+      "8": 18.6,
+      "16": 19.2,
+      "32": 13.0
+    },
+    "median_guided": {
+      "1": 38.3,
+      "4": 49.0,
+      "8": 50.9,
+      "16": 45.2,
+      "32": 25.2
+    },
+    "median_guided_specificity": {
+      "1": 94.4,
+      "4": 94.2,
+      "8": 94.4,
+      "16": 94.2,
+      "32": 94.4
+    },
+    "tests": [
+      {
+        "hypothesis": "H1",
+        "factor": 4,
+        "diff_points": 32.9,
+        "bearings_up": 16,
+        "bearings_differing": 17,
+        "p_holm": 0.0
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 8,
+        "diff_points": 32.27,
+        "bearings_up": 17,
+        "bearings_differing": 18,
+        "p_holm": 0.0
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 16,
+        "diff_points": 25.99,
+        "bearings_up": 18,
+        "bearings_differing": 19,
+        "p_holm": 0.0
+      },
+      {
+        "hypothesis": "H1",
+        "factor": 32,
+        "diff_points": 12.16,
+        "bearings_up": 21,
+        "bearings_differing": 22,
+        "p_holm": 0.0
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 4,
+        "diff_points": 30.2,
+        "bearings_up": 14,
+        "bearings_differing": 15,
+        "p_holm": 0.0004
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 8,
+        "diff_points": 23.09,
+        "bearings_up": 15,
+        "bearings_differing": 18,
+        "p_holm": 0.0014
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 16,
+        "diff_points": 24.33,
+        "bearings_up": 18,
+        "bearings_differing": 19,
+        "p_holm": 0.0006
+      },
+      {
+        "hypothesis": "H2",
+        "factor": 32,
+        "diff_points": 7.77,
+        "bearings_up": 17,
+        "bearings_differing": 21,
+        "p_holm": 0.0308
+      }
+    ]
+  },
+  "rule_fixed": {
+    "tests": [
+      {
+        "hypothesis": "H3",
+        "clean": "bruto",
+        "factor": 4,
+        "diff_points": 21.35,
+        "bearings_up": 18,
+        "bearings_differing": 20,
+        "p_holm": 0.0004
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "bruto",
+        "factor": 8,
+        "diff_points": 19.01,
+        "bearings_up": 18,
+        "bearings_differing": 19,
+        "p_holm": 0.0007
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "bruto",
+        "factor": 16,
+        "diff_points": 12.29,
+        "bearings_up": 13,
+        "bearings_differing": 18,
+        "p_holm": 0.0033
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "bruto",
+        "factor": 32,
+        "diff_points": 7.1,
+        "bearings_up": 11,
+        "bearings_differing": 19,
+        "p_holm": 0.1693
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "mediana3",
+        "factor": 4,
+        "diff_points": 16.85,
+        "bearings_up": 14,
+        "bearings_differing": 15,
+        "p_holm": 0.0021
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "mediana3",
+        "factor": 8,
+        "diff_points": 0.23,
+        "bearings_up": 9,
+        "bearings_differing": 16,
+        "p_holm": 0.8859
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "mediana3",
+        "factor": 16,
+        "diff_points": 10.39,
+        "bearings_up": 15,
+        "bearings_differing": 18,
+        "p_holm": 0.0021
+      },
+      {
+        "hypothesis": "H3",
+        "clean": "mediana3",
+        "factor": 32,
+        "diff_points": 0.02,
+        "bearings_up": 11,
+        "bearings_differing": 18,
+        "p_holm": 0.8859
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "bruto",
+        "factor": 4,
+        "diff_points": 13.46,
+        "bearings_up": 18,
+        "bearings_differing": 18,
+        "p_holm": 0.0
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "bruto",
+        "factor": 8,
+        "diff_points": 9.3,
+        "bearings_up": 15,
+        "bearings_differing": 16,
+        "p_holm": 0.0006
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "bruto",
+        "factor": 16,
+        "diff_points": 3.82,
+        "bearings_up": 9,
+        "bearings_differing": 15,
+        "p_holm": 0.2478
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "bruto",
+        "factor": 32,
+        "diff_points": -8.85,
+        "bearings_up": 3,
+        "bearings_differing": 17,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "mediana3",
+        "factor": 4,
+        "diff_points": 3.84,
+        "bearings_up": 9,
+        "bearings_differing": 11,
+        "p_holm": 0.0264
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "mediana3",
+        "factor": 8,
+        "diff_points": 4.1,
+        "bearings_up": 10,
+        "bearings_differing": 12,
+        "p_holm": 0.2478
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "mediana3",
+        "factor": 16,
+        "diff_points": -1.81,
+        "bearings_up": 9,
+        "bearings_differing": 17,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H4",
+        "clean": "mediana3",
+        "factor": 32,
+        "diff_points": -7.49,
+        "bearings_up": 11,
+        "bearings_differing": 21,
+        "p_holm": 1.0
+      }
+    ]
+  },
+  "acquisition": {
+    "tests": [
+      {
+        "hypothesis": "H5",
+        "factor": 4,
+        "diff_points": -7.25,
+        "bearings_up": 3,
+        "bearings_differing": 16,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H5",
+        "factor": 8,
+        "diff_points": -11.51,
+        "bearings_up": 3,
+        "bearings_differing": 16,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H5",
+        "factor": 16,
+        "diff_points": -8.73,
+        "bearings_up": 4,
+        "bearings_differing": 15,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H5",
+        "factor": 32,
+        "diff_points": -29.72,
+        "bearings_up": 2,
+        "bearings_differing": 18,
+        "p_holm": 1.0
+      },
+      {
+        "hypothesis": "H6",
+        "factor": 4,
+        "diff_points": 5.14,
+        "bearings_up": 10,
+        "bearings_differing": 17,
+        "p_holm": 0.0873
+      },
+      {
+        "hypothesis": "H6",
+        "factor": 8,
+        "diff_points": 1.07,
+        "bearings_up": 11,
+        "bearings_differing": 16,
+        "p_holm": 0.345
+      }
+    ],
+    "zone_profile_wide_band": {
+      "4x": {
+        "antialias": 47.0,
+        "zona1": 27.5,
+        "zona2": 2.5,
+        "zona3": 3.0
+      },
+      "8x": {
+        "antialias": 51.9,
+        "zona1": 35.6,
+        "zona2": 40.4,
+        "zona3": 8.1,
+        "zona4": 2.6,
+        "zona5": 2.2,
+        "zona6": 2.0,
+        "zona7": 3.5
+      }
+    },
+    "leakage_and_decoys": {
+      "4x": {
+        "detections_damaged": 691,
+        "share_peak_within_003_of_integer": 0.023,
+        "balanced_with_exclusion_003": 49.8,
+        "decoy_over_threshold_damaged": 0.146,
+        "decoy_over_threshold_healthy": 0.061,
+        "true_fault_over_threshold_damaged": 0.527
+      },
+      "8x": {
+        "detections_damaged": 713,
+        "share_peak_within_003_of_integer": 0.025,
+        "balanced_with_exclusion_003": 51.3,
+        "decoy_over_threshold_damaged": 0.154,
+        "decoy_over_threshold_healthy": 0.035,
+        "true_fault_over_threshold_damaged": 0.539
+      },
+      "16x": {
+        "detections_damaged": 621,
+        "share_peak_within_003_of_integer": 0.01,
+        "balanced_with_exclusion_003": 44.5,
+        "decoy_over_threshold_damaged": 0.098,
+        "decoy_over_threshold_healthy": 0.05,
+        "true_fault_over_threshold_damaged": 0.461
+      },
+      "32x": {
+        "detections_damaged": 461,
+        "share_peak_within_003_of_integer": 0.02,
+        "balanced_with_exclusion_003": 30.4,
+        "decoy_over_threshold_damaged": 0.076,
+        "decoy_over_threshold_healthy": 0.082,
+        "true_fault_over_threshold_damaged": 0.33
+      }
+    },
+    "integrity": {
+      "matches": 13176,
+      "max_abs_diff": 0.0
+    }
+  },
+  "specificity_range_rule_arms": [
+    89.8,
+    95.0
+  ]
+}

@@ -8,14 +8,21 @@ below it keeps the selector away from high bands. Sub-Nyquist acquisition gives 
 by design, because the folding of the band of interest is what makes the rate reduction possible
 \citep{vaughan1991,mishali2010practice}. Interference folds with it.
 
-The ideal anti-alias filter shows the price of restoring the protection:
+The ideal anti-alias filter shows the price and the value of restoring the protection:
 \begin{itemize}
   \item on Ottawa it prevents the capture;
   \item on CWRU it prevents the capture by band-limited bursts, but not by spike trains, whose
-  in-band part stays impulsive;
-  \item without injection it costs 27 points at $10\times$ and $12\times$, because it also removes
-  the folded fault resonance.
+  in-band part stays impulsive. Without injection it costs 27 points at $10\times$ and $12\times$,
+  because it also removes the folded fault resonance;
+  \item on Paderborn, under the fault-order rule, it raises the accuracy by 7 to 30 points, because
+  the diagnostic content lies in the base band and what it removes is the impulsive content above.
 \end{itemize}
+Whether pure decimation pays off therefore depends on where the informative band lies relative to
+the interference. A zone profile measures it before the acquisition is chosen: the accuracy of the
+decision after band-pass sampling of each Nyquist zone, on records with known faults
+(Section~\ref{sec:res-rule}). Commissioning the zone with the full-rate kurtogram is not a
+substitute, because the kurtogram is the step that the interference captures.
+
 A search ceiling that protects the selector at full rate is likewise undone by decimation: the
 ceiling stays where it was, and the interference folds below it. The protection that a full-rate
 system takes for granted has to be rebuilt after decimation, by the selector or by a cleaning step

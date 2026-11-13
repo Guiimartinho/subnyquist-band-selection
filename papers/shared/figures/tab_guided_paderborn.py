@@ -1,83 +1,75 @@
-"""Tabela do E26 no Paderborn: o seletor guiado contra o kurtograma cego, no fluxo decimado.
+"""Tabela do E26 no Paderborn: regra das ordens de falha, escolha de banda e aquisição.
 
-Regra do projeto: a tabela nasce do ``analysis.json`` do experimento, nunca de número transcrito.
+Regra do projeto: a tabela nasce dos ``analysis.json`` do experimento, nunca de número transcrito.
 
-- **Fonte:** `E26/results-paderborn/analysis.json`, escrito por `analyze_paderborn.py`.
-- **Conteúdo:**
-  - a acurácia balanceada nos rolamentos danificados e a especificidade nos sãos, por braço e
-    fator;
-  - as diferenças pré-registradas (H1 e H2), com o p de Holm.
+- **Fontes,** todas do fluxo bruto:
+  - `E26/results-paderborn/analysis.json`: o kurtograma cego;
+  - `E26/results-paderborn-regra/analysis.json`: o E26b, com a regra fixa e a banda mudando;
+  - `E26/results-paderborn-aquisicao/analysis.json`: o E26c, com anti-alias antes de decimar.
+- **Linhas:** a acurácia balanceada nos danificados, por fator.
 
-    uv run python papers/shared/figures/tab_guided_paderborn.py [--analysis PATH] [--out PATH]
+    uv run python papers/shared/figures/tab_guided_paderborn.py
 """
 
 from __future__ import annotations
 
-import argparse
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 E26 = ROOT / "experiments/E26-fault-order-guided-selector"
-ANALYSIS = E26 / "results-paderborn/analysis.json"
 OUT = ROOT / "papers/mssp-2026/tables/tab_guided_paderborn.tex"
-ARMS = [
-    ("kurtograma", "blind kurtogram"),
-    ("mediana_kurtograma", "median + blind kurtogram"),
-    ("guiado", "guided"),
-    ("mediana_guiado", "median + guided"),
-]
-TESTS = [("H1", "vs blind kurtogram (H1)"), ("H2", "vs median + blind kurtogram (H2)")]
+FACTORS = (1, 4, 8, 16, 32)
 
 
-def fmt(v) -> str:
-    return "--" if v is None else f"{v:.1f}"
+def load(name: str) -> dict:
+    return json.loads((E26 / name / "analysis.json").read_text(encoding="utf-8"))["summary"]
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--analysis", type=Path, default=ANALYSIS)
-    ap.add_argument("--out", type=Path, default=OUT)
-    args = ap.parse_args()
-    rep = json.loads(args.analysis.read_text(encoding="utf-8"))
-    summary, tests = rep["summary"], rep["tests"]
-    factors = sorted({int(k.split("|")[1].rstrip("x")) for k in summary})
-    cols = " & ".join(f"{f}$\\times$" for f in factors)
-    n = len(factors) + 1
-    lines = [
-        rf"\begin{{tabular}}{{l{'c' * len(factors)}}}",
-        r"\toprule",
-        rf"decimation factor & {cols} \\",
-    ]
-    for title, field in (
-        ("balanced accuracy on damaged bearings [\\%]", "balanced"),
-        ("specificity on healthy bearings [\\%]", "specificity"),
-    ):
-        lines += [r"\midrule", rf"\multicolumn{{{n}}}{{l}}{{\emph{{{title}}}}} \\"]
-        for arm, label in ARMS:
-            cells = " & ".join(fmt(summary[f"{arm}|{f}x"][field]) for f in factors)
-            lines.append(f"{label} & {cells} \\\\")
-    diff_title = "median + guided minus baseline [points] (Holm $p$)"
-    lines += [r"\midrule", rf"\multicolumn{{{n}}}{{l}}{{\emph{{{diff_title}}}}} \\"]
-    for hyp, label in TESTS:
-        by_f = {t["factor"]: t for t in tests if t["hypothesis"] == hyp}
-        cells = []
-        for f in factors:
-            t = by_f.get(f)
-            if t is None:
-                cells.append("--")
-                continue
-            mark = r"$^{\ast}$" if t["passes"] else ""
-            cells.append(f"{t['diff_points']:+.1f} ({t['p_holm']:.3f}){mark}")
-        lines.append(f"{label} & {' & '.join(cells)} \\\\")
-    lines += [r"\bottomrule", r"\end{tabular}"]
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    head = (
-        "% gerado por papers/shared/figures/tab_guided_paderborn.py a partir do analysis.json do\n"
-        "% E26 no Paderborn; nao editar a mao. Asterisco: passa o criterio pre-registrado.\n"
+    e26, e26b, e26c = (
+        load("results-paderborn"),
+        load("results-paderborn-regra"),
+        load("results-paderborn-aquisicao"),
     )
-    args.out.write_text(head + "\n".join(lines) + "\n", encoding="utf-8")
-    print(f"-> {args.out}")
+    rows = [
+        ("pure decimation", "kurtogram band, blind order estimate", e26, "kurtograma|{f}x"),
+        ("", "kurtogram band, fault-order rule", e26b, "kurtograma_regra|bruto|{f}x"),
+        ("", "wide band, fault-order rule", e26b, "banda_larga_regra|bruto|{f}x"),
+        ("", "guided band, fault-order rule", e26b, "guiado|bruto|{f}x"),
+        (
+            "anti-alias filter",
+            "kurtogram band, fault-order rule",
+            e26c,
+            "antialias|kurtograma_regra|{f}x",
+        ),
+        ("", "wide band, fault-order rule", e26c, "antialias|banda_larga_regra|{f}x"),
+        ("", "guided band, fault-order rule", e26c, "antialias|guiado|{f}x"),
+    ]
+    cols = " & ".join(f"{f}$\\times$" for f in FACTORS)
+    lines = [
+        r"\begin{tabular}{ll" + "c" * len(FACTORS) + "}",
+        r"\toprule",
+        rf"acquisition & band and decision & {cols} \\",
+        r"\midrule",
+    ]
+    for i, (acq, label, src, key) in enumerate(rows):
+        if i == 4:
+            lines.append(r"\midrule")
+        cells = []
+        for f in FACTORS:
+            v = src.get(key.format(f=f))
+            cells.append("--" if v is None or v.get("balanced") is None else f"{v['balanced']:.1f}")
+        lines.append(f"{acq} & {label} & {' & '.join(cells)} \\\\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    head = (
+        "% gerado por papers/shared/figures/tab_guided_paderborn.py a partir dos analysis.json do\n"
+        "% E26, E26b e E26c no Paderborn; nao editar a mao. Fluxo bruto, acuracia balanceada (%).\n"
+    )
+    OUT.write_text(head + "\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
+    print(f"-> {OUT}")
 
 
 if __name__ == "__main__":

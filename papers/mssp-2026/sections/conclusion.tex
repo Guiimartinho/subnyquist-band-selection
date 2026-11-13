@@ -1,4 +1,25 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-\todo[inline]{Write after the results.}
+Sampling bearing vibration below the Nyquist rate by pure decimation brings the fault resonance into
+a narrow band, and with it whatever impulsive content lies in the folded zones. On three public
+benchmarks, that content decided whether blind band selection survived the rate reduction.
+\begin{itemize}
+  \item On Ottawa, spikes of one sample, healthy records included, captured the kurtogram under
+  decimation. Removing isolated outliers in the decimated stream, a three-point median or a lower
+  search ceiling avoided the capture at $4\times$ without access to the full rate.
+  \item On Paderborn, the kurtogram was captured before any decimation. A decision restricted to
+  the fault orders, with a threshold from healthy bearings, recovered much of what the blind
+  pipeline missed, at every rate. An anti-alias filter before decimation did better than pure
+  decimation, because the diagnostic content lay in the base band.
+  \item Learned sampling masks did not outperform trained uniform decimation or random masks on the
+  benchmark that could detect a gain of 5 points. The decoder that the masks shared carried the
+  margin over the classical pipeline.
+\end{itemize}
+
+Three practices follow for a node that samples below the Nyquist rate. Before choosing between pure
+decimation and filtering, measure the accuracy by Nyquist zone on records with known faults. After
+decimation, protect the band choice or the decision, since the protection that the anti-alias filter
+gives at full rate is gone. Before training learned acquisition on a benchmark, check that the
+benchmark can detect a gain. The results model an ideal sampler. The bandwidth of a real
+track-and-hold, which decides what folds, has to be measured on the target converter.
