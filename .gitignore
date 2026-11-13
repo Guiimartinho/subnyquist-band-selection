@@ -46,7 +46,7 @@ firmware/**/build/
 *.spl
 *.tdo
 # PDF do paper: gerado por papers/shared/build_pdf.py a partir das fontes versionadas
-papers/*/main.pdf
+papers/*/main*.pdf
 
 # so
 .DS_Store

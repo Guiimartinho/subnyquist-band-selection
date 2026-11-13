@@ -96,9 +96,8 @@ def main() -> None:
     ap.add_argument("--ruler", choices=("local", "nested"), default="local")
     args = ap.parse_args()
     hits = load(args.ruler)
-    fig, axes = plt.subplots(
-        1, 2, figsize=(5.4, 2.6), sharey=True
-    )  # largura do texto do elsarticle
+    # largura do texto do elsarticle; legenda embaixo, fora dos painéis
+    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.3), sharey=True)
     present = sorted({k[1] for k in hits}, key=lambda a: ARMS[a][4])
     for ax, (race, label) in zip(axes, RACES.items(), strict=True):
         for arm in present:
@@ -120,7 +119,8 @@ def main() -> None:
         ax.set_xlabel("decimation factor $M$")
         ax.set_ylim(-3, 103)
         ax.grid(alpha=0.25, lw=0.5)
-        ax.text(0.02, 0.04, label, transform=ax.transAxes, fontsize=8, va="bottom")
+        # rótulo do painel acima do eixo de taxa, para não cobrir dados nem a legenda
+        ax.set_title(label, loc="left", fontsize=8, pad=24)
         top = ax.secondary_xaxis(
             "top", functions=(lambda m: FS_FULL_KSPS / m, lambda r: FS_FULL_KSPS / r)
         )
@@ -131,8 +131,9 @@ def main() -> None:
         top.set_xlabel("effective rate $f_s/M$ [kS/s]", fontsize=7)
     ruler = f"{args.ruler} ruler"
     axes[0].set_ylabel(f"order hits [%] ({ruler})")
-    axes[1].legend(loc="lower right", frameon=False)
-    fig.tight_layout()
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, frameon=False)
+    fig.tight_layout(rect=(0, 0.12, 1, 1))
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / f"fig_valley_{args.ruler}.pdf"
     fig.savefig(out)

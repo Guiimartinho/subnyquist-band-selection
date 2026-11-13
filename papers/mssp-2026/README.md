@@ -37,10 +37,13 @@ fora do git e fora do PATH do sistema:
 
 ```
 uv run python papers/shared/build_pdf.py install                 # uma vez: TinyTeX e pacotes
-uv run python papers/shared/build_pdf.py build papers/mssp-2026  # gera main.pdf
+uv run python papers/shared/build_pdf.py build papers/mssp-2026  # main.pdf, com as pendências
+uv run python papers/shared/build_pdf.py build papers/mssp-2026 --submission  # main-submission.pdf
 ```
 
-O `main.pdf` é gerado e não é versionado. A bibliografia é a fonte única,
+Os dois PDFs são gerados e não são versionados. O `main-submission.pdf` é a versão para a
+revista: sem a lista de pendências e sem as caixas do `todonotes`. As referências são numeradas
+na ordem de citação (`elsarticle-num-names`), o estilo da MSSP. A bibliografia é a fonte única,
 `../../literature/refs.bib`, e o texto só cita entradas com campo `verified`. As anotações
 internas das entradas ficam no campo `annote`, que o estilo da Elsevier não imprime.
 

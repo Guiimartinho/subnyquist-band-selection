@@ -7,6 +7,7 @@ oficial e aponte `TEX_BIN` para ele.
 
     uv run python papers/shared/build_pdf.py install                 # TinyTeX + pacotes do paper
     uv run python papers/shared/build_pdf.py build papers/mssp-2026  # gera main.pdf
+    uv run python papers/shared/build_pdf.py build papers/mssp-2026 --submission
 """
 
 from __future__ import annotations
@@ -83,20 +84,31 @@ def run(cmd: list[str], cwd: Path, env: dict[str, str]) -> int:
     return subprocess.run([exe, *cmd[1:]], cwd=cwd, env=env, capture_output=True).returncode
 
 
-def build(paper: Path, main: str = "main") -> int:
+def build(paper: Path, main: str = "main", submission: bool = False) -> int:
     if not (TEX_BIN / "pdflatex.exe").exists() and not shutil.which("pdflatex"):
         print("TinyTeX ausente: rode primeiro `build_pdf.py install`.")
         return 2
     env = os.environ.copy()
     env["PATH"] = str(TEX_BIN) + os.pathsep + env.get("PATH", "")
-    latex = ["pdflatex", "-interaction=nonstopmode", "-file-line-error", f"{main}.tex"]
-    steps = [latex, ["bibtex", main], latex, latex]
+    # versão de submissão: mesmas fontes, com o todonotes desligado (sem lista nem caixas)
+    job = f"{main}-submission" if submission else main
+    source = f"{main}.tex"
+    if submission:
+        source = "\\PassOptionsToPackage{disable}{todonotes}\\input{" + source + "}"
+    latex = [
+        "pdflatex",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        f"-jobname={job}",
+        source,
+    ]
+    steps = [latex, ["bibtex", job], latex, latex]
     codes = [run(cmd, paper, env) for cmd in steps]
-    log = (paper / f"{main}.log").read_text(encoding="latin-1", errors="replace")
+    log = (paper / f"{job}.log").read_text(encoding="latin-1", errors="replace")
     errors = [line for line in log.splitlines() if line.startswith("!") or ".tex:" in line]
     missing = re.findall(r"File `([^']+)' not found", log)
     undef = len(re.findall(r"(Citation|Reference) `[^']+' on page", log))
-    blg = paper / f"{main}.blg"
+    blg = paper / f"{job}.blg"
     bib_warn = blg.read_text(encoding="latin-1").count("Warning--") if blg.exists() else 0
     pages = re.search(r"Output written on \S+ \((\d+) pages", log)
     print(f"códigos de saída: {codes}")
@@ -108,7 +120,7 @@ def build(paper: Path, main: str = "main") -> int:
         print("arquivos ausentes (instale com tlmgr):", sorted(set(missing)))
     for line in errors[:15]:
         print("  ", line)
-    pdf = paper / f"{main}.pdf"
+    pdf = paper / f"{job}.pdf"
     ok = pdf.exists() and codes[-1] == 0
     print(f"{'PDF gerado' if ok else 'falhou'}: {pdf}")
     return 0 if ok else 1
@@ -120,11 +132,17 @@ def main() -> int:
     sub.add_parser("install")
     b = sub.add_parser("build")
     b.add_argument("paper", type=Path)
+    b.add_argument(
+        "--submission",
+        action="store_true",
+        help="gera main-submission.pdf, sem a lista de pendências e sem as caixas do todonotes",
+    )
     args = ap.parse_args()
     if args.cmd == "install":
         install()
         return 0
-    return build((ROOT / args.paper).resolve() if not args.paper.is_absolute() else args.paper)
+    paper = (ROOT / args.paper).resolve() if not args.paper.is_absolute() else args.paper
+    return build(paper, submission=args.submission)
 
 
 if __name__ == "__main__":

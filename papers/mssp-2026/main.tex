@@ -4,7 +4,8 @@
 % faltam afiliacoes conferidas, e-mail, declaracoes e o repositorio publico. Compila com o TinyTeX
 % local: papers/shared/build_pdf.py. Referencias so do literature/refs.bib (campo verified).
 \PassOptionsToPackage{hyphens}{url}
-\documentclass[preprint,12pt,authoryear]{elsarticle}
+% referencias numeradas na ordem de citacao, o estilo da MSSP (elsarticle-num-names, que tambem da nome ao \citet)
+\documentclass[preprint,12pt]{elsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -14,6 +15,13 @@
 \usepackage{hyperref}
 % caminhos e URLs longos: deixa o TeX esticar os espacos em vez de estourar a margem
 \setlength{\emergencystretch}{3em}
+% figuras altas cabem no alto da pagina ou numa pagina de floats, em vez de irem para o fim
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.75}
+% espaco entre a legenda (acima) e o filete superior das tabelas
+\setlength{\belowcaptionskip}{6pt}
 
 \journal{Mechanical Systems and Signal Processing}
 
@@ -79,9 +87,11 @@ DOI, before submission. Publisher PDFs in \texttt{literature/pdf} must leave the
 e-mail, the CRediT statement, the declaration of competing interest and the funding.}
 
 \appendix
+\setcounter{table}{0}
+\setcounter{figure}{0}
 \input{sections/appendix_ledger}
 
-\bibliographystyle{elsarticle-harv}
+\bibliographystyle{elsarticle-num-names}
 \bibliography{../../literature/refs}
 
 \end{document}

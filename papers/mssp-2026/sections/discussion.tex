@@ -22,8 +22,9 @@ The ideal anti-alias filter shows the price and the value of restoring the prote
   \item on CWRU it prevents the capture by band-limited bursts, but not by spike trains, whose
   in-band part stays impulsive. Without injection it costs 27 points at $10\times$ and $12\times$,
   because it also removes the folded fault resonance;
-  \item on Paderborn, under the fault-order rule, it raises the accuracy by 7 to 30 points, because
-  the diagnostic content lies in the base band and what it removes is the impulsive content above.
+  \item on Paderborn, under the fault-order rule, it raises the accuracy by 7 to 30 points: the
+  zones below 12~kHz identify the fault, and the filter keeps the higher zones from folding onto
+  them; whether what it removes is impulsive content or broadband noise was not tested.
 \end{itemize}
 Whether pure decimation pays off therefore depends on where the informative band lies relative to
 the interference, and on these three benchmarks the answer differed. A zone profile measures it

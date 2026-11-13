@@ -1,8 +1,9 @@
 \section{Data and methods}
 \label{sec:methods}
 
-Hypotheses, decision rules and tests were written before each run, and
-Appendix~\ref{app:ledger} lists every one of them with its verdict. They were also committed to
+Each experiment is named by its identifier in the repository (E07 to E26). Hypotheses,
+decision rules and tests were written before each run, and
+\ref{app:ledger} lists every one of them with its verdict. They were also committed to
 the repository before the run for the Paderborn experiments, both power gates, both learned-mask
 runs and the later Ottawa runs on robust selectors and on cleaning after decimation; the commit
 history records the order. The confirmatory Paderborn run of the fault-order rule came first, and
@@ -32,7 +33,7 @@ The drive-end 48~kS/s records of the Case Western Reserve University benchmark, 
 categorization of \citet{smith2015cwru}, host the injected-interference experiment.
 
 \paragraph{Paderborn}
-The Paderborn benchmark \citep{lessmeier2016paderborn} records 6203 bearings at 64~kS/s in a drive
+The Paderborn benchmark \citep{lessmeier2016paderborn} records bearings of type 6203 at 64~kS/s in a drive
 fed by a PWM inverter with 16~kHz switching. We use the three settings at 1500~rpm, whose 4~s
 measurements resolve 0.010 order, and the 23 bearings with single-race damage: 12 outer-race (7
 artificial, 5 from accelerated lifetime tests) and 11 inner-race (5 artificial, 6 real). The
@@ -104,7 +105,7 @@ harmonic as a hit. Accuracy is balanced: the mean over races of the per-unit hit
 
 A sample is an isolated spike when its deviation from the mean of its two neighbours,
 $\delta[n] = x[n] - \tfrac12(x[n-1] + x[n+1])$, exceeds ten times
-$1.4826\,\mathrm{median}|\delta|$, and both neighbours deviate in the opposite direction by less
+its scaled median absolute deviation (MAD), $1.4826\,\mathrm{median}|\delta|$, and both neighbours deviate in the opposite direction by less
 than 0.8 of it. Spikes are replaced by the mean of their neighbours. Applied at full rate, before
 decimation, the procedure is not realizable on a decimating node; it is a diagnostic intervention
 that attributes the loss to the spikes. A single-sample spike that survives decimation lands on a
@@ -167,7 +168,7 @@ of healthy segments declared healthy.
 
 The acquisition is varied at the same rate $f_s/M$:
 \begin{itemize}
-  \item pure decimation, $x[::M]$;
+  \item pure decimation, $x_M[n] = x[nM]$;
   \item an ideal anti-alias filter at $f_s/(2M)$ before decimation;
   \item an ideal band-pass filter on one Nyquist zone, $[k, k+1] \cdot f_s/(2M)$, before
   decimation, which is classical band-pass sampling \citep{vaughan1991,lu2018undersampled}. The
@@ -238,7 +239,10 @@ Early stopping and checkpoint selection start only after the annealing ends. A b
 only if the masks left the Gumbel noise, that is, if the margin between the $K$-th and
 $(K{+}1)$-th logits exceeds the noise standard deviation, in at least half of the splits.
 
-The learned masks are compared with:
+Two hypotheses were pre-registered. H1: the learned mask outperforms each of the three
+references below in at least two of the four budgets, under both rulers. H2: the learned
+constrained mask outperforms the mask learned without the constraint and projected onto it
+afterwards, the projection gap. The learned masks are compared with:
 \begin{itemize}
   \item the best uniform rate at or below the budget, chosen on training data;
   \item the same decoder with that uniform mask;

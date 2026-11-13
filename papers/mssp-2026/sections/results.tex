@@ -66,7 +66,7 @@ The pre-registered attribution of the loss to specific zones was therefore withd
 search ceiling to 12.5~kHz also avoids the valley: the raw records then stay at 27--29 hits from
 $1\times$ to $6\times$.
 
-\begin{table}[t]
+\begin{table}[!tbp]
   \centering
   \caption{Outer-race order hits on Ottawa under pure decimation, with the 25~kHz search ceiling
   unless stated. Each cell gives the hits under the nested ruler (of 36 segments) and, in
@@ -77,7 +77,7 @@ $1\times$ to $6\times$.
   \resizebox{\textwidth}{!}{\input{tables/tab_ottawa_valley.tex}}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
   \centering
   \includegraphics{figures/fig_valley_nested.pdf}
   \caption{Order hits against the decimation factor on Ottawa, under the nested ruler, for the
@@ -242,7 +242,7 @@ Paderborn therefore does not test the Ottawa mechanism, which presupposes a sele
 at full rate. Here the kurtogram is right at full rate in only 2 of the 23 bearings, 63\% in KA01
 and 98\% in KI01; in the others it reaches at most 12\%.
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
   \centering
   \includegraphics{figures/fig_paderborn.pdf}
   \caption{Balanced order accuracy against the decimation factor on Paderborn, under the nested
@@ -342,7 +342,7 @@ are identified in more than 80\% of their segments and eight in less than 10\%. 
 stayed below 20\% at every factor in both guided arms: KI03, KI05, KI07, KI08 and KI21 on the
 inner race, and KA15, KA22 and KA30 on the outer race.
 
-\begin{table}[t]
+\begin{table}[!tbp]
   \centering
   \caption{Balanced accuracy (\%) of race identification on Paderborn (23 damaged and 6 healthy
   bearings, raw stream), by acquisition, band and decision. The fault-order rule uses a threshold
@@ -355,7 +355,7 @@ inner race, and KA15, KA22 and KA30 on the outer race.
   \resizebox{\textwidth}{!}{\input{tables/tab_guided_paderborn.tex}}
 \end{table}
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
   \centering
   \includegraphics{figures/fig_rule_paderborn.pdf}
   \caption{Race identification on Paderborn with the fault-order rule, raw stream. (a) Decision
@@ -395,7 +395,7 @@ and 1.00 with three or five. The Paderborn run of the learned masks therefore us
 fold. That run admits measurements up to 1~ms short of 4~s, which the gate excluded, so its
 baseline differs slightly (17.4, 18.3, 18.8 and 12.7\% under the nested ruler).
 
-\begin{table}[t]
+\begin{table}[!tbp]
   \centering
   \caption{Power of the H1 decision rule to detect a planted arm that is truly better than the
   classical baseline, under the optimistic rule, for 200 simulated replications per cell (20 for
@@ -456,7 +456,7 @@ consistent with a band choice guided by the training labels, the effect of the f
 obtained without learning (Section~\ref{sec:res-rule}), but it was not tested, and the decoders were
 not evaluated on healthy bearings.
 
-\begin{figure}[t]
+\begin{figure}[!tbp]
   \centering
   \includegraphics{figures/fig_masks_paderborn.pdf}
   \caption{Learned sampling masks on Paderborn: balanced order accuracy against the sample budget,
