@@ -4,6 +4,13 @@ title: "Blind band selection under pure decimation of bearing vibration: code an
 type: software
 license: MIT
 repository-code: "https://github.com/Guiimartinho/subnyquist-band-selection"
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.24206559
+    description: "Zenodo archive of the releases (concept DOI, resolves to the latest version)"
+  - type: doi
+    value: 10.5281/zenodo.24206560
+    description: "Zenodo archive of release v1.0.0, the version used in the paper"
 authors:
   - family-names: Ito
     given-names: Luiz Guilherme Martinho Sampaio

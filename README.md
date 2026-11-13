@@ -1,5 +1,7 @@
 # Blind band selection under pure decimation of bearing vibration
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24206559.svg)](https://doi.org/10.5281/zenodo.24206559)
+
 Code, configurations and results for the paper
 
 > L. G. M. S. Ito, L. S. de Carvalho, J. R. F. Azambuja, *Blind band selection under pure
@@ -69,7 +71,10 @@ keep the licences of their sources (see Data above and `datasets/manifests/`).
 
 ## Citation
 
-See `CITATION.cff`.
+See `CITATION.cff`. The releases are archived at Zenodo:
+[10.5281/zenodo.24206559](https://doi.org/10.5281/zenodo.24206559) resolves to the latest one, and
+the version used in the paper, v1.0.0, is
+[10.5281/zenodo.24206560](https://doi.org/10.5281/zenodo.24206560).
 
 ## Contact
 
