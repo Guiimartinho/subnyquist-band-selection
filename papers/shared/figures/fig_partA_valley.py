@@ -99,7 +99,8 @@ def main() -> None:
     hits = load(args.ruler)
     # elsarticle text width; legend below, outside the panels
     fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.3), sharey=True)
-    present = sorted({k[1] for k in hits}, key=lambda a: ARMS[a][4])
+    # ties in rank keep the order of ARMS (a set alone would follow the string hash seed)
+    present = sorted({k[1] for k in hits}, key=lambda a: (ARMS[a][4], list(ARMS).index(a)))
     for ax, (race, label) in zip(axes, RACES.items(), strict=True):
         for arm in present:
             name, color, marker, ls, z = ARMS[arm]

@@ -101,7 +101,8 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
     hits = load(args.results)
-    present = sorted({k[0] for k in hits}, key=lambda a: ARMS[a][4])
+    # ties in rank keep the order of ARMS (a set alone would follow the string hash seed)
+    present = sorted({k[0] for k in hits}, key=lambda a: (ARMS[a][4], list(ARMS).index(a)))
     factors = sorted({k[2] for k in hits})
     # elsarticle text width; legend below, outside the panels
     fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.5), sharey=False)
