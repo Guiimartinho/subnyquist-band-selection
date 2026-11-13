@@ -1,0 +1,98 @@
+\section{Ledger of pre-registered hypotheses}
+\label{app:ledger}
+
+Table~\ref{tab:ledger} lists every hypothesis that was written before its run in the experiments
+behind this paper, with the verdict recorded in the experiment's notes in the repository. The last
+column says whether the hypothesis was also committed to the repository before the run; where it
+was not, the run is exploratory in the strict sense, even if the hypothesis was written first. Two
+pilots that were never pre-registered, co-prime sampling and the fault-order rule on Ottawa, are
+reported in Section~\ref{sec:res-fail}. Abbreviations: BA, balanced accuracy; TAT, the
+rate-admissibility test of Section~\ref{sec:res-injected}; FLIP, exact sign-flip test; Holm over
+$n$, Holm's correction over $n$ tests.
+
+{\footnotesize
+\begin{longtable}{@{}p{0.11\textwidth}p{0.40\textwidth}p{0.36\textwidth}p{0.07\textwidth}@{}}
+\caption{Pre-registered hypotheses, verdicts and whether each was committed before its run.
+$^a$Designed after E26, on the same records. $^b$Evaluability rule fixed after the training
+diagnostics of a first attempt. $^c$Run after the learned-mask run that it assesses.}
+\label{tab:ledger}\\
+\toprule
+Run & Hypothesis & Recorded verdict & Comm.\\
+\midrule
+\endfirsthead
+\toprule
+Run & Hypothesis & Recorded verdict & Comm.\\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+E07 ext. & Order accuracy at $96$, $128$ and $160\times$ stays within 13 points of $64\times$
+  (arm with a calibrated prior) & Refuted at $96\times$ ($-15.4$); the blind arm is reported
+  descriptively & yes \\
+E20 & Zone rejection or the ideal anti-alias filter restores the outer race at $4\times$
+  ($\geq 20$ of 36, exact McNemar $p < 0.01$, both rulers) & Supported: 25 vs 6 in the first run, 27
+  vs 6 after the ruler correction & no \\
+E20 & A single zone explains most of the recovery & Withdrawn: the captor is a broadband spike
+  train & no \\
+E20 & A 12.5~kHz ceiling restores the outer race at $4\times$ and costs the inner race &
+  Restoration supported (27 vs 6); inner-race cost refuted & no \\
+E20 & Spike removal or a three-point median at full rate restores $4\times$ & Supported: 28 vs 6;
+  arms added after exploration & no \\
+E20 & The SES infogram, the infogram after spike removal or the spectral Gini index avoids the
+  valley & Not supported: 11, 7 and 0 of 36 & yes \\
+E20 & Spike removal on the decimated stream restores $4\times$ & Supported: 29 vs 6 & yes \\
+E20 & A three-point median on the decimated stream restores $4\times$ & Supported: 29 of 36; arm
+  computed by exploration before the run & yes \\
+E21 & MAFAULDA shows a valley of at least 15 points that the anti-alias filter removes & Not
+  testable: fault orders on shaft harmonics & no \\
+E21 & The TAT, computed on a first half, predicts the errors in the second half & BA 0.47, below its
+  refutation bound of 0.65; then declared not testable & no \\
+E22 & Random compressive sampling never beats uniform sampling with a lowered ceiling &
+  Comparison invalid (dictionary without the resonance); dropped & no \\
+E22 & The rate chosen by the TAT is within 5 points of the best rate & Refuted: $-8.3$ to $-18.7$
+  & no \\
+E23 & At the highest dose, at least 80\% of the predicted cells lose at least 20 points & 85.4\%
+  $[47.9, 89.6]$; 60\% without the smoke-run records; endpoint moved after the smoke run & no \\
+E23 & At most 20\% of the cells with folding but no predicted capture lose & Supported (0 of 7),
+  but true by construction & no \\
+E23 & At the dose P*, the surrogate loses less than half of what the bursts lose & Supported:
+  0.14 $[-0.01, 0.23]$, bootstrap by record & no \\
+E23 & The TAT predicts hits (BA $\geq 0.8$), and its rate is within 5 points of the best & BA 0.69,
+  inconclusive; gap $-5.2$, refuted & no \\
+E23 & Spike trains like Ottawa's cost at least 20 points; mitigations stay within 5 & Inconclusive:
+  $-31$ and $-23$ points; mitigations lose up to 15 & no \\
+E24 & Spike removal before decimation raises BA (cluster bootstrap, Holm over 4) & Passed at
+  $8\times$ only, Holm 0.04999; fails with $B = 2\times10^5$ and with FLIP & yes \\
+E24 & The SES infogram raises BA & Passed at $32\times$: $+3.1$, Holm 0.001 & yes \\
+E24 & Spike removal after decimation raises BA & Not supported: $-1.0$ to $+0.7$ & yes \\
+E24b & The choice of the lowest band at $4\times$ is folded content & Refuted: that band is chosen
+  in 45.4\% of the segments without any folding & yes \\
+E24b & A lower search ceiling at full rate raises BA (FLIP, Holm over 4) & Failed: smallest Holm
+  0.064 & yes \\
+E24b & Content at 15--17 and 30.5--32~kHz sustains the capture (notch) & Invalid: the control
+  notch moved 27.3\% of the band choices & yes \\
+E26 & The guided band with the rule, after the median, beats blind estimation (FLIP, Holm over 4,
+  specificity $\geq 90\%$) & Passed at all four factors: $+12.2$ to $+32.9$ & yes \\
+E26 & The same, against blind estimation after the median & Passed at all four factors: Holm
+  0.0004 to 0.031 & yes \\
+E26b & The guided band beats the kurtogram band under the same rule (FLIP, Holm over 8) & Mixed:
+  raw stream at $4$--$16\times$; median at $4\times$ and $16\times$ & yes$^a$ \\
+E26b & The guided band beats the whole band under the same rule & Mixed: raw stream at $4\times$
+  and $8\times$; median at $4\times$; $-8.9$ at $32\times$ & yes$^a$ \\
+E26c & Pure decimation beats the anti-alias filter (guided band, Holm over 4) & Failed: $-7.3$ to
+  $-29.7$ & yes$^a$ \\
+E26c & Pure decimation beats band-pass sampling of the zone chosen on the other bearings (Holm over
+  2) & Failed: $+5.1$ (Holm 0.087) and $+1.1$ & yes$^a$ \\
+E15 Ott. & The learned mask beats three references in at least 2 of 4 budgets, under both rulers
+  & Failed: 0 of 24 tests; smallest $p$ 0.20 & yes$^b$ \\
+E15 Ott. & The projection gap is positive & Evaluable at 1/4 only: 0.0 $[-14.3, +11.4]$ &
+  yes$^b$ \\
+E15 Ott. & Ottawa can detect a gain of 5 points (power $\geq 0.80$) & Failed: best power 0.03 &
+  yes$^c$ \\
+E15 Pad. & Paderborn can detect a gain of 5 points & Passed: power 1.00 with three seeds & yes \\
+E15 Pad. & As on Ottawa, with folds by bearing and three seeds & Failed: 0 of 24 tests; smallest $p$
+  0.037, Holm 0.44 & yes \\
+E15 Pad. & The projection gap is positive & Not evaluable: the free mask converged in at most 42\%
+  of the runs & yes \\
+\end{longtable}
+}

@@ -1,9 +1,18 @@
 \section{Data and methods}
 \label{sec:methods}
 
-Every hypothesis, decision rule and test below was written and committed before the corresponding
-run; the commit history of the repository records the order. Values given here are those of the
-experiment configurations.
+Hypotheses, decision rules and tests were written before each run, and
+Appendix~\ref{app:ledger} lists every one of them with its verdict. They were also committed to
+the repository before the run for the Paderborn experiments, both power gates, both learned-mask
+runs and the later Ottawa runs on robust selectors and on cleaning after decimation; the commit
+history records the order. The confirmatory Paderborn run of the fault-order rule came first, and
+the two runs that vary its band and its acquisition were designed after it, on the same records.
+The first Ottawa and CWRU runs were committed only after they had run. The spike-removal and
+median arms on Ottawa were added after an exploratory analysis of the same records had shown their
+effect, the CWRU endpoint was moved to the highest dose after a smoke run on two records, the
+evaluability rule of the learned masks was fixed after the training diagnostics of a first
+attempt, and the Ottawa power gate was run after the learned-mask run that it assesses. Values
+given here are those of the experiment configurations.
 \todo[inline]{Cite the code and data release (repository link) before submission.}
 
 \subsection{Datasets}
@@ -11,8 +20,9 @@ experiment configurations.
 
 \paragraph{Ottawa}
 The University of Ottawa benchmark \citep{huang2018ottawa} records bearing vibration under
-time-varying speed at 200~kS/s, with an accelerometer and a shaft encoder; we count 1024 encoder
-pulses per revolution, a value inferred from the data because it is not documented. It contains
+time-varying speed at 200~kS/s, with an ICP accelerometer (model 623C01) and an incremental shaft
+encoder on a USB data-acquisition board; we count 1024 encoder pulses per revolution, a value
+inferred from the data because it is not documented. It contains
 healthy, inner-race and outer-race conditions under four speed scenarios, with three trials each.
 The bearing has nine rolling elements and a diameter ratio $d/D = 0.2067$, so the fault orders are
 $\mathrm{BPFO} = 3.570$ and $\mathrm{BPFI} = 5.430$. Records are cut into 2.5~s segments.
@@ -39,6 +49,12 @@ in which the stored time axis is correct, puts 185 files beyond 0.5\%. We theref
 throughout, cut every measurement to 255\,936 samples (4~s minus 1~ms) aligned with the speed
 channel, and exclude shorter or unreadable measurements.
 
+\paragraph{A benchmark set aside}
+A fourth benchmark, MAFAULDA, was analysed and set aside before any comparison of methods. Its
+fault orders, 2.998 and 5.002, lie on the third and fifth shaft harmonics, and 59\% of the
+full-rate estimates fall within 0.03 of an integer order, so an order hit there measures the shaft
+harmonic rather than the fault.
+
 \subsection{Acquisition model}
 
 Sub-Nyquist acquisition is modelled by pure decimation, $x_M[n] = x[nM]$, of the full-rate record,
@@ -53,9 +69,11 @@ is that of content between the effective and the original Nyquist frequencies.
 
 The baseline is the classical envelope pipeline. The band is chosen by a fast kurtogram
 \citep{antoni2007kurtogram} with ideal FFT band masks, dyadic and one-third-dyadic levels up to
-level 4, and a search range from 500~Hz to a ceiling. The ceiling is 25~kHz for Ottawa, below
-which lies more than 99.9\% of the record energy, and the effective Nyquist frequency for
-Paderborn. The squared envelope of the
+level 4, and a search range from 500~Hz to a ceiling. The ceiling is the effective Nyquist
+frequency for Paderborn and 25~kHz for Ottawa. On Ottawa it is a band prior, chosen after an
+observation: without it, the full-rate kurtogram selects a band between 50 and 100~kHz in all
+twelve outer-race records, and the fault appears at no order, although the content above 25~kHz
+carries only 2 to 7\% of the record energy. The squared envelope of the
 band is resampled in angle at 64 samples per revolution with an angular anti-alias filter, and the
 order estimate is the maximum of the order spectrum above order 2, with no prior on the fault
 order. A run is discarded, and counted as a miss, when the decimated record has fewer than 4096
@@ -82,6 +100,7 @@ from the third and fifth shaft harmonics, and a looser tolerance would score a l
 harmonic as a hit. Accuracy is balanced: the mean over races of the per-unit hit rate.
 
 \subsection{Spike removal}
+\label{sec:met-spikes}
 
 A sample is an isolated spike when its deviation from the mean of its two neighbours,
 $\delta[n] = x[n] - \tfrac12(x[n-1] + x[n+1])$, exceeds ten times
@@ -101,7 +120,8 @@ microsecond-scale event as an isolated sample at full amplitude.
 At $4\times$ on Ottawa the effective Nyquist frequency is 25~kHz, equal to the search ceiling. The
 upper half of the search range at the first kurtogram level, $[12.75, 25]$~kHz, then receives the
 folded content of three zones of the original frequency axis: $Z_1 = [25, 37.25]$,
-$Z_2 = [62.75, 75]$ and $Z_3 = [75, 87.25]$~kHz. To attribute the loss, each zone, and their
+$Z_2 = [62.75, 75]$ and $Z_3 = [75, 87.25]$~kHz. To attribute the loss to zones, an aim later
+withdrawn (Section~\ref{sec:res-valley}), each zone, and their
 union, is rejected at full rate before decimation by an ideal zero-phase FFT mask. An ideal
 anti-alias filter, which zeroes everything above the effective Nyquist frequency, and a
 three-point running median complete the interventions. None of these masks is realizable; their
@@ -155,27 +175,48 @@ The acquisition is varied at the same rate $f_s/M$:
   record.
 \end{itemize}
 The confirmation run, the run with the rule fixed and the band varied, and the acquisition run
-were each pre-registered before they ran. The Ottawa runs of the same rule were exploratory and
-were revised after seeing the data, so they enter only as motivation.
+were each pre-registered before they ran; the last two were designed after the first. The rule
+looks only at two candidate orders and takes its threshold from healthy bearings, while the blind
+pipeline estimates any order from 2 to 32, so the two operate at different specificities, and both
+are reported. A pilot of the same rule on Ottawa was exploratory and was revised twice after seeing
+the data; it enters only as a failure case (Section~\ref{sec:res-fail}).
 
 \subsection{Statistical protocol}
 \label{sec:stats}
 
-Accuracy differences are tested with a cluster bootstrap whose unit is the independent source of
-variation. For Ottawa, that is the condition-by-scenario cluster, four per race. For Paderborn, it
-is the bearing. Units are resampled with replacement within each race, together with the
-cross-validation folds when there are any, and the one-sided p-value is
-$(1 + \#\{\Delta^* \le 0\})/(1 + B)$ with $B = 4000$. A zero difference therefore counts against the
-hypothesis. Holm's correction is applied within each family of tests. Paired segment-level
-comparisons in the Ottawa intervention study use the exact McNemar test.
+The independent unit is the bearing on Paderborn, the condition-by-scenario cluster on Ottawa (four
+per race) and the fault cluster on CWRU (four). Three tests are used, each named where it is
+reported.
+\begin{itemize}
+  \item \emph{Cluster bootstrap} (learned masks, spike removal on Paderborn, CWRU). Units are
+  resampled with replacement within each race, together with the cross-validation folds when there
+  are any, and the one-sided p-value is $(1 + \#\{\Delta^* \le 0\})/(1 + B)$ with $B = 4000$, so a
+  zero difference counts against the hypothesis. With few clusters this bootstrap is
+  anticonservative.
+  \item \emph{Exact sign-flip test} (fault-order rule, search ceiling, robustness checks on
+  Paderborn). The statistic is the difference in balanced accuracy, the mean over races of the
+  per-bearing differences. Its null distribution flips the sign of each bearing's difference
+  independently: exactly, over all assignments, when at most 18 bearings differ, and with $10^6$
+  random assignments otherwise. The test is one-sided unless stated, and 95\% intervals are
+  obtained by inverting it.
+  \item \emph{Exact McNemar test} (paired hits, two-sided), on segments, on records or on bearings
+  identified by majority of segments.
+\end{itemize}
+Holm's correction is applied within each family of tests. On Ottawa and CWRU no comparison can be
+significant at the level of the independent unit: with four clusters, the smallest one-sided p-value
+of a sign-flip test is $1/16$. The Ottawa effects are therefore reported by segment and by record,
+which treats these as independent and overstates the evidence.
 
 \paragraph{Power gate}
-Before training any learned method, we asked whether a benchmark can detect an improvement at all.
-A planted arm is derived from the baseline by turning each of its misses into a hit with
-probability $q$, using the same draw for both rulers, with $q$ chosen for gains of +5 and +10
-points or for a perfect arm. The pre-registered decision rule is then applied with all other
-comparisons assumed significant, which is deliberately optimistic, so that a negative answer is
-conclusive. A benchmark passes if the power at +5 points reaches 0.80 in some admissible design.
+We asked whether a benchmark can detect an improvement at all: on Paderborn before training, on
+Ottawa after the learned-mask run. A planted arm is derived from the classical baseline by turning
+each of its misses into a hit with probability $q$, using the same draw for both rulers, with $q$
+chosen for gains of +5 and +10 points or for a perfect arm. The pre-registered decision rule is then
+applied with all other comparisons assumed significant, which is deliberately optimistic, so that a
+negative answer is conclusive. A benchmark passes if the power at +5 points reaches 0.80 in some
+admissible design. Because the classical baseline is deterministic, the gate measures power only
+against it; it says nothing about comparisons between learned arms, whose variance across seeds it
+does not model.
 
 \subsection{Learned sampling masks}
 \label{sec:masks}
@@ -208,5 +249,5 @@ The learned masks are compared with:
 \end{itemize}
 
 On Paderborn, cross-validation is by bearing, in four folds stratified by race, with three seeds
-per fold. Training labels come from the nested ruler, because the local ruler exists for only 6 of
+per fold. Training labels come from the nested ruler, because the local ruler exists for only 7 of
 the 23 bearings.

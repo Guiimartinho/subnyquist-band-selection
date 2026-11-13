@@ -801,3 +801,23 @@ quantos processos calculam as células.
 - **Números do artigo:** `papers/shared/figures/num_partB_paderborn.py` →
   `papers/mssp-2026/numbers/partB_paderborn.json`.
 
+
+## De onde vem a margem do decodificador no Paderborn (exploratório, 2026-11-13)
+
+Pedido pela revisão adversarial do manuscrito. Não é pré-registrado. Script:
+`explore_line_split.py` → `results-paderborn/exploratory/line_split.csv` (mesma agregação do
+`summary.csv`, régua aninhada).
+
+- **16 rolamentos sem régua local** (sem raia visível em taxa cheia): o clássico fica em 7,7–8,0 %,
+  e os três braços com decodificador em 16,8–24,0 %. A margem sobre o clássico está aqui.
+- **7 rolamentos com régua local** (KA01, KA06, KA16, KI01, KI16, KI17, KI18): o clássico dá 42,4,
+  45,1 e 47,2 % de 1/4 a 1/16, e a aprendida 34,2, 31,5 e 43,8 %. Em 1/32 o clássico cai a 26,8 %, e
+  a aprendida fica em 45,2 %.
+- **Na régua local,** a aprendida fica 11,7, 15,6 e 6,4 pontos abaixo do clássico de 1/4 a 1/16, e
+  18,9 acima em 1/32. Nada disso é significativo.
+- **Correção do texto anterior:** "evidência contra um ganho de 5 pontos" não se sustenta. Os
+  limites superiores do IC 95 % contra `dec_uniforme_treino` e `dec_aleatoria` vão de +3,4 a +18,2
+  pontos. A porta de poder mediu poder só contra o clássico, que é determinístico.
+- **Leitura, não testada:** os decodificadores ganham onde o kurtograma está capturado, e são
+  treinados com rótulos que dizem que ordem procurar. Isso é compatível com escolha de banda guiada
+  pelos rótulos, o efeito da regra do E26 sem aprendizado. Não houve controle com rolamentos sãos.

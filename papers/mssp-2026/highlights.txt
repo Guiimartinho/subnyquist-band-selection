@@ -1,0 +1,5 @@
+Single-sample spikes in a public benchmark capture the kurtogram under decimation
+An anti-alias filter at the reduced rate avoids that capture at no cost
+A fault-order decision beats blind estimation on Paderborn, already at full rate
+A power gate shows whether a planned test can detect a learned-acquisition gain
+Learned sampling masks did not outperform trained uniform decimation

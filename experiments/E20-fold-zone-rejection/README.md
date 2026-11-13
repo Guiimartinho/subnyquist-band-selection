@@ -466,3 +466,23 @@ commitado e de um `metrics.csv` no formato do E20.
 - **Leitura:** o critério de "amostra isolada" não é necessário. A correção é uma limpeza simples
   do fluxo decimado, e não um método novo.
 
+
+## O trem de picos (exploratório, 2026-11-13)
+
+Pedido pela revisão adversarial do manuscrito, que mediu isto no scratchpad. Reproduzido com código
+commitado: `exploratory/spike_train.py` → `results-post-despike/exploratory/spike_train.csv`, nos 36
+registros inteiros e pelo mesmo critério do braço `despike`.
+
+- **Taxa:** mediana de 1.336 picos/s nos saudáveis (956 a 1.377), 1.301/s na pista externa (1.270 a
+  1.339) e 315/s na interna (251 a 505). Desvio mediano de 18,7, 18,9 e 14,0 MAD. Mais de 95 % são
+  negativos em todos os registros.
+- **Periodicidade:** 32 a 41 % dos intervalos entre picos valem exatamente 40 amostras, e o espectro
+  dos instantes de pico tem a raia dominante em 10.001,2–10.001,3 Hz em todos os 36 registros, a
+  120 ppm de 10 kHz.
+- **Encoder:** a fração de picos a até 1 amostra de uma borda difere da de instantes sorteados em no
+  máximo 0,023. Com bordas tão densas, esse teste tem pouca resolução.
+- **Leitura:** um evento de 5 µs não é resposta de acelerômetro. É interferência na cadeia de
+  aquisição, com relógio próprio perto de 10 kHz. A fonte não foi identificada.
+- **Diferença com o texto anterior:** as contagens de 2.460/s (H-A-1) e 1.330/s (O-A-1), citadas
+  acima, não registram o critério usado e não batem com esta (H-A-1 fica perto de 1.300/s aqui). Os
+  números com código commitado são os desta seção.

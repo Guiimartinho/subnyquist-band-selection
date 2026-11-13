@@ -8,10 +8,13 @@ band within one Nyquist zone \citep{vaughan1991}. Multicoset sampling reaches it
 in arbitrary positions \citep{venkataramani2001optimal}, and the modulated wideband converter and
 the Xampling framework extend it to unknown supports \citep{mishali2009xampling,mishali2010practice,
 eldar2015}. In all of these, aliasing is not an artefact to be avoided but the mechanism that makes
-the rate reduction possible. Noise present in the signal before subsampling folds with it and is
-amplified by the subsampling factor, the noise folding of compressed sensing
-\citep{ariascastro2011noisefolding}. What folds along with the band of interest, and what it does
-to a blind band selector, is the subject of this paper.
+the rate reduction possible. The price is also classical. Out-of-band noise folds into the band and
+degrades the signal-to-noise ratio of bandpass sampling unless a band-pass prefilter removes it
+\citep{vaughan1991}; noise present in the signal before subsampling is amplified by the subsampling
+factor, the noise folding of compressed sensing \citep{ariascastro2011noisefolding}, which costs a
+wideband compressive receiver 3~dB per octave of subsampling \citep{davenport2012noisefolding}.
+What folds along with the band of interest, and what it does to a blind band selector rather than
+to the signal-to-noise ratio, is the subject of this paper.
 
 \paragraph{Band selection for bearing diagnostics under impulsive interference}
 The fast kurtogram selects the demodulation band by spectral kurtosis \citep{antoni2007kurtogram}.
@@ -25,15 +28,28 @@ cyclic and non-cyclic impulses and found that, with large non-cyclic impulses, o
 on conditional variance identified the cyclic band \citep{hebdasobkowicz2020condvar}; robust
 correlation maps were proposed for heavy-tailed signals \citep{hebdasobkowicz2025robustcorr}. These
 works establish that non-fault impulses capture blind selectors at full rate, with an anti-alias
-filter in place. None considers decimation.
+filter in place. None considers decimation. A second family avoids blind selection altogether by
+targeting the known fault frequencies: the band is chosen by the strength of the envelope spectrum
+at the expected cyclic frequencies \citep{smith2019demodband,mauricio2020iesfogram,
+schmidt2020ifbigram}, and the decision itself, checking the envelope spectrum at the fault
+frequencies that the geometry predicts, is standard practice \citep{randall2011bearing}. The guided
+band and the fault-order rule of Section~\ref{sec:met-rule} belong to this family.
 
 \paragraph{Bearing diagnostics below the Nyquist rate}
 Bandpass sampling followed by envelope analysis keeps bearing signatures at rates well below the
 Nyquist rate \citep{lu2018undersampled}. Multirate and adaptive schemes have been proposed
 \citep{elbouharrouti2023multirate,zhao2026adaptive}, as have compressive approaches with random
-sampling \citep{ahmed2018compressedbearing,tounsi2026cs}. These studies evaluate diagnostic
-accuracy under reduced sampling. None of them, to our knowledge, examines where a blind band
-selector goes when interference folds.
+sampling \citep{ahmed2018compressedbearing,tounsi2026cs} and the detection of fault harmonics from
+under-sampled vibration \citep{tang2015harmoniccs}, and multi-sensor sub-Nyquist blind sampling of
+the power spectrum has been proposed for low-power wireless sensors in operational modal analysis
+\citep{gkoktsi2019psbs}. These studies evaluate diagnostic accuracy under reduced sampling. None of
+them, to our knowledge, examines where a blind band selector goes when interference folds.
+
+\paragraph{Benchmarks}
+The CWRU records were categorized by how diagnosable they are \citep{smith2015cwru}, and training
+and test sets drawn from independent bearings have been proposed for fair evaluation
+\citep{hendriks2022cwrubench}. The power gate of Section~\ref{sec:stats} adds a prior question:
+whether a planned test on a given benchmark can detect the gain it looks for.
 
 \paragraph{Learned acquisition}
 In magnetic resonance imaging, sampling masks are learned jointly with the reconstruction

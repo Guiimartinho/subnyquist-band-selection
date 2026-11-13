@@ -56,7 +56,8 @@
   pages   = {37--52},
   year    = {1967},
   cluster = {C1},
-  verified = {canonical},
+  doi     = {10.1007/BF02395039},
+  verified = {live},
   note    = {Piso teorico do projeto. Ver docs/adr/0001.}
 }
 
@@ -90,7 +91,8 @@
   publisher = {Cambridge University Press},
   year      = {2015},
   cluster   = {C1},
-  verified  = {canonical},
+  doi     = {10.1017/CBO9780511762321},
+  verified  = {live},
   note      = {Referencia unica mais util do projeto; cobre C1 inteiro.}
 }
 
@@ -103,7 +105,8 @@
   pages   = {1973--1984},
   year    = {1991},
   cluster = {C1},
-  verified = {canonical},
+  doi     = {10.1109/78.134430},
+  verified = {live},
   note    = {Baseline oficial do projeto, custo zero.}
 }
 
@@ -185,6 +188,7 @@
   eprint  = {1106.4514},
   archivePrefix = {arXiv},
   cluster = {C1},
+  doi     = {10.1109/JSTSP.2010.2042414},
   verified = {live}
 }
 
@@ -686,7 +690,8 @@
   pages   = {485--520},
   year    = {2011},
   cluster = {C6},
-  verified = {canonical}
+  doi     = {10.1016/j.ymssp.2010.07.017},
+  verified = {live}
 }
 
 @article{antoni2007kurtogram,
@@ -698,6 +703,7 @@
   pages   = {108--124},
   year    = {2007},
   cluster = {C6},
+  doi     = {10.1016/j.ymssp.2005.12.002},
   verified = {live},
   note    = {LIDO 2026-09-03; metadados conferidos contra a fonte. Complexidade O(N log N), a mesma da FFT - logo o kurtograma CABE NO NO, nao precisa ir para o gateway.}
 }
@@ -981,8 +987,11 @@
   author  = {Smith, W. A. and Randall, R. B.},
   title   = {Rolling element bearing diagnostics using the {Case Western Reserve University} data: a benchmark study},
   journal = {Mechanical Systems and Signal Processing},
+  volume = {64--65},
+  pages = {100--131},
   year    = {2015},
   cluster = {C6},
+  doi     = {10.1016/j.ymssp.2015.04.021},
   verified = {live},
   note    = {LIDO 2026-09-03. Categoriza quais registros do CWRU sao utilizaveis e quais sao problematicos. Obrigatorio antes de rodar o E02: usar CWRU sem esta triagem invalida o resultado.}
 }
@@ -1580,4 +1589,31 @@
   doi      = {10.3390/s151025648},
   cluster  = {C6},
   verified = {live}
+}
+
+@article{davenport2012noisefolding,
+  author   = {Davenport, Mark A. and Laska, Jason N. and Treichler, John R. and Baraniuk, Richard G.},
+  title    = {The Pros and Cons of Compressive Sensing for Wideband Signal Acquisition: Noise Folding versus Dynamic Range},
+  journal  = {IEEE Transactions on Signal Processing},
+  volume   = {60},
+  number   = {9},
+  pages    = {4628--4642},
+  year     = {2012},
+  doi      = {10.1109/TSP.2012.2201149},
+  cluster  = {C1},
+  verified = {live},
+  note     = {Conferido no Crossref em 2026-11-13; resumo lido (OpenAlex). Perda de 3 dB de SNR por oitava de subamostragem, o noise folding classico.}
+}
+
+@article{hendriks2022cwrubench,
+  author   = {Hendriks, Jacob and Dumond, Patrick and Knox, D. A.},
+  title    = {Towards better benchmarking using the {CWRU} bearing fault dataset},
+  journal  = {Mechanical Systems and Signal Processing},
+  volume   = {169},
+  pages    = {108732},
+  year     = {2022},
+  doi      = {10.1016/j.ymssp.2021.108732},
+  cluster  = {C6},
+  verified = {live},
+  note     = {Conferido no Crossref em 2026-11-13. So o registro e os destaques foram lidos (sem resumo nas APIs): conjuntos de treino e teste com rolamentos independentes.}
 }

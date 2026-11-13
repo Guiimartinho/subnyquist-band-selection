@@ -6,7 +6,15 @@ In conventional acquisition, the anti-alias filter in front of the converter con
 interference. Content above the Nyquist frequency never reaches the samples, and a search ceiling
 below it keeps the selector away from high bands. Sub-Nyquist acquisition gives up this protection
 by design, because the folding of the band of interest is what makes the rate reduction possible
-\citep{vaughan1991,mishali2010practice}. Interference folds with it.
+\citep{vaughan1991,mishali2010practice}. Interference folds with it. That out-of-band noise folds
+into the band and costs signal-to-noise ratio is classical: bandpass sampling places a band-pass
+prefilter in front of the converter for this reason \citep{vaughan1991}, and compressive
+acquisition loses 3~dB per octave of subsampling to the same effect
+\citep{davenport2012noisefolding}. A node that lowers its rate at run time behind an analog front
+end fixed for its highest rate, without knowing where the fault resonance lies, cannot place such
+a prefilter around it; pure decimation is the limiting case of that design. What our results add
+is what the folded content does to a blind band selector, which noise folding alone does not
+predict: on CWRU, a surrogate with the same folded spectrum did not capture the selector.
 
 The ideal anti-alias filter shows the price and the value of restoring the protection:
 \begin{itemize}
@@ -18,10 +26,12 @@ The ideal anti-alias filter shows the price and the value of restoring the prote
   the diagnostic content lies in the base band and what it removes is the impulsive content above.
 \end{itemize}
 Whether pure decimation pays off therefore depends on where the informative band lies relative to
-the interference. A zone profile measures it before the acquisition is chosen: the accuracy of the
-decision after band-pass sampling of each Nyquist zone, on records with known faults
-(Section~\ref{sec:res-rule}). Commissioning the zone with the full-rate kurtogram is not a
-substitute, because the kurtogram is the step that the interference captures.
+the interference, and on these three benchmarks the answer differed. A zone profile measures it
+before the acquisition is chosen: the accuracy of the decision after band-pass sampling of each
+Nyquist zone (Section~\ref{sec:res-rule}). It needs records with known faults, which a new machine
+may not have. On Paderborn, commissioning the zone with the full-rate kurtogram was not a
+substitute, because there the kurtogram is captured at full rate; on Ottawa with its ceiling, and
+on CWRU, the full-rate kurtogram finds the fault band.
 
 A search ceiling that protects the selector at full rate is likewise undone by decimation: the
 ceiling stays where it was, and the interference folds below it. The protection that a full-rate
@@ -30,12 +40,17 @@ that the node can run.
 
 \paragraph{Benchmark power before learned acquisition}
 The decisive Ottawa run of the learned masks could not have detected a gain. The classical
-baseline misses 3 to 9 of about 60 test segments, and even a perfect arm fails the pre-registered
-rule. The question was answered by a power analysis that needs only the classical stage, which
-runs on CPU before any training. The same analysis showed that Paderborn can detect a gain of 5
-points with three seeds per fold. We suggest such a gate as a precondition for claims about learned
-acquisition on condition-monitoring benchmarks, because a negative result on an underpowered
-benchmark carries no information about the method.
+baseline misses 3 to 9 of about 60 test segments, and our pre-registered decision rule could not
+have detected even a perfect method. We learned this after the run, from a power analysis that
+needs only the classical stage and runs on CPU. The same analysis, run before training, showed that
+Paderborn can detect a gain of 5 points over the classical pipeline with three seeds per fold. That
+the bearing, not the segment, is the independent unit of a bearing benchmark has been argued for
+training and test splits \citep{hendriks2022cwrubench}; the gate asks the question that comes
+before it, whether the test can detect the gain at all. We suggest it as a precondition for claims
+about learned acquisition on condition-monitoring benchmarks, because a negative result from an
+underpowered test carries no information about the method. The gate covers only the comparison
+with a deterministic baseline; comparisons between learned arms also need the variance across
+seeds, and on Paderborn their intervals remained too wide to exclude a gain of 5 points.
 
 \paragraph{What the mitigations and the selectors do not fix}
 On Ottawa, three mitigations that need no full-rate access tie at $4\times$, and none comes for free.
@@ -53,39 +68,58 @@ infogram with pre-whitening and deterministic/random separation \citep{antoni201
 selector would protect the band choice without touching the samples.
 
 \paragraph{Where the impulses come from}
-The source of the impulses differs between the two benchmarks, and neither is established.
+The source of the impulses differs between the two benchmarks, and neither was identified.
 \begin{itemize}
-  \item On Ottawa they are single-sample spikes of the raw records.
+  \item On Ottawa they are a quasi-periodic train of single-sample spikes, present at the same rate
+  in healthy and outer-race records, with a clock of its own near 10~kHz and no relation to the
+  encoder edges. A 5~$\mu$s event is not an accelerometer response, which points to interference
+  in the acquisition chain. Users who decimate this benchmark meet it whatever their method.
   \item On Paderborn the drive is fed by a 16~kHz PWM inverter, and the 15--17~kHz band is the most
   impulsive one, but no switching line appears in the vibration spectrum.
 \end{itemize}
-On Paderborn, removing the spikes does not release the selector. A full-rate run with the same
-lower ceilings gains more than decimation, so there decimation relieves the capture by narrowing
-the search range, not through what folds, although the pre-registered test of the ceiling falls
-just short of significance (Section~\ref{sec:res-paderborn}). A notch on the 15--17~kHz band did
-not settle whether that band is the captor, because its control moved the band choice as well. A
+On Paderborn, removing the spikes does not release the selector. Descriptively, a full-rate run
+with the same lower ceilings did at least as well as decimation, which suggests that decimation
+relieves the capture mostly by narrowing the search range, but the pre-registered test of the
+ceiling did not pass (Section~\ref{sec:res-paderborn}). A notch on the 15--17~kHz band did not
+settle whether that band is the captor, because its control moved the band choice as well. A
 sub-Nyquist node shares its rig with such sources, and the band choice has to be protected from
 them whatever their origin.
 
 \paragraph{Learned masks and the medical-imaging precedent}
 On both benchmarks, the learned mask did not outperform the uniform decimation trained on the same
-records or a random mask; on Paderborn the test had the power to detect $+5$ points. Magnetic
+records or a random mask, although on Paderborn the intervals do not exclude a gain of 5 points
+over either. Magnetic
 resonance imaging reached a similar point. At $4\times$, learned acquisition policies tie with
 non-adaptive learned and equidistant patterns, an adaptive policy gains at $8\times$, and the best
 policies learn to be non-adaptive \citep{bakker2022adaptive}. The gains reported there for learned
 or task-driven sampling come at higher acceleration or against fixed Cartesian patterns
 \citep{bakker2022adaptive,xu2026hierasample}, with masks shaped by a downstream task rather than by
-the image \citep{weber2024prom}. Here the margin over the classical pipeline came from the decoder
-that all masks shared. At these budgets, the benefit of learning lies in the processing after the
-samples, not in the sampling pattern.
+the image \citep{weber2024prom}. Here, under the nested ruler, all decoder arms were above the
+classical pipeline, by a margin confined to the bearings where the kurtogram is captured and the
+fault line is not visible at full rate. Under the local ruler, on the bearings with a visible line,
+the learned mask was below the classical pipeline at three of four budgets. The decoders learn from
+labels that name the fault order, so their margin may be the band guidance that the fault-order
+rule gives without learning. At these budgets we found no benefit in the sampling pattern itself.
 
 \paragraph{Limitations}
 The study simulates sub-Nyquist acquisition by decimating records acquired at 200 and 64~kS/s. It
 models an ideal sampler: no track-and-hold bandwidth, jitter or quantization. A converter whose
 track-and-hold has a finite bandwidth would not record a microsecond-scale event as an isolated
-sample at full amplitude, so both the capture and the cleaning may differ on hardware. Each
-benchmark comes from one rig and one acquisition system. The three segments of an Ottawa record
-are not independent, and we report record-level tests alongside the segment-level ones. The tolerance and the
-refinement span are dataset-specific and were fixed before the runs from the geometry and the
-record resolution. The Paderborn local ruler exists only where the fault line is visible at full
-rate. Energy is reported as converted samples per second, not measured.
+sample at full amplitude, so both the capture and the cleaning may differ on hardware. Neither the
+transducer bands nor the analog chains of the benchmarks were characterized. Each benchmark comes
+from one rig and one acquisition system.
+\begin{itemize}
+  \item On Ottawa and CWRU no effect can be significant at the level of the independent unit; the
+  segment- and record-level tests overstate the evidence.
+  \item The Ottawa ceiling is a band prior, chosen after the full-rate capture was observed.
+  \item Paderborn was analysed in several runs, and the runs that vary the band and the acquisition
+  of the fault-order rule were designed after its confirmation, on the same records. The threshold
+  of the rule comes from six healthy bearings, and the zone profile needs records with known
+  faults.
+  \item The tolerance and the refinement span are dataset-specific and were fixed before the runs
+  from the geometry and the record resolution. The Paderborn local ruler exists only where the fault
+  line is visible at full rate.
+  \item The kurtogram uses ideal FFT band masks rather than the filter bank of its reference
+  implementation, and training on GPU is not bit-reproducible.
+  \item Energy is reported as converted samples per second, not measured.
+\end{itemize}

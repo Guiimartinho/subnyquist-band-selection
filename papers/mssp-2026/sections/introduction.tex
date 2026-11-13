@@ -1,13 +1,12 @@
 \section{Introduction}
 \label{sec:intro}
 
-The diagnostic content of rolling-element bearing vibration sits far above its modulation rate.
-A localized defect excites structural resonances, and the fault frequency only appears as the
-repetition rate of the excited transients. In the Paderborn benchmark
-\citep{lessmeier2016paderborn}, the resonance that carries an electrical-discharge outer-race
-defect occupies roughly 2.5--4.4~kHz, and the one that carries inner-race defects 8.4--11~kHz,
-while the fault orders are 3.05 and 4.95, that is, about 76~Hz and 124~Hz at 1500~rpm
-(Section~\ref{sec:data}). Sampling such signals at twice their highest frequency is costly in
+The diagnostic content of rolling-element bearing vibration usually sits well above its modulation
+rate. A localized defect excites structural resonances, and the fault frequency only appears as the
+repetition rate of the excited transients \citep{randall2011bearing}. In the Ottawa benchmark
+\citep{huang2018ottawa}, the band that the kurtogram selects at full rate for the outer-race
+records lies between 2.0 and 4.6~kHz, while the fault frequencies have a median of 81~Hz
+(Section~\ref{sec:results}). Sampling such signals at twice their highest frequency is costly in
 energy and in data, and it is not what the information requires.
 
 The rate that the information requires is set by the occupied bandwidth, not by the highest
@@ -30,45 +29,53 @@ conventional acquisition, with an anti-alias filter in front of the converter. I
 filter confines the interference to the acquisition band; \citet{vaerenberg2025cyclicemi} even
 note that the anti-alias filter acts as the carrier band of the EMI impulses.
 
-Pure decimation below the Nyquist rate removes that filter by design, because bandpass sampling
-needs the resonance band to fold into baseband. Whatever impulsive content lies outside the band
-of interest folds as well, and it may land on the range that the selector searches. Whether, when
-and how strongly this happens has not been studied, as far as our searches show: keyword searches
-and forward-citation tracking of \citet{smith2016emi} and \citet{vaerenberg2025cyclicemi} found no
-work on band selection under decimation or folding (Section~\ref{sec:related}).
+Classical bandpass sampling keeps a band-pass prefilter in front of the converter, because noise
+and interference outside the band fold into it and cost signal-to-noise ratio
+\citep{vaughan1991,davenport2012noisefolding}. A node that lowers its rate at run time behind an
+analog front end fixed for its highest rate, without knowing where the fault resonance lies,
+cannot place that prefilter. Pure decimation is the limiting case of such a design: it needs the
+resonance band to fold into baseband, and whatever impulsive content lies outside that band folds
+as well, possibly onto the range that the selector searches. What the folded content does to a
+blind band selector has not been studied, as far as our searches show: keyword searches and
+forward-citation tracking of \citet{smith2016emi} and \citet{vaerenberg2025cyclicemi} found no work
+on band selection under decimation or folding (Section~\ref{sec:related}).
 
-This paper studies that interaction and its consequence for learned acquisition.
-\todo[inline]{Contributions: confirm each against the final results before submission.}
+This paper studies that interaction on three public benchmarks and its consequence for learned
+acquisition. Its findings are narrow, and Appendix~\ref{app:ledger} lists every pre-registered
+test behind them, failures included.
 \begin{enumerate}
-  \item We show, on the public Ottawa benchmark \citep{huang2018ottawa}, that single-sample spikes
-  present in the raw records, healthy ones included, capture kurtogram band selection under pure
-  decimation and produce a non-monotonic loss of order-estimation accuracy with the decimation
-  factor. Removing the spikes before decimation restores the accuracy, in a pre-registered test.
-  Three simple steps that need no access to the full-rate record do the same at $4\times$:
-  cleaning isolated outliers in the decimated stream, a three-point median, and a lower search
-  ceiling. Each has a limit, which we report.
-  \item We reproduce the capture causally by injecting impulsive interference into the CWRU
-  benchmark \citep{smith2015cwru}, against a phase-randomized surrogate with the same spectrum.
-  \item We test the same interventions on the Paderborn benchmark, whose drive is fed by a 16~kHz
-  PWM inverter. There, the kurtogram is already captured at full rate, decimation produces no
-  valley, spike removal changes little, and the SES infogram \citep{antoni2016infogram} helps only
-  at the lowest rate. A lower search ceiling at full rate gains more than decimation, though short
-  of significance in a pre-registered test. The replication shows when the mechanism's
-  precondition, a selector that is right at full rate, is absent.
-  \item On Paderborn, three pre-registered runs show that a decision restricted to the fault orders
-  of the bearing geometry, with a threshold from healthy bearings, identifies the faulty race about
-  three times as often as the blind pipeline at $4\times$ and $8\times$, at 94\% specificity. Most
-  of the gain comes from the decision rather than from the band, and none from decimation. At the
-  same rate, an anti-alias filter is 7 to 30 points better than pure decimation, because the
-  diagnostic content lies in the base band. Whether folding helps is therefore a property of the
-  machine, which a profile of accuracy by Nyquist zone measures before the acquisition is chosen.
-  \item We show with a pre-registered power gate that a widely used benchmark cannot detect any
-  improvement over a training-selected uniform rate, not even from a perfect estimator, while
-  another can. We argue that such a gate should precede the training of learned acquisition on
+  \item On the Ottawa benchmark, a quasi-periodic train of single-sample spikes, present in every
+  record including the healthy ones, captures kurtogram band selection on the outer-race records
+  from $3\times$ to $6\times$, and order-estimation accuracy falls non-monotonically with the
+  decimation factor; the inner race is unaffected. An anti-alias filter at the reduced rate avoids
+  the capture at no cost, and so does removing the spikes before decimation. Three steps that need
+  no access to the full-rate record do the same at $4\times$: cleaning isolated outliers in the
+  decimated stream, a three-point median, and a lower search ceiling. Each has a limit, which we
+  report. The spike train is a property of the records that anyone who decimates them meets.
+  \item Injecting impulsive interference into the CWRU benchmark \citep{smith2015cwru} reproduces
+  the capture, while a phase-randomized surrogate with the same folded spectrum does not, so the
+  capture needs impulsiveness and not only folded power.
+  \item On the Paderborn benchmark, whose drive is fed by a 16~kHz PWM inverter, the kurtogram is
+  already captured at full rate, decimation produces no valley, and spike removal changes little.
+  The replication shows what happens when the precondition of the Ottawa mechanism, a selector that
+  is right at full rate, is absent.
+  \item On Paderborn, a decision restricted to the fault orders of the bearing geometry, with a
+  threshold from six healthy bearings, identifies the faulty race in 49 to 51\% of the segments at
+  $4\times$ and $8\times$, against 16 to 19\% for blind order estimation, at 94\% against 100\%
+  specificity. The advantage is as large at full rate, so it is not attributable to decimation.
+  At the same rate, an anti-alias filter is 7 to 30 points better than pure decimation, and a
+  profile of accuracy by Nyquist zone shows where the identifying content lies before the
+  acquisition is chosen.
+  \item A power gate shows that our pre-registered decision rule could not have detected even a
+  perfect learned method on Ottawa, while on Paderborn it could detect a gain of 5 points over the
+  classical pipeline. We suggest such a gate before the training of learned acquisition on
   condition-monitoring data.
-  \item We test learned sampling masks under a hardware-feasible set on both benchmarks, at equal
-  or lower average rate. The learned mask does not outperform uniform decimation trained on the
-  same records or a random mask at any budget from 1/4 to 1/32. On Paderborn, where a gain of 5
-  points was detectable, the differences stay within $-5.2$ and $+4.4$ points, and the margin over
-  the classical pipeline belongs to the decoder that all masks share.
+  \item Learned sampling masks under a timer-schedulable constraint did not outperform uniform
+  decimation trained on the same records, or a random mask, at any budget from 1/4 to 1/32 on
+  either benchmark, although on Paderborn the intervals do not exclude a gain of 5 points. The
+  margin of all decoder arms over the classical pipeline is confined to the bearings where the
+  kurtogram is captured.
 \end{enumerate}
+None of these is a new method. The noise folding of sub-Nyquist acquisition, envelope analysis at
+the fault frequencies and selectors that target them are all established; what this paper adds is
+how they interact when a blind band selector meets pure decimation.

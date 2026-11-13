@@ -1,10 +1,12 @@
-% Artigo unico do ADR 0006 (MSSP). Rascunho completo de 2026-11-13: resultados do E07/E20/E23/E24/
-% E24b/E26/E26b/E26c/E15; falta a revisao adversarial do manuscrito inteiro, os autores e o link do
-% codigo. Referencias so do literature/refs.bib (fonte unica, campo verified).
+% Artigo unico do ADR 0006 (MSSP). Rascunho de 2026-11-13, revisado contra a revisao adversarial do
+% manuscrito inteiro (reviewer-2, mesmo dia): pre-registro por experimento, livro-razao das hipoteses
+% no apendice, manchete do Paderborn com IC e especificidades. Faltam autores, link do codigo,
+% declaracoes da Elsevier e compilacao. Referencias so do literature/refs.bib (campo verified).
 \documentclass[preprint,12pt,authoryear]{elsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{longtable}
 \usepackage{siunitx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
@@ -15,34 +17,32 @@
 
 \begin{frontmatter}
 
-\title{Folded impulses capture blind band selection when bearing vibration is decimated below
-the Nyquist rate}
-% Titulo de trabalho: muda depois dos resultados da Parte (b).
+\title{Blind band selection under pure decimation of bearing vibration: aliased impulses,
+fault-order decisions and a power check for learned sampling}
 
 \author{\todo[inline]{Author list and affiliations: decided by the student and the advisor.}}
 
 \begin{abstract}
-Condition-monitoring nodes that sample vibration below the Nyquist rate rely on folding to bring a
-fault resonance into a narrow band. Folding also brings interference, and blind band selection is
-the step it reaches first. We study this interaction under pure decimation of three public bearing
-benchmarks. On Ottawa, single-sample spikes present in the raw records, healthy ones included,
-capture the kurtogram under decimation, and order-estimation accuracy drops non-monotonically with
-the decimation factor. Removing the spikes before decimation restores it in a pre-registered test,
-and three steps that need no access to the full-rate record do the same at $4\times$. Injecting
-impulsive interference into CWRU reproduces the capture against a phase-randomized surrogate. On
-Paderborn the kurtogram is already captured at full rate. There, a decision restricted to the fault
-orders of the bearing geometry, with a threshold from healthy bearings, identifies the faulty race
-about three times as often as the blind pipeline at 1/4 and 1/8 of the rate, at 94\% specificity.
-Most of the gain comes from the decision rather than from the band, and none from decimation. At
-the same rate, an anti-alias filter is 7 to 30 points better than pure decimation, because the
-diagnostic content lies in the base band: whether folding helps is a property of the machine,
-measurable by Nyquist zone. A pre-registered power gate shows that one benchmark cannot detect any
-improvement from learned acquisition while the other can. On the latter, learned sampling masks do
-not outperform trained uniform decimation or random masks.
+A node that lowers its sampling rate behind a front end fixed for the highest rate cannot band-pass
+filter an unknown fault resonance. Pure decimation is the limiting case: everything outside the band
+folds with it. We study how the folded content affects blind band selection in three bearing
+benchmarks. On Ottawa, a quasi-periodic train of single-sample spikes, present in every record
+including healthy ones, captures the kurtogram on outer-race records from $3\times$ to $6\times$,
+and order-estimation accuracy falls non-monotonically with the factor. An anti-alias filter at the
+reduced rate avoids the capture at no cost, and three steps that need no full-rate access do the
+same at $4\times$. Injected bursts reproduce the capture on CWRU, while a phase-randomized surrogate
+with the same folded spectrum does not. On Paderborn, where the kurtogram is captured at full rate,
+a decision restricted to the fault orders of the bearing geometry, with a threshold from six
+healthy bearings, identified the faulty race in 49--51\% of segments at $4\times$ and $8\times$,
+against 16--19\% for blind order estimation (+33 points, 95\% interval +16 to +50), at 94\% against
+100\% specificity. The advantage was as large at full rate, and an anti-alias filter beat pure
+decimation by 7 to 30 points. A power gate showed that our pre-registered test could not detect even
+a perfect learned method on Ottawa, unlike on Paderborn. Learned sampling masks did not outperform
+trained uniform decimation or random masks, but the intervals do not exclude a gain of 5 points.
 \end{abstract}
 
 \begin{keyword}
-bandpass sampling \sep Landau rate \sep spectral kurtosis \sep kurtogram \sep impulsive noise
+bandpass sampling \sep aliasing \sep spectral kurtosis \sep kurtogram \sep impulsive noise
 \sep learned sampling \sep rolling element bearings
 \end{keyword}
 
@@ -56,6 +56,13 @@ bandpass sampling \sep Landau rate \sep spectral kurtosis \sep kurtogram \sep im
 \input{sections/results}
 \input{sections/discussion}
 \input{sections/conclusion}
+
+\todo[inline]{Before submission: CRediT statement, declaration of competing interest, funding,
+data availability (Ottawa CC BY 4.0, Paderborn CC BY-NC 4.0, CWRU), and the Elsevier declaration
+of generative AI use in the writing process.}
+
+\appendix
+\input{sections/appendix_ledger}
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{../../literature/refs}
