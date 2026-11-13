@@ -317,10 +317,14 @@
   note   = {Ponte teoria-hardware. Prony e o mesmo estimador do FRI.}
 }
 
-@misc{shtendel2023bandpass,
+@article{shtendel2023bandpass,
   author = {Shtendel, G. and Florescu, D. and Bhandari, A.},
   title  = {Unlimited sampling of bandpass signals: computational demodulation via undersampling},
+  journal = {IEEE Transactions on Signal Processing},
+  volume = {71},
+  pages  = {4134--4145},
   year   = {2023},
+  doi    = {10.1109/TSP.2023.3314274},
   eprint = {2307.04917},
   archivePrefix = {arXiv},
   cluster = {C2},
@@ -433,10 +437,14 @@
   verified = {live}
 }
 
-@misc{naaman2021fritem,
+@article{naaman2021fritem,
   author = {Naaman, H. and Mulleti, S. and Eldar, Y. C.},
   title  = {{FRI-TEM}: time encoding sampling of finite-rate-of-innovation signals},
-  year   = {2021},
+  journal = {IEEE Transactions on Signal Processing},
+  volume = {70},
+  pages  = {2267--2279},
+  year   = {2022},
+  doi    = {10.1109/TSP.2022.3167146},
   eprint = {2106.05564},
   archivePrefix = {arXiv},
   cluster = {C2},
@@ -508,6 +516,7 @@
   volume  = {38},
   number  = {2},
   pages   = {18--44},
+  doi     = {10.1109/MSP.2020.3016905},
   year    = {2021},
   eprint  = {1912.10557},
   archivePrefix = {arXiv},
@@ -568,6 +577,9 @@
   title   = {Deep task-based analog-to-digital conversion},
   journal = {IEEE Transactions on Signal Processing},
   year    = {2022},
+  volume  = {70},
+  pages   = {6021--6034},
+  doi     = {10.1109/TSP.2022.3229947},
   eprint  = {2201.12634},
   archivePrefix = {arXiv},
   cluster = {C4},
@@ -581,6 +593,7 @@
   journal = {IEEE Transactions on Computational Imaging},
   volume  = {6},
   pages   = {1139--1152},
+  doi     = {10.1109/TCI.2020.3006727},
   year    = {2020},
   url     = {https://ieeexplore.ieee.org/document/9133281/},
   eprint  = {1907.11374},
@@ -874,12 +887,15 @@
   author  = {Vol, T. and Danial, L. and Shlezinger, N.},
   title   = {Learning task-based trainable neuromorphic {ADCs} via power-aware distillation},
   journal = {IEEE Transactions on Signal Processing},
-  year    = {2024},
+  year    = {2025},
+  volume  = {73},
+  pages   = {1246--1261},
+  doi     = {10.1109/TSP.2025.3546458},
   eprint  = {2409.15300},
   archivePrefix = {arXiv},
   cluster = {C4},
   verified = {live},
-  note    = {CORRIGE A ALEGACAO DE ORIGINALIDADE: aquisicao aprendida orientada a tarefa JA e power-aware. Eixo deles = quantizacao/bits em ADC memristivo; o desta tese = agendamento temporal em MCU comum.}
+  note    = {CORRIGE A ALEGACAO DE ORIGINALIDADE: aquisicao aprendida orientada a tarefa JA e power-aware. Eixo deles = quantizacao/bits em ADC memristivo; o desta tese = agendamento temporal em MCU comum. Ano corrigido de 2024 para 2025 em 2026-11-13 (Crossref): a versao de periodico e TSP 73, 2025; a de conferencia e ICASSP 2024, pp. 5850-5854, doi 10.1109/ICASSP48485.2024.10446371. A citekey ficou.}
 }
 
 @article{fishel2025artoveq,
@@ -1443,5 +1459,88 @@
   year     = {2017},
   doi      = {10.1016/j.ymssp.2017.01.011},
   cluster  = {C6},
+  verified = {live}
+}
+
+@article{cao2026dcscm,
+  author   = {Cao, Jiahui and Yang, Zhibo and Hou, Bingchang and Sun, Ruobin and Nandi, Asoke K.},
+  title    = {A Minimal Deterministic Compressive Measurement Scheme for Condition Monitoring},
+  journal  = {IEEE Sensors Journal},
+  year     = {2026},
+  doi      = {10.1109/JSEN.2026.3750406},
+  note     = {early access; volume e paginas ainda nao atribuidos no Crossref em 2026-11-13},
+  cluster  = {C6},
+  verified = {live}
+}
+
+@article{palko2025recursivecs,
+  author   = {Palk{\'o}, Andr{\'a}s and Sujbert, L{\'a}szl{\'o}},
+  title    = {Recursive Compressive Sensing for Vibration Analysis},
+  journal  = {IEEE Transactions on Instrumentation and Measurement},
+  volume   = {74},
+  pages    = {1--10},
+  year     = {2025},
+  doi      = {10.1109/TIM.2025.3612656},
+  cluster  = {C6},
+  verified = {live}
+}
+
+@inproceedings{weber2024prom,
+  author    = {Weber, Tobias and Ingrisch, Michael and Bischl, Bernd and R{\"u}gamer, David},
+  title     = {Constrained Probabilistic Mask Learning for Task-specific Undersampled {MRI} Reconstruction},
+  booktitle = {2024 IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)},
+  pages     = {7650--7659},
+  year      = {2024},
+  doi       = {10.1109/WACV57701.2024.00749},
+  cluster   = {C4},
+  verified  = {live}
+}
+
+@misc{xu2026hierasample,
+  author   = {Ruru Xu and Kian Anvari Hamedani and Zhikai Yang and Ilkay Oksuz},
+  title    = {Frequency-Hierarchical Active k-Space Sampling for Diagnostic {MRI}},
+  year     = {2026},
+  eprint   = {2607.19779},
+  archivePrefix = {arXiv},
+  note     = {preprint, not peer reviewed},
+  cluster  = {C4},
+  verified = {live}
+}
+
+@inproceedings{du2024imageless,
+  author    = {Du, Yuning and Dharmakumar, Rohan and Tsaftaris, Sotirios A.},
+  title     = {The {MRI} Scanner as a Diagnostic: Image-Less Active Sampling},
+  booktitle = {Medical Image Computing and Computer Assisted Intervention -- {MICCAI} 2024},
+  series    = {Lecture Notes in Computer Science},
+  pages     = {467--476},
+  year      = {2024},
+  doi       = {10.1007/978-3-031-72384-1_44},
+  note      = {resumo nao obtido em 2026-11-13 (OpenAlex sem resumo, Semantic Scholar sem o registro); eixos pelo titulo},
+  cluster   = {C4},
+  verified  = {live}
+}
+
+@article{naaman2024iftemhw,
+  author   = {Naaman, Hila and Glazer, Nimrod and Namer, Moshe and Bilik, Daniel and Savariego, Shlomi and Eldar, Yonina C.},
+  title    = {Hardware Prototype of a Time-Encoding Sub-{Nyquist} {ADC}},
+  journal  = {IEEE Transactions on Instrumentation and Measurement},
+  volume   = {73},
+  pages    = {1--13},
+  year     = {2024},
+  doi      = {10.1109/TIM.2024.3476568},
+  cluster  = {C2},
+  verified = {live}
+}
+
+@article{rao2024unrolling,
+  author   = {Rao, Fengpei and Zeng, Ming and Cheng, Yiwei},
+  title    = {A Novel Interpretable Model via Algorithm Unrolling for Intelligent Fault Diagnosis of Machinery},
+  journal  = {IEEE Sensors Journal},
+  volume   = {24},
+  number   = {1},
+  pages    = {495--505},
+  year     = {2024},
+  doi      = {10.1109/JSEN.2023.3332755},
+  cluster  = {C3},
   verified = {live}
 }
