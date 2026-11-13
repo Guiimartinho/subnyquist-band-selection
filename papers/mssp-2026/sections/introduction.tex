@@ -52,12 +52,16 @@ This paper studies that interaction and its consequence for learned acquisition.
   \item We test the same interventions on the Paderborn benchmark, whose drive is fed by a 16~kHz
   PWM inverter. There, the kurtogram is already captured at full rate, decimation produces no
   valley, spike removal changes little, and the SES infogram \citep{antoni2016infogram} helps only
-  at the lowest rate. The replication shows when the mechanism's precondition, a selector that is
-  right at full rate, is absent.
+  at the lowest rate. A lower search ceiling at full rate gains more than decimation, though short
+  of significance in a pre-registered test. The replication shows when the mechanism's
+  precondition, a selector that is right at full rate, is absent.
   \item We show with a pre-registered power gate that a widely used benchmark cannot detect any
   improvement over a training-selected uniform rate, not even from a perfect estimator, while
   another can. We argue that such a gate should precede the training of learned acquisition on
   condition-monitoring data.
-  \item \todo{E15 on Paderborn:} We test learned sampling masks under a hardware-feasible set
-  against the best uniform rate, at equal or lower average rate.
+  \item We test learned sampling masks under a hardware-feasible set on both benchmarks, at equal
+  or lower average rate. The learned mask does not outperform uniform decimation trained on the
+  same records or a random mask at any budget from 1/4 to 1/32. On Paderborn, where a gain of 5
+  points was detectable, the differences stay within $-5.2$ and $+4.4$ points, and the margin over
+  the classical pipeline belongs to the decoder that all masks share.
 \end{enumerate}
