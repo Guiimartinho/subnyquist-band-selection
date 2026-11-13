@@ -1,37 +1,37 @@
-"""Kurtograma — escolhe a banda ressonante onde o transiente é mais impulsivo.
+"""Kurtogram — picks the resonant band where the transient is most impulsive.
 
-É a peça que decide **onde** a amostragem passa-faixa deve ser centrada. Sem ela a
-escolha da banda é arbitrária, e é justamente essa ligação — kurtograma escolhe a
-banda, teoria passa-faixa diz a que taxa amostrá-la — que sustenta a contribuição de
-sistema do projeto.
+It is the piece that decides **where** bandpass sampling should be centered. Without it the
+choice of band is arbitrary, and it is precisely this link — the kurtogram picks the
+band, bandpass theory says at what rate to sample it — that supports the project's system
+contribution.
 
-Antoni (MSSP 21(1):108-124, 2007) mostra que o custo é **O(N log N)**, a mesma ordem
-de uma FFT. Isso foi conferido na fonte e tem consequência de arquitetura: a varredura
-**cabe no nó**, e não é preciso transmitir um registro em taxa cheia para o gateway só
-para escolher a banda — que seria exatamente o gasto de rádio a evitar.
+Antoni (MSSP 21(1):108-124, 2007) shows that the cost is **O(N log N)**, the same order
+as an FFT. This was checked against the source and has an architectural consequence: the
+sweep **fits on the node**, and there is no need to transmit a full-rate record to the gateway
+just to pick the band — which would be exactly the radio expenditure to avoid.
 
-Implementação: grade 1/3-binária, filtragem ideal no domínio da FFT e curtose do
-envelope complexo pela Eq. (7). Não é a recursão de banco de filtros do artigo. O que
-coincide com a fonte e o que não coincide, conferido no PDF em 2026-11-11:
+Implementation: 1/3-binary grid, ideal filtering in the FFT domain, and kurtosis of the
+complex envelope by Eq. (7). It is not the filter-bank recursion of the paper. What
+agrees with the source and what does not, checked against the PDF on 2026-11-11:
 
-- **Coincide:** sem ``f_min_hz``/``f_max_hz``, o nível ``L`` tem ``2^L`` bandas de largura
-  ``fs·2^(-L-1)``, com centros da Eq. (5) e larguras da Eq. (6); os níveis intermediários
-  ``k + log2(3) - 1`` dão as larguras 1/6, 1/12, 1/24 da Fig. 5. Estimador da Eq. (7).
-- **Desvio 1, partição da faixa de busca.** Com ``f_min_hz``/``f_max_hz`` as ``2^L`` bandas
-  dividem ``[f_min, min(f_max, fs/2)]``, e não ``[0, fs/2]``. Os limites **mudam a
-  partição**, não só mascaram candidatas. Consequência: a partição só depende de ``fs``
-  quando ``fs/2 < f_max``. No E07 (500 Hz a 25 kHz sobre 200 kSPS) os fatores 1, 2 e 4
-  veem as mesmas bandas e a 8x elas mudam; em Antoni mudariam a cada fator.
-- **Desvio 2, nível 0 ausente.** A banda inteira não é candidata.
-- **Desvio 3, filtros.** Máscaras ideais, sem sobreposição entre bandas vizinhas e sem
-  decimação; os filtros quase-analíticos FIR do artigo se sobrepõem (Figs. 3 e 4) e a
-  curtose é tomada na saída criticamente decimada.
-- **Bordas, como na nota 3 do artigo.** A filtragem por FFT é circular e o salto na
-  emenda do registro vira um transiente falso nas bordas. O registro é estendido por
-  espelhamento (a extensão periódica fica contínua) e as ``EDGE_GUARD_PERIODS·fs/Δf``
-  amostras de cada borda ficam fora da curtose. Antes da correção de 2026-11-11, ruído
-  gaussiano estacionário com espectro de máquina dava SK acima de 100, contra a
-  propriedade (ii) do artigo, que a exige nula.
+- **Agrees:** without ``f_min_hz``/``f_max_hz``, level ``L`` has ``2^L`` bands of width
+  ``fs·2^(-L-1)``, with centers from Eq. (5) and widths from Eq. (6); the intermediate levels
+  ``k + log2(3) - 1`` give the widths 1/6, 1/12, 1/24 of Fig. 5. Estimator from Eq. (7).
+- **Deviation 1, partition of the search range.** With ``f_min_hz``/``f_max_hz`` the ``2^L``
+  bands divide ``[f_min, min(f_max, fs/2)]``, and not ``[0, fs/2]``. The limits **change the
+  partition**, they do not only mask candidates. Consequence: the partition depends on ``fs``
+  only when ``fs/2 < f_max``. In E07 (500 Hz to 25 kHz over 200 kSPS) factors 1, 2 and 4
+  see the same bands and at 8x they change; in Antoni they would change at every factor.
+- **Deviation 2, level 0 absent.** The whole band is not a candidate.
+- **Deviation 3, filters.** Ideal masks, with no overlap between neighboring bands and no
+  decimation; the paper's quasi-analytic FIR filters overlap (Figs. 3 and 4) and the
+  kurtosis is taken at the critically decimated output.
+- **Edges, as in note 3 of the paper.** FFT filtering is circular, and the jump at the
+  seam of the record becomes a false transient at the edges. The record is extended by
+  mirroring (the periodic extension becomes continuous) and the ``EDGE_GUARD_PERIODS·fs/Δf``
+  samples at each edge are left out of the kurtosis. Before the fix of 2026-11-11, stationary
+  Gaussian noise with a machine spectrum gave SK above 100, contrary to
+  property (ii) of the paper, which requires it to be zero.
 """
 
 from __future__ import annotations
@@ -44,25 +44,25 @@ from numpy.typing import ArrayLike, NDArray
 from snq_recon.envelope import _band_analytic_from_spectrum
 
 EDGE_GUARD_PERIODS = 4.0
-"""Amostras excluídas em cada borda, em unidades de ``fs/Δf`` (o inverso da largura da banda).
+"""Samples excluded at each edge, in units of ``fs/Δf`` (the inverse of the bandwidth).
 
-É a ordem do transitório do protótipo FIR de 8 coeficientes que Antoni usa em todos os
-exemplos (nível ``k``: ``L·2^k = L·fs/(2·Δf)`` amostras, ``L = 8``) — essa conta é deste
-projeto, não do artigo. Medido em ruído gaussiano colorido: com espelhamento, 4 basta
-para a SK cair ao piso do estimador; sem espelhamento nem 32 bastava.
+It is the order of the transient of the 8-coefficient FIR prototype that Antoni uses in all
+the examples (level ``k``: ``L·2^k = L·fs/(2·Δf)`` samples, ``L = 8``) — that calculation is
+this project's, not the paper's. Measured on colored Gaussian noise: with mirroring, 4 is
+enough for the SK to drop to the estimator's floor; without mirroring not even 32 was enough.
 """
 
 
 def _edge_guard(n_samples: int, fs_hz: float, bandwidth_hz: float) -> int:
-    """Amostras a descartar em cada borda; nunca mais que um quarto do registro."""
+    """Samples to discard at each edge; never more than a quarter of the record."""
     return min(int(np.ceil(EDGE_GUARD_PERIODS * fs_hz / bandwidth_hz)), n_samples // 4)
 
 
 def spectral_kurtosis(z: NDArray[np.complex128]) -> float:
-    """Curtose do envelope de um sinal analítico de banda.
+    """Kurtosis of the envelope of a band analytic signal.
 
-    Normalizada de modo que ruído gaussiano complexo circular dá ~0 e um trem de
-    impulsos raros dá valor alto. É a definição usual em diagnóstico de máquinas.
+    Normalized so that circular complex Gaussian noise gives ~0 and a train of
+    rare impulses gives a high value. It is the usual definition in machine diagnostics.
     """
     e2 = np.abs(z) ** 2
     m2 = float(np.mean(e2))
@@ -73,14 +73,14 @@ def spectral_kurtosis(z: NDArray[np.complex128]) -> float:
 
 @dataclass(frozen=True)
 class KurtogramResult:
-    """Melhor par (banda, resolução) e o mapa completo."""
+    """Best (band, resolution) pair and the full map."""
 
     f_lo_hz: float
     f_hi_hz: float
     kurtosis: float
     level: float
     grid: list[tuple[float, float, float, float]]
-    """Todas as células avaliadas: ``(nível, f_lo, f_hi, curtose)``."""
+    """All evaluated cells: ``(level, f_lo, f_hi, kurtosis)``."""
 
     @property
     def band_hz(self) -> tuple[float, float]:
@@ -96,17 +96,18 @@ class KurtogramResult:
 
     def summary(self) -> str:
         return (
-            f"banda [{self.f_lo_hz / 1e3:.2f}, {self.f_hi_hz / 1e3:.2f}] kHz "
-            f"(centro {self.center_hz / 1e3:.2f} kHz, largura {self.bandwidth_hz / 1e3:.2f} kHz) "
-            f"| curtose {self.kurtosis:.2f} | nível {self.level:g}"
+            f"band [{self.f_lo_hz / 1e3:.2f}, {self.f_hi_hz / 1e3:.2f}] kHz "
+            f"(center {self.center_hz / 1e3:.2f} kHz, width {self.bandwidth_hz / 1e3:.2f} kHz) "
+            f"| kurtosis {self.kurtosis:.2f} | level {self.level:g}"
         )
 
 
 def _levels(max_level: int) -> list[float]:
-    """Níveis 1/3-binários de Antoni (2007), Fig. 5: ``k`` e ``k + log2(3) - 1``.
+    """1/3-binary levels of Antoni (2007), Fig. 5: ``k`` and ``k + log2(3) - 1``.
 
-    O intermediário divide a banda em três, e não é um passo de 1/3 de oitava: está a
-    0,585 oitava do nível ``k``. O nível 0 não entra (desvio 2 do docstring do módulo).
+    The intermediate level splits the band into three, and it is not a 1/3-octave step: it lies
+    0.585 octave from level ``k``. Level 0 is not included (deviation 2 in the module
+    docstring).
     """
     out: list[float] = []
     for k in range(1, max_level + 1):
@@ -122,36 +123,36 @@ def fast_kurtogram(
     f_max_hz: float | None = None,
     min_energy_frac: float = 1e-4,
 ) -> KurtogramResult:
-    """Varre o plano (frequência central, largura) e devolve a banda mais impulsiva.
+    """Sweeps the (center frequency, width) plane and returns the most impulsive band.
 
-    ``min_energy_frac`` descarta bandas praticamente vazias: em sinal sintético sem
-    ruído, a curtose de uma banda sem energia mede o arredondamento de ponto flutuante.
-    Não confundir com o falso transiente da emenda do registro, que é tratado à parte
-    (espelhamento e guarda de borda, ver o docstring do módulo) e que afetava bandas com
-    energia real, acima de qualquer limiar razoável.
+    ``min_energy_frac`` discards practically empty bands: in a noiseless synthetic
+    signal, the kurtosis of a band with no energy measures floating-point rounding.
+    Not to be confused with the false transient from the record seam, which is handled
+    separately (mirroring and edge guard, see the module docstring) and which affected bands
+    with real energy, above any reasonable threshold.
 
-    ``max_level`` controla a resolução mais fina: no nível ``k`` a faixa de busca é
-    dividida em ``2**k`` bandas. ``f_min_hz`` e ``f_max_hz`` **definem a faixa que é
-    particionada**, não só mascaram candidatas: a partição de ``[f_min, min(f_max, fs/2)]``
-    não depende de ``fs`` enquanto ``fs/2 >= f_max``. Com os dois no padrão, a partição é a
-    de Antoni (2007).
+    ``max_level`` controls the finest resolution: at level ``k`` the search range is
+    divided into ``2**k`` bands. ``f_min_hz`` and ``f_max_hz`` **define the range that is
+    partitioned**, they do not only mask candidates: the partition of
+    ``[f_min, min(f_max, fs/2)]`` does not depend on ``fs`` as long as ``fs/2 >= f_max``. With
+    both at their defaults, the partition is that of Antoni (2007).
 
-    O resultado alimenta diretamente `snq_core.valid_bandpass_rates_hz`: a banda
-    escolhida aqui é a que a amostragem passa-faixa vai centrar.
+    The result feeds directly into `snq_core.valid_bandpass_rates_hz`: the band
+    picked here is the one that bandpass sampling will center on.
     """
     x = np.asarray(x, dtype=float).ravel()
     n = x.size
     nyq = fs_hz / 2.0
     hi = min(f_max_hz, nyq) if f_max_hz is not None else nyq
     if hi <= f_min_hz:
-        raise ValueError("faixa de busca vazia")
+        raise ValueError("empty search range")
 
     grid: list[tuple[float, float, float, float]] = []
     best = (f_min_hz, hi, -np.inf, 0.0)
     total_energy = float(np.sum(x**2))
 
-    # Extensão par: a extensão periódica de [x, x invertido] não tem salto na emenda,
-    # só uma quina, cujo transiente decai como 1/t^2 e cabe na guarda de borda.
+    # Even extension: the periodic extension of [x, x reversed] has no jump at the seam,
+    # only a corner, whose transient decays as 1/t^2 and fits within the edge guard.
     mirrored = np.concatenate([x, x[::-1]])
     spec = np.fft.fft(mirrored)
     freqs = np.fft.fftfreq(mirrored.size, d=1.0 / fs_hz)
@@ -167,9 +168,9 @@ def fast_kurtogram(
                 total_energy > 0.0
                 and float(np.sum(np.abs(z) ** 2)) < min_energy_frac * total_energy
             ):
-                continue  # banda vazia: curtose seria numericamente degenerada
+                continue  # empty band: the kurtosis would be numerically degenerate
             guard = _edge_guard(n, fs_hz, float(up - lo))
-            k = spectral_kurtosis(z[guard : n - guard])  # nota 3 de Antoni (2007)
+            k = spectral_kurtosis(z[guard : n - guard])  # note 3 of Antoni (2007)
             grid.append((level, float(lo), float(up), k))
             if k > best[2]:
                 best = (float(lo), float(up), k, level)
@@ -180,5 +181,5 @@ def fast_kurtogram(
 
 
 def band_from_kurtogram(x: ArrayLike, fs_hz: float, **kw: object) -> tuple[float, float]:
-    """Atalho: só a banda escolhida, para encadear com a análise de envelope."""
+    """Shortcut: only the chosen band, for chaining with the envelope analysis."""
     return fast_kurtogram(x, fs_hz, **kw).band_hz  # type: ignore[arg-type]

@@ -1,4 +1,4 @@
-"""Laço de treino: teto de épocas, paciência e melhor checkpoint."""
+"""Training loop: epoch cap, patience and best checkpoint."""
 
 import math
 
@@ -14,10 +14,10 @@ class Scalar(torch.nn.Module):
 
 
 def _fit(model, cfg, target=2.0, val_target=1.0):
-    """Treino puxa ``w`` para ``target``; validação mede a distância a ``val_target``.
+    """Training pulls ``w`` towards ``target``; validation measures the distance to ``val_target``.
 
-    A perda de validação cai enquanto ``w`` se aproxima de 1 e sobe depois: o sobreajuste em
-    forma pura. A parada tem de acontecer e o checkpoint devolvido é o mais perto de 1.
+    The validation loss falls while ``w`` approaches 1 and rises afterwards: overfitting in
+    pure form. The stop has to happen and the returned checkpoint is the one closest to 1.
     """
     return fit(
         model,
@@ -34,7 +34,7 @@ def test_parada_por_paciencia_devolve_o_melhor_checkpoint():
     assert res.stopped_early
     assert res.epochs_run == res.best_epoch + 1 + 5
     assert res.epochs_run < 500
-    # o estado final e o do melhor checkpoint, nao o da ultima epoca
+    # the final state is that of the best checkpoint, not that of the last epoch
     assert float((model.w.detach() - 1.0) ** 2) == pytest.approx(res.best_val_loss)
     assert float((model.w.detach() - 1.0) ** 2) <= min(h["val_loss"] for h in res.history) + 1e-12
     assert len(res.history) == res.epochs_run
@@ -57,13 +57,13 @@ def test_perda_nao_finita_interrompe_e_restaura():
         cfg=FitConfig(max_epochs=5, patience=2),
     )
     assert res.diverged
-    assert float(model.w.detach()) == 0.0  # estado inicial, porque nenhuma epoca terminou
+    assert float(model.w.detach()) == 0.0  # initial state, because no epoch finished
 
 
 def test_so_parametros_treinaveis_entram_no_otimizador():
     model = Scalar()
     model.w.requires_grad_(False)
-    with pytest.raises(ValueError, match="treinavel"):
+    with pytest.raises(ValueError, match="trainable"):
         _fit(model, FitConfig(max_epochs=1))
 
 
@@ -83,18 +83,18 @@ def test_grupos_de_parametros_com_taxas_proprias():
         cfg=FitConfig(max_epochs=1, patience=5, lr=0.001, grad_clip=None),
         param_groups=[{"params": [model.a], "lr": 0.001}, {"params": [model.b], "lr": 0.1}],
     )
-    # um passo de Adam move cada parametro de ~lr: b anda 100 vezes mais que a
+    # one Adam step moves each parameter by ~lr: b moves 100 times more than a
     assert float(model.b.detach()) == pytest.approx(100 * float(model.a.detach()), rel=1e-3)
 
 
 def test_min_epochs_blocks_early_stop_and_checkpoint_during_annealing():
-    """Com min_epochs, a parada nao dispara antes e o melhor checkpoint vem depois dele."""
+    """With min_epochs, the stop does not fire before it and the best checkpoint comes after it."""
     import torch
     from snq_learn.training import FitConfig, fit
 
     torch.manual_seed(0)
     model = torch.nn.Linear(1, 1)
-    # perda de validacao que so piora: sem min_epochs, pararia em patience + 1 epocas
+    # validation loss that only gets worse: without min_epochs, it would stop at patience + 1 epochs
     losses = iter([float(i) for i in range(1000)])
 
     res = fit(
@@ -109,7 +109,7 @@ def test_min_epochs_blocks_early_stop_and_checkpoint_during_annealing():
 
 
 def test_min_epochs_acima_do_teto_vale_o_ultimo_estado():
-    """Se o treino acaba antes de min_epochs, o melhor e o ultimo estado finito."""
+    """If training ends before min_epochs, the best is the last finite state."""
     import torch
     from snq_learn.training import FitConfig, fit
 

@@ -1,45 +1,48 @@
-"""E15 - mascara de amostragem aprendida sob conjunto viavel (ADR 0006, Parte 2).
+"""E15 - learned sampling mask under a feasible set (ADR 0006, Part 2).
 
-Pergunta (README): no front-end A e no mesmo orcamento de amostras/s, uma mascara aprendida
-contra a tarefa, restrita a um conjunto viavel (periodica, K posicoes por periodo de L = K x
-orcamento ticks, espacamento circular >= g), supera a melhor uniforme? O teste e o
-PRE-REGISTRADO no README (secao "Pre-registro") e no bloco `preregistration` do config.
+Question (README): on front-end A and at the same budget of samples/s, does a mask learned
+against the task, restricted to a feasible set (periodic, K positions per period of L = K x
+budget ticks, circular spacing >= g), outperform the best uniform one? The test is the one
+PREREGISTERED in the README (section "Preregistration") and in the `preregistration` block of
+the config.
 
-Bracos (coluna `arm` do metrics.csv)
-------------------------------------
-Classicos (pipeline do E07/E22: kurtograma -> envelope -> ordem -> argmax), so CPU:
-  uniforme_orcamento          decimacao no fator do orcamento (o braco `uniforme` do E22)
-  uniforme_treino             fator >= orcamento de maior acerto nos registros fora do teste,
-                              pela regua local; um fator por conjunto; empate -> maior taxa
-  uniforme_treino_por_grupo   idem, um fator por grupo (usa a familia do registro de teste)
-  oraculo_uniforme[_por_grupo]  escolhido COM o rotulo de teste: limite superior, nao e metodo
-Mesmo decodificador desdobrado (`snq_learn.order_decoder`), mascara fixa, um estagio:
-  dec_uniforme, dec_aleatoria, dec_multicoset (alias de pico minimo),
-  dec_multicoset_vb (suporte conhecido, venkataramani2001optimal),
-  dec_uniforme_treino         mascara uniforme no fator do `uniforme_treino`
-Mascara buscada (estagio A, conjunto com o decodificador) e decodificador RETREINADO DO ZERO
-com a mascara final fixa (estagio B), o mesmo protocolo dos bracos fixos:
-  dec_aprendida               top-K de Gumbel no conjunto viavel (B); _sem_ajuste: A projetado
-  dec_aprendida_sel           a dec_aprendida do orcamento treinado >= b de melhor validacao
-  dec_livre                   top-K de Gumbel SEM a restricao (horizonte M.L, sem g): A, nao
-                              realizavel; _projetada (B) e _projetada_sem_ajuste (A projetado)
-  dec_loupe_*                 LOUPE (opcional), mesma estrutura
-  dec_adaptativa_blocos       adaptativo por blocos inspirado no ADPS (um estagio)
-  wdcnn                       rede generica (zhang2017wdcnn), so familia, sinal decimado
+Arms (`arm` column of metrics.csv)
+----------------------------------
+Classical (E07/E22 pipeline: kurtogram -> envelope -> order -> argmax), CPU only:
+  uniforme_orcamento          decimation at the budget factor (the `uniforme` arm of E22)
+  uniforme_treino             factor >= budget with the most hits on the records outside the
+                              test set, by the local ruler; one factor per dataset; tie ->
+                              higher rate
+  uniforme_treino_por_grupo   same, one factor per group (uses the family of the test record)
+  oraculo_uniforme[_por_grupo]  chosen WITH the test label: upper bound, not a method
+Same unrolled decoder (`snq_learn.order_decoder`), fixed mask, one stage:
+  dec_uniforme, dec_aleatoria, dec_multicoset (minimum peak alias),
+  dec_multicoset_vb (known support, venkataramani2001optimal),
+  dec_uniforme_treino         uniform mask at the `uniforme_treino` factor
+Searched mask (stage A, jointly with the decoder) and decoder RETRAINED FROM SCRATCH with the
+final mask fixed (stage B), the same protocol as the fixed arms:
+  dec_aprendida               Gumbel top-K on the feasible set (B); _sem_ajuste: A projected
+  dec_aprendida_sel           the dec_aprendida of the trained budget >= b with the best
+                              validation
+  dec_livre                   Gumbel top-K WITHOUT the constraint (horizon M.L, no g): A, not
+                              realizable; _projetada (B) and _projetada_sem_ajuste (A projected)
+  dec_loupe_*                 LOUPE (optional), same structure
+  dec_adaptativa_blocos       block-adaptive, inspired by ADPS (one stage)
+  wdcnn                       generic network (zhang2017wdcnn), family only, decimated signal
 
-Reguas
+Rulers
 ------
-- **local**: a raia do proprio trecho, em taxa cheia, pelo centro do plato de escore
-  (`snq_recon.refine_order`). Treino e validacao usam a grade deslizante dos registros de treino
-  e de validacao; a escolha da uniforme usa os segmentos dos registros fora do teste; a
-  pontuacao usa o proprio segmento de teste (so para pontuar, nunca para escolher). Trecho com
-  plato na borda da grade de refino fica de fora.
-- **aninhada**: mediana das calibracoes do segmento 0 dos registros fora do teste do grupo.
+- **local**: the line of the excerpt itself, at full rate, from the center of the score plateau
+  (`snq_recon.refine_order`). Training and validation use the sliding grid of the training and
+  validation records; the choice of the uniform factor uses the segments of the records outside
+  the test set; scoring uses the test segment itself (only to score, never to choose). An
+  excerpt whose plateau is at the edge of the refinement grid is left out.
+- **nested**: median of the segment-0 calibrations of the group's records outside the test set.
 
     uv run --frozen python experiments/E15-learned-sampling-mask/run.py \
         --config experiments/E15-learned-sampling-mask/config/base.yaml
 
-Auxiliares do pipeline classico copiados do E20/E22, porque nada importa experiments/.
+Classical-pipeline helpers copied from E20/E22, because nothing imports experiments/.
 """
 
 from __future__ import annotations
@@ -134,7 +137,7 @@ ARMS_OF_METHOD = {
     "dec_adaptativa": ("dec_adaptativa_blocos",),
     "wdcnn": ("wdcnn",),
 }
-SECONDARY = (  # comparacoes descritivas, fora do pre-registro: sem correcao
+SECONDARY = (  # descriptive comparisons, outside the preregistration: no correction
     ("dec_aprendida_sel", "oraculo_uniforme"),
     ("dec_aprendida_sel", "uniforme_orcamento"),
     ("dec_aprendida", "dec_uniforme"),
@@ -154,7 +157,7 @@ def at_repo(p: str | Path) -> Path:
 
 
 def derive_seed(*parts: object) -> int:
-    """Semente inteira estavel a partir de partes heterogeneas (sha256 de cada parte)."""
+    """Stable integer seed from heterogeneous parts (sha256 of each part)."""
     words = [int(hashlib.sha256(str(p).encode()).hexdigest()[:8], 16) for p in parts]
     return int(np.random.SeedSequence(words).generate_state(1)[0])
 
@@ -168,7 +171,7 @@ def finite(v: Any) -> bool:
 
 
 # ----------------------------------------------------------------------
-# pipeline classico (copiado do E20/E22)
+# classical pipeline (copied from E20/E22)
 # ----------------------------------------------------------------------
 def ceiling_at(ceiling0_hz: float | None, fs_eff_hz: float, frac: float = 1.0) -> float:
     base = fs_eff_hz / 2.0 if ceiling0_hz is None else min(float(ceiling0_hz), fs_eff_hz / 2.0)
@@ -178,7 +181,7 @@ def ceiling_at(ceiling0_hz: float | None, fs_eff_hz: float, frac: float = 1.0) -
 def guard_verdict(
     n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: dict, guard_factor: float
 ) -> str | None:
-    """Guarda do E22, com o fator de pontos por revolucao configuravel (E22: 2)."""
+    """E22 guard, with a configurable points-per-revolution factor (E22: 2)."""
     if n_samples < int(cfg["min_samples"]):
         return "min_samples"
     if fs_eff_hz / 2.0 <= float(cfg["kurtogram"]["f_min_hz"]):
@@ -196,11 +199,12 @@ def kurtogram(x, fs_hz: float, f_max_hz: float, cfg: dict):
 
 
 def despike(x: np.ndarray, k_mad: float = 10.0) -> tuple[np.ndarray, int]:
-    """Troca picos isolados de uma amostra pela media dos vizinhos (criterio do E20/E22).
+    """Replace isolated one-sample spikes with the mean of the neighbors (E20/E22 criterion).
 
-    Desvio acima de ``k_mad`` MAD em relacao a media dos vizinhos, com os dois vizinhos
-    desviando em sentido oposto e menos de 0,8 vez. Devolve o sinal e quantas amostras trocou.
-    Exige a taxa cheia: nao e realizavel no no, e por isso a variante decisiva e a `bruto`.
+    A deviation above ``k_mad`` MADs from the mean of the neighbors, with both neighbors
+    deviating in the opposite direction and by less than 0.8 times as much. Returns the signal
+    and how many samples were replaced. Requires the full rate: it is not realizable on the
+    node, and that is why the deciding variant is `bruto`.
     """
     d = x[1:-1] - 0.5 * (x[:-2] + x[2:])
     mad = 1.4826 * np.median(np.abs(d))
@@ -221,7 +225,7 @@ def despike(x: np.ndarray, k_mad: float = 10.0) -> tuple[np.ndarray, int]:
 
 
 def classic(x, v, fs_hz: float, factor: int, f_max_hz: float, cfg: dict, guard: float) -> dict:
-    """Pipeline do E07/E22 num fator: estimativa sem prior e motivo de descarte."""
+    """E07/E22 pipeline at one factor: estimate without prior and reason for discarding."""
     xd, vd = undersample(x, factor), undersample(v, factor)
     fs_eff = fs_hz / factor
     verdict = guard_verdict(xd.size, fs_eff, fs_eff / float(np.max(vd)), cfg, guard)
@@ -241,7 +245,7 @@ def classic(x, v, fs_hz: float, factor: int, f_max_hz: float, cfg: dict, guard: 
 
 
 def calibrate(spec, nominal: float, cfg: dict) -> dict:
-    """Ordem pelo centro do plato (`refine_order`) e, para registro, o 1o ponto do plato."""
+    """Order at the plateau center (`refine_order`) and, for the record, the 1st plateau point."""
     span = float(cfg["prior"]["calibration_span"])
     nh = int(cfg["prior"]["score_harmonics"])
     tol = float(cfg["tolerance_order"])
@@ -253,7 +257,7 @@ def calibrate(spec, nominal: float, cfg: dict) -> dict:
     )
     top = float(scores.max())
     at_max = np.flatnonzero(scores >= top - 1e-12 * max(abs(top), 1.0))
-    # plato que encosta na borda da grade: refine_order manda tratar como falha de calibracao
+    # plateau touching the grid edge: refine_order says to treat it as a calibration failure
     at_edge = bool(at_max[0] == 0 or at_max[-1] == grid.size - 1 or top <= 0.0)
     return {
         "center": float(center),
@@ -263,9 +267,9 @@ def calibrate(spec, nominal: float, cfg: dict) -> dict:
 
 
 def dataset_cfg(cfg: dict, d: dict) -> dict:
-    """Config efetivo de um conjunto: o global com os ``overrides`` do conjunto por cima.
+    """Effective config of a dataset: the global one with the dataset's ``overrides`` on top.
 
-    Sem ``overrides`` (Ottawa, CWRU, MAFAULDA) devolve uma cópia igual ao global.
+    Without ``overrides`` (Ottawa, CWRU, MAFAULDA) it returns a copy equal to the global one.
     """
     out = copy.deepcopy(cfg)
 
@@ -281,7 +285,7 @@ def dataset_cfg(cfg: dict, d: dict) -> dict:
 
 
 def line_prominence(spec, nominal: float, center: float, cfg: dict) -> float:
-    """Pico em ±0,015 ordem do centro sobre a mediana da janela de ±``prominence_window``."""
+    """Peak within ±0.015 order of the center over the median within ±``prominence_window``."""
     o, a = np.asarray(spec.freqs_hz), np.asarray(spec.magnitude)
     w = float(cfg.get("prominence_window", 0.07))
     win = (o >= nominal * (1 - w)) & (o <= nominal * (1 + w))
@@ -293,14 +297,14 @@ def line_prominence(spec, nominal: float, center: float, cfg: dict) -> float:
 
 
 def full_rate_calibration(x, v, fs_hz: float, nominal: float, cfg: dict, c0) -> dict:
-    """Raia de um trecho em taxa cheia: kurtograma (teto ``c0``), envelope, ordem e refino."""
+    """Full-rate line of an excerpt: kurtogram (ceiling ``c0``), envelope, order and refinement."""
     try:
         k = kurtogram(x, fs_hz, ceiling_at(c0, fs_hz), cfg)
         spr = int(cfg["samples_per_rev"])
         spec = envelope_order_spectrum(x, fs_hz, v, k.band_hz, samples_per_rev=spr)
         out = {**calibrate(spec, nominal, cfg), "band_hz": [k.f_lo_hz, k.f_hi_hz]}
         thr = cfg.get("min_line_prominence")
-        if thr is not None:  # raia que não se destaca não vale como régua (Paderborn)
+        if thr is not None:  # a line that does not stand out is not valid as a ruler (Paderborn)
             prom = line_prominence(spec, nominal, out["center"], cfg)
             out["prominence"] = prom
             out["at_edge"] = bool(out["at_edge"] or not (np.isfinite(prom) and prom >= float(thr)))
@@ -310,7 +314,7 @@ def full_rate_calibration(x, v, fs_hz: float, nominal: float, cfg: dict, c0) -> 
 
 
 # ----------------------------------------------------------------------
-# conjuntos de dados (adaptadores)
+# datasets (adapters)
 # ----------------------------------------------------------------------
 @dataclass
 class Record:
@@ -334,7 +338,7 @@ def _cwru_number(rid: str) -> tuple[int, str]:
 
 
 def list_ids(d: dict, healthy: bool = False) -> list[str]:
-    """Identificadores dos registros de falha (ou do controle saudavel) do conjunto."""
+    """Identifiers of the dataset's fault records (or of its healthy control)."""
     kind = d["kind"]
     if kind == "ottawa":
         if healthy:
@@ -374,7 +378,7 @@ def list_ids(d: dict, healthy: bool = False) -> list[str]:
             for r in maf.list_records(at_repo(d["data_dir"]), subsets=tuple(d["bearings"]))
             if Path(r).parts[1] == d["fault"] and r not in screen
         ]
-    raise ValueError(f"tipo de conjunto desconhecido: {kind}")
+    raise ValueError(f"unknown dataset kind: {kind}")
 
 
 def load_record(ds: str, d: dict, rid: str) -> Record:
@@ -394,7 +398,7 @@ def load_record(ds: str, d: dict, rid: str) -> Record:
             dataset=ds,
             rid=rid,
             group=rec.condition,
-            cluster=rid.rsplit("-", 1)[0],  # condicao x cenario: o aglomerado do bootstrap
+            cluster=rid.rsplit("-", 1)[0],  # condition x scenario: the bootstrap cluster
             fs_hz=ottawa.FS_HZ,
             x=rec.vibration,
             speed_hz=rec.speed_profile_hz(int(d["pulses_per_rev"])),
@@ -409,13 +413,13 @@ def load_record(ds: str, d: dict, rid: str) -> Record:
         number, point = _cwru_number(rid)
         family = cat.fault_of(number, point)
         if family is None:
-            raise ValueError(f"{rid}: fora do catalogo")
+            raise ValueError(f"{rid}: not in the catalog")
         path = download_record(number, raw)
         rec = cwru_load(number, point, raw, cat, fs_hz=float(d["fs_hz"]))
         if rec.shaft_hz is None:
-            raise ValueError(f"{rid}: sem RPM no arquivo")
+            raise ValueError(f"{rid}: no RPM in the file")
         h = rec.signal.size // 2
-        orders = fault_frequencies_hz(CWRU_6205_2RS_JEM_SKF, 1.0)  # Hz por Hz de eixo = ordens
+        orders = fault_frequencies_hz(CWRU_6205_2RS_JEM_SKF, 1.0)  # Hz per shaft Hz = orders
         return Record(
             dataset=ds,
             rid=rid,
@@ -451,14 +455,15 @@ def load_record(ds: str, d: dict, rid: str) -> Record:
         )
     if kind == "paderborn":
         return paderborn_record(ds, d, rid)
-    raise ValueError(f"tipo de conjunto desconhecido: {kind}")
+    raise ValueError(f"unknown dataset kind: {kind}")
 
 
 def paderborn_record(ds: str, d: dict, rid: str) -> Record:
-    """Rolamento x ajuste: as medições concatenadas, cada uma um segmento de ``segment_samples``.
+    """Bearing x setting: the measurements concatenated, each one a segment of ``segment_samples``.
 
-    Medição ilegível ou curta (`snq_data.paderborn`) fica de fora. A janela de treino e a régua
-    local usam ``window_samples = segment_samples`` e passo igual, alinhados às medições.
+    An unreadable or short measurement (`snq_data.paderborn`) is left out. The training window and
+    the local ruler use ``window_samples = segment_samples`` and an equal hop, aligned with the
+    measurements.
     """
     from snq_data import paderborn as pb
 
@@ -478,7 +483,7 @@ def paderborn_record(ds: str, d: dict, rid: str) -> Record:
         start += n_seg
     c = int(d["calibration_measurement"])
     if c not in spans:
-        raise ValueError(f"{rid}: medição de calibração ilegível")
+        raise ValueError(f"{rid}: unreadable calibration measurement")
     race = pb.BEARINGS[code][1]
     orders = pb.computed_orders()
     nominal = None if race == "none" else float(orders["BPFO" if race == "OR" else "BPFI"])
@@ -486,7 +491,7 @@ def paderborn_record(ds: str, d: dict, rid: str) -> Record:
         dataset=ds,
         rid=rid,
         group="H" if race == "none" else race,
-        cluster=code,  # o rolamento: o aglomerado do bootstrap
+        cluster=code,  # the bearing: the bootstrap cluster
         fs_hz=pb.FS_HZ,
         x=np.concatenate(xs),
         speed_hz=np.concatenate(vs),
@@ -499,7 +504,7 @@ def paderborn_record(ds: str, d: dict, rid: str) -> Record:
 
 
 def record_sha256(rec: Record) -> str:
-    """sha256 do arquivo do registro, ou dos arquivos que o compõem (Paderborn)."""
+    """sha256 of the record's file, or of the files that make it up (Paderborn)."""
     if not rec.files:
         return hashlib.sha256(rec.path.read_bytes()).hexdigest()
     h = hashlib.sha256()
@@ -510,7 +515,7 @@ def record_sha256(rec: Record) -> str:
 
 
 # ----------------------------------------------------------------------
-# estagio classico (CPU, em paralelo): reguas em taxa cheia e grade uniforme
+# classical stage (CPU, in parallel): full-rate rulers and uniform grid
 # ----------------------------------------------------------------------
 def classical_task(task: dict) -> dict:
     cfg, ds, rid = task["cfg"], task["dataset"], task["rid"]
@@ -527,7 +532,7 @@ def classical_task(task: dict) -> dict:
         "grid": {},
         "despiked_samples": {},
     }
-    if rec.nominal is not None:  # reguas sempre no sinal bruto: a verdade nao muda de variante
+    if rec.nominal is not None:  # rulers always on the raw signal: truth does not vary by variant
         a, b = rec.cal
         out["calib"] = full_rate_calibration(
             rec.x[a:b], rec.speed_hz[a:b], fs, rec.nominal, cfg, c0
@@ -562,11 +567,11 @@ def classical_task(task: dict) -> dict:
 
 
 # ----------------------------------------------------------------------
-# reguas, familia e escolha da melhor uniforme
+# rulers, family and choice of the best uniform factor
 # ----------------------------------------------------------------------
 @dataclass
 class RowCtx:
-    """O que uma linha do metrics.csv precisa saber da celula."""
+    """What a metrics.csv row needs to know about its cell."""
 
     ds: str
     variant: str
@@ -587,10 +592,11 @@ def nested_truths(
     ok: dict[str, bool],
     test: set[str],
 ) -> dict[str, dict[str, Any]]:
-    """Regua aninhada: mediana das calibracoes do segmento 0 fora do teste, por grupo.
+    """Nested ruler: median of the segment-0 calibrations outside the test set, per group.
 
-    Fora do teste: deixa-um-de-fora entre os registros fora do teste; sem pares, a propria
-    calibracao, marcada. No teste: mediana dos registros fora do teste do grupo.
+    Outside the test set: leave-one-out among the records outside the test set; with no peers,
+    the record's own calibration, flagged. In the test set: median of the group's records
+    outside the test set.
     """
     pool = [r for r in recs if r not in test and ok[r]]
     out: dict[str, dict[str, Any]] = {}
@@ -612,7 +618,7 @@ def family_centers(
     ok: dict[str, bool],
     test: set[str],
 ) -> dict[str, float]:
-    """Ordem de cada familia (grupo), pela mediana das calibracoes fora do teste."""
+    """Order of each family (group), from the median of the calibrations outside the test set."""
     out: dict[str, float] = {}
     for g in sorted({group_of[r] for r in recs}):
         vals = [calib[r] for r in recs if r not in test and ok[r] and group_of[r] == g]
@@ -622,7 +628,7 @@ def family_centers(
 
 
 def family_of_estimate(est: float | None, centers: dict[str, float], span: float) -> str:
-    """Familia de ordem central mais proxima, dentro de ``±span`` relativo; senao 'nenhuma'."""
+    """Family with the nearest central order, within a relative ``±span``; otherwise 'nenhuma'."""
     if est is None or not np.isfinite(est):
         return NO_FAMILY
     best, dist = NO_FAMILY, math.inf
@@ -641,10 +647,10 @@ def hits_at(
     segs: dict[str, list[int]],
     tol: float,
 ) -> tuple[int, int]:
-    """Acertos e total num fator, pela regua por segmento ``truth``.
+    """Hits and total at one factor, by the per-segment ruler ``truth``.
 
-    Segmento sem regua (plato na borda) fica de fora; segmento descartado pela guarda do
-    pipeline conta como erro.
+    A segment without a ruler (plateau at the edge) is left out; a segment discarded by the
+    pipeline's guard counts as a miss.
     """
     h = n = 0
     for r in recs:
@@ -667,9 +673,9 @@ def choose_factor(
     segs: dict[str, list[int]],
     tol: float,
 ) -> int | None:
-    """Fator >= orcamento de maior acerto em ``recs``; empate vai para a maior taxa."""
+    """Factor >= budget with the most hits on ``recs``; a tie goes to the higher rate."""
     best: tuple[float, int | None] = (-1.0, None)
-    for f in sorted(f for f in factors if f >= budget):  # crescente: empate fica com a maior taxa
+    for f in sorted(f for f in factors if f >= budget):  # ascending: ties go to the higher rate
         h, n = hits_at(f, recs, truth, est, segs, tol)
         if n and h / n > best[0]:
             best = (h / n, f)
@@ -692,13 +698,13 @@ def row_base(rc: RowCtx, arm: str, rid: str, group: str, seg: int) -> dict:
 
 
 def score_row(row: dict, est: float | None, rc: RowCtx, rid: str, seg: int) -> dict:
-    """Acerto pelas duas reguas, familia e, no saudavel, se a estimativa parece falha."""
+    """Hit by both rulers, family and, if healthy, whether the estimate looks like a fault."""
     ok = est is not None and bool(np.isfinite(est))
     row.update(
         estimate=round(float(est), 4) if ok else "",
         family_pred=family_of_estimate(est, rc.centers, rc.span),
     )
-    if rid in rc.nested:  # registro com falha
+    if rid in rc.nested:  # faulty record
         tl = rc.seg_truth.get((rid, seg), math.nan)
         tn = rc.nested[rid]["truth"]
         row.update(
@@ -709,7 +715,7 @@ def score_row(row: dict, est: float | None, rc: RowCtx, rid: str, seg: int) -> d
             hit_nested=int(ok and abs(est - tn) < rc.tol) if np.isfinite(tn) else "",
             family_true=row["group"],
         )
-    else:  # controle saudavel: nao ha verdade; mede se o metodo "acha" uma ordem de falha
+    else:  # healthy control: there is no truth; measures whether the method "finds" a fault order
         row.update(
             fault_like=int(ok and any(abs(est - c) < rc.tol for c in rc.centers.values())),
             family_true=HEALTHY,
@@ -726,10 +732,10 @@ def classical_rows(
     segs: dict[str, list[int]],
     healthy: list[str],
 ) -> tuple[list[dict], dict[int, int | None]]:
-    """Bracos classicos de uma (conjunto, variante, divisao), e o fator do `uniforme_treino`.
+    """Classical arms of one (dataset, variant, split), and the `uniforme_treino` factor.
 
-    A escolha fora do teste usa a regua local dos segmentos dos registros fora do teste; o
-    oraculo, a dos registros de teste.
+    The choice outside the test set uses the local ruler of the segments of the records outside
+    the test set; the oracle uses that of the test records.
     """
     split = rc.split
     nontest, test = split["train"] + split["val"], split["test"]
@@ -743,7 +749,7 @@ def classical_rows(
             return choose_factor(b, factors, recs, rc.seg_truth, grid_est, segs, rc.tol)
 
         chosen[b] = m_train = pick(nontest)
-        arms: dict[str, tuple[Any, bool]] = {  # braco -> (fator ou fator por grupo, saudavel?)
+        arms: dict[str, tuple[Any, bool]] = {  # arm -> (factor or per-group factor, healthy?)
             "uniforme_orcamento": (b, True),
             "uniforme_treino": (m_train, True),
             "uniforme_treino_por_grupo": (
@@ -771,7 +777,7 @@ def classical_rows(
 
 
 # ----------------------------------------------------------------------
-# divisoes por registro (E05): teste, depois validacao dentro do resto
+# per-record splits (E05): test set, then validation within the rest
 # ----------------------------------------------------------------------
 def make_splits(recs: list[str], group_of: dict[str, str], pcfg: dict, seed: int) -> list[dict]:
     groups = sorted({group_of[r] for r in recs})
@@ -813,15 +819,15 @@ def make_splits(recs: list[str], group_of: dict[str, str], pcfg: dict, seed: int
 
 
 # ----------------------------------------------------------------------
-# janelas e lotes
+# windows and batches
 # ----------------------------------------------------------------------
 class GuardError(ValueError):
-    """Janela fora das condicoes do decodificador (rotacao alta ou baixa demais)."""
+    """Window outside the decoder's conditions (rotation speed too high or too low)."""
 
 
 @dataclass
 class Bank:
-    """Registros em memoria para uma variante (bruto ou sem picos), sinal no dispositivo."""
+    """Records in memory for one variant (raw or despiked), signal on the device."""
 
     recs: dict[str, Record]
     x: dict[str, torch.Tensor]
@@ -832,11 +838,11 @@ class Bank:
 def kfold_by_cluster(
     d: dict, recs: list[str], cluster_of: dict[str, str], pcfg: dict, seed: int
 ) -> list[dict]:
-    """K-fold por aglomerado (rolamento), estratificado por pista: cada um vai a teste uma vez.
+    """K-fold by cluster (bearing), stratified by race: each one goes to the test set once.
 
-    As dobras repetem as da porta de poder do Paderborn (`paderborn_gate.kfold_by_bearing`), com
-    a mesma semente e a mesma ordem de ``outer`` e ``inner``. A validação sai dos aglomerados fora
-    do teste: ``val_fraction`` por pista, pelo menos 1.
+    The folds repeat those of the Paderborn power gate (`paderborn_gate.kfold_by_bearing`), with
+    the same seed and the same order of ``outer`` and ``inner``. Validation comes from the
+    clusters outside the test set: ``val_fraction`` per race, at least 1.
     """
     sp = d["splits"]
     k = int(sp["n_folds"])
@@ -879,10 +885,11 @@ def make_bank(recs: dict[str, Record], despiked: bool, k_mad: float, device: tor
 
 
 def window_plan(bank: Bank, rid: str, start: int, n: int, dec: OrderDecoder) -> dict:
-    """Plano angular de uma janela, com a guarda das condicoes do decodificador.
+    """Angular plan of a window, with the guard on the decoder's conditions.
 
-    A fase da janela e a fase do registro inteiro (integral trapezoidal da rotacao) menos a do
-    inicio da janela, o mesmo que `phase_revolutions` aplicado so a janela.
+    The window phase is the phase of the whole record (trapezoidal integral of the rotation
+    speed) minus the phase at the window start, the same as `phase_revolutions` applied to the
+    window alone.
     """
     r = bank.recs[rid]
     v = r.speed_hz[start : start + n]
@@ -907,7 +914,7 @@ def window_plan(bank: Bank, rid: str, start: int, n: int, dec: OrderDecoder) -> 
 
 
 def fixed_windows(bank: Bank, rids: list[str], period: int) -> list[tuple[str, int, int, int]]:
-    """Janelas de avaliacao: os segmentos de teste, aparados para multiplo de ``period``."""
+    """Evaluation windows: the test segments, trimmed to a multiple of ``period``."""
     out = []
     for rid in rids:
         for seg, a, b in bank.recs[rid].tests:
@@ -918,7 +925,7 @@ def fixed_windows(bank: Bank, rids: list[str], period: int) -> list[tuple[str, i
 def train_pick(
     rng: np.random.Generator, pool: dict[str, dict[str, list[tuple[int, float]]]]
 ) -> tuple[str, int, float]:
-    """Janela de treino: grupo uniforme, registro uniforme no grupo, trecho uniforme da grade."""
+    """Training window: group, record within the group and grid excerpt, each drawn uniformly."""
     groups = sorted(pool)
     by_rec = pool[groups[int(rng.integers(len(groups)))]]
     rids = sorted(by_rec)
@@ -930,7 +937,7 @@ def train_pick(
 def wdcnn_pick(
     rng: np.random.Generator, by_group: dict[str, list[str]], bank: Bank, n: int
 ) -> tuple[str, int]:
-    """Janela da WDCNN: grupo uniforme, registro uniforme, inicio uniforme (rotulo = familia)."""
+    """WDCNN window: group, record and start each drawn uniformly (label = family)."""
     groups = sorted(by_group)
     pool = by_group[groups[int(rng.integers(len(groups)))]]
     rid = pool[int(rng.integers(len(pool)))]
@@ -938,7 +945,7 @@ def wdcnn_pick(
 
 
 # ----------------------------------------------------------------------
-# metodos aprendidos
+# learned methods
 # ----------------------------------------------------------------------
 @dataclass
 class Ctx:
@@ -959,7 +966,7 @@ class Ctx:
 
 
 def make_decoder(ctx: Ctx, fs_hz: float, factor: int, period: int) -> OrderDecoder:
-    """Decodificador iniciado nas bandas do kurtograma da taxa ``fs/factor``."""
+    """Decoder initialized on the kurtogram bands at the rate ``fs/factor``."""
     dc, dd = ctx.cfg["decoder"], ctx.d["decoder"]
     f_hi = ceiling_at(ctx.d.get("ceiling0_hz"), fs_hz / factor)
     bands = kurtogram_bands_hz(float(ctx.cfg["kurtogram"]["f_min_hz"]), f_hi, dc["init_levels"])
@@ -997,7 +1004,7 @@ def fit_cfg(ctx: Ctx, lr: float) -> FitConfig:
 
 
 def _scrub(model: torch.nn.Module) -> torch.nn.Module:
-    """Solta tensores de diagnostico ligados ao grafo, para que ``deepcopy`` funcione."""
+    """Drops diagnostic tensors attached to the graph, so that ``deepcopy`` works."""
     for m in model.modules():
         if isinstance(getattr(m, "last_penalty", None), torch.Tensor):
             m.last_penalty = torch.zeros(())
@@ -1005,10 +1012,10 @@ def _scrub(model: torch.nn.Module) -> torch.nn.Module:
 
 
 class OrderTask:
-    """Lotes, perda, validacao e avaliacao de um modelo de ordem numa celula.
+    """Batches, loss, validation and evaluation of an order model in one cell.
 
-    ``trim`` e o periodo para o qual as janelas sao aparadas: o da mascara (``M·L`` na livre) e
-    multiplo do periodo ``L`` do banco de filtros.
+    ``trim`` is the period the windows are trimmed to: the mask's (``M·L`` for the free mask) is a
+    multiple of the filter bank's period ``L``.
     """
 
     def __init__(self, ctx: Ctx, decoder: OrderDecoder, trim: int) -> None:
@@ -1021,7 +1028,7 @@ class OrderTask:
         self.sigma = float(ctx.cfg["tolerance_order"]) / 2.0
         self.lam = float(t["spacing_penalty"])
         if not ctx.pool:
-            raise ValueError("nenhuma janela de treino com regua local valida")
+            raise ValueError("no training window with a valid local ruler")
         self.decoder_ref = decoder
         val = sorted({rid for rid, _seg in ctx.val_labels})
         self.val_windows = [
@@ -1046,7 +1053,7 @@ class OrderTask:
             while len(xs) < self.batch:
                 tries += 1
                 if tries > 100 * self.batch:
-                    raise RuntimeError("janelas de treino rejeitadas pela guarda em excesso")
+                    raise RuntimeError("too many training windows rejected by the guard")
                 rid, start, label = train_pick(rng, self.ctx.pool)
                 try:
                     p = self.plan(rid, start, self.n_train)
@@ -1084,7 +1091,7 @@ class OrderTask:
         return float(np.mean(losses)) if losses else math.inf
 
     def val_metrics(self, model: SampledOrderModel) -> dict[str, float]:
-        """Perda e acuracia balanceada de ordem na validacao, pela regua local."""
+        """Validation loss and balanced order accuracy, by the local ruler."""
         model.eval()
         hits: dict[str, list[int]] = defaultdict(list)
         with torch.no_grad():
@@ -1102,7 +1109,7 @@ class OrderTask:
         return {"val_loss": v, "val_bal_acc": bal}
 
     def evaluate(self, model: SampledOrderModel, arm: str, extra: dict) -> list[dict]:
-        """Linhas do metrics.csv nos registros de teste e no controle saudavel."""
+        """metrics.csv rows on the test records and on the healthy control."""
         rc = self.ctx.rc
         model.eval()
         rows = []
@@ -1152,10 +1159,10 @@ def designed_mask(fs_set: FeasibleSet, cfg: dict) -> np.ndarray:
 
 
 def vb_mask(ctx: Ctx, fs_hz: float) -> tuple[np.ndarray | None, dict]:
-    """Multi-coset para o suporte conhecido (`venkataramani2001optimal`), ver `masks`.
+    """Multi-coset for the known support (`venkataramani2001optimal`), see `masks`.
 
-    O suporte e a banda do kurtograma em taxa cheia mais frequente entre os registros fora do
-    teste (so dados de treino), encolhida em torno do centro ate caber em K celulas.
+    The support is the most frequent full-rate kurtogram band among the records outside the
+    test set (training data only), shrunk around its center until it fits in K cells.
     """
     fs_set = ctx.fs_set
     if ctx.known_band is None:
@@ -1184,11 +1191,11 @@ def vb_mask(ctx: Ctx, fs_hz: float) -> tuple[np.ndarray | None, dict]:
 
 
 def fixed_positions(method: str, ctx: Ctx, fs_hz: float) -> tuple[Any, ...]:
-    """Padrao, conjunto, fator de taxa e informacao de um braco de mascara fixa."""
+    """Pattern, feasible set, rate factor and information of a fixed-mask arm."""
     fs_set, b = ctx.fs_set, ctx.rc.budget
     if method == "dec_uniforme":
         return uniform_positions(fs_set), fs_set, b, {}
-    if method == "dec_aleatoria":  # a mesma mascara para todas as sementes e taxas
+    if method == "dec_aleatoria":  # the same mask for all seeds and learning rates
         rng = np.random.default_rng(
             derive_seed(ctx.cfg["seed"], ctx.rc.ds, ctx.rc.split["index"], b, "aleatoria")
         )
@@ -1204,11 +1211,11 @@ def fixed_positions(method: str, ctx: Ctx, fs_hz: float) -> tuple[Any, ...]:
             return None, fs_set, b, {"skipped": "uniforme_treino sem fator"}
         fs_m = FeasibleSet.for_budget(m, fs_set.active_per_period, fs_set.min_gap_ticks)
         return uniform_positions(fs_m), fs_m, m, {"chosen_factor": m}
-    raise ValueError(f"metodo fixo desconhecido: {method}")
+    raise ValueError(f"unknown fixed method: {method}")
 
 
 def search_sampler(method: str, ctx: Ctx, seed: int) -> tuple[torch.nn.Module, int]:
-    """Amostrador do estagio A e o periodo de aparo das janelas."""
+    """Stage-A sampler and the period the windows are trimmed to."""
     cfg, t, fs_set = ctx.cfg, ctx.cfg["training"], ctx.fs_set
     period, k, g = fs_set.period_ticks, fs_set.active_per_period, fs_set.min_gap_ticks
     if method == "dec_aprendida":
@@ -1254,13 +1261,13 @@ def search_sampler(method: str, ctx: Ctx, seed: int) -> tuple[torch.nn.Module, i
             tau=float(t["tau_start"]),
             seed=seed,
         ), period
-    raise ValueError(f"metodo de busca desconhecido: {method}")
+    raise ValueError(f"unknown search method: {method}")
 
 
 def train_one(
     ctx: Ctx, model: SampledOrderModel, task: OrderTask, lr: float, anneal: bool
 ) -> FitResult:
-    """Um treino com parada antecipada; a mascara tem taxa de aprendizado propria."""
+    """One training run with early stopping; the mask has its own learning rate."""
     t = ctx.cfg["training"]
     mult = float(ctx.cfg["mask"]["lr_multiplier"])
     groups = [
@@ -1276,7 +1283,7 @@ def train_one(
 
     fc = fit_cfg(ctx, lr)
     if anneal and bool(t.get("stop_after_anneal", False)):
-        # regra B5, 2a aplicacao (2026-11-11): parada e checkpoint so depois do recozimento
+        # rule B5, 2nd application (2026-11-11): stopping and checkpoint only after annealing
         fc = dataclasses.replace(fc, min_epochs=int(t["tau_anneal_epochs"]))
     return fit(
         model,
@@ -1303,7 +1310,7 @@ def _fit_info(res: FitResult, lr: float, seconds: float) -> dict:
 def best_over_lr(
     ctx: Ctx, label: str, build: Callable[[int], tuple[SampledOrderModel, OrderTask]], anneal: bool
 ) -> tuple[SampledOrderModel, OrderTask, dict, list]:
-    """Treina em cada taxa da grade e fica com o menor erro de validacao (so validacao)."""
+    """Trains at each rate of the grid and keeps the lowest validation error (validation only)."""
     rc = ctx.rc
     best: tuple[float, SampledOrderModel, OrderTask, dict] | None = None
     history = []
@@ -1329,7 +1336,7 @@ def best_over_lr(
 def fit_fixed(
     ctx: Ctx, positions: np.ndarray, fs_set: FeasibleSet, factor: int, label: str, fs_hz: float
 ) -> tuple[SampledOrderModel, OrderTask, dict, list]:
-    """Mascara fixa + decodificador treinado do zero: o protocolo comum a todos os bracos."""
+    """Fixed mask + decoder trained from scratch: the protocol shared by all arms."""
     period = fs_set.period_ticks
 
     def build(seed: int) -> tuple[SampledOrderModel, OrderTask]:
@@ -1344,7 +1351,7 @@ def fit_fixed(
 
 
 def search(ctx: Ctx, method: str, fs_hz: float) -> tuple[SampledOrderModel, OrderTask, dict, list]:
-    """Estagio A: mascara e decodificador juntos, com recozimento da temperatura."""
+    """Stage A: mask and decoder together, with temperature annealing."""
     period = ctx.fs_set.period_ticks
 
     def build(seed: int) -> tuple[SampledOrderModel, OrderTask]:
@@ -1370,7 +1377,7 @@ def _extra(info: dict) -> dict:
         "epochs_run": info.get("epochs_run", ""),
         "positions": info.get("positions", ""),
         "chosen_factor": info.get("chosen_factor", ""),
-        # B5: a mascara buscada saiu do ruido de Gumbel? (margem do top-K / desvio do ruido)
+        # B5: did the searched mask get out of the Gumbel noise? (top-K margin / noise std)
         "mask_margin_over_gumbel": round(float(diag["margin_over_gumbel_std"]), 4)
         if "margin_over_gumbel_std" in diag
         else "",
@@ -1379,7 +1386,7 @@ def _extra(info: dict) -> dict:
 
 
 def run_method(method: str, ctx: Ctx) -> dict:
-    """Um metodo numa celula: linhas de teste, informacao por braco e historico de perdas."""
+    """One method in one cell: test rows, per-arm information and loss history."""
     fs_hz = next(iter(ctx.bank.recs.values())).fs_hz
     rows: list[dict] = []
     infos: dict[str, dict] = {}
@@ -1426,14 +1433,14 @@ def run_method(method: str, ctx: Ctx) -> dict:
         pos = loupe.project(fs_set)
         arm_a, arm_b = "dec_loupe_projetada_sem_ajuste", "dec_loupe_projetada"
     else:
-        raise ValueError(f"metodo desconhecido: {method}")
-    # sem ajuste: o decodificador do estagio A com a mascara projetada, sem treino nenhum
+        raise ValueError(f"unknown method: {method}")
+    # without fine-tuning: the stage-A decoder with the projected mask, no training at all
     model_p = SampledOrderModel(FixedMask(pos, period).to(ctx.device), model_a.decoder)
     task_p = OrderTask(ctx, model_a.decoder, period)
     info_p = {**info_a, **mask_info(pos, period, ctx, fs_hz), **task_p.val_metrics(model_p)}
     rows += task_p.evaluate(model_p, arm_a, _extra(info_p))
     infos[arm_a] = info_p
-    # estagio B: a mascara final, fixa, com decodificador treinado do zero
+    # stage B: the final mask, fixed, with a decoder trained from scratch
     model_b, task_b, info_b, hist_b = fit_fixed(ctx, pos, fs_set, ctx.rc.budget, arm_b, fs_hz)
     info_b["search"] = {k: v for k, v in info_a.items() if k != "diagnostics"}
     info_b["diagnostics"] = info_a.get("diagnostics")
@@ -1443,9 +1450,9 @@ def run_method(method: str, ctx: Ctx) -> dict:
 
 
 def select_across_budgets(outs: dict[int, dict], budgets: list[int]) -> list[dict]:
-    """`dec_aprendida_sel`: em cada b, a `dec_aprendida` de orcamento treinado >= b de melhor
-    validacao (acuracia balanceada de ordem pela regua local; empate: menor perda; depois a
-    maior taxa). Nenhum rotulo de teste entra."""
+    """`dec_aprendida_sel`: at each b, the `dec_aprendida` of trained budget >= b with the best
+    validation (balanced order accuracy by the local ruler; tie: lowest loss; then the highest
+    rate). No test label is used."""
     rows = []
     for b in budgets:
         cands = []
@@ -1466,7 +1473,7 @@ def select_across_budgets(outs: dict[int, dict], budgets: list[int]) -> list[dic
 
 
 # ----------------------------------------------------------------------
-# WDCNN (so baseline de familia de falha, sobre o sinal uniformemente decimado)
+# WDCNN (fault-family baseline only, on the uniformly decimated signal)
 # ----------------------------------------------------------------------
 def run_wdcnn(ctx: Ctx) -> dict:
     cfg, t, w, rc = ctx.cfg, ctx.cfg["training"], ctx.cfg["wdcnn"], ctx.rc
@@ -1540,7 +1547,7 @@ def run_wdcnn(ctx: Ctx) -> dict:
         for seg, a, e in r.tests:
             row = row_base(rc, "wdcnn", rid, r.group, seg)
             starts = starts_of(a, e, None)
-            if not starts:  # conta como erro: o segmento entra no denominador
+            if not starts:  # counts as a miss: the segment enters the denominator
                 row.update(skipped="segmento menor que uma janela", family_pred=NO_FAMILY)
                 rows.append({**row, "family_true": fam_true})
                 continue
@@ -1562,7 +1569,7 @@ def run_wdcnn(ctx: Ctx) -> dict:
 
 
 # ----------------------------------------------------------------------
-# resumo, estatistica pre-registrada e comparacoes
+# summary, preregistered statistics and comparisons
 # ----------------------------------------------------------------------
 def summarize(rows: list[dict], groups_of_ds: dict[str, list[str]]) -> list[dict]:
     cells: dict[tuple, list[dict]] = defaultdict(list)
@@ -1614,7 +1621,7 @@ def summarize(rows: list[dict], groups_of_ds: dict[str, list[str]]) -> list[dict
             chosen_factors=" ".join(sorted(factors, key=int)),
             chosen_budgets=" ".join(sorted(chosen_b, key=int)),
         )
-        # B5: fracao das celulas (divisao, semente) em que a mascara buscada saiu do ruido
+        # B5: fraction of the (split, seed) cells in which the searched mask got out of the noise
         conv = {}
         for r in fault:
             if r.get("mask_converged") not in (None, ""):
@@ -1625,8 +1632,8 @@ def summarize(rows: list[dict], groups_of_ds: dict[str, list[str]]) -> list[dict
 
 
 def per_record(rows: list[dict], ruler: str) -> dict[tuple[Any, str], float]:
-    """Acerto medio por (divisao, registro), sobre segmentos e sementes: a media por registro
-    que vem ANTES de reamostrar. Linha descartada pela guarda conta como erro."""
+    """Mean hit per (split, record), over segments and seeds: the per-record mean that comes
+    BEFORE resampling. A row discarded by the guard counts as a miss."""
     acc: dict[tuple[Any, str], list[int]] = defaultdict(list)
     for r in rows:
         if r.get("family_true") in (HEALTHY, None, "") or r.get(f"hit_{ruler}") in ("", None):
@@ -1645,14 +1652,14 @@ def cluster_bootstrap(
     min_clusters: int = 3,
     min_splits: int = 2,
 ) -> dict[str, Any] | None:
-    """Diferenca de acuracia balanceada a - b, em pontos, com bootstrap por aglomerado.
+    """Balanced-accuracy difference a - b, in points, with a cluster bootstrap.
 
-    Pareado por (divisao, registro). A estatistica e a media, sobre os grupos (pistas), da
-    diferenca media no grupo: a acuracia balanceada. Cada reamostra sorteia, com reposicao, as
-    divisoes e, dentro de cada grupo, os aglomerados (condicao x cenario no Ottawa); o peso de
-    um par e o numero de vezes que a sua divisao e o seu aglomerado foram sorteados. p unilateral
-    para a > b: ``(1 + #{Δ* <= 0})/(1 + B)``. Teste sem ``min_clusters`` aglomerados em algum
-    grupo, ou com menos de ``min_splits`` divisoes, nao e elegivel e recebe p = 1.
+    Paired by (split, record). The statistic is the mean, over the groups (races), of the mean
+    difference within the group: the balanced accuracy. Each resample draws, with replacement,
+    the splits and, within each group, the clusters (condition x scenario on Ottawa); the weight
+    of a pair is the number of times its split and its cluster were drawn. One-sided p for
+    a > b: ``(1 + #{Δ* <= 0})/(1 + B)``. A test without ``min_clusters`` clusters in some group,
+    or with fewer than ``min_splits`` splits, is not eligible and gets p = 1.
     """
     keys = sorted(set(a) & set(b), key=lambda k: (str(k[0]), k[1]))
     if not keys:
@@ -1682,8 +1689,8 @@ def cluster_bootstrap(
             boots.append(float(np.mean(vals)))
     arr = np.asarray(boots)
     min_c = min(len(c) for c in clusters.values())
-    # elegibilidade pre-registrada: com menos de 3 aglomerados por grupo ou 1 divisao, todas as
-    # reamostras saem quase iguais e o p vira 1/(1+B) sem medir variabilidade nenhuma
+    # preregistered eligibility: with fewer than 3 clusters per group or 1 split, all resamples
+    # come out almost the same and p becomes 1/(1+B) without measuring any variability
     eligible = min_c >= min_clusters and len(splits) >= min_splits and arr.size > 0
     p = float((1 + np.count_nonzero(arr <= 0.0)) / (1 + arr.size)) if eligible else 1.0
     return {
@@ -1702,7 +1709,7 @@ def cluster_bootstrap(
 
 
 def holm(pvals: list[float]) -> list[float]:
-    """p ajustados de Holm (passo a passo descendente), na ordem de entrada."""
+    """Holm-adjusted p-values (step-down), in input order."""
     m = len(pvals)
     order = sorted(range(m), key=lambda i: pvals[i])
     adj = [0.0] * m
@@ -1722,7 +1729,7 @@ def arm_rows(rows: list[dict], ds: str, var: str, b: int, arm: str) -> list[dict
 
 
 def mask_converged_frac(rows: list[dict], ds: str, var: str, b: int, arm: str) -> float | None:
-    """B5: fracao das celulas (divisao, semente) em que a mascara do braco saiu do ruido."""
+    """B5: fraction of the (split, seed) cells in which the arm's mask got out of the noise."""
     conv: dict[tuple, int] = {}
     for r in arm_rows(rows, ds, var, b, arm):
         if r.get("mask_converged") not in (None, ""):
@@ -1733,9 +1740,9 @@ def mask_converged_frac(rows: list[dict], ds: str, var: str, b: int, arm: str) -
 def evaluable_budgets(
     rows: list[dict], ds: str, var: str, budgets: list[int], arms: list[str], min_frac: float
 ) -> dict[int, tuple[bool, str]]:
-    """Orcamento avaliavel numa hipotese: cada braco de `arms` com a mascara fora do ruido em pelo
-    menos `min_frac` das divisoes. Braco listado sem diagnostico conta como nao avaliavel, para nao
-    passar em silencio; sem bracos listados, todo orcamento e avaliavel."""
+    """Budget evaluable in a hypothesis: every arm in `arms` with its mask out of the noise in at
+    least `min_frac` of the splits. A listed arm without diagnostics counts as not evaluable, so
+    that it does not pass silently; with no arms listed, every budget is evaluable."""
     out = {}
     for b in budgets:
         fr = {a: mask_converged_frac(rows, ds, var, b, a) for a in arms}
@@ -1748,7 +1755,7 @@ def evaluable_budgets(
 def hypotheses(
     rows: list[dict], cfg: dict, group_of: dict[str, str], cluster_of: dict[str, str]
 ) -> list[dict]:
-    """Testes pre-registrados (README, secao "Pre-registro"; bloco `preregistration`)."""
+    """Preregistered tests (README, section "Preregistration"; `preregistration` block)."""
     pr = cfg["preregistration"]
     ds, var, alpha = pr["dataset"], pr["variant"], float(pr["alpha"])
     n_boot, seed = int(cfg["analysis"]["bootstrap_resamples"]), int(cfg["seed"])
@@ -1767,7 +1774,7 @@ def hypotheses(
             for b in budgets:
                 ok, conv_txt = evals[b]
                 if not ok:
-                    # B5: mascara presa no ruido -> p = 1 no Holm (conservador), e nao vence
+                    # B5: mask stuck in noise -> p = 1 in Holm (conservative); it does not win
                     for base in baselines:
                         nt = {"budget": b, "baseline": base, "p_one_sided": 1.0}
                         tests.append({**nt, "evaluable": 0, "convergence": conv_txt})
@@ -1829,7 +1836,7 @@ def hypotheses(
 def comparisons(
     rows: list[dict], cfg: dict, group_of: dict[str, str], cluster_of: dict[str, str]
 ) -> list[dict]:
-    """Comparacoes secundarias (fora do pre-registro), com o mesmo bootstrap e sem correcao."""
+    """Secondary comparisons (outside the preregistration), same bootstrap and no correction."""
     n_boot, seed = int(cfg["analysis"]["bootstrap_resamples"]), int(cfg["seed"])
     cells = sorted({(r["dataset"], r["variant"], int(r["budget"])) for r in rows})
     out = []
@@ -1932,7 +1939,7 @@ def resolve_device(name: str) -> torch.device:
 def execute(
     method: str, ctx: Ctx, runs_dir: Path, run_key: dict, no_resume: bool, manifest: dict
 ) -> dict:
-    """Roda um metodo numa celula, ou retoma a execucao gravada com a mesma chave."""
+    """Runs one method in one cell, or resumes the saved run with the same key."""
     rc = ctx.rc
     rel = Path(rc.ds) / rc.variant / f"b{rc.budget}" / f"split{rc.split['index']}"
     rel = rel / f"seed{rc.seed}" / f"{method}.json"
@@ -1951,9 +1958,9 @@ def execute(
     fault = [r for r in out["rows"] if r.get("family_true") not in (HEALTHY, None)]
     hits = sum(int(r.get("hit_local") or 0) for r in fault)
     fam = sum(int(r.get("family_pred") == r.get("family_true")) for r in fault)
-    tag = f"[{rc.ds} {rc.variant} 1/{rc.budget} div {rc.split['index']} sem {rc.seed}] {method}"
+    tag = f"[{rc.ds} {rc.variant} 1/{rc.budget} split {rc.split['index']} seed {rc.seed}] {method}"
     print(
-        f"  {tag}: ordem (regua local) {hits}/{len(fault)}, familia {fam}/{len(fault)}, "
+        f"  {tag}: order (local ruler) {hits}/{len(fault)}, family {fam}/{len(fault)}, "
         f"{time.time() - t0:.0f} s",
         flush=True,
     )
@@ -1961,7 +1968,7 @@ def execute(
 
 
 def mode_band(bands: list[list[float] | None]) -> tuple[float, float] | None:
-    """Banda mais frequente (empate: a de menor frequencia inferior)."""
+    """Most frequent band (tie: the one with the lowest lower edge)."""
     vals = [tuple(round(float(v), 1) for v in bnd) for bnd in bands if bnd]
     if not vals:
         return None
@@ -1974,18 +1981,18 @@ def mode_band(bands: list[list[float] | None]) -> tuple[float, float] | None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
-    ap.add_argument("--datasets", nargs="*", default=None, help="subconjunto dos conjuntos")
-    ap.add_argument("--limit", type=int, default=None, help="so os primeiros N registros")
-    ap.add_argument("--methods", nargs="*", default=None, help="subconjunto dos metodos")
+    ap.add_argument("--datasets", nargs="*", default=None, help="subset of the datasets")
+    ap.add_argument("--limit", type=int, default=None, help="only the first N records")
+    ap.add_argument("--methods", nargs="*", default=None, help="subset of the methods")
     ap.add_argument("--budgets", nargs="*", type=int, default=None)
-    ap.add_argument("--max-epochs", type=int, default=None, help="sobrepoe o teto de epocas")
-    ap.add_argument("--device", default=None, help="auto, cpu ou cuda")
+    ap.add_argument("--max-epochs", type=int, default=None, help="overrides the epoch cap")
+    ap.add_argument("--device", default=None, help="auto, cpu or cuda")
     ap.add_argument("--workers", type=int, default=None)
-    ap.add_argument("--no-resume", action="store_true", help="refaz execucoes ja gravadas")
+    ap.add_argument("--no-resume", action="store_true", help="redoes runs already saved")
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     cfg_sha = sha256_file(args.config)
-    # o que muda o resultado de uma execucao gravada: config, codigo e CLI
+    # what changes the result of a saved run: config, code and CLI
     run_key = {
         "config_sha256": cfg_sha,
         "entrypoint_sha256": sha256_file(Path(__file__)),
@@ -2002,12 +2009,12 @@ def main() -> int:
     datasets = args.datasets or [ds for ds, d in cfg["datasets"].items() if d.get("enabled")]
     for ds in datasets:
         if ds not in cfg["datasets"]:
-            raise SystemExit(f"conjunto {ds!r} nao esta no config")
+            raise SystemExit(f"dataset {ds!r} is not in the config")
     methods = args.methods or list(cfg["methods"])
     unknown = [m for m in methods if m not in ARMS_OF_METHOD]
     if unknown:
-        raise SystemExit(f"metodos desconhecidos: {unknown}")
-    print(f"dispositivo {device}; conjuntos {datasets}; metodos {methods}", flush=True)
+        raise SystemExit(f"unknown methods: {unknown}")
+    print(f"device {device}; datasets {datasets}; methods {methods}", flush=True)
     tol = float(cfg["tolerance_order"])
     span = float(cfg["prior"]["calibration_span"])
     seeds_per_split = int(cfg["protocol"].get("seeds_per_split", 1))
@@ -2038,7 +2045,7 @@ def main() -> int:
     cluster_all: dict[str, str] = {}
     for ds in datasets:
         d = cfg["datasets"][ds]
-        cfg_ds = dataset_cfg(cfg, d)  # igual ao global sem ``overrides``
+        cfg_ds = dataset_cfg(cfg, d)  # equal to the global one without ``overrides``
         tol = float(cfg_ds["tolerance_order"])
         span = float(cfg_ds["prior"]["calibration_span"])
         ids = list_ids(d)
@@ -2050,8 +2057,8 @@ def main() -> int:
         budgets = [int(b) for b in (args.budgets or allowed) if int(b) in allowed]
         names = [variant_name(v) for v in variants]
         print(
-            f"[{ds}] {len(ids)} registros com falha, {len(healthy_ids)} saudaveis, "
-            f"orcamentos {budgets}, variantes {names}",
+            f"[{ds}] {len(ids)} faulty records, {len(healthy_ids)} healthy, "
+            f"budgets {budgets}, variants {names}",
             flush=True,
         )
         t0 = time.time()
@@ -2061,9 +2068,7 @@ def main() -> int:
         ]
         with ProcessPoolExecutor(max_workers=workers) as pool:
             cls = list(pool.map(classical_task, tasks))
-        print(
-            f"[{ds}] estagio classico e reguas em taxa cheia: {time.time() - t0:.0f} s", flush=True
-        )
+        print(f"[{ds}] classical stage and full-rate rulers: {time.time() - t0:.0f} s", flush=True)
         by_id = {c["rid"]: c for c in cls}
         group_of = {c["rid"]: c["group"] for c in cls}
         cluster_of = {c["rid"]: c["cluster"] for c in cls}
@@ -2138,8 +2143,8 @@ def main() -> int:
                 manifest["known_band"][f"{ds}:split{split['index']}"] = known
                 pool: dict[str, dict[str, list[tuple[int, float]]]] = defaultdict(dict)
                 if d.get("train_labels") == "nested":
-                    # Paderborn: a régua local só existe em 6 dos 23 rolamentos; os rótulos de
-                    # treino e validação são a régua aninhada, definida em todos
+                    # Paderborn: the local ruler only exists on 6 of the 23 bearings; the training
+                    # and validation labels are the nested ruler, defined on all of them
                     for r in split["train"]:
                         t_r = nested[r]["truth"]
                         if np.isfinite(t_r):
@@ -2206,19 +2211,20 @@ def main() -> int:
     write_csv(results / "hypotheses.csv", hyp)
     write_csv(results / "comparisons.csv", comps)
     masks = {}
-    # so as execucoes desta invocacao: arquivos antigos em runs/ (outra chave) nao entram
+    # only the runs of this invocation: old files in runs/ (another key) are not included
     for rel in sorted(manifest["runs"]):
         saved = json.loads((runs_dir / rel).read_text(encoding="utf-8"))
         masks[Path(rel).with_suffix("").as_posix()] = saved.get("info", {})
     text = json.dumps(masks, indent=2, default=str)
     (results / "masks.json").write_text(text, encoding="utf-8")
     manifest["n_rows"] = len(all_rows)
-    # so no fim: consultar a GPU inicializa o contexto CUDA, e o estagio classico bifurca processos
+    # only at the end: querying the GPU initializes the CUDA context, and the classical stage
+    # forks processes
     manifest["device_name"] = (
         torch.cuda.get_device_name(device) if device.type == "cuda" else platform.processor()
     )
     write_manifest(args.config, results, cfg, manifest)
-    print(f"\n{len(all_rows)} linhas -> {results / 'metrics.csv'}")
+    print(f"\n{len(all_rows)} rows -> {results / 'metrics.csv'}")
     return 0
 
 

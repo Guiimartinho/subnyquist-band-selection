@@ -1,8 +1,8 @@
-"""snq-sim - cadeia de aquisicao fisica honesta.
+"""snq-sim - honest physical acquisition chain.
 
-As tres paredes do projeto (banda do transdutor, banda do track-and-hold, taxa do
-SAR) aparecem explicitamente aqui. Simulacao que assume amostrador ideal nao diz
-nada sobre o hardware.
+The project's three walls (transducer bandwidth, track-and-hold bandwidth, SAR
+rate) appear explicitly here. A simulation that assumes an ideal sampler says
+nothing about the hardware.
 """
 
 from snq_sim.chain import (

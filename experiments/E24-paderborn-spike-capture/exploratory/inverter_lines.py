@@ -1,19 +1,20 @@
-"""Exploratório (revisão adversarial, 2026-11-12, checagem C4): chaveamento PWM na vibração?
+"""Exploratory (adversarial review, 2026-11-12, check C4): PWM switching in the vibration?
 
-No E24, o kurtograma em taxa cheia escolhe 11,0–21,5 kHz em 909 de 1305 segmentos, sem acerto
-nenhum ali. A hipótese é que o chaveamento PWM de 16 kHz do acionamento seja o captor. Esta checagem
-procura, na medição 2 de cada um dos 69 registros (vibração e corrente de fase a 64 kS/s):
+In E24, the full-rate kurtogram picks 11.0–21.5 kHz in 909 of 1305 segments, with no hit at all
+there. The hypothesis is that the drive's 16 kHz PWM switching is the captor. This check looks
+at measurement 2 of each of the 69 records (vibration and phase current at 64 kS/s) for:
 
-- **Raias.** No PSD de Welch (Hann de 8192, 50 %), procura raias em 16 kHz ± 2k·f_e e em
-  32 kHz − (2k+1)·f_e, com k = 0..5. A f_e é a fundamental da corrente de fase, procurada em
-  50–150 Hz. Conta como raia a que fica pelo menos 10 dB acima da mediana do PSD em ±500 Hz.
-- **Coerência** entre a vibração e a corrente de fase nessas raias.
-- **Impulsividade.** É a curtose espectral do envelope (E|z|⁴/E[|z|²]² − 2, como no kurtograma)
-  em 15–17 kHz e em 11–15 kHz, por máscara ideal de FFT.
+- **Lines.** In the Welch PSD (Hann of 8192, 50 %), it looks for lines at 16 kHz ± 2k·f_e and at
+  32 kHz − (2k+1)·f_e, with k = 0..5. f_e is the fundamental of the phase current, searched in
+  50–150 Hz. A line counts if it is at least 10 dB above the PSD median within ±500 Hz.
+- **Coherence** between the vibration and the phase current at those lines.
+- **Impulsiveness.** It is the spectral kurtosis of the envelope (E|z|⁴/E[|z|²]² − 2, as in the
+  kurtogram) in 15–17 kHz and in 11–15 kHz, by ideal FFT mask.
 
-Isso não decide sozinho a causa da captura. A checagem que testa a causa é o notch (C3).
+This alone does not decide the cause of the capture. The check that tests the cause is the
+notch (C3).
 
-    python experiments/E24-paderborn-spike-capture/exploratory/inverter_lines.py [RAIZ_PADERBORN]
+    python experiments/E24-paderborn-spike-capture/exploratory/inverter_lines.py [PADERBORN_ROOT]
 """
 
 from __future__ import annotations

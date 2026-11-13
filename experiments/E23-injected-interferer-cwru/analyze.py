@@ -1,25 +1,25 @@
-"""E23 - criterios pre-registrados (config/base.yaml, secao ``analysis``) sobre results/metrics.csv.
+"""E23 - pre-registered criteria (config/base.yaml, section ``analysis``) on results/metrics.csv.
 
     uv run python experiments/E23-injected-interferer-cwru/analyze.py \
         --config experiments/E23-injected-interferer-cwru/config/base.yaml
 
-Escrito ANTES da 1a rodada completa. Definicoes:
+Written BEFORE the 1st full run. Definitions:
 
-- celula: (portadora, fator, teto efetivo) do braco ``uniforme``; avaliavel se, sem injecao, o
-  acerto nos registros for >= ``evaluable_baseline``;
-- classe prevista da celula: a moda, entre registros, da classe calculada da realizacao
-  injetada (1 captura, 0 sem captura, -1 borda); classes misturadas viram borda;
-- queda: acerto sem injecao menos acerto com injecao, em pontos, pareado por registro;
-- H1(a): na potencia maxima, fracao das celulas previstas (1) avaliaveis com queda >= drop;
-- H1(b): em cada potencia, fracao das celulas dobradas (fator >= 2) sem captura prevista (0)
-  avaliaveis com queda >= drop;
-- H1': P* = menor potencia com queda media do impulsivo >= drop nas celulas previstas; em P*,
-  razao entre a queda media do substituto e a do impulsivo nas mesmas celulas;
-- H2: acuracia balanceada do TAT (admissivel -> preve acerto) sobre todas as linhas do braco
-  uniforme no teto de referencia; e a diferenca media entre ``taxa_tat`` e o oraculo uniforme
-  (melhor fator >= orcamento no teste, por condicao), sobre condicoes x orcamentos.
+- cell: (carrier, factor, effective ceiling) of the ``uniforme`` arm; evaluable if, without
+  injection, the hit rate over the records is >= ``evaluable_baseline``;
+- predicted class of the cell: the mode, across records, of the class computed from the injected
+  realization (1 capture, 0 no capture, -1 borderline); mixed classes become borderline;
+- drop: hit rate without injection minus hit rate with injection, in points, paired by record;
+- H1(a): at max power, the fraction of evaluable predicted (1) cells with drop >= drop_points;
+- H1(b): at each power, fraction of the folded cells (factor >= 2) with no predicted capture (0)
+  that are evaluable and have drop >= drop_points;
+- H1': P* = lowest power with a mean impulsive drop >= drop_points in the predicted cells; at P*,
+  ratio between the mean drop of the surrogate and that of the impulsive in the same cells;
+- H2: balanced accuracy of the TAT (admissible -> predicts a hit) over all rows of the uniform
+  arm at the reference ceiling; and the mean difference between ``taxa_tat`` and the uniform
+  oracle (best factor >= budget in the test, per condition), over conditions x budgets.
 
-Intervalos: bootstrap por registro (``analysis.bootstrap`` reamostras).
+Intervals: bootstrap by record (``analysis.bootstrap`` resamples).
 """
 
 from __future__ import annotations
@@ -92,7 +92,7 @@ class Data:
         return float(np.mean(v)) if v else None
 
     def drop(self, kind: str, fc: float, db: float, f: int, c: float, sample: list[str]):
-        """Queda (pontos) pareada por registro; None se nao houver par."""
+        """Drop (points) paired by record; None if there is no pair."""
         pairs = []
         for rec in sample:
             b = self.base.get((rec, f, c))
@@ -178,9 +178,9 @@ class Data:
                 tp, fn = tp + w * r["tat"], fn + w * (1 - r["tat"])
             else:
                 tn, fp = tn + w * (1 - r["tat"]), fp + w * r["tat"]
-        tpr = tp / (tp + fn) if tp + fn else float("nan")  # indefinida se nao ha acerto
-        tnr = tn / (tn + fp) if tn + fp else float("nan")  # indefinida se nao ha erro
-        # oraculo por condicao
+        tpr = tp / (tp + fn) if tp + fn else float("nan")  # undefined if there is no hit
+        tnr = tn / (tn + fp) if tn + fp else float("nan")  # undefined if there is no miss
+        # oracle per condition
         acc_uni: dict = defaultdict(list)
         for r in uni0:
             acc_uni[(r["kind"], r["fc_hz"], r["rel_db"], r["factor"])] += [r["hit"]] * cnt[
@@ -214,7 +214,7 @@ class Data:
         }
 
     def extras(self) -> dict:
-        """Indicador direto de captura e recuperacao pelo anti-alias ideal (descritivo)."""
+        """Direct capture indicator and recovery by the ideal anti-alias (descriptive)."""
         line: dict = defaultdict(list)
         for (kind, fc, db, _rec, f, c), r in self.inj.items():
             if r["line"] is not None and c == ceiling0(self.cfg, f):
@@ -243,6 +243,8 @@ def verdict(h1: dict, h2: dict, a: dict) -> dict:
     )
     ba, gap = h2["tat_balanced_accuracy"], h2["mean_gap_tat_minus_oracle_points"]
 
+    # The verdict labels are data (analysis.json, tests) and stay in Portuguese: apoiada =
+    # supported, refutada = refuted, inconclusiva = inconclusive, nao avaliavel = not evaluable.
     def three(ok: bool, bad: bool) -> str:
         return "apoiada" if ok else ("refutada" if bad else "inconclusiva")
 
@@ -277,15 +279,15 @@ def verdict(h1: dict, h2: dict, a: dict) -> dict:
 
 
 def analyze_spikes(path: Path, cfg: dict) -> dict:
-    """H-picos (pre-registrada no README): queda por braco, fator, taxa e amplitude.
+    """H-picos (H-spikes, pre-registered in the README): drop per arm, factor, rate and amplitude.
 
-    Queda = acerto sem injecao menos acerto com picos, em pontos, pareada por registro, no teto
-    de referencia para o braco uniforme. Veredicto, na condicao do Ottawa (taxa e amplitude em
-    ``analysis.spikes.ottawa_like``):
-    - apoiada se o uniforme cai >= ``drop_points`` em algum fator >= 2 E ``aaf_ideal`` e
-      ``despike`` caem <= ``mitigation_max_drop_points`` em todos os fatores;
-    - refutada se nenhum fator >= 2 do uniforme cai >= ``drop_points`` em amplitude nenhuma;
-    - inconclusiva no meio.
+    Drop = hit rate without injection minus hit rate with spikes, in points, paired by record, at
+    the reference ceiling for the uniform arm. Verdict, at the Ottawa condition (rate and amplitude
+    in ``analysis.spikes.ottawa_like``):
+    - ``apoiada`` (supported) if the uniform arm drops >= ``drop_points`` at some factor >= 2 AND
+      ``aaf_ideal`` and ``despike`` drop <= ``mitigation_max_drop_points`` at all factors;
+    - ``refutada`` (refuted) if no uniform factor >= 2 drops >= ``drop_points`` at any amplitude;
+    - ``inconclusiva`` (inconclusive) in between.
     """
     sa = cfg["analysis"]["spikes"]
     hit: dict = defaultdict(dict)
@@ -393,7 +395,7 @@ def main() -> int:
         for k, v in boot.items()
     }
     report = {
-        # procedencia da analise (revisao de 2026-11-11): o que leu e com que codigo
+        # provenance of the analysis (review of 2026-11-11): what it read and with which code
         "analyze_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "metrics_sha256": hashlib.sha256((results / "metrics.csv").read_bytes()).hexdigest(),
         "n_records": len(recs),
@@ -411,15 +413,15 @@ def main() -> int:
             {k: report[k] for k in ("n_records", "cells_by_predicted_class", "verdict")}, indent=1
         )
     )
-    print("H1 por potencia:")
+    print("H1 per power:")
     for db, v in h1["per_power"].items():
         print(f"  {db:+5.0f} dB: {v}")
     print(
-        f"P* = {h1['p_star_db']}; razao substituto/impulsivo em P* = "
+        f"P* = {h1['p_star_db']}; surrogate/impulsive ratio at P* = "
         f"{h1['surrogate_ratio_at_p_star']}"
     )
     print(f"H2: {h2}")
-    print(f"IC 95 %: {ci}")
+    print(f"95 % CI: {ci}")
     print(f"-> {dst}")
     return 0
 

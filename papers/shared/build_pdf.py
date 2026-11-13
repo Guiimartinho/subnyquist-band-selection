@@ -1,12 +1,12 @@
-"""Compila um paper com uma TeX Live mínima (TinyTeX) instalada só dentro deste repositório.
+"""Compiles a paper with a minimal TeX Live (TinyTeX) installed only inside this repository.
 
-O TinyTeX fica em `.tools/tinytex/`, ignorado pelo git. Nada vai para o PATH do sistema: o
-instalador oficial roda `tlmgr path add`, e este script não roda. O instalador é o binário de
-Windows do TinyTeX, a máquina deste projeto; em outro sistema, instale o TinyTeX pelo script
-oficial e aponte `TEX_BIN` para ele.
+TinyTeX lives in `.tools/tinytex/`, ignored by git. Nothing goes into the system PATH: the
+official installer runs `tlmgr path add`, and this script does not. The installer is the Windows
+binary of TinyTeX, since that is this project's machine; on another system, install TinyTeX with
+the official script and point `TEX_BIN` to it.
 
-    uv run python papers/shared/build_pdf.py install                 # TinyTeX + pacotes do paper
-    uv run python papers/shared/build_pdf.py build papers/mssp-2026  # gera main.pdf
+    uv run python papers/shared/build_pdf.py install                 # TinyTeX + paper packages
+    uv run python papers/shared/build_pdf.py build papers/mssp-2026  # builds main.pdf
     uv run python papers/shared/build_pdf.py build papers/mssp-2026 --submission
 """
 
@@ -28,7 +28,7 @@ VERSION = "2026.11"
 ASSET = f"TinyTeX-1-windows-v{VERSION}.exe"
 URL = f"https://github.com/rstudio/tinytex-releases/releases/download/v{VERSION}/{ASSET}"
 TEX_BIN = Path(os.environ.get("TEX_BIN", TEX / "bin" / "windows"))
-# pacotes que o elsarticle, o todonotes e o preâmbulo do paper pedem além do TinyTeX-1
+# packages that elsarticle, todonotes and the paper's preamble need on top of TinyTeX-1
 PACKAGES = [
     "elsarticle",
     "todonotes",
@@ -56,41 +56,41 @@ def tlmgr(*args: str) -> None:
 
 def install() -> None:
     if (TEX_BIN / "pdflatex.exe").exists():
-        print(f"TinyTeX já está em {TEX}")
+        print(f"TinyTeX is already in {TEX}")
     else:
         dl = TOOLS / "_download"
         if dl.exists():
             shutil.rmtree(dl)
         dl.mkdir(parents=True)
         exe = dl / ASSET
-        print(f"baixando {URL}")
+        print(f"downloading {URL}")
         req = urllib.request.Request(URL, headers={"User-Agent": "tinytex-local-install"})
         with urllib.request.urlopen(req) as r, exe.open("wb") as f:
             shutil.copyfileobj(r, f)
-        # arquivo autoextraível: -y extrai a pasta TinyTeX no diretório corrente, sem perguntar
+        # self-extracting archive: -y extracts the TinyTeX folder into the cwd, without asking
         subprocess.run([str(exe), "-y"], cwd=dl, check=True)
         if TEX.exists():
             shutil.rmtree(TEX)
         shutil.move(str(dl / "TinyTeX"), str(TEX))
         shutil.rmtree(dl)
-        print(f"TinyTeX extraído em {TEX}")
-    tlmgr("update", "--self")  # o tlmgr do pacote costuma estar atrás do repositório
+        print(f"TinyTeX extracted to {TEX}")
+    tlmgr("update", "--self")  # the bundled tlmgr is usually behind the repository
     tlmgr("install", *PACKAGES)
 
 
 def run(cmd: list[str], cwd: Path, env: dict[str, str]) -> int:
-    # no Windows o CreateProcess procura o executável no PATH do pai, não no do filho
+    # on Windows, CreateProcess looks up the executable in the parent's PATH, not the child's
     exe = shutil.which(cmd[0], path=env["PATH"]) or cmd[0]
     return subprocess.run([exe, *cmd[1:]], cwd=cwd, env=env, capture_output=True).returncode
 
 
 def build(paper: Path, main: str = "main", submission: bool = False) -> int:
     if not (TEX_BIN / "pdflatex.exe").exists() and not shutil.which("pdflatex"):
-        print("TinyTeX ausente: rode primeiro `build_pdf.py install`.")
+        print("TinyTeX is missing: run `build_pdf.py install` first.")
         return 2
     env = os.environ.copy()
     env["PATH"] = str(TEX_BIN) + os.pathsep + env.get("PATH", "")
-    # versão de submissão: mesmas fontes, com o todonotes desligado (sem lista nem caixas)
+    # submission version: same sources, with todonotes disabled (no list and no boxes)
     job = f"{main}-submission" if submission else main
     source = f"{main}.tex"
     if submission:
@@ -111,18 +111,18 @@ def build(paper: Path, main: str = "main", submission: bool = False) -> int:
     blg = paper / f"{job}.blg"
     bib_warn = blg.read_text(encoding="latin-1").count("Warning--") if blg.exists() else 0
     pages = re.search(r"Output written on \S+ \((\d+) pages", log)
-    print(f"códigos de saída: {codes}")
+    print(f"exit codes: {codes}")
     print(
-        f"páginas: {pages.group(1) if pages else '?'}; referências indefinidas: {undef}; "
-        f"avisos do BibTeX: {bib_warn}"
+        f"pages: {pages.group(1) if pages else '?'}; undefined references: {undef}; "
+        f"BibTeX warnings: {bib_warn}"
     )
     if missing:
-        print("arquivos ausentes (instale com tlmgr):", sorted(set(missing)))
+        print("missing files (install them with tlmgr):", sorted(set(missing)))
     for line in errors[:15]:
         print("  ", line)
     pdf = paper / f"{job}.pdf"
     ok = pdf.exists() and codes[-1] == 0
-    print(f"{'PDF gerado' if ok else 'falhou'}: {pdf}")
+    print(f"{'PDF built' if ok else 'failed'}: {pdf}")
     return 0 if ok else 1
 
 
@@ -135,7 +135,7 @@ def main() -> int:
     b.add_argument(
         "--submission",
         action="store_true",
-        help="gera main-submission.pdf, sem a lista de pendências e sem as caixas do todonotes",
+        help="builds main-submission.pdf, without the pending-items list or the todonotes boxes",
     )
     args = ap.parse_args()
     if args.cmd == "install":

@@ -1,201 +1,204 @@
-# E22 - Baselines publicados na mesma taxa de amostras/s
+# E22 - Published baselines at the same samples/s rate
 
-Aberto em 2026-11-11 pelo [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). Fixa o
-que a máscara aprendida (E15) precisa vencer. Toda comparação é feita na **mesma taxa média de
-amostras convertidas por segundo**. Todos os braços são métodos publicados reimplementados, ou as
-mitigações estabelecidas pelo E20. Nenhum espantalho.
+Opened on 2026-11-11 by [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). It fixes
+what the learned mask (E15) has to beat. Every comparison is made at the **same mean rate of
+converted samples per second**. All arms are reimplemented published methods, or the mitigations
+established by E20. No straw man.
 
-## Pergunta
+## Question
 
-Dado um orçamento de amostras/s abaixo da taxa de aquisição, qual método publicado entrega o
-melhor acerto de ordem de falha? A amostragem aleatória com CS (o concorrente direto) supera a
-uniforme bem escolhida?
+Given a budget of samples/s below the acquisition rate, which published method delivers the best
+fault-order accuracy? Does random sampling with CS (the direct competitor) beat well-chosen uniform
+sampling?
 
-## Cenários de front-end
+## Front-end scenarios
 
-Eles são declarados porque mudam qual método é ótimo.
+They are declared because they change which method is optimal.
 
-- **A. Sem filtro analógico sintonizável.** Por exemplo, um acelerômetro MEMS ligado direto ao
-  ADC. É onde a dobra do E20 acontece, e o cenário principal do artigo.
-- **B. Passa-faixa analógico fixo na ressonância**, escolhido numa calibração em taxa cheia
-  (`lu2018undersampled`). É o ótimo clássico quando a banda é conhecida de antemão.
+- **A. No tunable analog filter.** For example, a MEMS accelerometer connected directly to the
+  ADC. This is where the E20 fold happens, and it is the main scenario of the paper.
+- **B. Fixed analog band-pass on the resonance**, chosen in a full-rate calibration
+  (`lu2018undersampled`). It is the classical optimum when the band is known beforehand.
 
-## Braços
+## Arms
 
-| braço | front-end | método | referência |
+| arm | front-end | method | reference |
 |---|---|---|---|
-| `uniforme` | A | decimação na taxa do orçamento, kurtograma até o Nyquist efetivo | pipeline do E07 (`antoni2007kurtogram`) |
-| `uniforme_teto` | A | idem, com teto da busca escolhido pelo TAT na calibração | mitigação do E20 |
-| `taxa_tat` | A | o **menor** fator admissível pelo TAT dentro do orçamento, ou seja, a maior taxa admissível | E21 |
-| `oraculo_uniforme` | A | o melhor fator uniforme dentro do orçamento, escolhido **com o rótulo de teste** | limite superior; não é método |
-| `aleatorio_cs` | A | instantes aleatórios + OMP em base de ordem + envelope | `sensors2025csvibration` (braço do E13) |
-| `multitaxa` | A | duas correntes uniformes coprimas somando o orçamento, com consistência de ordem entre elas | `zhao2018coprime`, `sun2013multirate` |
-| `passa_faixa_lu` | B | passa-faixa ideal na banda da calibração + amostragem passa-faixa na menor taxa válida do orçamento | `lu2018undersampled`, `vaughan1991` |
-| `zhao_asns` | A | amostragem sub-Nyquist adaptativa | `zhao2026adaptive`, **só se o PDF permitir reproduzir** |
+| `uniforme` (uniform) | A | decimation at the budget rate, kurtogram up to the effective Nyquist | E07 pipeline (`antoni2007kurtogram`) |
+| `uniforme_teto` (uniform with ceiling) | A | same, with the search ceiling chosen by the TAT in the calibration | E20 mitigation |
+| `taxa_tat` (TAT rate) | A | the **smallest** factor admissible by the TAT within the budget, that is, the highest admissible rate | E21 |
+| `oraculo_uniforme` (uniform oracle) | A | the best uniform factor within the budget, chosen **with the test label** | upper bound; not a method |
+| `aleatorio_cs` (random CS) | A | random instants + OMP in an order basis + envelope | `sensors2025csvibration` (E13 arm) |
+| `multitaxa` (multirate) | A | two co-prime uniform streams adding up to the budget, with order consistency between them | `zhao2018coprime`, `sun2013multirate` |
+| `passa_faixa_lu` (Lu band-pass) | B | ideal band-pass on the calibration band + band-pass sampling at the lowest valid rate within the budget | `lu2018undersampled`, `vaughan1991` |
+| `zhao_asns` | A | adaptive sub-Nyquist sampling | `zhao2026adaptive`, **only if the PDF allows reproducing it** |
 
-Seletores robustos (`antoni2016infogram`, `smith2016emi`, `mauricio2020iesfogram`) entram como
-variante do braço `uniforme` quando implementados.
+Robust selectors (`antoni2016infogram`, `smith2016emi`, `mauricio2020iesfogram`) come in as a
+variant of the `uniforme` arm when implemented.
 
-## O que cada método pode usar
+## What each method may use
 
-Declarado porque muda o que é justo comparar:
-- `taxa_tat`, `uniforme_teto` e `passa_faixa_lu` usam **uma captura curta em taxa cheia da
-  própria máquina** (calibração).
-- A máscara do E15 usa **registros de treino** de outras máquinas e condições, e nenhuma captura
-  da máquina de teste.
-- O artigo reporta os dois regimes, sem misturar.
+Declared because it changes what is fair to compare:
+- `taxa_tat`, `uniforme_teto` and `passa_faixa_lu` use **a short full-rate capture of the machine
+  itself** (calibration).
+- The E15 mask uses **training records** from other machines and conditions, and no capture of the
+  test machine.
+- The paper reports the two regimes, without mixing them.
 
-## Hipóteses
+## Hypotheses
 
-- **H1.** Em todos os orçamentos, `aleatorio_cs` não supera `uniforme_teto`. Estimar sem
-  reconstruir ganha de reconstruir, como no E13 a 64×.
-- **H2.** `taxa_tat` fica a no máximo 5 pontos do `oraculo_uniforme` em todos os orçamentos.
+- **H1.** At every budget, `aleatorio_cs` does not beat `uniforme_teto`. Estimating without
+  reconstructing wins over reconstructing, as in E13 at 64×.
+- **H2.** `taxa_tat` stays within at most 5 points of `oraculo_uniforme` at every budget.
 
-## O que refutaria
+## What would refute them
 
-- **H1 é refutada** se `aleatorio_cs` superar `uniforme_teto` em algum orçamento, com intervalo
-  bootstrap por registro acima de zero. Isso é resultado publicável contra a rota atual, e o
-  artigo o reporta como tal.
-- **H2 é refutada** se `taxa_tat` ficar mais de 5 pontos abaixo do oráculo em algum orçamento.
+- **H1 is refuted** if `aleatorio_cs` beats `uniforme_teto` at some budget, with a per-record
+  bootstrap interval above zero. That is a publishable result against the current route, and the
+  paper reports it as such.
+- **H2 is refuted** if `taxa_tat` falls more than 5 points below the oracle at some budget.
 
-## Protocolo
+## Protocol
 
-- **Conjuntos:** Ottawa (pistas interna e externa) e MAFAULDA (pista externa, fora da triagem do
-  tacômetro).
-- **Orçamentos**, como fração da taxa de aquisição: 1/4, 1/8, 1/16 e 1/32 no Ottawa; 1/4, 1/8 e
-  1/16 no MAFAULDA.
-- **Divisão:** calibração (1ª metade) e teste (2ª metade) dentro de cada registro, para os braços
-  que calibram. Divisões repetidas **por registro** (E05) para tudo o que é escolhido em treino.
-- **Métricas:** acerto de ordem com o `n`, intervalo bootstrap por registro, e McNemar pareado
-  entre braços na mesma taxa.
+- **Datasets:** Ottawa (inner and outer races) and MAFAULDA (outer race, without the sequences
+  excluded by the tachometer screening).
+- **Budgets**, as a fraction of the acquisition rate: 1/4, 1/8, 1/16 and 1/32 on Ottawa; 1/4, 1/8
+  and 1/16 on MAFAULDA.
+- **Split:** calibration (1st half) and test (2nd half) within each record, for the arms that
+  calibrate. Repeated splits **by record** (E05) for everything that is chosen in training.
+- **Metrics:** order accuracy with its `n`, per-record bootstrap interval, and paired McNemar
+  between arms at the same rate.
 
-## Estado
+## Status
 
-**Fase 1 implementada** (`run.py`). Braços: `uniforme`, `uniforme_teto`, `taxa_tat`,
-`oraculo_uniforme` (na análise), `aleatorio_cs` e `passa_faixa_lu`. Ficam para a fase 2 a
-`multitaxa`, que precisa de uma regra de fusão própria, e o `zhao_asns`, que depende do PDF. Os
-testes de auxiliares estão em `tests/`.
+**Phase 1 implemented** (`run.py`). Arms: `uniforme`, `uniforme_teto`, `taxa_tat`,
+`oraculo_uniforme` (in the analysis), `aleatorio_cs` and `passa_faixa_lu`. Left for phase 2 are
+`multitaxa`, which needs a fusion rule of its own, and `zhao_asns`, which depends on the PDF. The
+helper tests are in `tests/`.
 
-**Teste de fumaça** (2026-11-11; `config/smoke.yaml`: Ottawa, 2 registros de pista interna,
-orçamentos 1/16 e 1/32):
-- O pipeline roda de ponta a ponta nos seis braços.
-- `aleatorio_cs` erra 8 de 8 células, coerente com o E13.
-- `passa_faixa_lu` só ficou fiel depois de **escolher, entre as bandas do kurtograma de
-  calibração, a mais impulsiva que o orçamento consegue amostrar**. Na primeira versão, que usava
-  a melhor banda sem restrição, ela era larga demais para qualquer taxa válida. Depois da
-  correção, acerta 8 de 8.
-- `uniforme_teto` com teto de 1/4 perdeu a banda informativa num registro e caiu no 2º
-  harmônico. É comportamento da regra, e vai reportado como tal.
+**Smoke test** (2026-11-11; `config/smoke.yaml`: Ottawa, 2 inner-race records, budgets 1/16 and
+1/32):
+- The pipeline runs end to end in the six arms.
+- `aleatorio_cs` misses 8 of 8 cells, consistent with E13.
+- `passa_faixa_lu` only became faithful after **choosing, among the bands of the calibration
+  kurtogram, the most impulsive one that the budget can sample**. In the first version, which used
+  the best band without restriction, that band was too wide for any valid rate. After the fix, it
+  hits 8 of 8.
+- `uniforme_teto` with a ceiling of 1/4 lost the informative band in one record and fell onto the
+  2nd harmonic. This is the behaviour of the rule, and it is reported as such.
 
-A fumaça não é resultado; a rodada completa usa `config/base.yaml` no servidor.
+The smoke test is not a result; the complete run uses `config/base.yaml` on the server.
 
-## Resultado (2026-11-11, fase 1, Ottawa)
+## Result (2026-11-11, phase 1, Ottawa)
 
-Rodada completa no servidor: 24 registros (12 da pista interna e 12 da externa), segmento 0 para
-calibração e segmentos 1 e 2 para teste, ou 48 segmentos por orçamento. Análise em `analyze.py`,
-gravada em `results/analysis.json`, com bootstrap por registro estratificado por grupo (4000
-reamostras) e McNemar exato pareado por segmento.
+Complete run on the server: 24 records (12 from the inner race and 12 from the outer race),
+segment 0 for calibration and segments 1 and 2 for test, or 48 segments per budget. Analysis in
+`analyze.py`, written to `results/analysis.json`, with a per-record bootstrap stratified by group
+(4000 resamples) and an exact McNemar test paired by segment.
 
-O **MAFAULDA saiu desta rodada**. O E21 mostrou que a ordem de BPFO dele coincide com o 3º
-harmônico do eixo, e por isso o acerto lá não mede a falha.
+**MAFAULDA was left out of this run**. E21 showed that its BPFO order coincides with the 3rd shaft
+harmonic, and so the accuracy there does not measure the fault.
 
-Acerto (%) nos dois grupos somados:
+Accuracy (%) over the two groups combined:
 
-| braço | 1/4 | 1/8 | 1/16 | 1/32 |
+| arm | 1/4 | 1/8 | 1/16 | 1/32 |
 |---|---|---|---|---|
-| `uniforme` (fator = orçamento) | 56,2 | 89,6 | 85,4 | 87,5 |
-| `uniforme_teto` | **87,5** | 89,6 | 54,2 | 29,2 |
-| `taxa_tat` | 79,2 | 89,6 | 85,4 | 87,5 |
-| `passa_faixa_lu` (Lu 2018) | 79,2 | 79,2 | 79,2 | 72,9 |
-| `aleatorio_cs` (Kato & Otaka) | 2,9 | 4,2 | 6,2 | 4,2 |
-| `oraculo_uniforme` (escolhido no teste) | 97,9 | 97,9 | 97,9 | 97,9 |
-| melhor uniforme escolhida em outros registros (*post hoc*) | 95,8 | 95,8 | 93,8 | 95,8 |
+| `uniforme` (factor = budget) | 56.2 | 89.6 | 85.4 | 87.5 |
+| `uniforme_teto` | **87.5** | 89.6 | 54.2 | 29.2 |
+| `taxa_tat` | 79.2 | 89.6 | 85.4 | 87.5 |
+| `passa_faixa_lu` (Lu 2018) | 79.2 | 79.2 | 79.2 | 72.9 |
+| `aleatorio_cs` (Kato & Otaka) | 2.9 | 4.2 | 6.2 | 4.2 |
+| `oraculo_uniforme` (chosen on the test) | 97.9 | 97.9 | 97.9 | 97.9 |
+| best uniform rate chosen on other records (*post hoc*) | 95.8 | 95.8 | 93.8 | 95.8 |
 
-**H1, números de pé mas comparação inválida (revisão de 2026-11-11).** O aleatório com CS fica
-de 25 a 85 pontos abaixo do `uniforme_teto` (IC 95 % abaixo de zero) e perde para o `uniforme` em
-todos os segmentos discordantes. O braço, porém, é um **espantalho por construção**:
-- O dicionário cobre as ordens 0,5 a 24 (`config/base.yaml`, seção `cs`), até cerca de 520 Hz nos
-  segmentos do Ottawa. Fica abaixo do piso de 500 Hz do kurtograma e longe das ressonâncias que
-  carregam a falha (2–4,6 kHz e 16,8–25 kHz). O envelope do sinal reconstruído não pode conter a
-  modulação da falha.
-- O sistema é sobredeterminado em todos os orçamentos: cerca de 2.316 colunas, com razão
-  linhas/colunas de 54 a 6,7. Não é *compressed sensing*.
-- Kato & Otaka (`sensors2025csvibration`) reconstroem 0–2.500 Hz no caso de rolamento.
+**H1: the numbers stand, but the comparison is invalid (review of 2026-11-11).** Random sampling
+with CS falls 25 to 85 points below `uniforme_teto` (95 % CI below zero) and loses to `uniforme` in
+every discordant segment. The arm, however, is a **straw man by construction**:
+- The dictionary covers orders 0.5 to 24 (`config/base.yaml`, section `cs`), up to about 520 Hz in
+  the Ottawa segments. It lies below the kurtogram's 500 Hz floor and far from the resonances that
+  carry the fault (2–4.6 kHz and 16.8–25 kHz). The envelope of the reconstructed signal cannot
+  contain the fault modulation.
+- The system is overdetermined at every budget: about 2,316 columns, with a rows/columns ratio
+  from 54 down to 6.7. It is not *compressed sensing*.
+- Kato & Otaka (`sensors2025csvibration`) reconstruct 0–2,500 Hz in the bearing case.
 
-**H1 sai do artigo** até existir um braço fiel: dicionário que cubra a ressonância, regime
-subdeterminado e operador rápido. O mesmo teto vale para o braço de CS do E13 (ver o relatório, §5).
+**H1 leaves the paper** until a faithful arm exists: a dictionary that covers the resonance, an
+underdetermined regime and a fast operator. The same limitation applies to the CS arm of E13 (see
+the report, §5).
 
-**H2, refutada nos quatro orçamentos.** O `taxa_tat` fica abaixo do oráculo em −18,7
-[−29,2; −8,3], −8,3 [−14,6; −2,1], −12,5 [−18,8; −6,2] e −10,4 [−18,8; −4,2] pontos.
-- **O que a regra faz bem:** resgata o vale de 1/4 contra o `uniforme` (11 × 0, p = 0,001).
-- **O que ela não faz:** achar a melhor taxa. Ela escolhe a maior taxa admissível, e a melhor
-  uniforme da pista externa é o fator 46 (4,35 kSPS), abaixo de qualquer orçamento.
+**H2, refuted at all four budgets.** `taxa_tat` falls below the oracle by −18.7 [−29.2; −8.3],
+−8.3 [−14.6; −2.1], −12.5 [−18.8; −6.2] and −10.4 [−18.8; −4.2] points.
+- **What the rule does well:** it rescues the 1/4 valley against `uniforme` (11 × 0, p = 0.001).
+- **What it does not do:** find the best rate. It chooses the highest admissible rate, and the
+  best uniform rate for the outer race is factor 46 (4.35 kSPS), below any budget.
 
-**O "fator 46 generaliza entre registros" foi retirado** (análise *post hoc*; revisão de
+**The claim "factor 46 generalizes across records" was withdrawn** (*post hoc* analysis; review of
 2026-11-11).
-- **Vazamento pela verdade.** A verdade de cada registro, a mediana deixa-um-de-fora das
-  calibrações do grupo, usa também os registros da dobra de teste. Com a verdade **aninhada**
-  (só registros de treino), a melhor uniforme escolhida em outros registros dá 87,5 / 87,5 / 89,6
-  / 91,7 % nas duas pistas somadas, e **75,0 / 75,0 / 79,2 / 83,3 %** na pista externa, em vez de
-  95,8 / 95,8 / 93,8 / 95,8 %. Os dois conjuntos de números foram recalculados de forma independente
-  (`check_nested_cv.py`, notebook de 2026-11-11).
-- **O 46 é o topo de um platô, não um ótimo.** Pareado, ele não se distingue dos vizinhos
-  (contra 45: 3 × 0, p = 0,25; contra 47: 4 × 0, p = 0,125). Pelas contas do revisor, ainda não
-  refeitas, num nulo por permutação do fator dentro do segmento P(max ≥ 23) = 0,019, e na
-  validação por cenário (LOSO) com verdade aninhada o 46 volta em 2 de 4 dobras. O que generaliza é um platô de fatores ≥ 7, fora do vale de 3× a 6×.
-- **Os 12 registros de cada grupo vêm de um rolamento só.** "Entre registros" quer dizer entre
-  repetições do mesmo ensaio.
-- **Contra a uniforme escolhida com verdade aninhada,** o `taxa_tat` fica −12,5 / −4,2 / −8,4 /
-  −4,2 pontos abaixo (−16,6 / −6,2 / −8,4 / −4,2 por cenário). Com bootstrap por cenário, todos os
-  IC incluem 0. A única diferença robusta é a da pista externa em 1/4.
+- **Leakage through the truth.** The truth of each record, the leave-one-out median of the
+  group's calibrations, also uses the records of the test fold. With the **nested** truth
+  (training records only), the best uniform rate chosen on other records gives 87.5 / 87.5 / 89.6
+  / 91.7 % over both races combined, and **75.0 / 75.0 / 79.2 / 83.3 %** on the outer race,
+  instead of 95.8 / 95.8 / 93.8 / 95.8 %. Both sets of numbers were recomputed independently
+  (`check_nested_cv.py`, notebook of 2026-11-11).
+- **46 is the top of a plateau, not an optimum.** Paired, it cannot be told apart from its
+  neighbours (against 45: 3 × 0, p = 0.25; against 47: 4 × 0, p = 0.125). By the reviewer's
+  calculations, not yet redone, under a null that permutes the factor within the segment
+  P(max ≥ 23) = 0.019, and in the per-scenario validation (LOSO) with nested truth 46 comes back
+  in 2 of 4 folds. What generalizes is a plateau of factors ≥ 7, outside the 3× to 6× valley.
+- **The 12 records of each group come from a single bearing.** "Across records" means across
+  repetitions of the same test.
+- **Against the uniform rate chosen with nested truth,** `taxa_tat` falls −12.5 / −4.2 / −8.4 /
+  −4.2 points below (−16.6 / −6.2 / −8.4 / −4.2 by scenario). With a per-scenario bootstrap, all
+  the CIs include 0. The only robust difference is that of the outer race at 1/4.
 
-**Os outros braços.**
-- `uniforme_teto` é o melhor braço em 1/4, mas desaba em 1/16 e 1/32 (0 × 15 e 2 × 30 contra o
-  `uniforme`). Reduzir o teto corta a banda informativa da pista interna, que fica em 16,8–25 kHz.
-- `passa_faixa_lu` fica estável em torno de 79 % e perde do `uniforme` em 1/32 (0 × 7, p = 0,016).
+**The other arms.**
+- `uniforme_teto` is the best arm at 1/4, but it collapses at 1/16 and 1/32 (0 × 15 and 2 × 30
+  against `uniforme`). Lowering the ceiling cuts off the informative band of the inner race, which
+  lies at 16.8–25 kHz.
+- `passa_faixa_lu` stays stable around 79 % and loses to `uniforme` at 1/32 (0 × 7, p = 0.016).
 
-**Consequência para o E15 (corrigida em 2026-11-11).** A primeira versão desta seção mandava o
-E15 mirar 96–128×. Isso foi retirado. Com a verdade aninhada, a melhor uniforme escolhida no treino
-dá 75–83 % na pista externa de 1/4 a 1/32, e há espaço para ganhar ali. Já em 96–128× o baseline
-uniforme cai por uma parede do pipeline (bandas mais estreitas que a frequência de falha; ver o
-E07, extensão), e um ganho ali seria contra um espantalho.
-- **Orçamentos:** 1/4 a 1/32.
-- **Baseline que decide:** a melhor uniforme escolhida nos registros de treino, com verdade
-  aninhada.
+**Consequence for E15 (corrected on 2026-11-11).** The first version of this section told E15 to
+aim at 96–128×. That was withdrawn. With the nested truth, the best uniform rate chosen in training
+gives 75–83 % on the outer race from 1/4 to 1/32, and there is room to gain there. At 96–128×, on
+the other hand, the uniform baseline falls because of a wall of the pipeline (bands narrower than
+the fault frequency; see E07, extension), and a gain there would be against a straw man.
+- **Budgets:** 1/4 to 1/32.
+- **Deciding baseline:** the best uniform rate chosen on the training records, with nested truth.
 
-A correção foi comunicada ao E15 no mesmo dia.
+The correction was passed on to E15 on the same day.
 
-## Re-execução com a régua corrigida (2026-11-11, tarde)
+## Re-run with the corrected ruler (2026-11-11, afternoon)
 
-Rodada às 13:57 UTC, com a verdade pelo centro do platô, a régua local gravada ao lado e o braço
-`despike` pré-registrado. A análise (`analyze.py --ruler global|local`) está em
-`results/analysis.json` e `results/analysis-local.json`, com procedência gravada.
-- **Régua global:** verdade deixa-um-de-fora, com validação cruzada aninhada.
-- **Régua local:** a raia em taxa cheia do próprio segmento, só para pontuar. A escolha fora do teste
-  não tem vazamento por construção.
+Run at 13:57 UTC, with the truth taken at the plateau centre, the local ruler recorded alongside,
+and the `despike` arm pre-registered. The analysis (`analyze.py --ruler global|local`) is in
+`results/analysis.json` and `results/analysis-local.json`, with its provenance recorded.
+- **Global ruler:** leave-one-out truth, with nested cross-validation.
+- **Local ruler:** the full-rate line of the segment itself, used only for scoring. The choice
+  made outside the test has no leakage by construction.
 
-Acerto (%) nas duas pistas somadas:
+Accuracy (%) over both races combined:
 
-| braço | global 1/4 · 1/8 · 1/16 · 1/32 | local 1/4 · 1/8 · 1/16 · 1/32 |
+| arm | global 1/4 · 1/8 · 1/16 · 1/32 | local 1/4 · 1/8 · 1/16 · 1/32 |
 |---|---|---|
-| `uniforme` | 56,2 · 87,5 · 83,3 · 87,5 | 57,4 · 91,5 · 87,2 · 91,5 |
-| **`despike`** | **91,7 · 93,8 · 89,6 · 89,6** | **97,9 · 97,9 · 93,6 · 93,6** |
-| `uniforme_teto` | 85,4 · 87,5 · 54,2 · 29,2 | 89,4 · 91,5 · 55,3 · 29,8 |
-| `taxa_tat` | 77,1 · 87,5 · 83,3 · 87,5 | 78,7 · 89,4 · 87,2 · 91,5 |
-| `passa_faixa_lu` | 79,2 · 79,2 · 79,2 · 77,1 | 83,0 · 83,0 · 83,0 · 80,9 |
-| `aleatorio_cs` (espantalho, ver acima) | 2,9 · 4,2 · 6,2 · 4,2 | 2,9 · 4,3 · 6,4 · 4,3 |
-| melhor uniforme escolhida em outros registros | 89,6 · 89,6 · 87,5 · 89,6 | **97,9 · 97,9 · 95,7 · 97,9** |
-| oráculo (escolhido no teste) | 95,8 nos quatro | 97,9 nos quatro |
+| `uniforme` | 56.2 · 87.5 · 83.3 · 87.5 | 57.4 · 91.5 · 87.2 · 91.5 |
+| **`despike`** | **91.7 · 93.8 · 89.6 · 89.6** | **97.9 · 97.9 · 93.6 · 93.6** |
+| `uniforme_teto` | 85.4 · 87.5 · 54.2 · 29.2 | 89.4 · 91.5 · 55.3 · 29.8 |
+| `taxa_tat` | 77.1 · 87.5 · 83.3 · 87.5 | 78.7 · 89.4 · 87.2 · 91.5 |
+| `passa_faixa_lu` | 79.2 · 79.2 · 79.2 · 77.1 | 83.0 · 83.0 · 83.0 · 80.9 |
+| `aleatorio_cs` (straw man, see above) | 2.9 · 4.2 · 6.2 · 4.2 | 2.9 · 4.3 · 6.4 · 4.3 |
+| best uniform rate chosen on other records | 89.6 · 89.6 · 87.5 · 89.6 | **97.9 · 97.9 · 95.7 · 97.9** |
+| oracle (chosen on the test) | 95.8 at all four | 97.9 at all four |
 
-**Leitura.**
-- **Remover os picos de uma amostra resolve o vale de 1/4**, como no E20: 56 → 92 % na régua global,
-  57 → 98 % na local.
-- **Pela régua local, a melhor uniforme escolhida fora do teste fica a 0–2 pontos do oráculo.** Na
-  pista externa o fator escolhido é o mesmo nas 3 dobras: 12 em 1/4 e 1/8, 46 em 1/32. A
-  retirada anterior do "fator 46 generaliza" vinha da régua: a verdade aninhada também carrega a
-  deriva da raia com a rotação.
-- **O H2 continua refutado,** agora nas duas réguas. O `taxa_tat` fica −19,2 [−29,2; −4,3] pontos
-  abaixo da uniforme escolhida fora do teste em 1/4 (régua local), e os outros intervalos incluem 0.
-- **Consequência para o E15.** Com a régua local, o baseline que decide, a melhor uniforme
-  escolhida no treino, está em 96–98 %. Sobram de 2 a 4 pontos para a máscara aprendida no Ottawa.
-  Um resultado negativo é plausível e será reportado como tal.
+**Reading.**
+- **Removing one-sample spikes fixes the 1/4 valley**, as in E20: 56 → 92 % under the global
+  ruler, 57 → 98 % under the local one.
+- **Under the local ruler, the best uniform rate chosen outside the test lies within 0–2 points
+  of the oracle.** On the outer race the chosen factor is the same in the 3 folds: 12 at 1/4 and
+  1/8, 46 at 1/32. The earlier withdrawal of "factor 46 generalizes" came from the ruler: the
+  nested truth also carries the drift of the line with the rotation speed.
+- **H2 remains refuted,** now under both rulers. `taxa_tat` falls −19.2 [−29.2; −4.3] points
+  below the uniform rate chosen outside the test at 1/4 (local ruler), and the other intervals
+  include 0.
+- **Consequence for E15.** Under the local ruler, the deciding baseline, the best uniform rate
+  chosen in training, is at 96–98 %. That leaves 2 to 4 points for the learned mask on Ottawa. A
+  negative result is plausible and will be reported as such.

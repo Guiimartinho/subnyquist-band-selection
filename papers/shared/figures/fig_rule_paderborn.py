@@ -1,22 +1,24 @@
-"""Figura da regra das ordens de falha no Paderborn (E26, E26b e E26c).
+"""Figure of the fault-order rule on Paderborn (E26, E26b and E26c).
 
-Regra do projeto: a figura nasce de metrics.csv, nunca de número transcrito.
+Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
-- **Painéis:**
-  - (a) decisão e banda sob decimação pura, no fluxo bruto: estimação cega (E26 `kurtograma`),
-    banda do kurtograma e banda larga com a regra (E26b) e banda guiada com a regra (E26 `guiado`);
-  - (b) aquisição na mesma taxa (E26c): decimação pura contra o anti-alias ideal, para a banda
-    guiada e a banda larga com a regra;
-  - (c) perfil por zona de Nyquist (E26c): banda larga com a regra depois do passa-faixa ideal de
-    cada zona, em 4× e 8×; a zona 0 é o anti-alias.
-- **Métrica:** a das análises do E26. O limiar é o percentil 95 do maior escore nos rolamentos sãos
-  (deixa-um-são-de-fora para avaliar um são). A acurácia é por rolamento, com média por pista e
-  depois média das pistas. A estimação cega acerta quando cai a ±0,025 ordem da régua aninhada.
-- **Incerteza:** banda de 95 % por bootstrap dos rolamentos dentro de cada pista (4000), como na
-  figura do E24.
-- **Conferência:** cada ponto tem de bater com o `analysis.json` da rodada (±0,1 ponto: o
-  `analysis.json` arredonda cada pista e depois a média); se não
-  bater, o script para.
+- **Panels:**
+  - (a) decision and band under pure decimation, on the raw stream: blind estimation (E26
+    `kurtograma`), kurtogram band and wide band with the rule (E26b), and guided band with the
+    rule (E26 `guiado`);
+  - (b) acquisition at the same rate (E26c): pure decimation against the ideal anti-alias filter,
+    for the guided band and the wide band with the rule;
+  - (c) profile by Nyquist zone (E26c): wide band with the rule after the ideal band-pass of each
+    zone, at 4× and 8×; zone 0 is the anti-alias filter.
+- **Metric:** that of the E26 analyses. The threshold is the 95th percentile of the highest score
+  on the healthy bearings (leave-one-healthy-out to evaluate a healthy one). The accuracy is per
+  bearing, averaged per race and then over the races. The blind estimation hits when it falls
+  within ±0.025 order of the nested ruler.
+- **Uncertainty:** 95 % band by bootstrap over the bearings within each race (4000), as in the
+  E24 figure.
+- **Check:** each point has to match the `analysis.json` of the run (±0.1 point: the
+  `analysis.json` rounds each race and then the mean); if it does not
+  match, the script stops.
 
     uv run python papers/shared/figures/fig_rule_paderborn.py
 """
@@ -32,7 +34,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 reprova no PDF eXpress (T0.8)
+matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 fonts fail PDF eXpress (T0.8)
 matplotlib.rcParams["ps.fonttype"] = 42
 matplotlib.rcParams["font.size"] = 8
 matplotlib.rcParams["axes.labelsize"] = 8
@@ -56,7 +58,7 @@ PNG = ACQ / "figures/e26_rule_paderborn.png"
 FS_FULL_KSPS = 64.0
 FAULTS = ("BPFO", "BPFI")
 Q = 95.0
-# paleta conferida no validador da skill dataviz (croma, daltonismo, contraste)
+# palette checked with the validator of the dataviz skill (chroma, colour blindness, contrast)
 GRAY, TEAL, RUST, PURPLE = "0.55", "#0089A3", "#C0501F", "#7B4CC0"
 
 Rows = list[dict[str, str]]
@@ -73,7 +75,7 @@ def num(v: str) -> float:
 
 
 def rule_per_bearing(rows: Rows, score: Score) -> dict[tuple[str, str], float]:
-    """Acerto por (pista, rolamento) da regra, com o limiar dos sãos (como `evaluate` do E26c)."""
+    """Rule hit rate per (race, bearing), with the healthy threshold (as `evaluate` of E26c)."""
     hs: dict[str, list[float]] = defaultdict(list)
     for r in rows:
         if r["race"] == "H":
@@ -92,7 +94,7 @@ def rule_per_bearing(rows: Rows, score: Score) -> dict[tuple[str, str], float]:
 
 
 def blind_per_bearing(rows: Rows, calib: Rows, tol: float) -> dict[tuple[str, str], float]:
-    """Acerto da estimação cega contra a régua aninhada (como `analyze_paderborn.py`)."""
+    """Hit rate of the blind estimation against the nested ruler (as `analyze_paderborn.py`)."""
     valid = [c for c in calib if c["ok"] == "1"]
     all_med = {
         race: float(np.median([float(c["center"]) for c in valid if c["race"] == race]))
@@ -121,7 +123,7 @@ def blind_per_bearing(rows: Rows, calib: Rows, tol: float) -> dict[tuple[str, st
 
 
 def balanced_ci(pb: dict[tuple[str, str], float], n_boot: int = 4000, seed: int = 0):
-    """Ponto e IC 95 % da acurácia balanceada nos rolamentos com falha."""
+    """Point and 95 % CI of the balanced accuracy on the faulty bearings."""
     by: dict[str, list[float]] = defaultdict(list)
     for (race, _b), v in sorted(pb.items()):
         if race in ("OR", "IR"):
@@ -139,7 +141,7 @@ def balanced_ci(pb: dict[tuple[str, str], float], n_boot: int = 4000, seed: int 
 def check(point: float, summary: dict, key: str) -> None:
     ref = summary[key]["balanced"]
     if abs(point - ref) > 0.1:
-        raise SystemExit(f"{key}: figura {point:.2f} contra analysis.json {ref}")
+        raise SystemExit(f"{key}: figure {point:.2f} against analysis.json {ref}")
 
 
 def series(cells: dict[int, dict[tuple[str, str], float]]):
@@ -204,7 +206,7 @@ def main() -> None:
     def score_acq(r: dict[str, str], c: str) -> float:
         return num(r[f"s_{c}"])
 
-    # (a) decisão e banda, decimação pura, fluxo bruto
+    # (a) decision and band, pure decimation, raw stream
     conf_f = by_factor(conf, lambda r: True)
     blind = {f: blind_per_bearing(rs, calib, tol) for f, rs in conf_f.items()}
     guided = {f: rule_per_bearing(rs, score_conf) for f, rs in conf_f.items()}
@@ -223,7 +225,7 @@ def main() -> None:
         check(balanced_ci(kurt_rule[f])[0], s_rule, f"kurtograma_regra|bruto|{f}x")
         check(balanced_ci(wide_rule[f])[0], s_rule, f"banda_larga_regra|bruto|{f}x")
 
-    # (b) aquisição: pura contra anti-alias
+    # (b) acquisition: pure against anti-alias
     acq_cells = {}
     for acqn in ("pura", "antialias"):
         for strat in ("guiado", "banda_larga_regra"):
@@ -237,7 +239,7 @@ def main() -> None:
                 check(balanced_ci(pb)[0], s_acq, f"{acqn}|{strat}|{f}x")
             acq_cells[(acqn, strat)] = cells
 
-    # (c) perfil por zona, banda larga com a regra
+    # (c) per-zone profile, wide band with the rule
     zones: dict[int, list[tuple[int, tuple[float, float, float]]]] = {}
     for m in (4, 8):
         prof = []
@@ -255,7 +257,7 @@ def main() -> None:
             prof.append((k, pt))
         zones[m] = prof
 
-    # largura do texto do elsarticle (390 pt); (a) e (b) em cima, (c) embaixo na largura toda
+    # elsarticle text width (390 pt); (a) and (b) on top, (c) below across the full width
     fig = plt.figure(figsize=(5.4, 5.6))
     grid = fig.add_gridspec(2, 2, height_ratios=[1.15, 0.85])
     axes = [fig.add_subplot(grid[0, 0]), fig.add_subplot(grid[0, 1]), fig.add_subplot(grid[1, :])]
@@ -318,7 +320,7 @@ def main() -> None:
     fig.savefig(OUT)
     PNG.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(PNG, dpi=200)
-    print(f"conferido contra os analysis.json; escrito: {OUT} e {PNG}")
+    print(f"checked against the analysis.json files; written: {OUT} and {PNG}")
 
 
 if __name__ == "__main__":

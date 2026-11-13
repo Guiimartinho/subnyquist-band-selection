@@ -1,36 +1,36 @@
-"""WDCNN (`zhang2017wdcnn`): **só baseline** de rede genérica de diagnóstico, nunca o método.
+"""WDCNN (`zhang2017wdcnn`): generic diagnosis network, **only as a baseline**, never the method.
 
 Zhang, Peng, Li, Chen & Zhang, *A New Deep Learning Model for Fault Diagnosis with Good
 Anti-Noise and Domain Adaptation Ability on Raw Vibration Signals*, Sensors 17(2):425, 2017,
-doi:10.3390/s17020425. Arquitetura conferida na Tabela 2 do texto aberto (PMC5336047) em
-2026-11-11:
+doi:10.3390/s17020425. Architecture checked against Table 2 of the open-access text
+(PMC5336047) on 2026-11-11:
 
-======  ==============  =================  ======  ==========  ========
-camada  tipo            núcleo/passo       canais  saída       padding
-======  ==============  =================  ======  ==========  ========
-1       convolução 1    64×1 / 16×1        16      128×16      sim
-2       pooling 1       2×1 / 2×1          16      64×16       não
-3       convolução 2    3×1 / 1×1          32      64×32       sim
-4       pooling 2       2×1 / 2×1          32      32×32       não
-5       convolução 3    3×1 / 1×1          64      32×64       sim
-6       pooling 3       2×1 / 2×1          64      16×64       não
-7       convolução 4    3×1 / 1×1          64      16×64       sim
-8       pooling 4       2×1 / 2×1          64      8×64        não
-9       convolução 5    3×1 / 1×1          64      6×64        não
-10      pooling 5       2×1 / 2×1          64      3×64        não
-11      totalmente con  100                1       100×1
-12      softmax         10                 1       10
-======  ==============  =================  ======  ==========  ========
+======  ================  =================  ========  ==========  ========
+layer   type              kernel/stride      channels  output      padding
+======  ================  =================  ========  ==========  ========
+1       convolution 1     64×1 / 16×1        16        128×16      yes
+2       pooling 1         2×1 / 2×1          16        64×16       no
+3       convolution 2     3×1 / 1×1          32        64×32       yes
+4       pooling 2         2×1 / 2×1          32        32×32       no
+5       convolution 3     3×1 / 1×1          64        32×64       yes
+6       pooling 3         2×1 / 2×1          64        16×64       no
+7       convolution 4     3×1 / 1×1          64        16×64       yes
+8       pooling 4         2×1 / 2×1          64        8×64        no
+9       convolution 5     3×1 / 1×1          64        6×64        no
+10      pooling 5         2×1 / 2×1          64        3×64        no
+11      fully connected   100                1         100×1
+12      softmax           10                 1         10
+======  ================  =================  ========  ==========  ========
 
-Entrada de 2048 pontos. BN logo depois de cada convolução e da camada totalmente conectada,
-antes da ReLU; pooling por máximo; Adam e entropia cruzada; sem dropout nem termo de
-regularização (o texto diz que a BN já faz esse papel). O padding "sim" é o "same" com passo:
-128 = 2048/16 exige 24 amostras de cada lado na primeira convolução.
+Input of 2048 points. BN right after each convolution and after the fully connected layer,
+before the ReLU; max pooling; Adam and cross-entropy; no dropout and no regularization
+term (the text says BN already plays that role). The "yes" padding is "same" padding with
+stride: 128 = 2048/16 requires 24 samples on each side in the first convolution.
 
-**Não estão no texto** e são escolhas declaradas desta reimplementação: taxa de aprendizado,
-tamanho do lote, número de épocas e a normalização da entrada (o runner do E15 padroniza cada
-janela). A AdaBN do artigo, para mudança de carga, não está implementada: o E15 não muda de
-domínio entre treino e teste.
+**Not stated in the text**, and declared as choices of this reimplementation: learning rate,
+batch size, number of epochs and the input normalization (the E15 runner standardizes each
+window). The paper's AdaBN, for load changes, is not implemented: E15 does not change
+domain between training and test.
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ from torch import nn
 
 __all__ = ["WDCNN"]
 
-# (canais de entrada, canais de saída, núcleo, passo, padding) das cinco convoluções da Tabela 2
+# (input channels, output channels, kernel, stride, padding) of the five convolutions in Table 2
 _TABLE2 = (
     (1, 16, 64, 16, 24),
     (16, 32, 3, 1, 1),
@@ -51,7 +51,7 @@ _TABLE2 = (
 
 
 class WDCNN(nn.Module):
-    """WDCNN da Tabela 2 de `zhang2017wdcnn`, com ``n_classes`` saídas."""
+    """WDCNN from Table 2 of `zhang2017wdcnn`, with ``n_classes`` outputs."""
 
     def __init__(self, n_classes: int, input_length: int = 2048) -> None:
         super().__init__()
@@ -76,13 +76,13 @@ class WDCNN(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """``x`` ``(B, L)`` ou ``(B, 1, L)`` → logits ``(B, n_classes)``; softmax fica na perda."""
+        """``x`` ``(B, L)`` or ``(B, 1, L)`` → logits ``(B, n_classes)``; softmax is in the loss."""
         if x.dim() == 2:
             x = x.unsqueeze(1)
         return self.classifier(self.features(x))
 
     def trace_shapes(self) -> list[tuple[str, tuple[int, int]]]:
-        """``(nome, (largura, canais))`` depois de cada convolução e pooling, como na Tabela 2."""
+        """``(name, (width, channels))`` after each convolution and pooling, as in Table 2."""
         out: list[tuple[str, tuple[int, int]]] = []
         h = torch.zeros(2, 1, self.input_length)
         was_training = self.training

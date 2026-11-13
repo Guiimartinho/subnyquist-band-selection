@@ -1,16 +1,16 @@
-"""E23 - interferente impulsivo injetado no CWRU 48k (ADR 0006, atualizacao pos-E21).
+"""E23 - impulsive interferer injected into CWRU 48k (ADR 0006, post-E21 update).
 
-Para cada registro de falha (48 kHz, DE) a 1a metade e calibracao e a 2a e teste. No
-teste injeta-se um interferente numa portadora acima do teto da busca: rajadas impulsivas,
-ou o substituto de fase aleatoria da mesma realizacao (mesmo espectro de potencia bin a bin,
-curtose ~3), que isola a impulsividade da potencia. O pipeline e o do E02 em hertz, com a
-faixa de busca restrita a [f_min, teto]. Bracos: uniforme, aaf_ideal, uniforme_teto (teto
-pelo TAT) e taxa_tat (fator pelo TAT); o oraculo uniforme sai na analise.
+For each fault record (48 kHz, DE) the 1st half is calibration and the 2nd is test. In the
+test an interferer is injected on a carrier above the search ceiling: impulsive bursts, or
+the phase-randomized surrogate of the same realization (same power spectrum bin by bin,
+kurtosis ~3), which isolates impulsiveness from power. The pipeline is E02's in hertz, with the
+search range restricted to [f_min, ceiling]. Arms: uniforme, aaf_ideal, uniforme_teto (ceiling
+set by the TAT) and taxa_tat (factor set by the TAT); the uniform oracle comes out in the analysis.
 
     uv run python experiments/E23-injected-interferer-cwru/run.py \
         --config experiments/E23-injected-interferer-cwru/config/base.yaml
 
-Auxiliares copiados do E20/E21/E22, porque nada importa experiments/.
+Helpers copied from E20/E21/E22, because nothing imports experiments/.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ def at_repo(p: str) -> Path:
 
 
 # ----------------------------------------------------------------------
-# sinal
+# signal
 # ----------------------------------------------------------------------
 def fft_mask(x: np.ndarray, fs_hz: float, keep) -> np.ndarray:
     xf = np.fft.rfft(x)
@@ -65,12 +65,12 @@ def band_power(x: np.ndarray, fs_hz: float, lo_hz: float, hi_hz: float) -> float
 
 
 def burst_bandwidth_hz(tau_s: float) -> float:
-    """Largura a meia potencia (FWHM) do espectro lorentziano de uma rajada exp(-t/tau)."""
+    """Half-power width (FWHM) of the Lorentzian spectrum of an exp(-t/tau) burst."""
     return 1.0 / (math.pi * tau_s)
 
 
 def impulsive_bursts(n: int, fs_hz: float, fc_hz: float, cfg: dict, rng) -> np.ndarray:
-    """Rajadas exp(-t/tau) numa portadora fc, a taxa fixa, com atraso e fase iniciais aleatorios."""
+    """exp(-t/tau) bursts on a carrier fc, at a fixed rate, with random initial delay and phase."""
     inj = cfg["injection"]
     tau = float(inj["burst_tau_s"])
     env = np.zeros(n)
@@ -86,10 +86,10 @@ def impulsive_bursts(n: int, fs_hz: float, fc_hz: float, cfg: dict, rng) -> np.n
 
 
 def phase_surrogate(s: np.ndarray, rng) -> np.ndarray:
-    """Mesmo espectro de amplitude de s, bin a bin, com fases aleatorias.
+    """Same amplitude spectrum as s, bin by bin, with random phases.
 
-    A estatistica de segunda ordem fica identica e a curtose vai a ~3: a unica diferenca para s
-    e a impulsividade.
+    The second-order statistics stay identical and the kurtosis goes to ~3: the only difference
+    from s is the impulsiveness.
     """
     sf = np.fft.rfft(s)
     ph = rng.uniform(0.0, 2 * np.pi, sf.size)
@@ -100,45 +100,45 @@ def phase_surrogate(s: np.ndarray, rng) -> np.ndarray:
 
 
 def interferer(n: int, fs_hz: float, kind: str, fc_hz: float, cfg: dict, seed_parts) -> np.ndarray:
-    """Interferente de potencia unitaria.
+    """Unit-power interferer.
 
-    ``impulsive`` e ``surrogate`` partem da MESMA realizacao de rajadas (mesma semente), e o
-    substituto so troca as fases. A semente nao depende da potencia, entao a varredura de
-    potencia escala a mesma realizacao.
+    ``impulsive`` and ``surrogate`` start from the SAME burst realization (same seed), and the
+    surrogate only swaps the phases. The seed does not depend on the power, so the power
+    sweep scales the same realization.
     """
     s = impulsive_bursts(n, fs_hz, fc_hz, cfg, np.random.default_rng([*seed_parts, 0]))
     if kind == "surrogate":
         s = phase_surrogate(s, np.random.default_rng([*seed_parts, 1]))
     elif kind != "impulsive":
-        raise ValueError(f"tipo de interferente desconhecido: {kind}")
+        raise ValueError(f"unknown interferer kind: {kind}")
     return s / math.sqrt(float(np.mean(s**2)))
 
 
 def spike_train(n: int, fs_hz: float, rate_hz: float, sign: float, rng) -> np.ndarray:
-    """Picos isolados de uma amostra (amplitude 1, sinal ``sign``) num processo de Poisson.
+    """Isolated single-sample spikes (amplitude 1, sign ``sign``) in a Poisson process.
 
-    E o captor que a revisao achou no Ottawa: cerca de 1.300 a 2.500 picos/s, de uma amostra,
-    com desvio negativo em 96 % dos casos. Picos colados sao separados para continuarem isolados.
+    It is the captor that the review found in Ottawa: about 1300 to 2500 spikes/s, single-sample,
+    with negative deviation in 96 % of the cases. Adjacent spikes are split apart to stay isolated.
     """
     hit = rng.random(n) < rate_hz / fs_hz
     hit[0] = hit[-1] = False
-    hit[1:] &= ~hit[:-1]  # nunca dois picos em amostras vizinhas
+    hit[1:] &= ~hit[:-1]  # never two spikes at neighboring samples
     return np.where(hit, float(sign), 0.0)
 
 
 def residual_mad(x: np.ndarray) -> float:
-    """MAD (escala gaussiana) do desvio de cada amostra em relacao a media dos vizinhos."""
+    """MAD (Gaussian scale) of the deviation of each sample from the mean of its neighbors."""
     d = x[1:-1] - 0.5 * (x[:-2] + x[2:])
     return float(1.4826 * np.median(np.abs(d)))
 
 
 def despike(x: np.ndarray, k_mad: float = 10.0) -> np.ndarray:
-    """Troca picos isolados de uma amostra pela media dos vizinhos (criterio da revisao do E20).
+    """Replace isolated single-sample spikes with the neighbors' mean (E20 review criterion).
 
-    Pico: desvio acima de ``k_mad`` MAD, com os dois vizinhos desviando em sentido oposto e
-    menos de 0,8 vez. Nao zera faixa nenhuma do espectro.
-    Limitacao: dois picos a duas amostras um do outro escapam, porque o vizinho do meio desvia
-    tanto quanto eles.
+    Spike: deviation above ``k_mad`` MAD, with both neighbors deviating in the opposite direction
+    and by less than 0.8 times as much. It does not zero any band of the spectrum.
+    Limitation: two spikes two samples apart escape, because the middle neighbor deviates
+    as much as they do.
     """
     d = x[1:-1] - 0.5 * (x[:-2] + x[2:])
     mad = 1.4826 * np.median(np.abs(d))
@@ -159,17 +159,17 @@ def despike(x: np.ndarray, k_mad: float = 10.0) -> np.ndarray:
 
 
 def fold_to_baseband_hz(f_hz, fs_eff_hz: float):
-    """Imagem de f em [0, fs_eff/2] sob decimacao pura (mesma convencao do snq_core)."""
+    """Image of f in [0, fs_eff/2] under pure decimation (same convention as snq_core)."""
     return np.abs((np.asarray(f_hz, dtype=float) + fs_eff_hz / 2.0) % fs_eff_hz - fs_eff_hz / 2.0)
 
 
 def folded_share_in_search(
     s: np.ndarray, fs_hz: float, factor: int, f_min_hz: float, f_max_hz: float
 ) -> float:
-    """Fracao da potencia de s cuja imagem, sob x[::factor], cai na faixa de busca [f_min, f_max].
+    """Power fraction of s whose image under x[::factor] falls in the search range [f_min, f_max].
 
-    E a previsao aritmetica de H1. Conta a cauda lorentziana da rajada, que vaza para a faixa
-    de busca ate sem dobra (em 1x).
+    It is the arithmetic prediction of H1. It counts the Lorentzian tail of the burst, which leaks
+    into the search range even without folding (at 1x).
     """
     p = np.abs(np.fft.rfft(s)) ** 2
     img = fold_to_baseband_hz(np.fft.rfftfreq(s.size, d=1.0 / fs_hz), fs_hz / factor)
@@ -178,16 +178,16 @@ def folded_share_in_search(
 
 
 def on_interferer_line(est_hz: float, cfg: dict, tol_hz: float) -> bool:
-    """A estimativa caiu sobre a taxa das rajadas (ou um harmonico ate o 3o)?
+    """Did the estimate land on the burst rate (or on a harmonic up to the 3rd)?
 
-    E o sinal direto de captura: o seletor passou a olhar o interferente.
+    It is the direct sign of capture: the selector started looking at the interferer.
     """
     rate = float(cfg["injection"]["burst_rate_hz"])
     return any(abs(est_hz - k * rate) < tol_hz for k in (1, 2, 3))
 
 
 def prediction_class(share: float, cfg: dict) -> int:
-    """1: captura prevista; 0: sem captura prevista; -1: borda (fora do criterio binario)."""
+    """1: predicted capture; 0: no predicted capture; -1: borderline (outside binary criterion)."""
     pr = cfg["prediction"]
     if share >= float(pr["capture_share"]):
         return 1
@@ -197,7 +197,7 @@ def prediction_class(share: float, cfg: dict) -> int:
 
 
 # ----------------------------------------------------------------------
-# pipeline (E02 em hertz, com faixa de busca restrita)
+# pipeline (E02 in hertz, with a restricted search range)
 # ----------------------------------------------------------------------
 def kurtogram(x, fs_hz: float, f_max_hz: float, cfg: dict):
     kg = cfg["kurtogram"]
@@ -217,9 +217,9 @@ def classic_hz(x, fs_hz: float, factor: int, f_max_hz: float, truth_hz: float, c
     if xd.size < int(cfg["min_samples"]):
         return {"skipped": "min_samples"}
     if fs_eff / 2.0 <= 2.0 * truth_hz:
-        return {"skipped": "envelope_nyquist"}  # o guarda do E02
+        return {"skipped": "envelope_nyquist"}  # the E02 guard
     if f_max_hz <= f_min:
-        return {"skipped": "teto abaixo do piso do kurtograma"}
+        return {"skipped": "teto abaixo do piso do kurtograma"}  # "ceiling below kurtogram floor"
     try:
         k = kurtogram(xd, fs_eff, f_max_hz, cfg)
         est = estimate_without_prior(
@@ -251,7 +251,7 @@ def tat_admissible(x_cal, fs_hz: float, factor: int, f_max_hz: float, cfg: dict)
 
 
 class TatCache:
-    """TAT por (fator, teto) sobre uma captura de calibracao, avaliado uma vez."""
+    """TAT per (factor, ceiling) on a calibration capture, evaluated once."""
 
     def __init__(self, x_cal: np.ndarray, fs_hz: float, cfg: dict) -> None:
         self.x_cal, self.fs_hz, self.cfg = x_cal, fs_hz, cfg
@@ -265,15 +265,15 @@ class TatCache:
 
 
 # ----------------------------------------------------------------------
-# um registro
+# one record
 # ----------------------------------------------------------------------
 Condition = tuple[str, float | None, float | None, float | None, float | None]
 
 
 def conditions(cfg: dict) -> list[Condition]:
-    """(tipo, portadora, potencia relativa, taxa de picos, amplitude dos picos em MAD).
+    """(kind, carrier, relative power, spike rate, spike amplitude in MAD).
 
-    Rajadas e substituto variam portadora e potencia; o trem de picos varia taxa e amplitude.
+    Bursts and surrogate vary carrier and power; the spike train varies rate and amplitude.
     """
     inj = cfg["injection"]
     out: list[Condition] = [("none", None, None, None, None)]
@@ -299,7 +299,7 @@ def run_record(task: dict) -> dict:
     catalog = CwruCatalog.load(at_repo(cfg["catalog"]))
     rec = load_record(number, point, at_repo(cfg["data_dir"]), catalog, fs_hz=float(cfg["fs_hz"]))
     if rec.shaft_hz is None:
-        return {"number": number, "error": "sem RPM"}
+        return {"number": number, "error": "no RPM"}
     x, fs = rec.signal.astype(float), float(cfg["fs_hz"])
     h = x.size // 2
     xc, xt = x[:h], x[h:]
@@ -309,13 +309,13 @@ def run_record(task: dict) -> dict:
     tol = float(cfg["tolerance_hz"])
     search_ceilings = [float(c) for c in cfg["search_ceilings_hz"]]
 
-    # potencia de referencia: a do registro na banda que o kurtograma escolhe em taxa cheia
+    # reference power: the record's, in the band that the kurtogram chooses at full rate
     k_cal = kurtogram(xc, fs, ceiling_at(fs, cfg), cfg)
     p_ref = band_power(xc, fs, k_cal.f_lo_hz, k_cal.f_hi_hz)
 
     seed_rec = int(hashlib.sha256(f"{number}{point}".encode()).hexdigest()[:8], 16)
     rows = []
-    # uma tarefa = um registro x uma condicao (o pool paraleliza sobre as duas)
+    # one task = one record x one condition (the pool parallelizes over both)
     mad_ref = residual_mad(xc)
     for kind, fc, rel_db, spike_rate, spike_amp in task.get("conditions") or conditions(cfg):
         if kind == "none":
@@ -352,7 +352,7 @@ def run_record(task: dict) -> dict:
             fs_eff = fs / m
             c0 = ceiling_at(fs_eff, cfg)
             image = "" if fc is None else round(float(alias_frequency_hz(fc, fs_eff)), 1)
-            # braco uniforme em cada teto da busca (tetos efetivos distintos, sem duplicar celula)
+            # uniform arm at each search ceiling (distinct effective ceilings, no duplicated cell)
             arms: list[tuple[str, float, dict]] = []
             for c_eff in sorted(
                 {round(min(c, fs_eff / 2.0), 3) for c in search_ceilings}, reverse=True
@@ -439,7 +439,7 @@ def run_record_safe(task: dict) -> dict:
 
 
 # ----------------------------------------------------------------------
-# analise
+# analysis
 # ----------------------------------------------------------------------
 def summarize(rows: list[dict]) -> list[dict]:
     cell = defaultdict(lambda: [0, 0])
@@ -504,7 +504,7 @@ def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> 
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     src_sha, src_n = source_sha256()
     dirty = _git("status", "--porcelain")
     manifest = {
@@ -545,8 +545,8 @@ def main() -> int:
     ]
     workers = int(args.workers or cfg["compute"]["workers"])
     print(
-        f"{len(tasks)} tarefas ({len(sel)} registros x {len(conditions(cfg))} condicoes), "
-        f"{workers} processos",
+        f"{len(tasks)} tasks ({len(sel)} records x {len(conditions(cfg))} conditions), "
+        f"{workers} processes",
         flush=True,
     )
     out, failed = [], []
@@ -555,7 +555,7 @@ def main() -> int:
             (failed if "error" in res else out).append(res)
             done = len(out) + len(failed)
             if done % 25 == 0 or done == len(tasks):
-                print(f"  {done}/{len(tasks)} tarefas ({len(failed)} com erro)", flush=True)
+                print(f"  {done}/{len(tasks)} tasks ({len(failed)} with errors)", flush=True)
     rows = [r for o in out for r in o["rows"]]
     summary = summarize(rows)
     write_manifest(
@@ -579,7 +579,7 @@ def main() -> int:
             w = csv.DictWriter(f, fieldnames=cols, restval="")
             w.writeheader()
             w.writerows(data)
-    print(f"\n{len(rows)} linhas -> {results / 'metrics.csv'}; {len(failed)} registros com erro")
+    print(f"\n{len(rows)} rows -> {results / 'metrics.csv'}; {len(failed)} records with errors")
     return 0
 
 

@@ -1,4 +1,4 @@
-"""As intervencoes do E20 removem o que dizem remover, e so isso."""
+"""The E20 interventions remove what they claim to remove, and only that."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ e20 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(e20)
 
 FS = 200_000.0
-N = 200_000  # 1 s: resolucao de 1 Hz, tons no centro do bin
+N = 200_000  # 1 s: 1 Hz resolution, tones at the bin centre
 
 
 def tone(f_hz: float) -> np.ndarray:
@@ -42,14 +42,14 @@ def test_stop_removes_only_its_zone():
 
 def test_aaf_ideal_kills_everything_above_effective_nyquist():
     x = tone(80_000.0) + tone(30_000.0) + tone(10_000.0)
-    y = e20.apply_intervention(x, FS, {"kind": "aaf_ideal"}, 4)  # Nyquist efetivo = 25 kHz
+    y = e20.apply_intervention(x, FS, {"kind": "aaf_ideal"}, 4)  # effective Nyquist = 25 kHz
     assert amp(y, 80_000.0) < 1e-9
     assert amp(y, 30_000.0) < 1e-9
     assert abs(amp(y, 10_000.0) - 1.0) < 1e-9
 
 
 def test_zone_z3_folds_onto_search_band_at_4x_and_2x():
-    """A aritmetica que motivou o E20: 80 kHz aparece em 20 kHz tanto em 4x quanto em 2x."""
+    """The arithmetic that motivated E20: 80 kHz shows up at 20 kHz at both 4x and 2x."""
     x = tone(80_000.0)
     for factor in (2, 4):
         d = x[::factor]
@@ -71,17 +71,17 @@ def test_despike_and_median3_remove_an_isolated_spike_without_a_band_mask():
     t = np.arange(20_000) / fs
     x = np.sin(2 * np.pi * 3000.0 * t)
     y = x.copy()
-    y[5_000] -= 5.0  # pico isolado de uma amostra
+    y[5_000] -= 5.0  # isolated single-sample spike
     for kind in ("despike", "median3"):
         z = e20.apply_intervention(y, fs, {"kind": kind}, factor=4)
-        # despike interpola; a mediana de 3 devolve um dos vizinhos (nao interpola)
+        # despike interpolates; the median of 3 returns one of the neighbours (no interpolation)
         lo, hi = sorted((x[4_999], x[5_001]))
         assert lo - 1e-9 <= z[5_000] <= hi + 1e-9, kind
         assert np.max(np.abs(np.delete(z - x, [4_999, 5_000, 5_001]))) < 0.05, kind
 
 
 def test_analyse_selector_default_is_the_plain_kurtogram_and_robust_ones_run():
-    """Seletor por braço (2026-11-12): o padrão é o kurtograma; os robustos rodam na mesma busca."""
+    """Per-arm selector (2026-11-12): kurtogram by default; robust ones run on the same search."""
     import yaml
 
     cfg = yaml.safe_load(
@@ -90,7 +90,7 @@ def test_analyse_selector_default_is_the_plain_kurtogram_and_robust_ones_run():
     rng = np.random.default_rng(0)
     fs, n = 50_000.0, 50_000
     x = rng.normal(size=n)
-    x[::997] += 30.0  # picos isolados
+    x[::997] += 30.0  # isolated spikes
     spd = np.full(n, 20.0)
     k0, _ = e20.analyse(x, fs, spd, cfg, 25_000.0)
     k1, _ = e20.analyse(x, fs, spd, cfg, 25_000.0, "sk")
@@ -101,7 +101,7 @@ def test_analyse_selector_default_is_the_plain_kurtogram_and_robust_ones_run():
 
 
 def test_post_despike_config_keeps_the_signal_before_decimation():
-    """O braço depois de decimar não mexe no sinal em taxa cheia (kind none)."""
+    """The after-decimation arm leaves the full-rate signal untouched (kind none)."""
     import yaml
 
     cfg = yaml.safe_load(

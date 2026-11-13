@@ -1,4 +1,4 @@
-# FUMACA do E24: so confere o caminho do codigo; nao e resultado.
+# E24 SMOKE test: only checks the code path; it is not a result.
 seed: 20261112
 data_dir: datasets/raw/paderborn
 settings:

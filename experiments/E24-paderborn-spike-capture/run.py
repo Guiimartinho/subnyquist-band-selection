@@ -1,14 +1,14 @@
-"""E24: captura do seletor por picos sob decimação pura, no Paderborn (pré-registro no README).
+"""E24: selector capture by spikes under pure decimation, on Paderborn (pre-registered in README).
 
-Só CPU. Para cada registro (rolamento × ajuste de 1500 rpm), faz três coisas.
+CPU only. For each record (bearing × 1500 rpm setting), it does three things.
 
-1. **Calibração:** a raia em taxa cheia da medição 1, para a régua aninhada.
-2. **Régua local:** a raia em taxa cheia de cada segmento (medições 2 a 20).
-3. **Estimativa:** para cada braço (seletor × remoção de picos) e fator, decimação pura, banda,
-   espectro de envelope em ordens e argmax sem prior.
+1. **Calibration:** the full-rate line of measurement 1, for the nested ruler.
+2. **Local ruler:** the full-rate line of each segment (measurements 2 to 20).
+3. **Estimate:** for each arm (selector × spike removal) and factor, pure decimation, band,
+   envelope order spectrum and argmax without prior.
 
-Depois: régua aninhada deixando o próprio rolamento de fora, acurácia balanceada, bootstrap por
-rolamento e Holm.
+Then: nested ruler leaving the bearing itself out, balanced accuracy, bootstrap by bearing
+and Holm.
 
     OMP_NUM_THREADS=1 python experiments/E24-paderborn-spike-capture/run.py \
         --config experiments/E24-paderborn-spike-capture/config/base.yaml --workers 6
@@ -55,8 +55,9 @@ def at_repo(p: str) -> Path:
 
 
 def despike(x: np.ndarray, k_mad: float = 10.0) -> np.ndarray:
-    """Critério do E20: desvio acima de ``k_mad`` MAD em relação à média dos vizinhos, com os
-    dois vizinhos desviando em sentido oposto e menos de 0,8 vez; troca pela média dos vizinhos."""
+    """E20 criterion: deviation above ``k_mad`` MAD from the neighbours' mean, with both
+    neighbours deviating in the opposite direction and less than 0.8 times as much; replaced by
+    the neighbours' mean."""
     d = x[1:-1] - 0.5 * (x[:-2] + x[2:])
     mad = 1.4826 * np.median(np.abs(d))
     big = np.abs(d) > k_mad * mad
@@ -81,7 +82,7 @@ def select_band(x, fs_hz: float, selector: str, cfg: dict, f_max_hz: float | Non
     kw = {
         "max_level": int(kg["max_level"]),
         "f_min_hz": float(kg["f_min_hz"]),
-        "f_max_hz": top,  # teto da busca: o Nyquist efetivo, ou um teto menor do braço
+        "f_max_hz": top,  # search ceiling: the effective Nyquist, or the arm's lower ceiling
     }
     if selector == "sk":
         return fast_kurtogram(x, fs_hz, **kw)
@@ -89,7 +90,7 @@ def select_band(x, fs_hz: float, selector: str, cfg: dict, f_max_hz: float | Non
 
 
 def line_calibration(x, v, nominal: float, cfg: dict) -> dict:
-    """Raia em taxa cheia (sinal bruto, kurtograma): refino em ±span e proeminência do pico."""
+    """Full-rate line (raw signal, kurtogram): refinement within ±span and peak prominence."""
     try:
         k = select_band(x, FS, "sk", cfg)
         spec = envelope_order_spectrum(x, FS, v, k.band_hz, samples_per_rev=cfg["samples_per_rev"])
@@ -113,7 +114,7 @@ def line_calibration(x, v, nominal: float, cfg: dict) -> dict:
 
 
 def notch(x: np.ndarray, fs_hz: float, bands_hz: list) -> np.ndarray:
-    """Zera faixas por máscara ideal de FFT, de fase zero (atribuição, não filtro realizável)."""
+    """Zeroes bands with an ideal zero-phase FFT mask (attribution, not a realizable filter)."""
     xf = np.fft.rfft(x)
     f = np.fft.rfftfreq(x.size, d=1.0 / fs_hz)
     for lo, hi in bands_hz:
@@ -131,11 +132,11 @@ def estimate(
     f_max_hz: float | None = None,
     notch_hz: list | None = None,
 ):
-    """Pipeline do E07/E22 num fator, com o seletor do braço. Devolve (ordem, banda) ou None."""
-    if notch_hz:  # em taxa cheia, antes de decimar
+    """E07/E22 pipeline at one factor, with the arm's selector. Returns (order, band) or None."""
+    if notch_hz:  # at full rate, before decimating
         x = notch(x, FS, notch_hz)
     xd, vd = undersample(x, factor), undersample(v, factor)
-    if post_despike:  # no fluxo já decimado: realizável no nó
+    if post_despike:  # on the already-decimated stream: realizable on the node
         xd = despike(xd, float(cfg["despike"]["k_mad"]))
     fs_eff = FS / factor
     guard = float(cfg["guard_points_per_rev_factor"]) * int(cfg["samples_per_rev"])
@@ -239,6 +240,7 @@ def build_rows(cfg: dict, cls: list[dict]) -> list[dict]:
                     if np.isfinite(nested)
                     else "",
                     "hit_local": int(ok and abs(est - tl) < tol) if np.isfinite(tl) else "",
+                    # data label, kept as is: "guarda ou ValueError" = "guard or ValueError"
                     "skipped": "" if res is not None else "guarda ou ValueError",
                 }
             )
@@ -261,7 +263,7 @@ def balanced(acc: dict[tuple[str, str], float]) -> float:
 
 
 def cluster_test(a: dict, b: dict, n_boot: int, seed: int) -> dict:
-    """a - b em acurácia balanceada; bootstrap dos rolamentos dentro de cada pista."""
+    """a - b in balanced accuracy; bootstrap of the bearings within each race."""
     keys = sorted(set(a) & set(b))
     races = sorted({k[0] for k in keys})
     d = {r: np.array([a[k] - b[k] for k in keys if k[0] == r]) for r in races}
@@ -315,7 +317,7 @@ def main() -> None:
     t0 = time.time()
     with ProcessPoolExecutor(max_workers=args.workers or int(cfg["compute"]["workers"])) as pool:
         cls = list(pool.map(record_task, [(cfg, str(root), r) for r in ids]))
-    print(f"{len(cls)} registros em {time.time() - t0:.0f} s", flush=True)
+    print(f"{len(cls)} records in {time.time() - t0:.0f} s", flush=True)
     rows = build_rows(cfg, cls)
     write_csv(out_dir / "metrics.csv", rows)
 
@@ -400,8 +402,8 @@ def main() -> None:
     for x in hyp:
         if "verdict" in x:
             print(
-                f"{x['hypothesis']} regua {x['ruler']}: veredito {x['verdict']} "
-                f"(fatores {x['factors_won'] or '-'})",
+                f"{x['hypothesis']} ruler {x['ruler']}: verdict {x['verdict']} "
+                f"(factors {x['factors_won'] or '-'})",
                 flush=True,
             )
     print(f"-> {out_dir}", flush=True)

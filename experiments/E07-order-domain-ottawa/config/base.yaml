@@ -1,8 +1,8 @@
-# E07 - degradacao por subamostragem no dominio de ordem, com folga real.
+# E07 - undersampling degradation in the order domain, with real headroom.
 #
-# O E02 mediu o CWRU, cujo Nyquist efetivo satura antes do metodo. Ottawa 2018 tem
-# ~28x de folga genuina e, o que importa mais, um encoder: sob rotacao variavel a
-# frequencia de falha em hertz se move, mas a ORDEM nao.
+# E02 measured CWRU, whose effective Nyquist saturates before the method does. Ottawa 2018 has
+# ~28x of genuine headroom and, what matters more, an encoder: under variable rotation the
+# fault frequency in hertz moves, but the ORDER does not.
 seed: 20260903
 
 data_dir: datasets/raw/ottawa
@@ -10,9 +10,9 @@ conditions: [I, O]
 scenarios: [A, B, C, D]
 trials: [1, 2, 3]
 
-# 2.000.000 amostras por registro (10 s a 200 kSPS). Tres janelas disjuntas de
-# 2,5 s dao ~37 revolucoes cada - resolucao de ordem ~0,027, folgada para a
-# tolerancia abaixo, e triplica o n sem repetir montagem.
+# 2,000,000 samples per record (10 s at 200 kSPS). Three disjoint windows of
+# 2.5 s give ~37 revolutions each - order resolution ~0.027, ample for the
+# tolerance below, and it triples n without repeating a setup.
 segment_samples: 500000
 segments_per_record: 3
 min_samples: 4096
@@ -21,16 +21,16 @@ pulses_per_rev: 1024
 
 kurtogram:
   max_level: 4
-  # Abaixo de 500 Hz esta o conteudo estrutural: 97% da energia, nenhuma falha.
+  # Below 500 Hz lies the structural content: 97% of the energy, no fault.
   f_min_hz: 500.0
-  # Acima de 20 kHz ha 0,1% da energia. A curtose de banda quase vazia e dominada
-  # por vazamento numerico, e o kurtograma "encontra" transiente onde nao ha
-  # energia - foi o que aconteceu em 12/12 registros de pista externa, que
-  # escolhiam 50-100 kHz e nao mostravam falha alguma. Teto medido, nao arbitrado.
+  # Above 20 kHz there is 0.1% of the energy. The kurtosis of an almost empty band is dominated
+  # by numerical leakage, and the kurtogram "finds" a transient where there is no
+  # energy - which is what happened in 12/12 outer-race records, which
+  # chose 50-100 kHz and showed no fault at all. Measured ceiling, not arbitrated.
   f_max_hz: 25000.0
 
-# Geometria de catalogo do ER16K: 9 esferas, esfera 0,3125", primitivo 1,516".
-# NAO e a verdade fundamental - e o prior nominal, cujo desvio o experimento mede.
+# ER16K catalog geometry: 9 balls, ball diameter 0.3125", pitch diameter 1.516".
+# It is NOT the ground truth - it is the nominal prior, whose deviation the experiment measures.
 nominal:
   n_elements: 9
   geom_ratio: 0.206
@@ -38,11 +38,11 @@ nominal:
 prior:
   n_harmonics: 6
   score_harmonics: 3
-  # Faixa de calibracao em torno da ordem nominal, para o prior calibrado.
+  # Calibration range around the nominal order, for the calibrated prior.
   calibration_span: 0.12
 
-# Acerto quando |ordem estimada - verdade| < tolerance_order. A dispersao entre
-# registros da mesma condicao e ~0,035 em ordens; 0,06 a cobre sem ficar frouxa.
+# A hit when |estimated order - truth| < tolerance_order. The spread between
+# records of the same condition is ~0.035 in orders; 0.06 covers it without being loose.
 tolerance_order: 0.06
 samples_per_rev: 64
 order_min: 2.0

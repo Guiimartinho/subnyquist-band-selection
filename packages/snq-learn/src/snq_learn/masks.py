@@ -1,39 +1,39 @@
-"""Máscaras de amostragem periódicas sobre a grade de ticks, e o conjunto viável do E15.
+"""Periodic sampling masks on the tick grid, and the E15 feasible set.
 
-O conjunto viável, como o README do E15 o define:
+The feasible set, as the E15 README defines it:
 
-- **grade:** a taxa de aquisição do conjunto de dados é a grade de ticks;
-- **padrão periódico** de ``L`` ticks com ``K`` posições ativas por período, taxa média ``K/L``
-  da grade;
-- **espaçamento mínimo** de ``g`` ticks entre posições ativas consecutivas, medido de forma
-  **circular**: a última posição de um período e a primeira do seguinte também precisam estar a
-  ``g`` ticks ou mais. Representa o tempo de conversão de um SAR único.
+- **grid:** the acquisition rate of the dataset is the tick grid;
+- **periodic pattern** of ``L`` ticks with ``K`` active positions per period, mean rate ``K/L``
+  of the grid;
+- **minimum spacing** of ``g`` ticks between consecutive active positions, measured
+  **circularly**: the last position of one period and the first of the next also have to be
+  ``g`` ticks or more apart. It represents the conversion time of a single SAR.
 
-Realização no nRF54L15, como hipótese de arquitetura e não como medida: um TIMER em modo de
-comparação com período de ``L`` ticks, um registrador CC por posição ativa, cada evento ligado
-por DPPI à tarefa SAMPLE do SAADC (ver `timer_schedule`). **O número de registradores CC por
-instância de TIMER do nRF54L15 não foi conferido** nesta implementação. ``K`` pequeno é escolha
-conservadora, não garantia.
+Realization on the nRF54L15, as an architecture hypothesis and not as a measurement: a TIMER in
+compare mode with a period of ``L`` ticks, one CC register per active position, each event
+linked by DPPI to the SAMPLE task of the SAADC (see `timer_schedule`). **The number of CC
+registers per TIMER instance of the nRF54L15 has not been checked** in this implementation. A
+small ``K`` is a conservative choice, not a guarantee.
 
-Peças, e nada além delas:
+Pieces, and nothing beyond them:
 
-``FeasibleSet``                 o conjunto ``(L, K, g)`` e a checagem de viabilidade;
-``project_to_feasible``         projeção exata, por programação dinâmica, de um vetor de escores;
-``fold_project``                projeção exata de uma máscara de horizonte ``M·L`` sem restrição;
-``uniform_positions``           o padrão uniforme, que é a decimação por ``L/K``;
-``random_feasible_positions``   sorteio uniforme sobre os padrões viáveis;
-``designed_positions``          multi-coset projetado por critério clássico, fixo e sem dados;
-``support_designed_positions``  multi-coset para suporte espectral conhecido
-                                (`venkataramani2001optimal`), com ``band_support_cells``;
-``FixedMask``                   qualquer padrão fixo, como módulo;
-``GumbelTopKMask``              máscara aprendida: top-K de Gumbel com straight-through
-                                (`huijben2020dps`, `vangorp2021adps`), com diagnósticos;
-``LoupeMask``                   LOUPE (`bahadir2020loupe`), sem restrição, e a projeção dele;
-``BlockAdaptiveMask``           política adaptativa por blocos, inspirada no ADPS.
+``FeasibleSet``                 the ``(L, K, g)`` set and the feasibility check;
+``project_to_feasible``         exact projection, by dynamic programming, of a score vector;
+``fold_project``                exact projection of an unconstrained mask with horizon ``M·L``;
+``uniform_positions``           the uniform pattern, which is decimation by ``L/K``;
+``random_feasible_positions``   uniform draw over the feasible patterns;
+``designed_positions``          multi-coset designed by a classical criterion, fixed, data-free;
+``support_designed_positions``  multi-coset for a known spectral support
+                                (`venkataramani2001optimal`), with ``band_support_cells``;
+``FixedMask``                   any fixed pattern, as a module;
+``GumbelTopKMask``              learned mask: Gumbel top-K with straight-through
+                                (`huijben2020dps`, `vangorp2021adps`), with diagnostics;
+``LoupeMask``                   LOUPE (`bahadir2020loupe`), unconstrained, and its projection;
+``BlockAdaptiveMask``           block-wise adaptive policy, inspired by ADPS.
 
-Todos os módulos de máscara recebem o sinal ``(B, N)`` e devolvem a máscara no tempo ``(B, N)``,
-com ``N`` múltiplo de ``L``. O produto ``x·m`` é o sinal mascarado e preenchido com zeros que o
-decodificador recebe.
+All mask modules receive the signal ``(B, N)`` and return the time-domain mask ``(B, N)``,
+with ``N`` a multiple of ``L``. The product ``x·m`` is the masked, zero-filled signal that the
+decoder receives.
 """
 
 from __future__ import annotations
@@ -72,14 +72,14 @@ __all__ = [
 
 
 # ----------------------------------------------------------------------
-# conjunto viável
+# feasible set
 # ----------------------------------------------------------------------
 @dataclass(frozen=True)
 class FeasibleSet:
-    """Padrões periódicos de ``period_ticks`` ticks com ``active_per_period`` posições ativas.
+    """Periodic patterns of ``period_ticks`` ticks with ``active_per_period`` active positions.
 
-    ``min_gap_ticks = 1`` não restringe nada além de posições distintas. O conjunto é vazio
-    quando ``K·g > L``, e isso é erro de construção, não um conjunto vazio silencioso.
+    ``min_gap_ticks = 1`` restricts nothing beyond distinct positions. The set is empty
+    when ``K·g > L``, and that is a construction error, not a silently empty set.
     """
 
     period_ticks: int
@@ -89,32 +89,32 @@ class FeasibleSet:
     def __post_init__(self) -> None:
         period, k, g = self.period_ticks, self.active_per_period, self.min_gap_ticks
         if period < 1 or k < 1 or g < 1:
-            raise ValueError("period_ticks, active_per_period e min_gap_ticks precisam ser >= 1")
+            raise ValueError("period_ticks, active_per_period and min_gap_ticks must be >= 1")
         if k > period:
-            raise ValueError(f"{k} posicoes nao cabem num periodo de {period} ticks")
+            raise ValueError(f"{k} positions do not fit in a period of {period} ticks")
         if k * g > period:
             raise ValueError(
-                f"conjunto vazio: {k} posicoes com espacamento >= {g} exigem periodo >= {k * g}, "
-                f"e o periodo e {period}"
+                f"empty set: {k} positions with spacing >= {g} require period >= {k * g}, "
+                f"and the period is {period}"
             )
 
     @classmethod
     def for_budget(cls, budget: int, active_per_period: int, min_gap_ticks: int = 1) -> FeasibleSet:
-        """Conjunto com ``L = K·budget``: taxa média exatamente ``1/budget`` da grade."""
+        """Set with ``L = K·budget``: mean rate exactly ``1/budget`` of the grid."""
         return cls(int(budget) * int(active_per_period), int(active_per_period), int(min_gap_ticks))
 
     @property
     def rate_fraction(self) -> float:
-        """Taxa média como fração da grade, ``K/L``."""
+        """Mean rate as a fraction of the grid, ``K/L``."""
         return self.active_per_period / self.period_ticks
 
     def violations(self, positions: ArrayLike) -> int:
-        """Quantos intervalos circulares entre posições consecutivas ficam abaixo de ``g``."""
+        """How many circular intervals between consecutive positions fall below ``g``."""
         p = _as_positions(positions, self.period_ticks)
         return int(np.count_nonzero(circular_gaps(p, self.period_ticks) < self.min_gap_ticks))
 
     def is_feasible(self, positions: ArrayLike) -> bool:
-        """``K`` posições distintas dentro do período e espaçamento circular >= ``g``."""
+        """``K`` distinct positions within the period and circular spacing >= ``g``."""
         p = np.asarray(positions).ravel()
         if p.size != self.active_per_period or not np.all(np.equal(np.mod(p, 1), 0)):
             return False
@@ -127,14 +127,14 @@ class FeasibleSet:
 def _as_positions(positions: ArrayLike, period_ticks: int) -> NDArray[np.int64]:
     p = np.unique(np.asarray(positions, dtype=np.int64).ravel())
     if p.size == 0:
-        raise ValueError("padrao sem posicoes ativas")
+        raise ValueError("pattern without active positions")
     if p[0] < 0 or p[-1] >= period_ticks:
-        raise ValueError(f"posicoes fora de [0, {period_ticks})")
+        raise ValueError(f"positions outside [0, {period_ticks})")
     return p
 
 
 def circular_gaps(positions: ArrayLike, period_ticks: int) -> NDArray[np.int64]:
-    """Intervalos entre posições ativas consecutivas, com a volta do período.
+    """Intervals between consecutive active positions, including the period wrap-around.
 
     >>> circular_gaps([0, 3, 5], 8).tolist()
     [3, 2, 3]
@@ -144,19 +144,19 @@ def circular_gaps(positions: ArrayLike, period_ticks: int) -> NDArray[np.int64]:
 
 
 def positions_to_mask(positions: ArrayLike, period_ticks: int) -> NDArray[np.float32]:
-    """Máscara binária de um período a partir das posições ativas."""
+    """Binary mask of one period from the active positions."""
     m = np.zeros(int(period_ticks), dtype=np.float32)
     m[_as_positions(positions, period_ticks)] = 1.0
     return m
 
 
 # ----------------------------------------------------------------------
-# projeção exata
+# exact projection
 # ----------------------------------------------------------------------
 def _best_spaced_subset(w: NDArray[np.float64], k: int, gap: int) -> tuple[float, list[int]] | None:
-    """Maior soma de ``k`` entradas de ``w`` com índices espaçados de ``gap`` ou mais (linear).
+    """Largest sum of ``k`` entries of ``w`` with indices spaced by ``gap`` or more (linear).
 
-    Programação dinâmica ``O(len(w)·k)``. Devolve ``None`` se não couberem ``k`` índices.
+    Dynamic programming, ``O(len(w)·k)``. Returns ``None`` if ``k`` indices do not fit.
     """
     n = w.size
     if k == 0:
@@ -168,7 +168,7 @@ def _best_spaced_subset(w: NDArray[np.float64], k: int, gap: int) -> tuple[float
     f[:, 0] = 0.0
     take = np.zeros((n + 1, k + 1), dtype=bool)
     for i in range(1, n + 1):
-        prev = f[max(i - gap, 0), :-1] + w[i - 1]  # escolher o elemento i-1
+        prev = f[max(i - gap, 0), :-1] + w[i - 1]  # take element i-1
         skip = f[i - 1, 1:]
         better = prev > skip
         f[i, 1:] = np.where(better, prev, skip)
@@ -187,22 +187,22 @@ def _best_spaced_subset(w: NDArray[np.float64], k: int, gap: int) -> tuple[float
 
 
 def project_to_feasible(scores: ArrayLike, fs: FeasibleSet) -> NDArray[np.int64]:
-    """Projeção **exata** de um vetor de escores sobre o conjunto viável.
+    """**Exact** projection of a score vector onto the feasible set.
 
-    Devolve as ``K`` posições de maior soma de escores com espaçamento circular >= ``g``. Para
-    máscaras binárias de cardinalidade fixa, ``||m - w||² = K - 2<m, w> + ||w||²``, então
-    maximizar a soma é o mesmo que minimizar a distância euclidiana: é a projeção de ``w``.
+    Returns the ``K`` positions with the largest score sum and circular spacing >= ``g``. For
+    binary masks of fixed cardinality, ``||m - w||² = K - 2<m, w> + ||w||²``, so maximizing
+    the sum is the same as minimizing the Euclidean distance: it is the projection of ``w``.
 
-    O laço externo fixa a menor posição escolhida ``s``; as outras ``K - 1`` ficam em
-    ``[s + g, min(L - 1, s + L - g)]``, o que garante o espaçamento da volta. Custo
-    ``O(L²·K)``. Em empate de soma, vence o primeiro ``s`` encontrado (determinístico).
+    The outer loop fixes the smallest chosen position ``s``; the other ``K - 1`` lie in
+    ``[s + g, min(L - 1, s + L - g)]``, which guarantees the wrap-around spacing. Cost
+    ``O(L²·K)``. On a tie in the sum, the first ``s`` found wins (deterministic).
     """
     w = np.asarray(scores, dtype=np.float64).ravel()
     period, k, gap = fs.period_ticks, fs.active_per_period, fs.min_gap_ticks
     if w.size != period:
-        raise ValueError(f"{w.size} escores para um periodo de {period} ticks")
+        raise ValueError(f"{w.size} scores for a period of {period} ticks")
     if not np.all(np.isfinite(w)):
-        raise ValueError("escores nao finitos")
+        raise ValueError("non-finite scores")
     best_val, best = -np.inf, None
     for s in range(period):
         if k == 1:
@@ -216,29 +216,29 @@ def project_to_feasible(scores: ArrayLike, fs: FeasibleSet) -> NDArray[np.int64]
             cand = [s] + [lo + i for i in sub[1]]
         if val > best_val + 1e-12:
             best_val, best = val, cand
-    if best is None:  # inalcançável com FeasibleSet válido; mantido como trava
-        raise ValueError("nenhum padrao viavel encontrado")
+    if best is None:  # unreachable with a valid FeasibleSet; kept as a safeguard
+        raise ValueError("no feasible pattern found")
     out = np.asarray(sorted(best), dtype=np.int64)
     assert fs.is_feasible(out)
     return out
 
 
 def fold_project(logits: ArrayLike, k_horizon: int, fs: FeasibleSet) -> NDArray[np.int64]:
-    """Projeção exata, no conjunto viável, de uma máscara aprendida **sem** a restrição.
+    """Exact projection, onto the feasible set, of a mask learned **without** the constraint.
 
-    A máscara livre tem horizonte ``P = M·L`` e ``k_horizon`` posições ativas, sem espaçamento;
-    a versão dura determinística é o top-``k_horizon`` dos logits. Entre as máscaras periódicas
-    de período ``L``, ``||m_P - tile(m_L)||² = cte - 2·Σ_l c_l·m_L(l)``, com ``c_l`` o número de
-    vezes que a posição ``l`` do período aparece nas ``M`` cópias: maximizar ``Σ c_l·m_L(l)`` com
-    `project_to_feasible` é a projeção euclidiana exata. Empate de contagem: média dos logits
-    dobrados, com peso pequeno demais para inverter uma contagem.
+    The free mask has horizon ``P = M·L`` and ``k_horizon`` active positions, with no spacing;
+    the deterministic hard version is the top-``k_horizon`` of the logits. Among the periodic
+    masks of period ``L``, ``||m_P - tile(m_L)||² = const - 2·Σ_l c_l·m_L(l)``, with ``c_l`` the
+    number of times position ``l`` of the period appears in the ``M`` copies: maximizing
+    ``Σ c_l·m_L(l)`` with `project_to_feasible` is the exact Euclidean projection. Count ties:
+    mean of the folded logits, with a weight too small to invert a count.
     """
     w = np.asarray(logits, dtype=np.float64).ravel()
     period = fs.period_ticks
     if w.size % period:
-        raise ValueError(f"horizonte de {w.size} ticks nao e multiplo do periodo {period}")
+        raise ValueError(f"horizon of {w.size} ticks is not a multiple of the period {period}")
     if not 1 <= int(k_horizon) <= w.size:
-        raise ValueError("k_horizon fora do horizonte")
+        raise ValueError("k_horizon outside the horizon")
     hard = np.zeros(w.size)
     hard[np.argsort(-w, kind="stable")[: int(k_horizon)]] = 1.0
     counts = hard.reshape(-1, period).sum(axis=0)
@@ -249,29 +249,31 @@ def fold_project(logits: ArrayLike, k_horizon: int, fs: FeasibleSet) -> NDArray[
 
 
 # ----------------------------------------------------------------------
-# padrões fixos
+# fixed patterns
 # ----------------------------------------------------------------------
 def uniform_positions(fs: FeasibleSet) -> NDArray[np.int64]:
-    """Padrão uniforme: uma conversão a cada ``L/K`` ticks, com fase zero.
+    """Uniform pattern: one conversion every ``L/K`` ticks, with zero phase.
 
-    Na grade, é exatamente ``snq_data.undersample(x, L/K)``.
+    On the grid, it is exactly ``snq_data.undersample(x, L/K)``.
     """
     period, k = fs.period_ticks, fs.active_per_period
     if period % k:
-        raise ValueError(f"uniforme exige L multiplo de K (L={period}, K={k})")
+        raise ValueError(f"uniform requires L to be a multiple of K (L={period}, K={k})")
     step = period // k
     if step < fs.min_gap_ticks:
-        raise ValueError(f"uniforme com passo {step} viola o espacamento minimo {fs.min_gap_ticks}")
+        raise ValueError(
+            f"uniform with step {step} violates the minimum spacing {fs.min_gap_ticks}"
+        )
     return np.arange(k, dtype=np.int64) * step
 
 
 def random_feasible_positions(fs: FeasibleSet, rng: np.random.Generator) -> NDArray[np.int64]:
-    """Padrão viável sorteado **uniformemente** entre todos os padrões viáveis.
+    """Feasible pattern drawn **uniformly** among all feasible patterns.
 
-    Os ``K`` intervalos circulares são ``g + e_i`` com ``Σ e_i = L - K·g``; a composição
-    ``e`` é sorteada por estrelas e barras e o padrão é girado por um deslocamento uniforme.
-    Cada padrão aparece ``K`` vezes (uma por escolha de qual intervalo é o primeiro), todas com
-    a mesma probabilidade, então o sorteio é uniforme sobre os padrões.
+    The ``K`` circular intervals are ``g + e_i`` with ``Σ e_i = L - K·g``; the composition
+    ``e`` is drawn by stars and bars and the pattern is rotated by a uniform offset.
+    Each pattern appears ``K`` times (one per choice of which interval is the first), all with
+    the same probability, so the draw is uniform over the patterns.
     """
     period, k, gap = fs.period_ticks, fs.active_per_period, fs.min_gap_ticks
     free = period - k * gap
@@ -289,11 +291,12 @@ def random_feasible_positions(fs: FeasibleSet, rng: np.random.Generator) -> NDAr
 
 
 def alias_weights(positions: ArrayLike, period_ticks: int) -> NDArray[np.float64]:
-    """``|M_l|``, ``l = 0..L-1``: peso da réplica deslocada de ``l·fs/L`` no sinal com zeros.
+    """``|M_l|``, ``l = 0..L-1``: replica weight at shift ``l·fs/L`` in the zero-filled signal.
 
-    Com ``z = x·m`` e ``m`` periódica, ``Z(f) = Σ_l M_l·X(f - l·fs/L)`` e
-    ``M_l = (1/L)·Σ_p exp(-j2π·l·p/L)``. ``M_0 = K/L``. O uniforme concentra tudo em ``K``
-    réplicas de peso cheio (as da decimação); um padrão não uniforme espalha o peso.
+    With ``z = x·m`` and periodic ``m``, ``Z(f) = Σ_l M_l·X(f - l·fs/L)`` and
+    ``M_l = (1/L)·Σ_p exp(-j2π·l·p/L)``. ``M_0 = K/L``. The uniform pattern concentrates
+    everything in ``K`` full-weight replicas (those of decimation); a non-uniform pattern
+    spreads the weight.
     """
     p = _as_positions(positions, period_ticks)
     lags = np.arange(int(period_ticks))
@@ -301,7 +304,7 @@ def alias_weights(positions: ArrayLike, period_ticks: int) -> NDArray[np.float64
 
 
 def _candidate_patterns(fs: FeasibleSet, max_enumeration: int, seed: int) -> NDArray[np.int64]:
-    """Padrões viáveis com a primeira posição em zero (o critério é invariante a rotação)."""
+    """Feasible patterns with the first position at zero (the criterion is rotation-invariant)."""
     period, k = fs.period_ticks, fs.active_per_period
     n_comb = math.comb(period - 1, k - 1)
     if n_comb <= max_enumeration:
@@ -310,7 +313,7 @@ def _candidate_patterns(fs: FeasibleSet, max_enumeration: int, seed: int) -> NDA
             dtype=np.int64,
             count=n_comb * (k - 1),
         ).reshape(n_comb, k - 1)
-    else:  # busca aleatória determinística quando a enumeração não cabe
+    else:  # deterministic random search when the enumeration does not fit
         rng = np.random.default_rng([seed, period, k, fs.min_gap_ticks])
         n_draws = min(int(max_enumeration), 200_000)
         draws = np.stack([random_feasible_positions(fs, rng) for _ in range(n_draws)])
@@ -328,19 +331,20 @@ def designed_positions(
     max_enumeration: int = 3_000_000,
     seed: int = 0,
 ) -> NDArray[np.int64]:
-    """Multi-coset **projetado**: padrão fixo, escolhido por critério clássico e sem dados.
+    """**Designed** multi-coset: a fixed pattern, chosen by a classical criterion, without data.
 
-    ``min_peak_alias`` minimiza o maior peso de réplica fora da origem,
-    ``max_{l≠0} |M_l|`` (`alias_weights`): espalha a energia dobrada em vez de concentrá-la,
-    como faz o uniforme. Desempate pela cobertura do co-arranjo (número de diferenças
-    circulares distintas) e depois pela ordem lexicográfica. ``coarray`` inverte a prioridade
-    dos dois critérios.
+    ``min_peak_alias`` minimizes the largest replica weight away from the origin,
+    ``max_{l≠0} |M_l|`` (`alias_weights`): it spreads the folded energy instead of concentrating
+    it, as the uniform pattern does. Ties are broken by the coarray coverage (number of distinct
+    circular differences) and then by lexicographic order. ``coarray`` inverts the priority of
+    the two criteria.
 
-    Não é o par coprimo de `zhao2018coprime`: com taxa exatamente ``1/B`` o par coprimo exige
-    ``4B - 2`` eventos por período e intervalos de 1 tick, e não cabe no mesmo ``(L, K, g)``.
+    It is not the coprime pair of `zhao2018coprime`: with a rate of exactly ``1/B`` the coprime
+    pair requires ``4B - 2`` events per period and 1-tick intervals, and does not fit in the
+    same ``(L, K, g)``.
     """
     if criterion not in ("min_peak_alias", "coarray"):
-        raise ValueError(f"criterio desconhecido: {criterion}")
+        raise ValueError(f"unknown criterion: {criterion}")
     period, k = fs.period_ticks, fs.active_per_period
     if k == 1:
         return np.zeros(1, dtype=np.int64)
@@ -359,7 +363,7 @@ def designed_positions(
         cover[a : a + chunk] = onehot[:, 1:].sum(axis=1)
     peaks = np.round(peaks, 12)
     keys = (-cover, peaks) if criterion == "min_peak_alias" else (peaks, -cover)
-    # np.lexsort: a última chave é a primária; as colunas do padrão desempatam por último
+    # np.lexsort: the last key is the primary one; the pattern columns break ties last
     order = np.lexsort(tuple(cands[:, j] for j in range(k - 1, -1, -1)) + keys)
     out = cands[order[0]].astype(np.int64)
     assert fs.is_feasible(out)
@@ -369,16 +373,17 @@ def designed_positions(
 def band_support_cells(
     band_hz: tuple[float, float], fs_hz: float, period_ticks: int, n_grid: int = 64
 ) -> list[tuple[float, tuple[int, ...]]]:
-    """Células espectrais ativas do modelo multi-coset para uma banda real conhecida.
+    """Active spectral cells of the multi-coset model for a known real band.
 
-    ``[0, fs)`` é dividido em ``L`` células de largura ``fs/L``. Para cada deslocamento ``f``
-    dentro de uma célula (grade de ``n_grid`` pontos), a célula ``l`` está ativa quando
-    ``f + l·fs/L`` cai na banda ``[lo, hi)`` ou no espelho ``[fs - hi, fs - lo)``: o sinal é
-    real. Devolve ``(peso, S)`` por conjunto distinto, com peso = fração da grade.
+    ``[0, fs)`` is divided into ``L`` cells of width ``fs/L``. For each offset ``f``
+    within a cell (grid of ``n_grid`` points), cell ``l`` is active when
+    ``f + l·fs/L`` falls in the band ``[lo, hi)`` or in the mirror ``[fs - hi, fs - lo)``: the
+    signal is real. Returns ``(weight, S)`` for each distinct set, with weight = fraction of the
+    grid.
     """
     lo, hi = float(band_hz[0]), float(band_hz[1])
     if not 0.0 <= lo < hi <= fs_hz / 2.0:
-        raise ValueError("banda precisa estar em [0, fs/2]")
+        raise ValueError("band must lie in [0, fs/2]")
     width = fs_hz / period_ticks
     counts: Counter[tuple[int, ...]] = Counter()
     for f0 in (np.arange(n_grid) + 0.5) / n_grid * width:
@@ -393,11 +398,11 @@ def band_support_cells(
 def shrink_band_to_support(
     band_hz: tuple[float, float], fs_hz: float, period_ticks: int, k: int, n_grid: int = 64
 ) -> tuple[float, float]:
-    """Encolhe a banda em torno do centro até que nenhum conjunto de células passe de ``K``.
+    """Shrinks the band around its center until no cell set exceeds ``K``.
 
-    Com ``K`` cosets, cada deslocamento ``f`` resolve no máximo ``K`` células (Landau). Uma
-    banda mais larga que isso não tem reconstrução multi-coset exata nessa taxa; o desenho
-    passa a mirar a parte central dela, e quem chama registra a banda encolhida.
+    With ``K`` cosets, each offset ``f`` resolves at most ``K`` cells (Landau). A
+    band wider than that has no exact multi-coset reconstruction at that rate; the design
+    then targets its central part, and the caller records the shrunk band.
     """
     lo, hi = float(band_hz[0]), float(band_hz[1])
     center, half = 0.5 * (lo + hi), 0.5 * (hi - lo)
@@ -407,7 +412,7 @@ def shrink_band_to_support(
         if sets and max(len(s) for _w, s in sets) <= k:
             return band
         half *= 0.97
-    raise ValueError("banda nao coube em K celulas")
+    raise ValueError("band did not fit in K cells")
 
 
 def support_designed_positions(
@@ -417,25 +422,26 @@ def support_designed_positions(
     max_enumeration: int = 3_000_000,
     seed: int = 0,
 ) -> NDArray[np.int64]:
-    """Multi-coset desenhado para um **suporte espectral conhecido**.
+    """Multi-coset designed for a **known spectral support**.
 
-    Na célula ``f``, as amostras dos cosets são ``y(f) = D(f)·A_S·x_S(f)``, com
-    ``A_S[k, s] = exp(j2π·c_k·s/L)`` e ``D(f)`` unitária. O padrão escolhido minimiza a
-    amplificação de ruído da reconstrução por mínimos quadrados, ``Σ_S w_S·||A_S^+||_F²``,
-    média sobre os conjuntos de células ativas (`band_support_cells`). Padrão que deixa
-    algum ``A_S`` singular fica de fora. Busca exaustiva no conjunto viável. Empate: o menor
-    alias de pico (`alias_weights`), escolha deste projeto.
+    In cell ``f``, the coset samples are ``y(f) = D(f)·A_S·x_S(f)``, with
+    ``A_S[k, s] = exp(j2π·c_k·s/L)`` and unitary ``D(f)``. The chosen pattern minimizes the
+    noise amplification of the least-squares reconstruction, ``Σ_S w_S·||A_S^+||_F²``,
+    averaged over the sets of active cells (`band_support_cells`). A pattern that leaves
+    some ``A_S`` singular is excluded. Exhaustive search over the feasible set. Tie: the
+    smallest peak alias (`alias_weights`), a choice of this project.
 
-    O critério segue o espírito de `venkataramani2001optimal`, que otimiza o padrão para um
-    suporte conhecido por cotas de erro da reconstrução. A forma exata da cota e a seleção
-    sequencial do artigo **não foram conferidas** (o resumo não estava disponível nas bases
-    consultadas em 2026-11-11). A amplificação de ruído é invariante à rotação do padrão.
+    The criterion follows the spirit of `venkataramani2001optimal`, which optimizes the pattern
+    for a known support through reconstruction error bounds. The exact form of the bound and
+    the sequential selection of the paper **have not been checked** (the abstract was not
+    available in the databases consulted on 2026-11-11). The noise amplification is invariant
+    to rotation of the pattern.
     """
     period, k = fs.period_ticks, fs.active_per_period
     if not supports:
-        raise ValueError("suporte vazio")
+        raise ValueError("empty support")
     if max(len(s) for _w, s in supports) > k:
-        raise ValueError(f"suporte com mais de K={k} celulas: encolha a banda antes")
+        raise ValueError(f"support with more than K={k} cells: shrink the band first")
     cands = _candidate_patterns(fs, max_enumeration, seed)
     score = np.zeros(cands.shape[0])
     for weight, cells in supports:
@@ -448,9 +454,9 @@ def support_designed_positions(
             amp = np.where(sv.min(axis=1) < 1e-9, np.inf, (1.0 / sv**2).sum(axis=1))
             score[a : a + chunk] += weight * amp
     if not np.any(np.isfinite(score)):
-        raise ValueError("nenhum padrao viavel reconstroi esse suporte")
-    # Desempate entre padroes igualmente bons para o suporte: menor alias de pico, que concentra
-    # menos a energia de fora do suporte modelado; depois, ordem lexicografica.
+        raise ValueError("no feasible pattern reconstructs this support")
+    # Tie-break between patterns equally good for the support: smallest peak alias, which
+    # concentrates less of the energy from outside the modeled support; then lexicographic order.
     best = np.isclose(score, np.nanmin(score), rtol=1e-9, atol=1e-12)
     cands, score = cands[best], score[best]
     lags = np.arange(1, period)
@@ -470,7 +476,7 @@ def support_designed_positions(
 def noise_amplification(
     positions: ArrayLike, period_ticks: int, supports: list[tuple[float, tuple[int, ...]]]
 ) -> float:
-    """``Σ_S w_S·||A_S^+||_F²`` de um padrão (infinito se algum ``A_S`` for singular)."""
+    """``Σ_S w_S·||A_S^+||_F²`` of a pattern (infinite if some ``A_S`` is singular)."""
     c = _as_positions(positions, period_ticks).astype(np.float64)
     total = 0.0
     for weight, cells in supports:
@@ -485,12 +491,12 @@ def noise_amplification(
 def timer_schedule(
     positions: ArrayLike, period_ticks: int, tick_hz: float, timer_clock_hz: float
 ) -> dict[str, object]:
-    """Como o padrão seria agendado num TIMER com DPPI, e se as contagens são inteiras.
+    """How the pattern would be scheduled on a TIMER with DPPI, and whether the counts are integers.
 
-    O padrão é girado para ter uma posição no tick 0. Então ``K`` registradores bastam: os
-    ``K - 1`` primeiros nas posições restantes e o último no fim do período, com atalho
-    COMPARE→CLEAR, de modo que o evento do fim do período é a posição 0 do período seguinte.
-    As contagens são ``ticks·timer_clock_hz/tick_hz`` e só são realizáveis se inteiras.
+    The pattern is rotated to have a position at tick 0. Then ``K`` registers suffice: the
+    first ``K - 1`` at the remaining positions and the last one at the end of the period, with a
+    COMPARE→CLEAR shortcut, so that the end-of-period event is position 0 of the next period.
+    The counts are ``ticks·timer_clock_hz/tick_hz`` and are only realizable if they are integers.
     """
     p = _as_positions(positions, period_ticks)
     rot = (p - p[0]) % period_ticks
@@ -508,21 +514,21 @@ def timer_schedule(
 
 
 # ----------------------------------------------------------------------
-# módulos
+# modules
 # ----------------------------------------------------------------------
 def _tile(period_mask: torch.Tensor, n_samples: int) -> torch.Tensor:
-    """Repete ``(B, L)`` ou ``(L,)`` até ``n_samples``, exigindo ``n_samples`` múltiplo de ``L``."""
+    """Repeats ``(B, L)`` or ``(L,)`` up to ``n_samples``, which must be a multiple of ``L``."""
     period = period_mask.shape[-1]
     if n_samples % period:
-        raise ValueError(f"N={n_samples} nao e multiplo do periodo L={period}")
+        raise ValueError(f"N={n_samples} is not a multiple of the period L={period}")
     reps = n_samples // period
     return period_mask.repeat(1, reps) if period_mask.dim() == 2 else period_mask.repeat(reps)
 
 
 def spacing_penalty(soft: torch.Tensor, min_gap_ticks: int) -> torch.Tensor:
-    """Pares (circulares) de posições a menos de ``g`` ticks, ponderados pela máscara relaxada.
+    """(Circular) pairs of positions less than ``g`` ticks apart, weighted by the relaxed mask.
 
-    ``Σ_{d=1}^{g-1} Σ_l m_l·m_{(l+d) mod L}``, média no lote. Zero quando ``g = 1``.
+    ``Σ_{d=1}^{g-1} Σ_l m_l·m_{(l+d) mod L}``, averaged over the batch. Zero when ``g = 1``.
     """
     total = soft.new_zeros(())
     for d in range(1, int(min_gap_ticks)):
@@ -533,12 +539,13 @@ def spacing_penalty(soft: torch.Tensor, min_gap_ticks: int) -> torch.Tensor:
 def _gumbel_topk(
     logits: torch.Tensor, k: int, tau: float, generator: torch.Generator | None = None
 ) -> tuple[torch.Tensor, torch.Tensor]:
-    """Top-K de Gumbel: máscara dura e relaxação, ``(B, L)`` cada.
+    """Gumbel top-K: hard mask and relaxation, ``(B, L)`` each.
 
-    ``K`` sorteios sem reposição: em cada um, ``softmax((w + G)/τ)`` sobre as posições ainda
-    livres, e a posição de maior escore perturbado é bloqueada para os seguintes. A soma das
-    ``K`` softmaxes é a relaxação; a soma das ``K`` posições escolhidas é a máscara dura. É a
-    construção de amostragem probabilística com straight-through usada em `vangorp2021adps`.
+    ``K`` draws without replacement: in each, ``softmax((w + G)/τ)`` over the positions still
+    free, and the position with the largest perturbed score is blocked for the following ones.
+    The sum of the ``K`` softmaxes is the relaxation; the sum of the ``K`` chosen positions is
+    the hard mask. It is the probabilistic sampling construction with straight-through used in
+    `vangorp2021adps`.
     """
     u = torch.rand(logits.shape, device=logits.device, dtype=logits.dtype, generator=generator)
     gumbel = -torch.log(-torch.log(u.clamp(1e-10, 1.0 - 1e-10)))
@@ -556,7 +563,7 @@ def _gumbel_topk(
 
 
 class FixedMask(nn.Module):
-    """Padrão fixo (uniforme, aleatório semeado, projetado ou final de um aprendido)."""
+    """Fixed pattern (uniform, seeded random, designed, or the final one of a learned mask)."""
 
     def __init__(self, positions: ArrayLike, period_ticks: int) -> None:
         super().__init__()
@@ -575,21 +582,23 @@ class FixedMask(nn.Module):
 
 
 class GumbelTopKMask(nn.Module):
-    """Máscara aprendida: top-K de Gumbel sobre os logits de um período do conjunto ``fs``.
+    """Learned mask: Gumbel top-K over the logits of one period of the set ``fs``.
 
-    Treino: máscara dura no forward e gradiente pela relaxação (straight-through), como em
-    `huijben2020dps` e `vangorp2021adps`, ou relaxação pura (``straight_through=False``). O
-    espaçamento mínimo de ``fs`` entra por `spacing_penalty` sobre a relaxação.
+    Training: hard mask in the forward pass and gradient through the relaxation
+    (straight-through), as in `huijben2020dps` and `vangorp2021adps`, or pure relaxation
+    (``straight_through=False``). The minimum spacing of ``fs`` enters through
+    `spacing_penalty` on the relaxation.
 
-    Avaliação: a máscara é a **projeção exata** dos logits sobre ``fs``, determinística.
-    ``freeze()`` fixa essa projeção.
+    Evaluation: the mask is the **exact projection** of the logits onto ``fs``, deterministic.
+    ``freeze()`` fixes that projection.
 
-    Com ``fs = FeasibleSet(M·L, M·K, 1)`` a mesma classe é a máscara **sem a restrição**:
-    horizonte de ``M`` períodos, contagem só no horizonte e nenhum espaçamento. ``audit_gap``
-    conta, no treino, as máscaras duras que violariam o espaçamento alvo (``audit_*``), e
-    `diagnostics` diz se a máscara saiu do ruído: margem entre o ``K``-ésimo e o
-    ``(K+1)``-ésimo logit contra o desvio do ruído de Gumbel (π/√6 ≈ 1,28), e posições finais
-    contra a projeção dos logits iniciais, que a semente reproduz.
+    With ``fs = FeasibleSet(M·L, M·K, 1)`` the same class is the mask **without the
+    constraint**: a horizon of ``M`` periods, count only over the horizon and no spacing.
+    ``audit_gap`` counts, during training, the hard masks that would violate the target spacing
+    (``audit_*``), and `diagnostics` says whether the mask has left the noise: the margin
+    between the ``K``-th and the ``(K+1)``-th logit against the standard deviation of the Gumbel
+    noise (π/√6 ≈ 1.28), and the final positions against the projection of the initial logits,
+    which the seed reproduces.
     """
 
     def __init__(
@@ -612,7 +621,7 @@ class GumbelTopKMask(nn.Module):
         if init == "uniform":
             w[torch.from_numpy(uniform_positions(fs))] += 1.0
         elif init != "flat":
-            raise ValueError(f"init desconhecido: {init}")
+            raise ValueError(f"unknown init: {init}")
         self.logits = nn.Parameter(w)
         self.register_buffer("initial_logits", w.detach().clone(), persistent=False)
         self.register_buffer("frozen_period", torch.zeros(0))
@@ -624,7 +633,7 @@ class GumbelTopKMask(nn.Module):
         self._projection: tuple[int, NDArray[np.int64]] | None = None
 
     def diagnostics(self) -> dict[str, object]:
-        """Logits finais, margem do top-K, posições iniciais e finais, violações auditadas."""
+        """Final logits, top-K margin, initial and final positions, audited violations."""
         w = self.logits.detach().cpu().numpy().astype(np.float64)
         w0 = self.initial_logits.detach().cpu().numpy().astype(np.float64)
         k = self.fs.active_per_period
@@ -639,7 +648,7 @@ class GumbelTopKMask(nn.Module):
             "logits_initial_std": float(w0.std()),
             "margin_k": margin,
             "gumbel_std": gumbel_std,
-            # > 1: o top-K deterministico resiste ao ruido de Gumbel; << 1: a mascara ainda e ruido
+            # > 1: the deterministic top-K resists the Gumbel noise; << 1: the mask is still noise
             "margin_over_gumbel_std": margin / gumbel_std,
             "converged": bool(margin > gumbel_std),
             "positions_initial": initial.tolist(),
@@ -658,7 +667,7 @@ class GumbelTopKMask(nn.Module):
         self.tau = float(tau)
 
     def _projected(self) -> NDArray[np.int64]:
-        """Projeção exata dos logits atuais, refeita só quando os logits mudam."""
+        """Exact projection of the current logits, recomputed only when the logits change."""
         stamp = self.logits._version
         if self._projection is None or self._projection[0] != stamp:
             pos = project_to_feasible(self.logits.detach().cpu().numpy(), self.fs)
@@ -671,7 +680,7 @@ class GumbelTopKMask(nn.Module):
         return self._projected()
 
     def freeze(self) -> NDArray[np.int64]:
-        """Fixa a projeção exata atual e congela os logits."""
+        """Fixes the current exact projection and freezes the logits."""
         self._projection = None
         pos = self._projected()
         self.frozen_period = torch.from_numpy(positions_to_mask(pos, self.fs.period_ticks)).to(
@@ -708,7 +717,7 @@ class GumbelTopKMask(nn.Module):
 
 
 def _gap_violations(positions: ArrayLike, period_ticks: int, gap: int) -> int:
-    """Intervalos circulares entre posições consecutivas menores que ``gap``."""
+    """Circular intervals between consecutive positions that are smaller than ``gap``."""
     pos = np.asarray(positions, dtype=np.int64).ravel()
     if pos.size < 2 or gap <= 1:
         return 0
@@ -716,10 +725,10 @@ def _gap_violations(positions: ArrayLike, period_ticks: int, gap: int) -> int:
 
 
 def _loupe_rescale(p: torch.Tensor, rate: float) -> torch.Tensor:
-    """Renormalização do LOUPE: média do mapa de probabilidade igual à taxa alvo.
+    """LOUPE renormalization: mean of the probability map equal to the target rate.
 
-    Se a média ``x̄`` passa da taxa ``α``, escala por ``α/x̄``; senão, escala ``1 - p`` por
-    ``(1-α)/(1-x̄)``. As probabilidades ficam em ``[0, 1]`` nos dois ramos.
+    If the mean ``x̄`` exceeds the rate ``α``, scales by ``α/x̄``; otherwise, scales ``1 - p`` by
+    ``(1-α)/(1-x̄)``. The probabilities stay in ``[0, 1]`` in both branches.
     """
     xbar = p.mean()
     r = rate / xbar
@@ -729,24 +738,25 @@ def _loupe_rescale(p: torch.Tensor, rate: float) -> torch.Tensor:
 
 
 class LoupeMask(nn.Module):
-    """LOUPE (`bahadir2020loupe`) sobre a grade de ticks, **sem** a restrição do conjunto viável.
+    """LOUPE (`bahadir2020loupe`) on the tick grid, **without** the feasible-set constraint.
 
-    Um logit por posição de um horizonte de ``n_positions`` ticks, repetido periodicamente no
-    tempo. Mapa de probabilidade ``p = σ(a·w)``, renormalizado para a taxa alvo. No treino,
-    cada tick é um Bernoulli independente: forward **duro**, ``1[u < p]``, e gradiente pela
-    relaxação ``σ(b·(p - u))`` (straight-through). A contagem por período não é fixa (só a
-    média é ``α``) e não há espaçamento mínimo.
+    One logit per position of a horizon of ``n_positions`` ticks, repeated periodically in
+    time. Probability map ``p = σ(a·w)``, renormalized to the target rate. During training,
+    each tick is an independent Bernoulli: **hard** forward pass, ``1[u < p]``, and gradient
+    through the relaxation ``σ(b·(p - u))`` (straight-through). The count per period is not
+    fixed (only the mean is ``α``) and there is no minimum spacing.
 
-    Desvio declarado do LOUPE original, que usa a relaxação também no forward: com ela, a
-    "taxa" vista no treino era 1,5 a 2,4 vezes a taxa alvo (revisão de 2026-11-11), e o modelo
-    treinava com mais amostras do que o orçamento e era avaliado com menos.
+    Declared deviation from the original LOUPE, which also uses the relaxation in the forward
+    pass: with it, the "rate" seen in training was 1.5 to 2.4 times the target rate (review of
+    2026-11-11), and the model trained with more samples than the budget and was evaluated with
+    fewer.
 
-    Avaliação "livre": uma realização de Bernoulli por tick, com semente fixa (``eval_seed``).
-    **Não é realizável** pelo TIMER (contagem e posições variam de período a período).
-    `project` leva o mapa ao conjunto viável: média das ``n_positions/L`` cópias por posição do
-    período e projeção exata. No E15 o gap de projeção da H2 é medido com o top-K de Gumbel sem
-    a restrição (`GumbelTopKMask` com horizonte e sem espaçamento); o LOUPE fica como braço
-    opcional.
+    "Free" evaluation: one Bernoulli realization per tick, with a fixed seed (``eval_seed``).
+    **Not realizable** by the TIMER (count and positions vary from period to period).
+    `project` takes the map to the feasible set: mean of the ``n_positions/L`` copies per
+    position of the period, and exact projection. In E15 the H2 projection gap is measured with
+    the Gumbel top-K without the constraint (`GumbelTopKMask` with a horizon and no spacing);
+    LOUPE remains an optional arm.
     """
 
     def __init__(
@@ -761,7 +771,7 @@ class LoupeMask(nn.Module):
     ) -> None:
         super().__init__()
         if not 0.0 < rate < 1.0:
-            raise ValueError("rate precisa estar em (0, 1)")
+            raise ValueError("rate must be in (0, 1)")
         self.n_positions = int(n_positions)
         self.rate = float(rate)
         self.slope = float(slope)
@@ -778,10 +788,10 @@ class LoupeMask(nn.Module):
         return _loupe_rescale(torch.sigmoid(self.slope * self.logits), self.rate)
 
     def folded(self, period_ticks: int) -> NDArray[np.float64]:
-        """Probabilidade média por posição de um período de ``period_ticks`` ticks."""
+        """Mean probability per position of a period of ``period_ticks`` ticks."""
         p = self.probabilities().detach().cpu().numpy().astype(np.float64)
         if self.n_positions % period_ticks:
-            raise ValueError("n_positions precisa ser multiplo do periodo")
+            raise ValueError("n_positions must be a multiple of the period")
         return p.reshape(-1, period_ticks).mean(axis=0)
 
     def project(self, fs: FeasibleSet) -> NDArray[np.int64]:
@@ -806,21 +816,22 @@ class LoupeMask(nn.Module):
 
 
 class BlockAdaptiveMask(nn.Module):
-    """Máscara adaptativa por blocos, inspirada no ADPS (`vangorp2021adps`).
+    """Block-wise adaptive mask, inspired by ADPS (`vangorp2021adps`).
 
-    A janela é dividida em ``n_blocks`` blocos (cada um múltiplo de ``L``). O bloco ``j`` usa
-    os logits ``w0 + Δθ(h_{<j})``, onde ``h_{<j}`` é a média de um resumo do que **já foi
-    adquirido**: a energia logarítmica relativa em ``n_features`` faixas do espectro do sinal
-    preenchido com zeros de cada bloco anterior. ``Δθ`` é um MLP pequeno com a última camada
-    iniciada em zero, então no início a política é a máscara fixa ``w0``.
+    The window is divided into ``n_blocks`` blocks (each a multiple of ``L``). Block ``j`` uses
+    the logits ``w0 + Δθ(h_{<j})``, where ``h_{<j}`` is the mean of a summary of what **has
+    already been acquired**: the relative log energy in ``n_features`` bands of the spectrum of
+    the zero-filled signal of each previous block. ``Δθ`` is a small MLP with the last layer
+    initialized at zero, so at the start the policy is the fixed mask ``w0``.
 
-    Diferenças declaradas em relação ao ADPS: política por blocos de períodos (não amostra a
-    amostra) e sem LSTM; o estado é a média dos resumos dos blocos anteriores.
+    Declared differences from ADPS: a policy per block of periods (not sample by
+    sample) and no LSTM; the state is the mean of the summaries of the previous blocks.
 
-    Treino: top-K de Gumbel com straight-through em cada bloco, penalidade de espaçamento.
-    Avaliação: projeção exata por bloco e, nas emendas entre blocos, descarte das conversões a
-    menos de ``g`` ticks da anterior (``last_dropped`` conta quantas). Realizável como
-    reprogramação dos CC do TIMER entre blocos, com a CPU acordando a cada bloco.
+    Training: Gumbel top-K with straight-through in each block, spacing penalty.
+    Evaluation: exact projection per block and, at the seams between blocks, dropping the
+    conversions less than ``g`` ticks after the previous one (``last_dropped`` counts how many).
+    Realizable as reprogramming the TIMER CCs between blocks, with the CPU waking up at every
+    block.
     """
 
     def __init__(
@@ -860,10 +871,10 @@ class BlockAdaptiveMask(nn.Module):
     def _bounds(self, n: int) -> list[tuple[int, int]]:
         period = self.fs.period_ticks
         if n % period:
-            raise ValueError(f"N={n} nao e multiplo do periodo L={period}")
+            raise ValueError(f"N={n} is not a multiple of the period L={period}")
         n_per = n // period
         if n_per < self.n_blocks:
-            raise ValueError("janela curta demais para o numero de blocos")
+            raise ValueError("window too short for the number of blocks")
         cuts = [round(i * n_per / self.n_blocks) * period for i in range(self.n_blocks + 1)]
         return list(itertools.pairwise(cuts))
 
@@ -908,7 +919,7 @@ class BlockAdaptiveMask(nn.Module):
 
 
 def _enforce_global_gap(m: torch.Tensor, gap: int) -> tuple[torch.Tensor, int]:
-    """Descarta conversões a menos de ``gap`` ticks da anterior mantida (emendas entre blocos)."""
+    """Drops conversions less than ``gap`` ticks after the previous kept one (block seams)."""
     if gap <= 1:
         return m, 0
     out = m.detach().cpu().numpy().copy()

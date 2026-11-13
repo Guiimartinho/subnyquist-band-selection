@@ -1,6 +1,6 @@
-"""Seletor de banda guiado pelas ordens de falha e limpeza do fluxo decimado (E26).
+"""Band selector guided by the fault orders, and cleaning of the decimated stream (E26).
 
-Funções puras, usadas pela rodada do Paderborn e testadas em ``tests/test_e26.py``.
+Pure functions, used by the Paderborn run and tested in ``tests/test_e26.py``.
 """
 
 from __future__ import annotations
@@ -9,11 +9,11 @@ import math
 
 import numpy as np
 from snq_recon.highres import envelope_order_spectrum
-from snq_recon.selectors import _levels  # a partição do kurtograma
+from snq_recon.selectors import _levels  # the kurtogram partition
 
 
 def median3(x: np.ndarray) -> np.ndarray:
-    """Mediana de 3 amostras (a do E20), aplicada ao fluxo já decimado."""
+    """Median of 3 samples (the one from E20), applied to the already-decimated stream."""
     y = np.asarray(x, dtype=float).copy()
     if y.size >= 3:
         y[1:-1] = np.median(np.vstack([y[:-2], y[1:-1], y[2:]]), axis=0)
@@ -21,7 +21,7 @@ def median3(x: np.ndarray) -> np.ndarray:
 
 
 def windows(order: float, k: int, frac: float, exclusion: float) -> list[tuple[float, float]]:
-    """Janela de busca [k·o(1−frac), k·o(1+frac)] sem as ordens inteiras ± ``exclusion``."""
+    """Search window [k·o(1−frac), k·o(1+frac)] without the integer orders ± ``exclusion``."""
     lo, hi = k * order * (1 - frac), k * order * (1 + frac)
     segs = [(lo, hi)]
     for n in range(int(math.floor(lo)), int(math.ceil(hi)) + 1):
@@ -40,7 +40,7 @@ def windows(order: float, k: int, frac: float, exclusion: float) -> list[tuple[f
 
 
 def prominence(orders: np.ndarray, mag: np.ndarray, segs: list[tuple[float, float]]) -> float:
-    """Pico dividido pela mediana, na união dos intervalos; NaN se houver menos de 3 bins."""
+    """Peak divided by the median, over the union of the intervals; NaN if fewer than 3 bins."""
     m = np.zeros(orders.size, dtype=bool)
     for s, e in segs:
         m |= (orders >= s) & (orders <= e)
@@ -70,9 +70,10 @@ def guided_scores(
     harmonics: tuple[int, ...],
     samples_per_rev: int,
 ) -> dict[str, tuple[float, tuple[float, float] | None]]:
-    """Por falha candidata: o maior escore entre as bandas e a banda que o deu.
+    """Per candidate fault: the highest score among the bands, and the band that gave it.
 
-    O escore de uma banda é a média, nas harmônicas pedidas, da proeminência da raia na janela.
+    The score of a band is the mean, over the requested harmonics, of the line prominence in the
+    window.
     """
     segs = {c: [windows(o, k, frac, exclusion) for k in harmonics] for c, o in orders.items()}
     best: dict[str, tuple[float, tuple[float, float] | None]] = {

@@ -1,7 +1,7 @@
-# E15 - FUMACA em CPU: prova o laco, a parada antecipada, a retomada, as reguas, a estatistica
-# e o manifest. NAO E RESULTADO. Subconjunto do base.yaml: Ottawa so cenario A (3 + 3 registros
-# com falha, 1 saudavel), orcamentos 16 e 32, janelas curtas, poucas epocas, uma divisao e uma
-# semente. Resultados em results-smoke.
+# E15 - SMOKE test on CPU: tests the loop, early stopping, resumption, the rulers, the statistics
+# and the manifest. IT IS NOT A RESULT. Subset of base.yaml: Ottawa scenario A only (3 + 3 faulty
+# records, 1 healthy), budgets 16 and 32, short windows, few epochs, one split and one seed.
+# Results in results-smoke.
 seed: 20261113
 
 datasets:
@@ -118,20 +118,20 @@ preregistration:
   alpha: 0.05
   correction: holm
   min_budgets: 2
-  min_clusters_per_group: 3         # teste com menos aglomerados por pista nao e elegivel (p = 1)
+  min_clusters_per_group: 3         # a test with fewer clusters per race is not eligible (p = 1)
   min_splits: 2
-  # B5, avaliabilidade (2026-11-12, antes de qualquer numero de teste da rodada corrigida): um
-  # orcamento so e avaliavel numa hipotese se a mascara de cada braco de `convergence_arms` saiu
-  # do ruido em pelo menos esta fracao das divisoes; senao, seus testes entram no Holm com p = 1.
+  # B5, evaluability (2026-11-12, before any test number of the corrected run): a budget is only
+  # evaluable in a hypothesis if the mask of every arm in `convergence_arms` got out of the noise
+  # in at least this fraction of the splits; otherwise, its tests enter Holm with p = 1.
   min_mask_converged_frac: 0.5
   h1:
     arm: dec_aprendida_sel
     baselines: [uniforme_treino, dec_uniforme_treino, dec_aleatoria]
-    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 como pre-registrado + mascara usada
+    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 as preregistered + mask used
   h2:
     arm: dec_aprendida
     baseline: dec_livre_projetada
-    convergence_arms: [dec_aprendida, dec_livre_projetada]  # sem isso, baseline preso no ruido
+    convergence_arms: [dec_aprendida, dec_livre_projetada]  # without this, a baseline stuck in the noise
 
 analysis: {bootstrap_resamples: 300}
 

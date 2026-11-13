@@ -1,4 +1,4 @@
-# E21 - captura do seletor no MAFAULDA e teste de admissibilidade da taxa (ADR 0006).
+# E21 - selector capture on MAFAULDA and the rate-admissibility test (ADR 0006).
 seed: 20261111
 
 data_dir: datasets/raw/mafaulda
@@ -9,7 +9,7 @@ fault: outer_race
 fault_family: BPFO
 axis: radial
 
-# Mesmo pipeline do E07/E20.
+# Same pipeline as E07/E20.
 min_samples: 4096
 kurtogram:
   max_level: 4
@@ -23,20 +23,20 @@ order_min: 2.0
 
 sweep:
   undersampling_factor: [1, 2, 3, 4, 5, 6, 8, 10, 12, 16]
-  # null = sem teto alem do Nyquist efetivo; os demais em Hz.
+  # null = no ceiling beyond the effective Nyquist; the others in Hz.
   search_ceiling_hz: [null, 12800.0, 6400.0]
   interventions: [none, aaf_ideal]
 
 tat:
-  # Fator inadmissivel quando a banda escolhida tem mais desta fracao de energia dobrada.
+  # Factor inadmissible when the chosen band has more than this share of folded energy.
   folded_share_threshold: 0.5
 
 analysis:
-  # H1: vale de pelo menos este numero de pontos abaixo de um fator maior.
+  # H1: valley of at least this many points below a larger factor.
   valley_points: 15
   monotone_tolerance_points: 5
-  # H2: diferenca minima de acerto (pontos) entre admissivel e inadmissivel, e acuracia
-  # balanceada minima do TAT.
+  # H2: minimum accuracy difference (points) between admissible and inadmissible, and the
+  # minimum balanced accuracy of the TAT.
   tat_min_gap_points: 10
   tat_min_balanced_accuracy: 0.65
   bootstrap_resamples: 2000

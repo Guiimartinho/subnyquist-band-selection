@@ -1,8 +1,8 @@
-"""Testes do loader de Ottawa 2018 — sem rede.
+"""Tests of the Ottawa 2018 loader — no network.
 
-O que precisa ser garantido aqui é a extração do perfil de rotação a partir do
-encoder, porque é ela que toda a análise de ordem consome e é o único ponto onde um
-erro silencioso escalaria todas as ordens por um fator constante.
+What has to be guaranteed here is the extraction of the rotation profile from the
+encoder, because it is what all the order analysis consumes and it is the only point where a
+silent error would scale all orders by a constant factor.
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from snq_data.ottawa import FAULT_ORDERS, FS_HZ, PULSES_PER_REV, OttawaRecord, r
 
 
 def _synthetic(rot_hz: float = 20.0, seconds: float = 1.0, ppr: int = PULSES_PER_REV):
-    """Encoder ideal a rotação constante, e vibração qualquer."""
+    """Ideal encoder at constant rotation, and an arbitrary vibration."""
     n = int(FS_HZ * seconds)
     t = np.arange(n) / FS_HZ
     encoder = np.sign(np.sin(2 * np.pi * rot_hz * ppr * t))
@@ -28,13 +28,13 @@ def _synthetic(rot_hz: float = 20.0, seconds: float = 1.0, ppr: int = PULSES_PER
 
 
 def test_perfil_de_rotacao_recupera_a_velocidade_constante():
-    """A 20 Hz e 1024 ppr os pulsos saem a 20,5 kHz, contra 200 kSPS de amostragem.
+    """At 20 Hz and 1024 ppr the pulses come out at 20.5 kHz, against 200 kSPS of sampling.
 
-    Sobram ~9,8 amostras por pulso, então o instante de cada borda é quantizado no
-    relógio de amostragem e a rotação por borda erra até ~5%. A mediana é exata a
-    2,3%, e esse viés é a própria quantização — não um erro de código. No nó real o
-    TIMER captura bordas a 128 MHz e o efeito some; aqui ele fica registrado porque
-    define o piso de resolução de qualquer análise de ordem feita fora do MCU.
+    That leaves ~9.8 samples per pulse, so the instant of each edge is quantized on the
+    sampling clock and the per-edge rotation is off by up to ~5%. The median is exact to
+    within 2.3%, and that bias is the quantization itself — not a code error. On the real node
+    the TIMER captures edges at 128 MHz and the effect disappears; here it is recorded because
+    it sets the resolution floor of any order analysis done outside the MCU.
     """
     rec = _synthetic(rot_hz=20.0)
     speed = rec.speed_profile_hz()
@@ -43,11 +43,11 @@ def test_perfil_de_rotacao_recupera_a_velocidade_constante():
 
 
 def test_ppr_errado_escala_todas_as_ordens():
-    """Metade dos pulsos por revolução dobra a rotação estimada.
+    """Half the pulses per revolution doubles the estimated rotation.
 
-    É o modo de falha que faria uma ordem de falha aparecer no lugar errado sem que
-    nada mais desse sinal de erro — daí o valor de 1024 estar registrado como
-    determinado empiricamente, e não suposto.
+    It is the failure mode that would make a fault order appear in the wrong place without
+    anything else signalling an error — hence the value of 1024 being recorded as
+    determined empirically, and not assumed.
     """
     rec = _synthetic(rot_hz=20.0)
     assert np.median(rec.speed_profile_hz(PULSES_PER_REV // 2)) == pytest.approx(40.0, rel=0.05)
@@ -63,15 +63,15 @@ def test_encoder_sem_pulsos_recusa_em_vez_de_inventar():
         vibration=rec.vibration,
         encoder=np.zeros_like(rec.encoder),
     )
-    with pytest.raises(ValueError, match="pulsos"):
+    with pytest.raises(ValueError, match="pulses"):
         mudo.speed_profile_hz()
 
 
 def test_ordens_de_falha_somam_o_numero_de_elementos():
-    """Identidade geométrica BPFO + BPFI = n. Vale para o prior NOMINAL.
+    """Geometric identity BPFO + BPFI = n. It holds for the NOMINAL prior.
 
-    O E07 mede 8,82 em vez de 9 nos dados reais; a diferença é o desvio do catálogo
-    que aquele experimento quantifica, não um erro desta constante.
+    E07 measures 8.82 instead of 9 on the real data; the difference is the catalog deviation
+    that experiment quantifies, not an error in this constant.
     """
     total = FAULT_ORDERS["inner_race"] + FAULT_ORDERS["outer_race"]
     assert total == pytest.approx(9.0)

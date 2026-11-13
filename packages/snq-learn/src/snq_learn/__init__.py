@@ -1,26 +1,26 @@
-"""snq-learn - metodos aprendidos, com modelo por baixo.
+"""snq-learn - learned methods, with a model underneath.
 
-Nao comecar por CNN generica. A referencia e model-based deep learning:
-algorithm unrolling (Monga, Li & Eldar, IEEE SPM 2021) da uma rede pequena,
-interpretavel e eficiente em dados - e que cabe em 256 kB de RAM.
+Do not start from a generic CNN. The reference is model-based deep learning:
+algorithm unrolling (Monga, Li & Eldar, IEEE SPM 2021) gives a small network that is
+interpretable and data-efficient - and that fits in 256 kB of RAM.
 
-A fronteira perseguida e aquisicao aprendida orientada a tarefa
+The frontier pursued is task-oriented learned acquisition
 (Shlezinger et al., IEEE TSP 2022; Bahadir et al., IEEE TCI 2020;
 van Gorp et al., ICML 2021).
 
-Restricao dura: a politica de amostragem aprendida precisa ser realizavel pelo
-DPPI/TIMER do nRF54L15. Mascara que o hardware nao agenda nao e resultado.
+Hard constraint: the learned sampling policy must be realizable by the
+DPPI/TIMER of the nRF54L15. A mask that the hardware does not schedule is not a result.
 
-Modulos:
+Modules:
 
-  distillation   destilacao Nyquist -> sub-Nyquist (E04/E05)
-  masks          conjunto viavel, projecao exata; mascaras fixa, aprendida, LOUPE, adaptativa (E15)
-  order_decoder  decodificador desdobrado: banco de filtros -> envelope -> ordem (E15)
-  wdcnn          WDCNN de zhang2017wdcnn, so como baseline (E15)
-  training       laco com teto de epocas, paciencia e melhor checkpoint (E15)
+  distillation   Nyquist -> sub-Nyquist distillation (E04/E05)
+  masks          feasible set, exact projection; fixed, learned, LOUPE and adaptive masks (E15)
+  order_decoder  unrolled decoder: filter bank -> envelope -> order (E15)
+  wdcnn          WDCNN from zhang2017wdcnn, only as a baseline (E15)
+  training       loop with an epoch cap, patience and best checkpoint (E15)
 
-Este pacote nao importa snq-data nem snq-recon: recebe tensores. Quem carrega dados e
-calcula a fase do tacometro e o runner do experimento.
+This package does not import snq-data or snq-recon: it receives tensors. The experiment
+runner is what loads the data and computes the tachometer phase.
 """
 
 from snq_learn.distillation import (

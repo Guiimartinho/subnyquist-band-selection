@@ -1,12 +1,12 @@
-"""Figura E07 — a linha de falha não se move quando a taxa desmorona.
+"""Figure E07 — the fault line does not move when the rate collapses.
 
-Pilha de espectros de ordem do mesmo registro, à taxa cheia e subamostrado. É a
-evidência visual do argumento central: a banda de ressonância dobra para posições
-diferentes a cada taxa, mas a **ordem** da falha fica onde está, porque ela vive na
-modulação do envelope e não na portadora.
+A stack of order spectra of the same record, at full rate and undersampled. It is the
+visual evidence for the central argument: the resonance band folds to different positions
+at each rate, but the fault **order** stays where it is, because it lives in the
+modulation of the envelope and not in the carrier.
 
-Painel da esquerda: onde a energia está em frequência, e onde o kurtograma pousa.
-Painel da direita: o espectro de ordem correspondente, com a ordem de falha marcada.
+Left panel: where the energy is in frequency, and where the kurtogram lands.
+Right panel: the corresponding order spectrum, with the fault order marked.
 
     uv run python papers/shared/figures/fig_e07_spectra.py --record I-B-1.mat
 """
@@ -20,7 +20,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-# Type 3 e o default do matplotlib e costuma reprovar no PDF eXpress do IEEE (T0.8).
+# Type 3 is matplotlib's default and tends to fail the IEEE PDF eXpress check (T0.8).
 matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
@@ -68,25 +68,29 @@ def main() -> None:
         )
         spec = envelope_order_spectrum(x, fs, v, k.band_hz, samples_per_rev=spr)
 
-        # --- esquerda: densidade espectral e a banda que o kurtograma escolheu ---
+        # --- left: spectral density and the band that the kurtogram chose ---
         axl = axes[i, 0]
         f, p = _welch(x, fs)
         axl.semilogy(f / 1000.0, p, color="0.35", lw=0.7)
         axl.axvspan(k.f_lo_hz / 1000, k.f_hi_hz / 1000, color=WARM, alpha=0.18, lw=0)
         axl.set_xlim(0, fs / 2000.0)
-        axl.set_ylabel(f"{factor}×\n{fs / 1000:.1f} kSPS", fontsize=8)
+        axl.set_ylabel(f"{factor}×\n{fs / 1000:.1f} kS/s", fontsize=8)
         axl.tick_params(labelsize=7)
+        # The label goes on the side where the trace stays lower under it; on I-B-1 that moves
+        # it to the left only at 64x, where the right-hand trace reaches the top of the axes.
+        edge_hz = 0.4 * fs / 2.0
+        right = p[f >= fs / 2.0 - edge_hz].max() <= p[f <= edge_hz].max()
         axl.text(
-            0.98,
+            0.98 if right else 0.02,
             0.88,
-            f"banda {k.f_lo_hz / 1000:.1f}–{k.f_hi_hz / 1000:.1f} kHz · K={k.kurtosis:.0f}",
+            f"band {k.f_lo_hz / 1000:.1f}–{k.f_hi_hz / 1000:.1f} kHz · K={k.kurtosis:.0f}",
             transform=axl.transAxes,
-            ha="right",
+            ha="right" if right else "left",
             fontsize=6.6,
             color=WARM,
         )
 
-        # --- direita: espectro de ordem, com a ordem de falha marcada ---
+        # --- right: order spectrum, with the fault order marked ---
         axr = axes[i, 1]
         sel = (spec.freqs_hz >= 0.5) & (spec.freqs_hz <= 14.0)
         axr.plot(spec.freqs_hz[sel], spec.magnitude[sel], color=ACCENT, lw=0.8)
@@ -99,26 +103,26 @@ def main() -> None:
             axr.text(
                 truth,
                 axr.get_ylim()[1] * 0.98,
-                f" ordem {truth:.2f}",
+                f" order {truth:.2f}",
                 fontsize=6.8,
                 color=WARM,
                 va="top",
             )
 
-    axes[0, 0].set_title("(a) densidade espectral e banda escolhida", fontsize=9, loc="left")
-    axes[0, 1].set_title("(b) espectro de ordem do envelope", fontsize=9, loc="left")
-    axes[-1, 0].set_xlabel("frequência [kHz]", fontsize=8)
-    axes[-1, 1].set_xlabel("ordem da rotação", fontsize=8)
+    axes[0, 0].set_title("(a) spectral density and chosen band", fontsize=9, loc="left")
+    axes[0, 1].set_title("(b) envelope order spectrum", fontsize=9, loc="left")
+    axes[-1, 0].set_xlabel("frequency [kHz]", fontsize=8)
+    axes[-1, 1].set_xlabel("shaft order", fontsize=8)
     fig.suptitle(
-        f"{rec.cite()} — a banda muda de lugar a cada taxa; a ordem, não",
-        fontsize=8.5,  # sem y explicito: o constrained_layout reserva o espaco
+        f"{rec.cite()} — the band moves at every rate; the order does not",
+        fontsize=8.5,  # no explicit y: constrained_layout reserves the space
     )
 
     for ext in ("pdf", "png"):
         fig.savefig(
             OUT / f"e07_spectra.{ext}", dpi=200
-        )  # sem bbox tight: a largura fica nos 7,16 in
-    print(f"escrito: {OUT / 'e07_spectra.pdf'}")
+        )  # no tight bbox: the width stays at 7.16 in
+    print(f"written: {OUT / 'e07_spectra.pdf'}")
 
 
 def _welch(x: np.ndarray, fs: float) -> tuple[np.ndarray, np.ndarray]:

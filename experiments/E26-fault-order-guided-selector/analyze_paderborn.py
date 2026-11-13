@@ -1,29 +1,32 @@
-"""Análise pré-registrada do E26 no Paderborn (README, "Confirmação no Paderborn").
+"""Pre-registered analysis of E26 on Paderborn (README, "Confirmation on Paderborn").
 
-- **Braços** (limpeza × seletor):
-  - ``kurtograma`` (bruto, cego) e ``mediana_kurtograma`` (mediana, cego);
-  - ``guiado`` (bruto, guiado) e ``mediana_guiado`` (mediana, guiado).
-- **Identificação.**
-  - **Cego:** é pista externa se a ordem estimada fica a ≤ ``tolerance_order`` da BPFO
-    verdadeira, pista interna se fica assim da BPFI, e "nenhuma" no resto.
-    - A ordem verdadeira da própria pista é a régua aninhada do E24: a mediana das calibrações
-      válidas dos **outros** rolamentos da mesma pista.
-    - Para a outra pista e para os sãos, é a mediana de todas as calibrações válidas dela.
-  - **Guiado:** é a falha de maior escore, se ele passar do limiar; senão, "nenhuma".
-    - O limiar é o percentil 95 dos escores dos sãos, por fator e limpeza.
-    - Para avaliar um são, o limiar sai dos outros 5, deixando um rolamento são de fora.
-- **Por rolamento.**
-  - Nos danificados, é a fração de segmentos com a falha certa. A acurácia balanceada é a média,
-    sobre as pistas, da média dos rolamentos.
-  - Nos sãos, é a fração com "nenhuma" (especificidade).
-- **Testes.**
-  - H1: ``mediana_guiado`` contra ``kurtograma``. H2: ``mediana_guiado`` contra
+- **Arms** (cleaning × selector):
+  - ``kurtograma`` (raw, blind) and ``mediana_kurtograma`` (median, blind);
+  - ``guiado`` (raw, guided) and ``mediana_guiado`` (median, guided).
+- **Identification.**
+  - **Blind:** it is outer race if the estimated order lies ≤ ``tolerance_order`` from the true
+    BPFO, inner race if it lies that close to the BPFI, and "none" otherwise.
+    - The true order of the race itself is the nested ruler of E24: the median of the valid
+      calibrations of the **other** bearings of the same race.
+    - For the other race and for the healthy bearings, it is the median of all the valid
+      calibrations of that race.
+  - **Guided:** it is the fault with the highest score, if that score exceeds the threshold;
+    otherwise, "none".
+    - The threshold is the 95th percentile of the healthy scores, per factor and cleaning.
+    - To evaluate a healthy bearing, the threshold comes from the other 5, leaving one healthy
+      bearing out.
+- **Per bearing.**
+  - On the damaged bearings, it is the fraction of segments with the right fault. The balanced
+    accuracy is the mean, over the races, of the mean over the bearings.
+  - On the healthy bearings, it is the fraction with "none" (specificity).
+- **Tests.**
+  - H1: ``mediana_guiado`` against ``kurtograma``. H2: ``mediana_guiado`` against
     ``mediana_kurtograma``.
-  - São feitos nos fatores decisivos, por troca de sinal estratificada por pista sobre as
-    diferenças por rolamento: exata até 2^``signflip_exact_max``, senão Monte Carlo.
-  - Holm sobre os fatores.
-  - Passa se o p de Holm for menor que α, a diferença for positiva e a especificidade do
-    ``mediana_guiado`` naquele fator for de pelo menos ``min_specificity``.
+  - They are run at the decisive factors, by a sign-flip test stratified by race on the
+    per-bearing differences: exact up to 2^``signflip_exact_max``, otherwise Monte Carlo.
+  - Holm over the factors.
+  - Passes if the Holm p is below α, the difference is positive and the specificity of
+    ``mediana_guiado`` at that factor is at least ``min_specificity``.
 
     uv run python experiments/E26-fault-order-guided-selector/analyze_paderborn.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn.yaml
@@ -103,7 +106,7 @@ def main() -> int:
     }
 
     def truth(bearing: str, race_of_bearing: str, race: str) -> float:
-        if race == race_of_bearing:  # régua aninhada: sem o próprio rolamento
+        if race == race_of_bearing:  # nested ruler: without the bearing itself
             peers = [
                 float(c["center"]) for c in valid if c["race"] == race and c["bearing"] != bearing
             ]
@@ -172,7 +175,7 @@ def main() -> int:
         "H2": ("mediana_guiado", "mediana_kurtograma"),
     }.items():
         cell = []
-        for f in (int(x) for x in an["decisive_factors"] if int(x) in factors):  # só os rodados
+        for f in (int(x) for x in an["decisive_factors"] if int(x) in factors):  # only those run
             t = signflip(
                 per_bearing(arm, f, ("OR", "IR")),
                 per_bearing(base, f, ("OR", "IR")),
@@ -216,7 +219,7 @@ def main() -> int:
         print(k, v)
     for t in tests:
         print(t)
-    print("veredito:", verdict)
+    print("verdict:", verdict)
     return 0
 
 

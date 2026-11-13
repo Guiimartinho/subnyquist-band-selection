@@ -1,6 +1,7 @@
-# E24b: teto sem dobra (C1) e notch (C3), revisao adversarial de 2026-11-12. Pre-registro no
-# README, 'E24b'. Os bracos de referencia (kurtograma e infograma_ses sem teto) sao lidos de
-# results/ (mesmo codigo, deterministico). Analise: exploratory/teto_notch_analysis.py.
+# E24b: ceiling without folding (C1) and notch (C3), adversarial review of 2026-11-12.
+# Pre-registration in the README, 'E24b'. The reference arms (kurtograma and infograma_ses with no
+# ceiling) are read from results/ (same code, deterministic). Analysis:
+# exploratory/teto_notch_analysis.py.
 seed: 20261112
 data_dir: datasets/raw/paderborn
 settings:

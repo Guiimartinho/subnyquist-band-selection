@@ -1,836 +1,865 @@
-# E15 - Máscara de amostragem aprendida sob conjunto viável
+# E15 - Learned sampling mask under a feasible set
 
-Número reservado no mapa de experimentos como "política de amostragem aprendida, realizável em
-hardware". Aberto em 2026-11-11 pelo [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md),
-como a Parte 2 (método) do artigo único. Roda na GPU do servidor.
+Number reserved in the experiment map as "learned sampling policy, realizable in hardware".
+Opened on 2026-11-11 by [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md), as Part 2
+(method) of the single paper. Runs on the server's GPU.
 
-## Pergunta
+## Question
 
-No front-end A (sem filtro analógico sintonizável) e com o mesmo orçamento de amostras/s, uma
-máscara de amostragem **aprendida contra a tarefa** supera os baselines publicados do E22? A
-máscara é restrita a um conjunto viável: padrão periódico sobre a grade de ticks, com
-espaçamento mínimo entre conversões.
+On front-end A (no tunable analog filter) and with the same samples/s budget, does a sampling
+mask **learned against the task** outperform the published baselines of E22? The mask is
+restricted to a feasible set: a periodic pattern on the tick grid, with a minimum spacing between
+conversions.
 
-## Conjunto viável
+## Feasible set
 
-- **Grade:** a taxa de aquisição do conjunto (Ottawa 200 kSPS; MAFAULDA 51,2 kSPS) é a grade de
-  ticks.
-- **Padrão periódico** de período L ticks, com K posições ativas por período. A taxa média é
-  K/L × fs, e com K/L = 1/orçamento o custo bate com o do E22. Isso é amostragem periódica
-  não-uniforme (multi-coset), realizável com TIMER e DPPI.
-- **Espaçamento mínimo** de g ticks entre posições ativas, que representa o tempo de conversão
-  de um único SAR.
+- **Grid:** the dataset's acquisition rate (Ottawa 200 kSPS; MAFAULDA 51.2 kSPS) is the tick
+  grid.
+- **Periodic pattern** with a period of L ticks and K active positions per period. The mean rate
+  is K/L × fs, and with K/L = 1/budget the cost matches that of E22. This is periodic nonuniform
+  sampling (multi-coset), realizable with TIMER and DPPI.
+- **Minimum spacing** of g ticks between active positions, which represents the conversion time
+  of a single SAR.
 
-## Modelo
+## Model
 
-**O decodificador não é uma CNN genérica.** É o pipeline clássico desdobrado e diferenciável:
-1. o sinal mascarado e preenchido com zeros;
-2. um banco de filtros complexos aprendíveis, que pode representar reconstrução multi-coset
-   linear de uma banda;
-3. o envelope ao quadrado;
-4. a reamostragem angular pelo tacômetro ou encoder, por interpolação diferenciável;
-5. o espectro de ordem.
+**The decoder is not a generic CNN.** It is the classical pipeline, unrolled and differentiable:
+1. the masked, zero-filled signal;
+2. a bank of learnable complex filters, which can represent linear multi-coset reconstruction of
+   a band;
+3. the squared envelope;
+4. angular resampling from the tachometer or encoder, by differentiable interpolation;
+5. the order spectrum.
 
-A estimativa é o mesmo `estimate_without_prior` do E22 (argmax da ordem), então os números se
-comparam com o E22.
+The estimate is the same `estimate_without_prior` as in E22 (argmax over order), so the numbers
+are comparable with those of E22.
 
-**Perda:** entropia cruzada sobre bins de ordem, com alvo suave na ordem verdadeira (largura da
-tolerância de 0,06). É orientada à tarefa, como em `shlezinger2022taskadc`.
+**Loss:** cross-entropy over order bins, with a soft target at the true order (width of the 0.06
+tolerance). It is task-oriented, as in `shlezinger2022taskadc`.
 
-**Máscara:** logits por posição do período, top-K de Gumbel com straight-through. A construção
-vem de `huijben2020dps` (DPS), e o ADPS (`vangorp2021adps`) a estende ao caso adaptativo. O
-espaçamento mínimo entra por penalidade durante o treino e por projeção exata no fim. A pergunta
-do gap de projeção (treinar sob a restrição contra projetar depois) tem precedente em MRI,
-`weiss2021pilot` (PILOT).
+**Mask:** logits per position of the period, Gumbel top-K with straight-through. The construction
+comes from `huijben2020dps` (DPS), and ADPS (`vangorp2021adps`) extends it to the adaptive case.
+The minimum spacing enters through a penalty during training and through an exact projection at
+the end. The projection-gap question (training under the constraint versus projecting afterwards)
+has a precedent in MRI, `weiss2021pilot` (PILOT).
 
 ## Baselines
 
-Todos são reimplementados, no mesmo protocolo e no mesmo orçamento. Tabela revista em 2026-11-11
-pela revisão adversarial; os nomes são os da coluna `arm` do `metrics.csv`.
+All are reimplemented, under the same protocol and the same budget. Table revised on 2026-11-11
+by the adversarial review; the names are those of the `arm` column of `metrics.csv`.
 
-| braço | referência | o que isola |
+| arm | reference | what it isolates |
 |---|---|---|
-| `uniforme_treino`: melhor uniforme escolhida fora do teste | E22 | o melhor clássico realizável |
-| `dec_uniforme_treino`: mesmo decodificador, uniforme nesse fator | E07, E22 | decodificador contra clássico, na mesma taxa |
-| `dec_uniforme`: mesmo decodificador, uniforme no orçamento | E07, E22 | ganho de aprender o padrão |
-| `dec_aleatoria`: máscara aleatória fixa, semeada | `sensors2025csvibration` | aprendido contra aleatório fixo |
-| `dec_multicoset`: multi-coset de menor alias de pico | `zhao2018coprime`, `sun2013multirate` | aprendido contra projetado sem dados |
-| `dec_multicoset_vb`: multi-coset para suporte conhecido | `venkataramani2001optimal` | aprendido contra projetado com o suporte |
-| `dec_livre_projetada`: top-K sem restrição, depois projetado | `huijben2020dps`, `weiss2021pilot` | o **gap de projeção** (H2) |
-| `dec_loupe_*` (opcional): LOUPE, depois projetado | `bahadir2020loupe` | o mesmo, com outro amostrador |
-| `dec_adaptativa_blocos`: adaptativo por blocos inspirado no ADPS | `vangorp2021adps` | adaptativo contra fixo |
-| `wdcnn`: rede genérica sobre o sinal uniformemente decimado | `zhang2017wdcnn` | rede genérica de diagnóstico |
-| `uniforme_orcamento`, `oraculo_uniforme` | E22 | referência; o oráculo usa o rótulo de teste |
+| `uniforme_treino` (uniform, training): best uniform rate chosen outside the test set | E22 | the best realizable classical method |
+| `dec_uniforme_treino` (decoder, uniform, training): same decoder, uniform at that factor | E07, E22 | decoder versus classical, at the same rate |
+| `dec_uniforme` (decoder, uniform): same decoder, uniform at the budget | E07, E22 | gain from learning the pattern |
+| `dec_aleatoria` (decoder, random): fixed random mask, seeded | `sensors2025csvibration` | learned versus fixed random |
+| `dec_multicoset`: multi-coset with the lowest peak alias | `zhao2018coprime`, `sun2013multirate` | learned versus designed without data |
+| `dec_multicoset_vb`: multi-coset for a known support | `venkataramani2001optimal` | learned versus designed with the support |
+| `dec_livre_projetada` (decoder, free, projected): unconstrained top-K, then projected | `huijben2020dps`, `weiss2021pilot` | the **projection gap** (H2) |
+| `dec_loupe_*` (optional): LOUPE, then projected | `bahadir2020loupe` | the same, with another sampler |
+| `dec_adaptativa_blocos` (decoder, adaptive, blocks): block-adaptive, inspired by ADPS | `vangorp2021adps` | adaptive versus fixed |
+| `wdcnn`: generic network on the uniformly decimated signal | `zhang2017wdcnn` | generic diagnostic network |
+| `uniforme_orcamento` (uniform, budget), `oraculo_uniforme` (uniform oracle) | E22 | reference; the oracle uses the test label |
 
-## Protocolo de treino
+## Training protocol
 
-- **Épocas:** teto de **500**, com **early stopping por paciência** (40 épocas) na perda de
-  validação. O melhor checkpoint vale.
-- **Validação separada por registro**, sem vazamento de segmentos. Divisões repetidas pelo
-  arcabouço do E05.
-- **Repetições:** 5 divisões por registro, com uma semente de treino cada (ver o pré-registro).
-- **Ajuste:** o mesmo orçamento de hiperparâmetros para todos os métodos aprendidos (uma taxa de
-  aprendizado, sem busca).
-- **Conjuntos:** Ottawa decide; ver as alterações e correções abaixo.
-- **Validação das reimplementações:** antes de comparar, cada baseline precisa reproduzir algo
-  conhecido. Por exemplo, a WDCNN em taxa cheia no CWRU tem número conhecido na literatura, e o
-  LOUPE tem de recuperar a máscara de baixa frequência num exemplo de brinquedo.
+- **Epochs:** a cap of **500**, with **patience-based early stopping** (40 epochs) on the
+  validation loss. The best checkpoint is the one kept.
+- **Validation split by record**, with no segment leakage. Splits repeated with the E05
+  framework.
+- **Repetitions:** 5 record-wise splits, with one training seed each (see the pre-registration).
+- **Tuning:** the same hyperparameter budget for all learned methods (one learning rate, no
+  search).
+- **Datasets:** Ottawa decides; see the changes and corrections below.
+- **Validation of the reimplementations:** before comparing, each baseline must reproduce
+  something known. For example, the WDCNN at full rate on CWRU has a known number in the
+  literature, and LOUPE has to recover the low-frequency mask in a toy example.
 
-## Hipóteses
+## Hypotheses
 
-Texto corrigido em 2026-11-11. A versão anterior comparava com `taxa_tat` e com o oráculo.
-`taxa_tat` não existe neste experimento, e o oráculo escolhe com o rótulo de teste. O teste exato
-está no **pré-registro**, mais abaixo.
+Text corrected on 2026-11-11. The previous version compared against `taxa_tat` (the rate set by
+E21's rate admissibility test, TAT) and against the oracle. `taxa_tat` does not exist in this
+experiment, and the oracle chooses with the test label. The exact test is in the
+**pre-registration**, further below.
 
-- **H1.** Em pelo menos dois orçamentos, a máscara aprendida (`dec_aprendida_sel`) tem acurácia
-  balanceada de ordem maior que a de cada um destes três braços:
-  - `uniforme_treino`, a melhor uniforme escolhida fora do teste;
-  - `dec_uniforme_treino`, o mesmo decodificador com a máscara uniforme nesse fator;
-  - `dec_aleatoria`, a máscara aleatória fixa.
+- **H1.** In at least two budgets, the learned mask (`dec_aprendida_sel`: the decoder with the
+  learned mask, selected across budgets) has a higher balanced order accuracy than each of these
+  three arms:
+  - `uniforme_treino`, the best uniform rate chosen outside the test set;
+  - `dec_uniforme_treino`, the same decoder with the uniform mask at that factor;
+  - `dec_aleatoria`, the fixed random mask.
 
-  Vale só se as duas réguas concordarem.
-- **H2.** O gap de projeção é maior que zero: treinar já sob a restrição (`dec_aprendida`) é
-  melhor que treinar o top-K de Gumbel sem a restrição e projetar depois (`dec_livre_projetada`).
+  It holds only if the two rulers agree.
+- **H2.** The projection gap is greater than zero: training under the constraint from the start
+  (`dec_aprendida`, "learned") is better than training the Gumbel top-K without the constraint
+  and projecting afterwards (`dec_livre_projetada`).
 
-## O que refutaria
+## What would refute
 
-- **H1 é refutada** se o critério do pré-registro falhar em qualquer uma das réguas. Então a
-  Parte 2 é resultado negativo, e o artigo a reporta como tal, como manda o ADR 0006.
-- **H2 é refutada** se o critério do pré-registro falhar. Nesse caso o conjunto viável não é
-  contribuição.
+- **H1 is refuted** if the pre-registration criterion fails on either of the rulers. Then Part 2
+  is a negative result, and the paper reports it as such, as ADR 0006 requires.
+- **H2 is refuted** if the pre-registration criterion fails. In that case the feasible set is not
+  a contribution.
 
-## Alterações de protocolo (2026-11-11)
+## Protocol changes (2026-11-11)
 
-Pedidas pela coordenação depois de o E21 e o E22 rodarem. O desenho acima fica como registro.
-Dois itens foram superados pela revisão adversarial da seção seguinte, e estão marcados.
+Requested by the coordinator after E21 and E22 ran. The design above stays as a record. Two items
+were superseded by the adversarial review in the next section, and they are marked.
 
-- **Conjuntos.** Ottawa (pistas interna e externa, com encoder) e CWRU 48k DE (rotação constante
-  pelo rpm do registro, triagem `smith2015cwru`). **Superado:** o CWRU saiu da decisão (A2).
-  - O MAFAULDA sai e fica no config como opção desligada. O E21 mostrou que, nesse rolamento,
-    BPFO = 2,998 e BPFI = 5,002 coincidem com o 3º e o 5º harmônicos do eixo, e aí o "acerto"
-    passa a medir o harmônico do eixo.
-  - Não há teste fora do conjunto de treino: as grades de ticks dos conjuntos não são a mesma, e
-    a máscara não se transfere sem reamostrar.
-- **Orçamentos.** Ottawa: 1/4, 1/8, 1/16 e 1/32; 1/48 e 1/64 são opcionais. De 96× a 160× não
-  servem de alvo, porque ali a parede é do pipeline, não da taxa.
-- **Baseline que decide:** `uniforme_treino`, a melhor uniforme escolhida nos registros fora do
-  teste da mesma divisão. É um fator por conjunto, porque o nó não sabe a família, e o empate vai
-  para a maior taxa.
-- **Verdade.** Centro do platô de escore (`snq_recon.refine_order`), e não o primeiro ponto, que
-  fica cerca de 0,0175 ordem abaixo. O primeiro ponto vai para o manifest. **Superado:** a régua
-  única por registro deu lugar às duas réguas (A1).
-- **Picos isolados de uma amostra no Ottawa** (cerca de 1300/s, em todos os registros). Os
-  resultados saem nas variantes `bruto` e `sem_picos`, pelo critério do E20/E22.
-- **Piso do seletor.** No decodificador aprendido, o piso de 500 Hz do kurtograma só inicializa o
-  banco. Nos braços clássicos, nas grades usadas, a guarda do piso não dispara. Em fator alto,
-  porém, o piso estreita a faixa de busca; isso é parede do pipeline.
+- **Datasets.** Ottawa (inner and outer races, with encoder) and CWRU 48k DE (constant speed from
+  the record's rpm, `smith2015cwru` screening). **Superseded:** CWRU was removed from the
+  decision (A2).
+  - MAFAULDA is dropped and stays in the config as a disabled option. E21 showed that, in this
+    bearing, BPFO = 2.998 and BPFI = 5.002 coincide with the 3rd and 5th shaft harmonics, and
+    then a "hit" ends up measuring the shaft harmonic.
+  - There is no test outside the training dataset: the tick grids of the datasets are not the
+    same, and the mask does not transfer without resampling.
+- **Budgets.** Ottawa: 1/4, 1/8, 1/16 and 1/32; 1/48 and 1/64 are optional. 96× to 160× do not
+  serve as targets, because there the wall is the pipeline's, not the rate's.
+- **Deciding baseline:** `uniforme_treino`, the best uniform rate chosen on the records outside
+  the test set of the same split. It is one factor per dataset, because the node does not know
+  the family, and ties go to the higher rate.
+- **Ground truth.** Center of the score plateau (`snq_recon.refine_order`), and not the first
+  point, which lies about 0.0175 order below. The first point goes into the manifest.
+  **Superseded:** the single ruler per record gave way to the two rulers (A1).
+- **Isolated one-sample spikes in Ottawa** (about 1300/s, in all records). The results are
+  reported in the `bruto` (raw) and `sem_picos` (spikes removed) variants, by the E20/E22
+  criterion.
+- **Selector floor.** In the learned decoder, the kurtogram's 500 Hz floor only initializes the
+  bank. In the classical arms, on the grids used, the floor guard does not trigger. At a high
+  factor, however, the floor narrows the search range; that is a pipeline wall.
 
-## Correções da revisão adversarial (2026-11-11)
+## Corrections from the adversarial review (2026-11-11)
 
-A primeira rodada completa foi interrompida antes de terminar. Não houve vazamento do teste, e o
-`uniforme_treino` estava correto, mas a rodada não valia por duas falhas (A1 e A2). A chave de
-retomada mudou, e a rodada recomeça do zero.
+The first full run was interrupted before it finished. There was no test leakage, and
+`uniforme_treino` was correct, but the run was not valid because of two flaws (A1 and A2). The
+resume key changed, and the run restarts from scratch.
 
-- **A1. A raia da pista externa muda com a rotação dentro do registro.** A coordenação mediu, com
-  `refine_order` em taxa cheia por segmento: O-A-1 vai de 3,519 a 16,7 Hz até 3,322 a 25,8 Hz, e
-  a pista interna fica estável (variação ≤ 0,045). Um rótulo constante por registro errava a raia
-  em boa parte das janelas da pista externa. Correção:
-  - **régua local**: `refine_order` em taxa cheia numa grade deslizante de janelas de 2,5 s, com
-    passo de 0,25 s, sobre os registros de treino e de validação. Cada janela de treino recebe o
-    rótulo do próprio trecho, e o trecho com platô na borda sai do treino;
-  - a mesma régua escolhe o `uniforme_treino`, nos segmentos dos registros fora do teste;
-  - na avaliação saem **duas réguas lado a lado**: a raia em taxa cheia do próprio segmento de
-    teste, só para pontuar e nunca para escolher, e a mediana aninhada do segmento 0.
-- **A2. O CWRU 48k não decide nada como estava:** 12 registros de pista externa contra 1 de
-  interna, que nunca vai a teste; classe única no teste; 3 unidades físicas. Escolha: **(b), sair
-  da decisão.** O adaptador fica, desligado no config. A opção (a), detecção de BPFO de classe
-  única, responderia outra pergunta e não teria intervalo por registro.
-- **B1. A comparação que decide misturava decodificador, máscara e taxa.**
-  - Entra `dec_uniforme_treino`: o mesmo decodificador com a máscara uniforme no fator escolhido
-    fora do teste.
-  - O braço aprendido decisivo, `dec_aprendida_sel`, escolhe pela validação entre os orçamentos
-    treinados ≥ b. O critério é a acurácia balanceada pela régua local, com desempate pela menor
-    perda e depois pela maior taxa.
-- **B2. Mesmo orçamento de estágios.** Toda máscara buscada vira um `FixedMask`, e o
-  decodificador é retreinado do zero com ela, no mesmo protocolo dos braços fixos. A versão do
-  estágio de busca sai como `_sem_ajuste`.
+- **A1. The outer-race line changes with the shaft speed within the record.** The coordinator
+  measured, with `refine_order` at full rate per segment: O-A-1 goes from 3.519 at 16.7 Hz to
+  3.322 at 25.8 Hz, and the inner race stays stable (variation ≤ 0.045). A constant label per
+  record missed the line in a large share of the outer-race windows. Fix:
+  - **local ruler**: `refine_order` at full rate on a sliding grid of 2.5 s windows, with a
+    0.25 s step, over the training and validation records. Each training window gets the label
+    of its own stretch, and a stretch with its plateau at the edge is dropped from training;
+  - the same ruler chooses `uniforme_treino`, on the segments of the records outside the test
+    set;
+  - the evaluation reports **two rulers side by side**: the full-rate line of the test segment
+    itself, only for scoring and never for choosing, and the nested median of segment 0.
+- **A2. As it stood, CWRU 48k decides nothing:** 12 outer-race records against 1 inner-race
+  record, which never goes to test; a single class in the test set; 3 physical units. Choice:
+  **(b), remove it from the decision.** The adapter stays, disabled in the config. Option (a),
+  single-class BPFO detection, would answer another question and would have no per-record
+  interval.
+- **B1. The deciding comparison mixed decoder, mask and rate.**
+  - `dec_uniforme_treino` is added: the same decoder with the uniform mask at the factor chosen
+    outside the test set.
+  - The deciding learned arm, `dec_aprendida_sel`, chooses by validation among the trained
+    budgets ≥ b. The criterion is the balanced accuracy by the local ruler, with ties broken by
+    the lowest loss and then by the highest rate.
+- **B2. Same stage budget.** Every searched mask becomes a `FixedMask`, and the decoder is
+  retrained from scratch with it, under the same protocol as the fixed arms. The search-stage
+  version is reported as `_sem_ajuste` (without refit).
 - **B3. LOUPE.**
-  - No forward relaxado, a taxa vista no treino era 1,5 a 2,4 vezes a do orçamento. O gap de
-    projeção passa a usar o top-K de Gumbel sem a restrição (`dec_livre`): horizonte de 4
-    períodos, contagem só no horizonte e nenhum espaçamento. Ele é projetado exatamente com
+  - In the relaxed forward pass, the rate seen in training was 1.5 to 2.4 times the budget's.
+    The projection gap now uses the unconstrained Gumbel top-K (`dec_livre`, "free"): a horizon
+    of 4 periods, counting only over the horizon, and no spacing. It is projected exactly with
     `fold_project`.
-  - `masks.json` grava a fração de máscaras duras que violam g e a projeção do mapa inicial
-    contra a final.
-  - O LOUPE fica opcional, agora com forward duro e straight-through.
-- **B4. Estatística.** Está pré-registrada na seção seguinte, antes de qualquer número.
-- **B5. A máscara podia não sair do ruído.**
-  - Logits iniciais de 0,01·randn e taxa de 0,001 a 0,003 com 8 passos por época, contra ruído de
-    Gumbel de desvio próximo de 1,28. Agora a máscara tem taxa própria: 10 vezes a do
-    decodificador (`mask.lr_multiplier`).
-  - `masks.json` grava os logits finais, a margem entre o K-ésimo e o (K+1)-ésimo logit,
-    `last_hard_violations`, o `best_epoch` e as posições finais contra a projeção dos logits
-    iniciais, que a semente reproduz.
-- **B6.** O braço adaptativo se chama "adaptativo por blocos inspirado no ADPS"
-  (`dec_adaptativa_blocos`). Como ele tem um estágio só, é comparado com
-  `dec_aprendida_sem_ajuste`.
-- **B7.** Entra `dec_multicoset_vb`, o multi-coset desenhado para o suporte conhecido
-  (`venkataramani2001optimal`; DOI conferido no Crossref).
-  - O suporte é a banda do kurtograma em taxa cheia mais frequente entre os registros fora do
-    teste, encolhida até caber em K células.
-  - O critério é a amplificação de ruído da reconstrução por mínimos quadrados. É uma leitura no
-    espírito do artigo, cuja cota exata **não foi conferida**, porque o resumo não estava
-    disponível nas bases consultadas.
+  - `masks.json` records the fraction of hard masks that violate g, and the projection of the
+    initial map against the final one.
+  - LOUPE stays optional, now with a hard forward pass and straight-through.
+- **B4. Statistics.** Pre-registered in the next section, before any number.
+- **B5. The mask could fail to get out of the noise.**
+  - Initial logits of 0.01·randn and a learning rate of 0.001 to 0.003 with 8 steps per epoch,
+    against Gumbel noise with a standard deviation close to 1.28. The mask now has its own
+    learning rate: 10 times the decoder's (`mask.lr_multiplier`).
+  - `masks.json` records the final logits, the margin between the K-th and the (K+1)-th logit,
+    `last_hard_violations`, the `best_epoch`, and the final positions against the projection of
+    the initial logits, which the seed reproduces.
+- **B6.** The adaptive arm is called "block-adaptive, inspired by ADPS" (`dec_adaptativa_blocos`).
+  Since it has a single stage, it is compared with `dec_aprendida_sem_ajuste` (learned, without
+  refit).
+- **B7.** `dec_multicoset_vb` is added: the multi-coset designed for the known support
+  (`venkataramani2001optimal`; DOI checked on Crossref).
+  - The support is the most frequent full-rate kurtogram band among the records outside the test
+    set, shrunk until it fits in K cells.
+  - The criterion is the noise amplification of the least-squares reconstruction. It is a reading
+    in the spirit of the paper, whose exact bound **was not checked**, because the abstract was
+    not available in the databases consulted.
 
-## Pré-registro (2026-11-11)
+## Pre-registration (2026-11-11)
 
-Escrito antes de qualquer número da rodada completa. O config espelha o texto no bloco
-`preregistration`, e o manifest grava o sha256 deste README (`readme_sha256`). Mudar o texto ou o
-bloco depois de ver um número invalida o pré-registro.
+Written before any number from the full run. The config mirrors the text in the `preregistration`
+block, and the manifest records the sha256 of this README (`readme_sha256`). Changing the text or
+the block after seeing a number invalidates the pre-registration.
 
-- **Conjunto e variante que decidem:** Ottawa, variante `bruto`. A `sem_picos` é secundária,
-  porque remover picos exige a taxa cheia e não é realizável no nó.
-- **Orçamentos:** 1/4, 1/8, 1/16 e 1/32.
-- **Métrica:** acurácia balanceada de ordem, isto é, a média, sobre as duas pistas, da fração de
-  segmentos de teste com |estimativa − régua| < 0,06 ordem.
-- **Réguas.** Cada hipótese é testada nas duas, e só vale se as duas concordarem.
-  - **Local:** a raia em taxa cheia do próprio segmento de teste.
-  - **Aninhada:** a mediana das calibrações do segmento 0 dos registros fora do teste da mesma
-    pista.
-- **Unidade de reamostragem:** o aglomerado condição × cenário, 4 por pista (I-A a I-D e O-A a
-  O-D). Também reamostra as 5 divisões.
-  - Antes de reamostrar, cada (divisão, registro) é resumido pela média sobre os segmentos e as
-    sementes.
-  - Cada reamostra sorteia as divisões e, dentro de cada pista, os aglomerados, com reposição. O
-    peso de um par é o produto das contagens.
-  - São 4000 reamostras. O p unilateral é (1 + #{Δ* ≤ 0})/(1 + B).
-  - **Elegibilidade:** o teste só vale com pelo menos 3 aglomerados por pista e 2 divisões entre
-    os pares. Abaixo disso, todas as reamostras saem quase iguais, e o p viraria 1/(1 + B) sem
-    medir variabilidade nenhuma; o teste recebe p = 1.
-- **Semente e divisão.** Há uma semente de treino por divisão, então a variabilidade de semente
-  fica confundida com a de divisão. O bootstrap reamostra as divisões, e o intervalo carrega as
-  duas juntas. `protocol.seeds_per_split` separa as duas, ao custo de GPU.
-- **Comparações decisivas e multiplicidade.**
-  - H1: `dec_aprendida_sel` contra `uniforme_treino`, `dec_uniforme_treino` e `dec_aleatoria`, nos
-    4 orçamentos. São 12 testes por régua, com correção de Holm sobre os 12.
-  - H2: `dec_aprendida` contra `dec_livre_projetada`, nos 4 orçamentos. São 4 testes por régua,
-    com Holm sobre os 4.
-  - α = 0,05.
-- **Regra de decisão.**
-  - Um orçamento vence na H1 quando os três testes dele são significativos depois de Holm e com
-    diferença positiva.
-  - A H1 vale numa régua quando vencem pelo menos dois orçamentos; vale no experimento quando
-    vale nas duas réguas.
-  - A H2 segue a mesma regra, com um teste por orçamento.
-  - `results/hypotheses.csv` traz cada teste, o p ajustado e o veredito.
-- **Não decide nada:** as comparações de `results/comparisons.csv`, que saem sem correção, o
-  oráculo, a variante `sem_picos`, a família de falha, a WDCNN e o controle saudável.
-- **Convergência da máscara (B5), decidida só por diagnóstico de treino.** A máscara "saiu do
-  ruído" quando a margem entre o K-ésimo e o (K+1)-ésimo logit passa do desvio do ruído de
-  Gumbel, π/√6 ≈ 1,28 (`mask_converged`). O `summary.csv` traz a fração das divisões em que isso
-  aconteceu (`mask_converged_frac`).
-  - Se a fração ficar abaixo de 0,5 em `dec_aprendida`, na variante `bruto`, em qualquer
-    orçamento, a rodada é refeita com `mask.lr_multiplier` = 30 **antes** de abrir
-    `hypotheses.csv`.
-  - A troca é registrada aqui. É uma decisão de otimização tomada pelo treino, não pelo teste.
-  - **Aplicada em 2026-11-11.** Na rodada com `lr_multiplier = 10` (14:35–21:05 UTC), a
-    `mask_converged_frac` de `dec_aprendida`, bruto, foi 0,6, 0,4, 0,4 e 0,2 de 1/4 a 1/32.
-    A rodada ficou selada em `results-lr10/`, sem abrir `hypotheses.csv` nem `comparisons.csv`,
-    e o config passou a `lr_multiplier = 30`.
-  - **Rodada com `lr_multiplier = 30`** (iniciada às 21:07 UTC de 2026-11-11). Na variante bruta,
-    a `mask_converged_frac` de `dec_aprendida` foi 1,0 / 1,0 / **0,4** / 0,6 de 1/4 a 1/32.
-    - O pré-registro previa uma única refação, e ela não resolveu 1/16.
-    - **Desvio declarado antes de abrir `hypotheses.csv`:** nesta rodada, a H1 de 1/16 fica
-      **não avaliável** (a máscara não saiu do ruído). 1/4, 1/8 e 1/32 são avaliados como
-      pré-registrado.
-    - A pedido do usuário, a rodada vai até o fim; a variante sem picos é descritiva.
-  - **Diagnóstico de treino** (só treino, nunca teste): as 8 divisões da variante bruta que não
-    convergiram têm a melhor época em 22–84 e pararam por paciência antes do fim do recozimento
-    da temperatura (`tau_anneal_epochs = 100`). As que convergiram, com uma exceção, treinaram
-    além dele.
-  - **Pré-registro da rodada seguinte (B5, 2ª aplicação):** `training.stop_after_anneal: true`.
-    - Nos braços com máscara aprendida e recozimento, a parada antecipada só conta e o melhor
-      checkpoint só é escolhido a partir de `tau_anneal_epochs` (`FitConfig.min_epochs`).
-    - O critério de convergência (margem > π/√6), `lr_multiplier = 30` e todo o resto ficam
-      iguais.
-    - Se mesmo assim a fração ficar abaixo de 0,5 em algum orçamento da variante bruta, esse
-      orçamento é declarado não avaliável, sem nova refação.
-  - **Decisão do usuário (2026-11-12, 01:23 UTC), antes de abrir qualquer número de teste da
-    rodada 30×:** a rodada corrigida decide H1 e H2 em todos os orçamentos, com um único
-    procedimento de treino.
-    - A decisão veio antes dos números porque a rodada corrigida só pode melhorar o resultado.
-      Decidir rodá-la só depois de ver a 30× seria escolher a rodada pelo resultado.
-    - A rodada 30× foi interrompida na metade `sem_picos`, que não decide nada, e selada sem
-      análise em `results-lr30/` (`SELADO.md`). Como não chegou ao fim, não gerou
-      `hypotheses.csv`. Só os diagnósticos de treino saíram dela (`convergencia.txt`).
-    - A rodada corrigida roda só a variante `bruto` (`despike_variants: [false]`). A `sem_picos`
-      fica para uma rodada secundária posterior.
-  - **Avaliabilidade por orçamento, em código** (`evaluable_budgets`; `min_mask_converged_frac`
-    e `convergence_arms` no bloco `preregistration`):
-    - Um orçamento só é avaliável numa hipótese se a máscara de cada braço de
-      `convergence_arms` saiu do ruído em pelo menos 0,5 das divisões.
-    - Os testes de um orçamento não avaliável entram no Holm com p = 1, o que é conservador, e
-      ele não pode vencer. `hypotheses.csv` marca `evaluable` e a convergência de cada braço.
-    - **H1:** `dec_aprendida` (o B5 como pré-registrado) e `dec_aprendida_sel` (a máscara
-      efetivamente usada em cada divisão, que pode vir de um orçamento treinado mais esparso).
-    - **H2:** `dec_aprendida` e `dec_livre_projetada`. Na rodada 30×, a máscara livre saiu do
-      ruído em só 1/5, 1/5, 1/5 e 0/5 das divisões (diagnóstico de treino). Sem essa exigência,
-      a H2 mediria o gap de projeção contra um baseline preso no ruído.
+- **Deciding dataset and variant:** Ottawa, `bruto` variant. `sem_picos` is secondary, because
+  removing spikes requires the full rate and is not realizable on the node.
+- **Budgets:** 1/4, 1/8, 1/16 and 1/32.
+- **Metric:** balanced order accuracy, that is, the mean, over the two races, of the fraction of
+  test segments with |estimate − ruler| < 0.06 order.
+- **Rulers.** Each hypothesis is tested on both, and holds only if the two agree.
+  - **Local:** the full-rate line of the test segment itself.
+  - **Nested:** the median of the segment-0 calibrations of the same race's records outside the
+    test set.
+- **Resampling unit:** the condition × scenario cluster, 4 per race (I-A to I-D and O-A to O-D).
+  The 5 splits are also resampled.
+  - Before resampling, each (split, record) is summarized by the mean over the segments and the
+    seeds.
+  - Each resample draws the splits and, within each race, the clusters, with replacement. The
+    weight of a pair is the product of the counts.
+  - There are 4000 resamples. The one-sided p is (1 + #{Δ* ≤ 0})/(1 + B).
+  - **Eligibility:** the test is valid only with at least 3 clusters per race and 2 splits among
+    the pairs. Below that, all resamples come out nearly equal, and the p would become 1/(1 + B)
+    without measuring any variability; the test gets p = 1.
+- **Seed and split.** There is one training seed per split, so seed variability is confounded
+  with split variability. The bootstrap resamples the splits, and the interval carries both
+  together. `protocol.seeds_per_split` separates the two, at a GPU cost.
+- **Deciding comparisons and multiplicity.**
+  - H1: `dec_aprendida_sel` against `uniforme_treino`, `dec_uniforme_treino` and `dec_aleatoria`,
+    in the 4 budgets. That is 12 tests per ruler, with Holm correction over the 12.
+  - H2: `dec_aprendida` against `dec_livre_projetada`, in the 4 budgets. That is 4 tests per
+    ruler, with Holm over the 4.
+  - α = 0.05.
+- **Decision rule.**
+  - A budget wins on H1 when its three tests are significant after Holm and with a positive
+    difference.
+  - H1 holds on a ruler when at least two budgets win; it holds in the experiment when it holds
+    on both rulers.
+  - H2 follows the same rule, with one test per budget.
+  - `results/hypotheses.csv` lists each test, the adjusted p and the verdict.
+- **Decides nothing:** the comparisons in `results/comparisons.csv`, which are reported without
+  correction, the oracle, the `sem_picos` variant, the fault family, the WDCNN and the healthy
+  control.
+- **Mask convergence (B5), decided only by training diagnostics.** The mask "got out of the
+  noise" when the margin between the K-th and the (K+1)-th logit exceeds the standard deviation
+  of the Gumbel noise, π/√6 ≈ 1.28 (`mask_converged`). `summary.csv` gives the fraction of the
+  splits in which this happened (`mask_converged_frac`).
+  - If the fraction falls below 0.5 for `dec_aprendida`, in the `bruto` variant, in any budget,
+    the run is redone with `mask.lr_multiplier` = 30 **before** opening `hypotheses.csv`.
+  - The switch is recorded here. It is an optimization decision made from training, not from the
+    test.
+  - **Applied on 2026-11-11.** In the run with `lr_multiplier = 10` (14:35–21:05 UTC), the
+    `mask_converged_frac` of `dec_aprendida`, raw, was 0.6, 0.4, 0.4 and 0.2 from 1/4 to 1/32.
+    The run was sealed in `results-lr10/`, without opening `hypotheses.csv` or `comparisons.csv`,
+    and the config moved to `lr_multiplier = 30`.
+  - **Run with `lr_multiplier = 30`** (started at 21:07 UTC on 2026-11-11). In the raw variant,
+    the `mask_converged_frac` of `dec_aprendida` was 1.0 / 1.0 / **0.4** / 0.6 from 1/4 to 1/32.
+    - The pre-registration provided for a single redo, and it did not fix 1/16.
+    - **Deviation declared before opening `hypotheses.csv`:** in this run, H1 at 1/16 is
+      **not evaluable** (the mask did not get out of the noise). 1/4, 1/8 and 1/32 are evaluated
+      as pre-registered.
+    - At the user's request, the run goes to the end; the variant without spikes is descriptive.
+  - **Training diagnostic** (training only, never test): the 8 splits of the raw variant that did
+    not converge have their best epoch in 22–84 and stopped by patience before the end of the
+    temperature annealing (`tau_anneal_epochs = 100`). Those that converged, with one exception,
+    trained beyond it.
+  - **Pre-registration of the next run (B5, 2nd application):** `training.stop_after_anneal: true`.
+    - In the arms with a learned mask and annealing, early stopping only counts, and the best
+      checkpoint is only chosen, from `tau_anneal_epochs` onward (`FitConfig.min_epochs`).
+    - The convergence criterion (margin > π/√6), `lr_multiplier = 30` and everything else stay
+      the same.
+    - If the fraction still falls below 0.5 in some budget of the raw variant, that budget is
+      declared not evaluable, with no further redo.
+  - **User's decision (2026-11-12, 01:23 UTC), before opening any test number from the 30×
+    run:** the corrected run decides H1 and H2 in all budgets, with a single training procedure.
+    - The decision came before the numbers because the corrected run can only improve the
+      result. Deciding to run it only after seeing the 30× run would be choosing the run by its
+      result.
+    - The 30× run was interrupted in the `sem_picos` half, which decides nothing, and sealed
+      without analysis in `results-lr30/` (`SELADO.md`, "sealed"). Since it did not reach the
+      end, it did not produce `hypotheses.csv`. Only the training diagnostics came out of it
+      (`convergencia.txt`, "convergence").
+    - The corrected run runs only the `bruto` variant (`despike_variants: [false]`). `sem_picos`
+      is left for a later secondary run.
+  - **Per-budget evaluability, in code** (`evaluable_budgets`; `min_mask_converged_frac` and
+    `convergence_arms` in the `preregistration` block):
+    - A budget is evaluable on a hypothesis only if the mask of each arm in `convergence_arms`
+      got out of the noise in at least 0.5 of the splits.
+    - The tests of a non-evaluable budget enter Holm with p = 1, which is conservative, and that
+      budget cannot win. `hypotheses.csv` flags `evaluable` and the convergence of each arm.
+    - **H1:** `dec_aprendida` (B5 as pre-registered) and `dec_aprendida_sel` (the mask actually
+      used in each split, which may come from a sparser trained budget).
+    - **H2:** `dec_aprendida` and `dec_livre_projetada`. In the 30× run, the free mask got out of
+      the noise in only 1/5, 1/5, 1/5 and 0/5 of the splits (training diagnostic). Without this
+      requirement, H2 would measure the projection gap against a baseline stuck in the noise.
 
-  Verificação no recorte da fumaça (1/32, 120 passos, sem parada antecipada; não é resultado):
-  - com multiplicador 1, o desvio dos logits foi de 0,01 a 0,047, dentro do ruído;
-  - com 10, foi a 0,475, mas a margem do top-K ainda era de 0,008.
+  Check on the smoke-test slice (1/32, 120 steps, no early stopping; not a result):
+  - with multiplier 1, the standard deviation of the logits went from 0.01 to 0.047, within the
+    noise;
+  - with 10, it went to 0.475, but the top-K margin was still 0.008.
 
-  Nos dois casos a melhor época foi a última. A rodada completa tem muito mais passos; a regra
-  acima decide.
+  In both cases the best epoch was the last one. The full run has many more steps; the rule above
+  decides.
 
-## Ressalvas para o texto do artigo
+## Caveats for the paper text
 
-- **O escopo é um rolamento por classe.** No Ottawa, cada condição tem o seu rolamento, então
-  "família de falha" equivale a "qual rolamento". Isso vale para a WDCNN, que classifica família.
-- **Faltam baselines publicados:** `han2024undersampledcnn`, `ahmed2018compressedbearing` e
+- **The scope is one bearing per class.** In Ottawa, each condition has its own bearing, so
+  "fault family" is equivalent to "which bearing". This applies to the WDCNN, which classifies
+  the family.
+- **Published baselines are missing:** `han2024undersampledcnn`, `ahmed2018compressedbearing` and
   `zhao2026adaptive`.
-- **`sem_picos` exige taxa cheia** e não é realizável no nó.
-- **Não há T/H, jitter nem conversão modelados.** As amostras são as do conjunto, na grade de
-  ticks. A cadeia do `snq-sim` não entra.
-- **Origem da máscara e da pergunta do gap:** DPS (`huijben2020dps`) e PILOT (`weiss2021pilot`)
-  precisam ser citados como tal.
-- **O nRF54L15 não foi conferido.** O número de registradores CC por TIMER não foi verificado. A
-  grade de 48 kSPS não é agendável a 16 MHz, porque dá 333,3 contagens por tick.
+- **`sem_picos` requires the full rate** and is not realizable on the node.
+- **No T/H, jitter or conversion is modeled.** The samples are those of the dataset, on the tick
+  grid. The `snq-sim` chain is not used.
+- **Origin of the mask and of the gap question:** DPS (`huijben2020dps`) and PILOT
+  (`weiss2021pilot`) must be cited as such.
+- **The nRF54L15 was not checked.** The number of CC registers per TIMER was not verified. The
+  48 kSPS grid cannot be scheduled at 16 MHz, because it gives 333.3 counts per tick.
 
-## Implementação
+## Implementation
 
-| peça | onde |
+| piece | where |
 |---|---|
-| conjunto viável, projeção exata, `fold_project`, uniforme, aleatória, projetadas | `snq_learn/masks.py` |
-| máscara aprendida (DPS) com diagnósticos, LOUPE, adaptativa por blocos | `snq_learn/masks.py` |
-| decodificador desdobrado (banco LPTV, envelope ao quadrado, espectro de ordem) | `snq_learn/order_decoder.py` |
-| WDCNN da Tabela 2 de `zhang2017wdcnn`, conferida no PMC5336047 | `snq_learn/wdcnn.py` |
-| laço com teto de épocas, paciência, melhor checkpoint e taxas por grupo | `snq_learn/training.py` |
-| réguas, braços, seleção entre orçamentos, pré-registro e bootstrap por aglomerado | `run.py` |
+| feasible set, exact projection, `fold_project`, uniform, random, designed | `snq_learn/masks.py` |
+| learned mask (DPS) with diagnostics, LOUPE, block-adaptive | `snq_learn/masks.py` |
+| unrolled decoder (LPTV bank, squared envelope, order spectrum) | `snq_learn/order_decoder.py` |
+| WDCNN from Table 2 of `zhang2017wdcnn`, checked against PMC5336047 | `snq_learn/wdcnn.py` |
+| loop with epoch cap, patience, best checkpoint and per-group learning rates | `snq_learn/training.py` |
+| rulers, arms, selection across budgets, pre-registration and cluster bootstrap | `run.py` |
 
-Decisões que o desenho não fixava, ou das quais ele se afasta:
+Decisions that the design did not fix, or in which the implementation departs from it:
 
-1. **K = 4 e L = 4 × orçamento.** Com K pequeno, um TIMER com K registradores de comparação
-   basta (`timer_schedule`). O espaçamento é g = 2 ticks no Ottawa (10 µs). O valor realizável é
-   medida de bancada, que não foi feita. A 16 MHz, a grade de 200 kSPS dá 80 contagens por tick.
-2. **Banco periódico no tempo**, `Y_c(f) = Σ_r G_{c,r}(f)·Z(f − r·fs/L)`, com R = 5 deslocamentos
-   (R ≥ K). Com só r = 0 ele é LTI.
-   - Na máscara uniforme, iniciado nas bandas do kurtograma, ele reproduz o braço uniforme do E22
-     (há teste para isso).
-   - São 92 mil parâmetros, contra 54 mil da WDCNN. São respostas em frequência numa grade de
-     1024 pontos, e não camadas genéricas, mas um revisor pode perguntar.
-3. **A seleção de canal é o kurtograma desdobrado:** `softmax(τ·SK + b)`. Não há termo aprendido
-   por bin de ordem, então o modelo não pinta pico onde o espectro não tem.
-4. **Família de falha** dos métodos de ordem: a família de ordem central (mediana aninhada) mais
-   próxima da estimativa, dentro de ±12 %; fora disso, "nenhuma". A WDCNN classifica direto, por
-   voto suave das janelas do segmento.
-5. **Controle saudável** (Ottawa H, nunca no treino): a fração de estimativas a menos de 0,06 de
-   uma ordem de falha. A decomposição espaço-imagem/núcleo não se define, porque não há
-   reconstrução de forma de onda.
-6. **Ficou de fora:** a validação da WDCNN no CWRU 12k de 10 classes contra o número do artigo.
-   Ela pede registros que não estão na máquina local, e o mapeamento de registro para classe ainda
-   precisa ser conferido. A validação do LOUPE num brinquedo está nos testes.
+1. **K = 4 and L = 4 × budget.** With a small K, one TIMER with K compare registers is enough
+   (`timer_schedule`). The spacing is g = 2 ticks in Ottawa (10 µs). The realizable value is a
+   bench measurement, which was not made. At 16 MHz, the 200 kSPS grid gives 80 counts per tick.
+2. **Time-periodic bank**, `Y_c(f) = Σ_r G_{c,r}(f)·Z(f − r·fs/L)`, with R = 5 shifts (R ≥ K).
+   With only r = 0 it is LTI.
+   - With the uniform mask, initialized at the kurtogram bands, it reproduces the uniform arm of
+     E22 (there is a test for this).
+   - It has 92 thousand parameters, against 54 thousand for the WDCNN. They are frequency
+     responses on a 1024-point grid, not generic layers, but a reviewer may ask.
+3. **Channel selection is the unrolled kurtogram:** `softmax(τ·SK + b)`. There is no learned term
+   per order bin, so the model does not paint a peak where the spectrum has none.
+4. **Fault family** for the order methods: the family whose central order (nested median) is
+   closest to the estimate, within ±12%; outside that, "none". The WDCNN classifies directly, by
+   soft voting over the segment's windows.
+5. **Healthy control** (Ottawa H, never in training): the fraction of estimates within 0.06 of a
+   fault order. The range/null-space decomposition is not defined, because there is no waveform
+   reconstruction.
+6. **Left out:** the validation of the WDCNN on 10-class CWRU 12k against the paper's number. It
+   needs records that are not on the local machine, and the record-to-class mapping still needs
+   to be checked. The validation of LOUPE on a toy example is in the tests.
 
-## Estado
+## Status
 
-Implementado, testado e com fumaça em CPU (`config/smoke.yaml`, `results-smoke/`). **A fumaça
-não é resultado.** A rodada completa usa `config/base.yaml` no servidor de GPU.
+Implemented, tested and smoke-tested on CPU (`config/smoke.yaml`, `results-smoke/`). **The smoke
+test is not a result.** The full run uses `config/base.yaml` on the GPU server.
 
-Cada execução treinada fica gravada em `results/runs/`. Um reinício retoma do ponto em que parou,
-enquanto o config, o código e a CLI não mudarem. O `masks.json` junta só as execuções da
-invocação corrente.
+Each trained execution is stored in `results/runs/`. A restart resumes from where it stopped, as
+long as the config, the code and the CLI do not change. `masks.json` gathers only the executions
+of the current invocation.
 
-Fumaça do protocolo corrigido (2026-11-11). O recorte é o cenário A do Ottawa, 1/16 e 1/32, nas
-duas variantes, com uma divisão e no máximo 6 épocas. O que ela prova é mecânica:
-- **Laço:** 40 execuções e 480 linhas. A parada antecipada disparou em 21 de 60 treinos.
-- **Retomada:** as 40 execuções foram retomadas, e `metrics.csv` e `hypotheses.csv` saíram
-  idênticos byte a byte.
-- **Régua local:** 14 a 15 das 15 janelas por registro saíram válidas. Um segmento de teste com
-  platô na borda ficou fora da pontuação local.
-- **LOUPE:** com o forward duro, a taxa no treino foi de 0,0315 contra 1/32.
-- **Bootstrap:** com uma divisão e um aglomerado por pista, todos os testes saem inelegíveis
-  (p = 1). O veredito sai 0, como deve.
+Smoke test of the corrected protocol (2026-11-11). The slice is Ottawa scenario A, 1/16 and 1/32,
+in both variants, with one split and at most 6 epochs. What it proves is mechanical:
+- **Loop:** 40 executions and 480 rows. Early stopping triggered in 21 of 60 trainings.
+- **Resume:** the 40 executions were resumed, and `metrics.csv` and `hypotheses.csv` came out
+  byte-for-byte identical.
+- **Local ruler:** 14 to 15 of the 15 windows per record came out valid. One test segment with
+  its plateau at the edge was left out of the local scoring.
+- **LOUPE:** with the hard forward pass, the rate in training was 0.0315 against 1/32.
+- **Bootstrap:** with one split and one cluster per race, all tests come out ineligible (p = 1).
+  The verdict comes out 0, as it should.
 
-## Rodada completa no servidor (lançada em 2026-11-11, 11:58 UTC)
+## Full run on the server (launched on 2026-11-11, 11:58 UTC)
 
-> Interrompida pela revisão adversarial (ver "Correções da revisão adversarial"). O ambiente
-> abaixo continua valendo para o relançamento.
+> Interrupted by the adversarial review (see "Corrections from the adversarial review"). The
+> environment below still applies to the relaunch.
 
-- **Árvore separada.** A rodada usa `~/snq/e15/sub_nyquist`, com o dado bruto ligado por link
-  simbólico à árvore principal. A árvore principal está rodando a fila de re-execuções (E23 picos,
-  E07, E20, E22), e sincronizar o `snq-learn` nela mudaria, no meio das rodadas, o hash de fonte
-  que elas gravam. O manifest do E15 registra o hash da árvore dele.
-- **Desvio de ambiente.** O lock instala `torch 2.14.0+cu130`, mas o driver NVIDIA do servidor só
-  vai até CUDA 12.6, e o torch não via a GPU. Só nessa árvore foi instalado
-  `torch 2.14.0+cu126`, a mesma versão com outro build de CUDA (índice
-  `download.pytorch.org/whl/cu126`). A rodada usa o Python do `.venv` direto, porque `uv run`
-  re-sincronizaria com o lock.
-- **GPU.** RTX 4090 de 25,3 GB, selecionada pelo UUID com `CUDA_VISIBLE_DEVICES`. A outra placa do
-  servidor está com defeito: o `nvidia-smi` falha em `0000:0C:00.0`.
-- **Comando.** `run.py --config config/base.yaml --workers 6`, com os 7 métodos, os 2 conjuntos e
-  até 500 épocas com paciência de 40. Na GPU, a reprodutibilidade bit a bit não é garantida (ver a
-  fumaça em CPU).
+- **Separate tree.** The run uses `~/snq/e15/sub_nyquist`, with the raw data symlinked to the main
+  tree. The main tree is running the re-execution queue (E23 spikes, E07, E20, E22), and syncing
+  `snq-learn` in it would change, in the middle of those runs, the source hash they record. The
+  E15 manifest records the hash of its own tree.
+- **Environment deviation.** The lock installs `torch 2.14.0+cu130`, but the server's NVIDIA
+  driver only goes up to CUDA 12.6, and torch did not see the GPU. Only in this tree was
+  `torch 2.14.0+cu126` installed, the same version with another CUDA build (index
+  `download.pytorch.org/whl/cu126`). The run uses the `.venv` Python directly, because `uv run`
+  would re-sync with the lock.
+- **GPU.** RTX 4090 with 25.3 GB, selected by UUID with `CUDA_VISIBLE_DEVICES`. The server's
+  other card is faulty: `nvidia-smi` fails on `0000:0C:00.0`.
+- **Command.** `run.py --config config/base.yaml --workers 6`, with the 7 methods, the 2 datasets
+  and up to 500 epochs with a patience of 40. On the GPU, bit-for-bit reproducibility is not
+  guaranteed (see the CPU smoke test).
 
-## Resultado da rodada decisiva (2026-11-12)
+## Result of the deciding run (2026-11-12)
 
-Rodada de 2026-11-12, de 01:35 a 05:48 UTC, no commit `314b0c3`.
-- Os quatro hashes do manifest (fonte, config, `run.py` e README) batem com o commit.
-- O `git_sha` sai nulo porque a árvore do servidor não é um checkout do git. Os hashes cobrem
-  isso.
-- Este README ganhou esta seção depois da rodada. O `readme_sha256` do manifest é o do commit
-  `314b0c3`.
+Run of 2026-11-12, from 01:35 to 05:48 UTC, at commit `314b0c3`.
+- The four hashes in the manifest (source, config, `run.py` and README) match the commit.
+- `git_sha` comes out null because the server tree is not a git checkout. The hashes cover that.
+- This README gained this section after the run. The manifest's `readme_sha256` is that of
+  commit `314b0c3`.
 
-### Avaliabilidade (B5), conferida antes de abrir as hipóteses
+### Evaluability (B5), checked before opening the hypotheses
 
-| orçamento | `dec_aprendida` | `dec_aprendida_sel` | `dec_livre_projetada` |
+| budget | `dec_aprendida` | `dec_aprendida_sel` | `dec_livre_projetada` |
 |---|---|---|---|
-| 1/4 | 1,0 | 1,0 | 0,6 |
-| 1/8 | 1,0 | 1,0 | 0,2 |
-| 1/16 | 1,0 | 1,0 | 0,2 |
-| 1/32 | 0,8 | 0,8 | 0,0 |
+| 1/4 | 1.0 | 1.0 | 0.6 |
+| 1/8 | 1.0 | 1.0 | 0.2 |
+| 1/16 | 1.0 | 1.0 | 0.2 |
+| 1/32 | 0.8 | 0.8 | 0.0 |
 
-A H1 é avaliável nos quatro orçamentos; a H2, só em 1/4.
+H1 is evaluable in all four budgets; H2, only at 1/4.
 
-### Veredito pré-registrado
+### Pre-registered verdict
 
-- **A H1 não passou em nenhuma das réguas.** Nenhum dos 24 testes é significativo, nem antes da
-  correção: o menor p unilateral é 0,20.
-- **A H2 não se sustenta.** Só pôde ser avaliada em 1/4, onde a diferença foi de 0,0 ponto:
-  [−14,3; +11,4] pela régua local e [−6,25; +6,25] pela aninhada.
+- **H1 did not pass on either ruler.** None of the 24 tests is significant, not even before the
+  correction: the smallest one-sided p is 0.20.
+- **H2 is not supported.** It could only be evaluated at 1/4, where the difference was
+  0.0 points: [−14.3, +11.4] by the local ruler and [−6.25, +6.25] by the nested one.
 
-Acurácia balanceada de ordem (%), variante `bruto` (`summary.csv`):
+Balanced order accuracy (%), `bruto` variant (`summary.csv`):
 
-| braço | régua | 1/4 | 1/8 | 1/16 | 1/32 |
+| arm | ruler | 1/4 | 1/8 | 1/16 | 1/32 |
 |---|---|---|---|---|---|
-| `uniforme_treino` (clássico, fator escolhido no treino) | local | 94,8 | 94,8 | 89,7 | 89,7 |
-| `dec_aprendida_sel` | local | 93,1 | 89,7 | 79,3 | 74,2 |
-| `dec_uniforme_treino` | local | 91,4 | 86,3 | 79,3 | 75,9 |
-| `dec_aleatoria` | local | 86,2 | 93,1 | 75,9 | 69,1 |
-| `oraculo_uniforme` (escolhe com o teste) | local | 98,3 | 98,3 | 98,3 | 98,3 |
-| `uniforme_treino` | aninhada | 88,3 | 88,3 | 86,7 | 85,0 |
-| `dec_aprendida_sel` | aninhada | 86,7 | 85,0 | 76,7 | 70,0 |
-| `dec_uniforme_treino` | aninhada | 90,0 | 86,7 | 78,3 | 75,0 |
-| `dec_aleatoria` | aninhada | 81,7 | 90,0 | 73,3 | 68,3 |
-| `oraculo_uniforme` | aninhada | 90,0 | 90,0 | 90,0 | 90,0 |
+| `uniforme_treino` (classical, factor chosen in training) | local | 94.8 | 94.8 | 89.7 | 89.7 |
+| `dec_aprendida_sel` | local | 93.1 | 89.7 | 79.3 | 74.2 |
+| `dec_uniforme_treino` | local | 91.4 | 86.3 | 79.3 | 75.9 |
+| `dec_aleatoria` | local | 86.2 | 93.1 | 75.9 | 69.1 |
+| `oraculo_uniforme` (chooses with the test) | local | 98.3 | 98.3 | 98.3 | 98.3 |
+| `uniforme_treino` | nested | 88.3 | 88.3 | 86.7 | 85.0 |
+| `dec_aprendida_sel` | nested | 86.7 | 85.0 | 76.7 | 70.0 |
+| `dec_uniforme_treino` | nested | 90.0 | 86.7 | 78.3 | 75.0 |
+| `dec_aleatoria` | nested | 81.7 | 90.0 | 73.3 | 68.3 |
+| `oraculo_uniforme` | nested | 90.0 | 90.0 | 90.0 | 90.0 |
 
-### Revisão adversarial (`reviewer-2`, 2026-11-12)
+### Adversarial review (`reviewer-2`, 2026-11-12)
 
-O veredito pré-registrado fica, mas o enunciado muda. O resultado é **ausência de evidência de
-ganho num desenho sem poder**. Não é evidência de que aprender a máscara não ajude.
+The pre-registered verdict stands, but the statement changes. The result is **absence of evidence
+of a gain in a design without power**. It is not evidence that learning the mask does not help.
 
-1. **O teste não podia passar.** Com um braço perfeito no lugar de `dec_aprendida_sel`, a mesma
-   regra dá veredito 0 nas duas réguas.
+1. **The test could not pass.** With a perfect arm in place of `dec_aprendida_sel`, the same rule
+   gives verdict 0 on both rulers.
 
-   | contra `uniforme_treino`, braço perfeito | 1/4 | 1/8 | 1/16 | 1/32 |
+   | against `uniforme_treino`, perfect arm | 1/4 | 1/8 | 1/16 | 1/32 |
    |---|---|---|---|---|
-   | p sem correção, régua local | 0,17 | 0,16 | 0,05 | 0,07 |
-   | p sem correção, régua aninhada | 0,025 | 0,022 | 0,018 | 0,024 |
+   | uncorrected p, local ruler | 0.17 | 0.16 | 0.05 | 0.07 |
+   | uncorrected p, nested ruler | 0.025 | 0.022 | 0.018 | 0.024 |
 
-   Depois do Holm, os p ficam em ≥ 0,43 (local) e ≥ 0,14 (aninhada). Os motivos:
-   - O clássico já acerta 56 de 59 segmentos em 1/4 e 1/8 pela régua local, e o oráculo, 58.
-   - A pista interna fica no teto em quase todos os braços. Só os 29 segmentos da pista externa
-     discriminam.
-   - Há 4 aglomerados por pista, de tamanhos desiguais: na externa, 1, 5, 6 e 3 pares.
-   - A diferença detectável contra `uniforme_treino` fica entre 18 e 40 pontos pela régua local e
-     entre 11 e 39 pela aninhada, acima da folga até o oráculo.
-2. **O déficit contra o clássico vem em boa parte de um registro, O-C-2.**
-   - O-C-2 está no teste em 4 das 5 divisões e soma 8 dos 29 segmentos da pista externa.
-   - Nele, todos os braços com o decodificador aprendido devolvem a ordem 2,0, que é a borda
-     inferior da busca (`order_min`).
-   - Sem O-C-2 (exploratório), `dec_aprendida_sel − uniforme_treino` passa a +4,6 / +2,3 / 0,0 /
-     −3,9 pontos.
-   - O mecanismo provável, não provado: com o envelope |y|² do decodificador, a raia de ordem 2
-     compete com a BPFO nesse registro.
-   - As divisões são de Monte Carlo, e 6 dos 24 registros nunca vão a teste.
-3. **Com o mesmo decodificador, a máscara quase não muda a decisão.**
-   - Entre `dec_aprendida_sel` e `dec_uniforme_treino`, 12 de 236 segmentos discordam (régua
-     local).
-   - Fora de 1/4, as máscaras aprendidas não concordam entre divisões mais do que máscaras viáveis
-     sorteadas.
-   - Duas réplicas que só diferem pela semente (`dec_uniforme_treino` em 1/4 e em 1/8, com o mesmo
-     fator) diferem em cerca de 5 pontos.
-4. **Não há vazamento, mas o baseline tem um grau de liberdade que a máscara não tem.**
-   - `uniforme_treino` escolhe o fator em [b, 48] só com treino e validação. Saiu 13 ou 14 em 1/4
-     e 1/8, e de 30 a 46 em 1/16 e 1/32, isto é, de 2 a 3,5 vezes menos amostras que o
-     orçamento.
-   - A máscara tem L = 4b e K = 4 fixos.
-   - Por isso a comparação é "até o orçamento", e não "na mesma taxa".
-5. **`stop_after_anneal` não piorou o braço decisivo.**
-   - O estágio B para cedo, e a validação tem 8 janelas.
-   - Os braços `_sem_ajuste` ficam iguais aos ajustados ou acima deles, e nenhum passa de
+   After Holm, the p values are ≥ 0.43 (local) and ≥ 0.14 (nested). The reasons:
+   - The classical method already gets 56 of 59 segments right at 1/4 and 1/8 by the local ruler,
+     and the oracle, 58.
+   - The inner race is at the ceiling in almost all arms. Only the 29 outer-race segments
+     discriminate.
+   - There are 4 clusters per race, of unequal sizes: on the outer race, 1, 5, 6 and 3 pairs.
+   - The detectable difference against `uniforme_treino` lies between 18 and 40 points by the
+     local ruler and between 11 and 39 by the nested one, above the headroom up to the oracle.
+2. **The deficit against the classical method comes largely from one record, O-C-2.**
+   - O-C-2 is in the test set in 4 of the 5 splits and accounts for 8 of the 29 outer-race
+     segments.
+   - On it, all arms with the learned decoder return order 2.0, which is the lower edge of the
+     search (`order_min`).
+   - Without O-C-2 (exploratory), `dec_aprendida_sel − uniforme_treino` becomes +4.6 / +2.3 / 0.0 /
+     −3.9 points.
+   - The probable mechanism, not proven: with the decoder's |y|² envelope, the order-2 line
+     competes with the BPFO in this record.
+   - The splits are Monte Carlo splits, and 6 of the 24 records never go to test.
+3. **With the same decoder, the mask barely changes the decision.**
+   - Between `dec_aprendida_sel` and `dec_uniforme_treino`, 12 of 236 segments disagree (local
+     ruler).
+   - Outside 1/4, the learned masks do not agree across splits more than randomly drawn feasible
+     masks do.
+   - Two replicas that differ only in the seed (`dec_uniforme_treino` at 1/4 and at 1/8, with the
+     same factor) differ by about 5 points.
+4. **There is no leakage, but the baseline has a degree of freedom that the mask does not have.**
+   - `uniforme_treino` chooses the factor in [b, 48] using only training and validation. It came
+     out as 13 or 14 at 1/4 and 1/8, and from 30 to 46 at 1/16 and 1/32, that is, 2 to 3.5 times
+     fewer samples than the budget.
+   - The mask has L = 4b and K = 4 fixed.
+   - That is why the comparison is "up to the budget", and not "at the same rate".
+5. **`stop_after_anneal` did not make the deciding arm worse.**
+   - Stage B stops early, and the validation has 8 windows.
+   - The `_sem_ajuste` arms are equal to the refit ones or above them, and none goes beyond
      `uniforme_treino`.
-6. **A seleção entre orçamentos não explica o negativo.**
-7. **H2:** o termo certo é "não sustentada", e não "refutada". Com 3 de 4 orçamentos não
-   avaliáveis, "o conjunto viável não é contribuição" é forte demais.
-8. **`dec_adaptativa_blocos` é ruído até prova em contrário.**
-   - Tem os maiores números pontuais em 1/4 a 1/16.
-   - Mas é o máximo entre 12 braços, está fora do pré-registro e treinou mais que os outros.
-9. **Não há bug** em `per_record`, `cluster_bootstrap`, `holm` nem `hypotheses`. O
-   `hypotheses.csv` se reproduz exatamente a partir do `metrics.csv`.
-10. **Anterioridade e escopo.**
-    - Em MRI, `bakker2022adaptive` acha políticas aprendidas empatadas com a equidistante a 4×.
-    - O resultado aqui vale para decimação de registros a 200 kSPS, com amostrador ideal, sem
-      track-and-hold e sem jitter.
+6. **The selection across budgets does not explain the negative.**
+7. **H2:** the right term is "not supported", not "refuted". With 3 of 4 budgets not evaluable,
+   "the feasible set is not a contribution" is too strong.
+8. **`dec_adaptativa_blocos` is noise until proven otherwise.**
+   - It has the highest point values at 1/4 to 1/16.
+   - But it is the maximum among 12 arms, it is outside the pre-registration, and it trained more
+     than the others.
+9. **There is no bug** in `per_record`, `cluster_bootstrap`, `holm` or `hypotheses`.
+   `hypotheses.csv` is reproduced exactly from `metrics.csv`.
+10. **Prior work and scope.**
+    - In MRI, `bakker2022adaptive` finds learned policies tied with the equispaced one at 4×.
+    - The result here holds for decimation of records at 200 kSPS, with an ideal sampler,
+      without track-and-hold and without jitter.
 
-### Enunciado para o artigo
+### Statement for the paper
 
-Parte (b):
+Part (b):
 
-> No conjunto Ottawa (variante bruta), em simulação por decimação de registros a 200 kSPS, sem
-> modelo de track-and-hold nem de jitter, a máscara aprendida sob o conjunto viável não superou a
-> melhor taxa uniforme escolhida nos registros de treino (que ficou abaixo do orçamento, entre
-> 1/13 e 1/46) em nenhum dos quatro orçamentos, de 1/4 a 1/32. As diferenças de acurácia
-> balanceada de ordem foram de −1,7 a −15 pontos, com intervalos de 95 % por bootstrap de
-> aglomerado entre −46 e +14 pontos, e nenhum dos 24 testes pré-registrados foi significativo. O
-> desenho não tinha poder: em simulação, nem um método que acertasse todos os segmentos de teste
-> passaria no critério.
+> On the Ottawa dataset (raw variant), in simulation by decimation of records at 200 kSPS, with
+> no track-and-hold or jitter model, the mask learned under the feasible set did not outperform
+> the best uniform rate chosen on the training records (which fell below the budget, between
+> 1/13 and 1/46) in any of the four budgets, from 1/4 to 1/32. The differences in balanced order
+> accuracy ranged from −1.7 to −15 points, with 95% cluster-bootstrap intervals between −46
+> and +14 points, and none of the 24 pre-registered tests was significant. The design had no
+> power: in simulation, not even a method that got every test segment right would pass the
+> criterion.
 
 H2:
 
-> O gap de projeção só pôde ser avaliado em 1/4, onde foi de 0,0 ponto [−14,3; +11,4]. Nos demais
-> orçamentos, a regra pré-registrada o declarou não avaliável.
+> The projection gap could only be evaluated at 1/4, where it was 0.0 points [−14.3, +11.4]. In
+> the other budgets, the pre-registered rule declared it not evaluable.
 
-### Exploratório: estabilidade da máscara usada
+### Exploratory: stability of the mask used
 
-Medida com `explore_mask_stability.py`, só sobre diagnósticos de treino
-(`results/exploratory/mask_stability.csv`). É a fração das posições usadas que sobrevive ao ruído
-de Gumbel do treino, em mediana entre as divisões.
+Measured with `explore_mask_stability.py`, on training diagnostics only
+(`results/exploratory/mask_stability.csv`). It is the fraction of the positions used that
+survives the training Gumbel noise, as a median across splits.
 
-| orçamento | aprendida | livre projetada |
+| budget | learned | free, projected |
 |---|---|---|
-| 1/4 | 0,999 | 0,986 |
-| 1/8 | 0,998 | 0,974 |
-| 1/16 | 0,995 | 0,909 |
-| 1/32 | 0,969 | 0,832 |
+| 1/4 | 0.999 | 0.986 |
+| 1/8 | 0.998 | 0.974 |
+| 1/16 | 0.995 | 0.909 |
+| 1/32 | 0.969 | 0.832 |
 
-As máscaras estão firmes, então o resultado não vem de máscara presa no ruído. A livre projetada é
-mais estável do que o critério de margem sugeria. Isso não muda a avaliabilidade, que foi
-pré-registrada.
+The masks are firm, so the result does not come from a mask stuck in the noise. The free
+projected mask is more stable than the margin criterion suggested. This does not change the
+evaluability, which was pre-registered.
 
-### O que destrava o quê
+### What unlocks what
 
-1. **Porta de poder.** Roda em CPU, sobre o `metrics.csv` atual: simular a regra com o braço
-   perfeito e com efeitos plantados (+5 e +10 pontos) em desenhos candidatos. Se nada passar no
-   Ottawa, a H1 não é testável nele.
-2. **Divisões:** cada registro testado uma vez e `seeds_per_split` ≥ 3. Depende de 1.
-3. **Depois de 2, em paralelo:**
-   - a ablação da falha em O-C-2 (`envelope_power` 1 contra 2, e a borda `order_min`);
-   - o decodificador clássico sobre a máscara aprendida;
-   - um braço que parte da melhor uniforme (`init: uniform`, com L = 4 × o fator escolhido);
-   - o mesmo orçamento de treino para todos os braços.
-4. **Braço adaptativo como primário pré-registrado,** com controle pareado. Depende de 2 e 3.
+1. **Power gate.** Runs on CPU, on the current `metrics.csv`: simulate the rule with the perfect
+   arm and with planted effects (+5 and +10 points) in candidate designs. If nothing passes on
+   Ottawa, H1 is not testable on it.
+2. **Splits:** each record tested once and `seeds_per_split` ≥ 3. Depends on 1.
+3. **After 2, in parallel:**
+   - the ablation of the failure on O-C-2 (`envelope_power` 1 versus 2, and the `order_min`
+     edge);
+   - the classical decoder on the learned mask;
+   - an arm that starts from the best uniform rate (`init: uniform`, with L = 4 × the chosen
+     factor);
+   - the same training budget for all arms.
+4. **Adaptive arm as the pre-registered primary,** with a paired control. Depends on 2 and 3.
 
-## Porta de poder (pré-registro, 2026-11-12)
+## Power gate (pre-registration, 2026-11-12)
 
-Escrito antes de rodar. A porta responde a uma pergunta: o Ottawa consegue, em algum desenho,
-detectar pela regra da H1 um braço que seja de fato melhor que o baseline? Ela roda só em CPU, com
-`power_gate.py`, sobre o `metrics.csv` da rodada decisiva.
+Written before running. The gate answers one question: can Ottawa, in some design, detect by the
+H1 rule an arm that is actually better than the baseline? It runs on CPU only, with
+`power_gate.py`, on the `metrics.csv` of the deciding run.
 
-- **Braço plantado.**
-  - Parte das linhas de `uniforme_treino`. Cada segmento em que ele erra vira acerto com
-    probabilidade q, com o mesmo sorteio nas duas réguas. Onde ele acerta, o plantado também
-    acerta.
-  - O q de cada (orçamento, régua) produz o efeito pedido em acurácia balanceada. Quando o teto não
-    comporta o efeito, o q para no braço perfeito (q = 1).
-- **Efeitos:** +5 pontos (o que decide), +10 pontos e o braço perfeito.
-- **Desenhos:**
-  - **D0:** como foi rodado, com 5 divisões de Monte Carlo e 1 semente.
-  - **D1 e D2:** com 3 e 5 sementes, emuladas como sorteios independentes do braço plantado e
-    tiradas em média por (divisão, registro).
-  - **DK:** cada registro testado uma vez, em 4 dobras estratificadas por pista, com 5 sementes.
-    - A grade clássica não fica em cache, então o baseline é sintético.
-    - Em cada pista, ele erra cada segmento com a taxa média de erro observada, o que espalha os
-      erros por todos os aglomerados.
-  - **D3, só como referência anticonservadora:** D2 com bootstrap por registro em vez de por
-    aglomerado.
-    - Não é um desenho válido para o artigo, porque registros da mesma condição × cenário não são
-      independentes.
-    - Serve para medir quanto o aglomerado limita o poder.
-- **Regras de decisão:**
-  - **Pré-registrada:** a da H1, com os três baselines e Holm sobre os 12 testes de cada régua. Vale
-    em D0 a D3.
-  - **Otimista:** só o teste contra `uniforme_treino`. Os 8 testes contra os baselines aprendidos
-    entram no Holm como significativos (p = 0). Vale em todos os desenhos e, no DK, é a única.
-- **Otimismo deliberado.** Os baselines aprendidos ficam fixos, sem ruído de semente, e o plantado
-  nunca piora. No DK, os erros do clássico ficam espalhados do jeito mais favorável ao teste. Por
-  isso um "não" é conclusivo, e um "sim" não prova que um desenho real funcione.
-- **Critério:** a H1 é testável no Ottawa se, em algum dos desenhos D0, D1, D2 ou DK, o poder pela
-  regra otimista para +5 pontos for de pelo menos 80 %. Se não for, a H1 não é testável no Ottawa,
-  e a parte (b) precisa de outro conjunto ou sai do artigo.
-- **Simulação:**
-  - São 200 repetições por desenho e efeito. O braço perfeito, que fora do DK só varia pelo
-    bootstrap, tem 20.
-  - Cada teste usa 2000 reamostras, com semente fixa.
-  - Antes, o bootstrap vetorizado é conferido contra o `cluster_bootstrap` do `run.py` nos dados
-    reais.
+- **Planted arm.**
+  - It starts from the rows of `uniforme_treino`. Each segment it gets wrong becomes a hit with
+    probability q, with the same draw on both rulers. Where it is right, the planted arm is also
+    right.
+  - The q of each (budget, ruler) produces the requested effect in balanced accuracy. When the
+    ceiling cannot accommodate the effect, q stops at the perfect arm (q = 1).
+- **Effects:** +5 points (the deciding one), +10 points and the perfect arm.
+- **Designs:**
+  - **D0:** as run, with 5 Monte Carlo splits and 1 seed.
+  - **D1 and D2:** with 3 and 5 seeds, emulated as independent draws of the planted arm and
+    averaged per (split, record).
+  - **DK:** each record tested once, in 4 folds stratified by race, with 5 seeds.
+    - The classical grid is not cached, so the baseline is synthetic.
+    - On each race, it gets each segment wrong at the observed mean error rate, which spreads the
+      errors over all clusters.
+  - **D3, only as an anticonservative reference:** D2 with a per-record bootstrap instead of a
+    per-cluster one.
+    - It is not a valid design for the paper, because records of the same condition × scenario
+      are not independent.
+    - It serves to measure how much the clustering limits the power.
+- **Decision rules:**
+  - **Pre-registered:** the H1 rule, with the three baselines and Holm over the 12 tests of each
+    ruler. Applies in D0 to D3.
+  - **Optimistic:** only the test against `uniforme_treino`. The 8 tests against the learned
+    baselines enter Holm as significant (p = 0). Applies in all designs and, in DK, is the only
+    one.
+- **Deliberate optimism.** The learned baselines stay fixed, with no seed noise, and the planted
+  arm never gets worse. In DK, the classical method's errors are spread in the way most favorable
+  to the test. That is why a "no" is conclusive, and a "yes" does not prove that a real design
+  works.
+- **Criterion:** H1 is testable on Ottawa if, in any of the designs D0, D1, D2 or DK, the power
+  by the optimistic rule for +5 points is at least 80%. If not, H1 is not testable on Ottawa,
+  and part (b) needs another dataset or leaves the paper.
+- **Simulation:**
+  - There are 200 repetitions per design and effect. The perfect arm, which outside DK varies
+    only through the bootstrap, has 20.
+  - Each test uses 2000 resamples, with a fixed seed.
+  - Beforehand, the vectorized bootstrap is checked against the `cluster_bootstrap` of `run.py`
+    on the real data.
 
-### Resultado da porta de poder (2026-11-12)
+### Power gate result (2026-11-12)
 
-- **Execução:** `power_gate.py`, cerca de 1 min de CPU. As saídas estão em `results/power_gate/`
-  (`power.csv`, `validation.json` e `baseline.json`).
-- **Validação do bootstrap vetorizado** contra o `hypotheses.csv` real: as diferenças pontuais são
-  idênticas, e os p ficam dentro do erro de Monte Carlo (maior desvio de 0,026, com 4000
-  reamostras de cada lado).
+- **Execution:** `power_gate.py`, about 1 min of CPU. The outputs are in `results/power_gate/`
+  (`power.csv`, `validation.json` and `baseline.json`).
+- **Validation of the vectorized bootstrap** against the real `hypotheses.csv`: the point
+  differences are identical, and the p values are within the Monte Carlo error (largest
+  deviation of 0.026, with 4000 resamples on each side).
 
-Poder da H1, isto é, a fração das repetições em que a regra passa nas duas réguas:
+Power of H1, that is, the fraction of the repetitions in which the rule passes on both rulers:
 
-| desenho | regra | +5 pontos | +10 pontos | braço perfeito |
+| design | rule | +5 points | +10 points | perfect arm |
 |---|---|---|---|---|
-| D0 (como rodado) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
-| D1 (3 sementes) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
-| D2 (5 sementes) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
-| DK (cada registro testado uma vez) | otimista | 0,03 | 0,06 | 0,07 |
-| D3 (bootstrap por registro, inválido) | pré-registrada / otimista | 0,00 / 0,00 | 0,00 / 0,00 | 0,00 / 0,00 |
+| D0 (as run) | pre-registered / optimistic | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 |
+| D1 (3 seeds) | pre-registered / optimistic | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 |
+| D2 (5 seeds) | pre-registered / optimistic | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 |
+| DK (each record tested once) | optimistic | 0.03 | 0.06 | 0.07 |
+| D3 (per-record bootstrap, invalid) | pre-registered / optimistic | 0.00 / 0.00 | 0.00 / 0.00 | 0.00 / 0.00 |
 
-**Veredito pelo critério pré-registrado: a H1 não é testável no Ottawa.** Entre os desenhos
-válidos, o maior poder pela regra otimista com +5 pontos é de 0,03. O critério exigia 0,80.
+**Verdict by the pre-registered criterion: H1 is not testable on Ottawa.** Among the valid
+designs, the highest power by the optimistic rule with +5 points is 0.03. The criterion required
+0.80.
 
-- **O limite é o número de erros do clássico.** `uniforme_treino` erra só de 3 a 9 dos 59 ou 60
-  segmentos de teste, conforme o orçamento e a régua, e todos na pista externa. A pista interna
-  não tem erro em nenhum orçamento.
-  - Pela régua local, em 1/4 e 1/8, os 3 erros estão em O-A (o único segmento válido do
-    aglomerado) e em O-B.
-- **Por que nem o braço perfeito passa em D0 a D2.**
-  - Na regra otimista, os 8 testes tomados como significativos ocupam os primeiros postos do Holm.
-  - Assim, o menor p contra `uniforme_treino` precisaria ficar abaixo de 0,05/4 = 0,0125.
-  - O braço perfeito chega, no máximo, a cerca de 0,02, pela régua aninhada.
-- **Mais sementes não mudam isso,** porque o baseline é determinístico. Testar cada registro uma
-  vez também não, porque continuam sendo poucos erros para corrigir.
-- **Nem a referência anticonservadora passa a regra completa.** É o D3, em que cada registro é um
-  aglomerado.
+- **The limit is the number of errors of the classical method.** `uniforme_treino` gets only
+  3 to 9 of the 59 or 60 test segments wrong, depending on the budget and the ruler, all of them
+  on the outer race. The inner race has no error in any budget.
+  - By the local ruler, at 1/4 and 1/8, the 3 errors are in O-A (the cluster's only valid
+    segment) and in O-B.
+- **Why not even the perfect arm passes in D0 to D2.**
+  - In the optimistic rule, the 8 tests taken as significant occupy the first ranks of Holm.
+  - Thus, the smallest p against `uniforme_treino` would need to be below 0.05/4 = 0.0125.
+  - The perfect arm reaches, at best, about 0.02, by the nested ruler.
+- **More seeds do not change this,** because the baseline is deterministic. Nor does testing each
+  record once, because there are still few errors to correct.
+- **Not even the anticonservative reference passes the full rule.** That is D3, in which each
+  record is a cluster.
 
-**Consequência.**
-- A parte (b) do artigo não pode ser decidida no Ottawa.
-- A pergunta precisa de um conjunto em que o baseline erre o bastante, espalhado por aglomerados
-  independentes o bastante, para que um ganho de +5 pontos seja detectável.
-- Essa conta pode ser feita antes de treinar, porque a porta só precisa do estágio clássico, que
-  roda em CPU.
+**Consequence.**
+- Part (b) of the paper cannot be decided on Ottawa.
+- The question needs a dataset in which the baseline errs enough, spread over enough independent
+  clusters, for a +5-point gain to be detectable.
+- This calculation can be done before training, because the gate only needs the classical stage,
+  which runs on CPU.
 
-## Porta de poder no Paderborn (pré-registro, 2026-11-12)
+## Power gate on Paderborn (pre-registration, 2026-11-12)
 
-Escrito antes de rodar, depois da ingestão e da checagem de adequação
-(`datasets/manifests/paderborn.yaml`). A pergunta é a mesma da porta do Ottawa: o conjunto
-consegue detectar, pela regra da H1, um braço de fato melhor que o baseline? Roda só em CPU, com
-`paderborn_gate.py` e `config/paderborn_gate.yaml`.
+Written before running, after the ingestion and the suitability check
+(`datasets/manifests/paderborn.yaml`). The question is the same as for the Ottawa gate: can the
+dataset detect, by the H1 rule, an arm that is actually better than the baseline? It runs on CPU
+only, with `paderborn_gate.py` and `config/paderborn_gate.yaml`.
 
-- **Registros:** rolamento × ajuste, nos três ajustes de 1500 rpm. A medição 1 calibra a régua
-  aninhada, e as medições 2 a 20 são os segmentos de teste, de 4 s cada (100 voltas, 0,010 ordem
-  de resolução).
-- **Grupos e aglomerados:** a pista é o grupo, e o rolamento é o aglomerado do bootstrap.
-  - Pista externa: 12 rolamentos (7 artificiais e 5 reais).
-  - Pista interna: 11 rolamentos (5 artificiais e 6 reais).
-  - Ficam fora os combinados (KB), cuja família de ordem é ambígua, e os saudáveis.
-- **Divisões:** K-fold por rolamento, com 4 dobras estratificadas por pista. Cada rolamento é
-  testado uma vez, e nenhum aparece no treino e no teste da mesma dobra.
-- **Pipeline clássico:** o do E15, com quatro mudanças.
-  - **Tolerância de 0,025 ordem**, em vez de 0,06. A BPFO e a BPFI ficam a 0,054 das harmônicas 3
-    e 5 do eixo.
-  - **Busca da régua em ±1 % da nominal**, em vez de ±12 %, para excluir 3,0 e 5,0.
-  - **Teto do kurtograma no Nyquist efetivo.**
-  - **Guarda de 1,0 × 64 pontos por volta**, a mesma do CWRU no E15. Com 2,0, o fator 32 não
-    rodaria.
-- **Régua local:** a raia em taxa cheia do próprio segmento.
-  - Só vale se não encostar na borda da busca e se o pico, em ±0,015 ordem do centro, tiver pelo
-    menos 5 vezes a mediana da janela de ±7 % da nominal.
-  - Na checagem de adequação, as raias visíveis deram de 14 a 141, e as ausentes de 0,3 a 2,5.
-- **Régua aninhada:** a mediana das calibrações válidas da medição 1 dos registros fora do teste,
-  na mesma pista. Ela vale para todos os segmentos de teste, inclusive os de rolamento sem raia
-  visível.
-- **Baseline:** `uniforme_treino`, a melhor taxa uniforme até o orçamento, escolhida pela régua
-  local nos registros fora do teste.
-- **Porta:** a do Ottawa, com braços plantados a partir do baseline (+5 pontos, +10 pontos e
-  perfeito) e 1, 3 ou 5 sementes (D0, D1 e D2).
-  - Só a regra otimista: não há braço aprendido, então os 8 testes contra os baselines
-    aprendidos entram no Holm como significativos.
-  - São 200 repetições por desenho (20 para o perfeito) e 2000 reamostras por teste.
-- **Critério:** a H1 é testável no Paderborn se o poder para +5 pontos, nas duas réguas, for de
-  pelo menos 80 % em algum dos desenhos D0, D1 ou D2.
-  - Se for, o E15 roda no Paderborn, com os braços aprendidos e as correções da revisão
-    adversarial, depois de um pré-registro próprio.
-  - Se não for, a parte (b) sai do artigo.
-- **Correção antes de qualquer número (2026-11-12, achada na fumaça).**
-  - O número de amostras de 64 kHz por arquivo varia (de 255999 a 262062), mas o eixo de tempo
-    vai sempre de 0 a 4 s.
-  - A corrente do PMSM, que gira a 4× a rotação, mostra que a taxa é de 64 kHz fixos: razão
-    mediana de 0,99998, com 1 arquivo de 2559 acima de 0,5 %.
-  - O carregador passa a cortar a vibração em 4 s, alinhados com o canal de rotação.
-  - Um arquivo não abre (`KA08/N15_M01_F10_KA08_2.mat`). A medição fica fora e vai registrada no
-    manifest.
-  - Nada do protocolo acima mudou.
+- **Records:** bearing × operating setting, in the three 1500 rpm settings. Measurement 1
+  calibrates the nested ruler, and measurements 2 to 20 are the test segments, 4 s each
+  (100 revolutions, 0.010 order of resolution).
+- **Groups and clusters:** the race is the group, and the bearing is the bootstrap cluster.
+  - Outer race: 12 bearings (7 with artificial and 5 with real damage).
+  - Inner race: 11 bearings (5 with artificial and 6 with real damage).
+  - Left out: the combined ones (KB), whose order family is ambiguous, and the healthy ones.
+- **Splits:** K-fold by bearing, with 4 folds stratified by race. Each bearing is tested once,
+  and none appears in both the training and the test set of the same fold.
+- **Classical pipeline:** that of E15, with four changes.
+  - **Tolerance of 0.025 order**, instead of 0.06. BPFO and BPFI lie 0.054 from shaft
+    harmonics 3 and 5.
+  - **Ruler search within ±1% of the nominal**, instead of ±12%, to exclude 3.0 and 5.0.
+  - **Kurtogram ceiling at the effective Nyquist.**
+  - **Guard of 1.0 × 64 points per revolution**, the same as for CWRU in E15. With 2.0, factor
+    32 would not run.
+- **Local ruler:** the full-rate line of the segment itself.
+  - It is valid only if it does not touch the search edge and if the peak, within ±0.015 order
+    of the center, is at least 5 times the median of the ±7% window around the nominal.
+  - In the suitability check, the visible lines gave 14 to 141, and the absent ones 0.3 to 2.5.
+- **Nested ruler:** the median of the valid measurement-1 calibrations of the records outside the
+  test set, on the same race. It applies to all test segments, including those of bearings
+  without a visible line.
+- **Baseline:** `uniforme_treino`, the best uniform rate up to the budget, chosen by the local
+  ruler on the records outside the test set.
+- **Gate:** that of Ottawa, with arms planted from the baseline (+5 points, +10 points and
+  perfect) and 1, 3 or 5 seeds (D0, D1 and D2).
+  - Only the optimistic rule: there is no learned arm, so the 8 tests against the learned
+    baselines enter Holm as significant.
+  - There are 200 repetitions per design (20 for the perfect arm) and 2000 resamples per test.
+- **Criterion:** H1 is testable on Paderborn if the power for +5 points, on both rulers, is at
+  least 80% in any of the designs D0, D1 or D2.
+  - If so, E15 runs on Paderborn, with the learned arms and the corrections from the adversarial
+    review, after its own pre-registration.
+  - If not, part (b) leaves the paper.
+- **Correction before any number (2026-11-12, found in the smoke test).**
+  - The number of 64 kHz samples per file varies (from 255999 to 262062), but the time axis
+    always goes from 0 to 4 s.
+  - The PMSM current, which turns at 4× the shaft speed, shows that the rate is a fixed 64 kHz:
+    median ratio of 0.99998, with 1 file out of 2559 above 0.5%.
+  - The loader now cuts the vibration at 4 s, aligned with the speed channel.
+  - One file does not open (`KA08/N15_M01_F10_KA08_2.mat`). The measurement is left out and
+    recorded in the manifest.
+  - Nothing in the protocol above changed.
 
-### Resultado da porta no Paderborn (2026-11-12)
+### Gate result on Paderborn (2026-11-12)
 
-O estágio clássico levou 3246 s em 28 processos de CPU. As saídas estão em
-`results-paderborn-gate/` (`power.csv`, `metrics.csv`, `truths.json` e `manifest.json`).
+The classical stage took 3246 s on 28 CPU processes. The outputs are in `results-paderborn-gate/`
+(`power.csv`, `metrics.csv`, `truths.json` and `manifest.json`).
 
-| desenho (regra otimista) | +5 pontos | +10 pontos | perfeito |
+| design (optimistic rule) | +5 points | +10 points | perfect |
 |---|---|---|---|
-| D0 (1 semente) | 0,74 | 0,99 | 1,00 |
-| D1 (3 sementes) | **1,00** | 1,00 | 1,00 |
-| D2 (5 sementes) | **1,00** | 1,00 | 1,00 |
+| D0 (1 seed) | 0.74 | 0.99 | 1.00 |
+| D1 (3 seeds) | **1.00** | 1.00 | 1.00 |
+| D2 (5 seeds) | **1.00** | 1.00 | 1.00 |
 
-**Veredito pelo critério pré-registrado: a H1 é testável no Paderborn, com pelo menos 3 sementes
-por dobra.** No Ottawa, nem o braço perfeito passava.
+**Verdict by the pre-registered criterion: H1 is testable on Paderborn, with at least 3 seeds
+per fold.** On Ottawa, not even the perfect arm passed.
 
-- **Há espaço para ganho.** `uniforme_treino` acerta 41,5 / 44,8 / 49,7 / 26,7 % pela régua local
-  e 16,8 / 17,4 / 18,6 / 13,2 % pela aninhada, de 1/4 a 1/32.
-- **Régua local:** só 6 dos 23 rolamentos têm raia visível em taxa cheia na medição 1 (KA01,
-  KA06, KA16, KI01, KI16 e KI18). São 180 segmentos de 1291 com régua local.
-- **Régua aninhada:** vale para todos os segmentos.
-  - Inclui rolamentos sem assinatura visível, nos quais nenhum método talvez acerte.
-  - A porta mede se o teste consegue detectar o ganho, e não se ele é alcançável.
-- **Medições fora: 21.**
-  - 1 ilegível; 2 com ~3,9 s; 3 com o canal de rotação de duração errada.
-  - 15 só têm 3 a 5 amostras a menos que 4 s. Esse critério foi rígido demais, e a rodada do E15
-    no Paderborn o relaxa: aceita até 1 ms a menos.
-  - Isso não muda o veredito, com poder de 1,00.
-- **Consequência:** a parte (b) volta ao artigo, condicionada ao E15 no Paderborn. Ele terá
-  pré-registro próprio, as correções da revisão adversarial e 3 sementes por dobra.
+- **There is room for a gain.** `uniforme_treino` gets 41.5 / 44.8 / 49.7 / 26.7% right by the
+  local ruler and 16.8 / 17.4 / 18.6 / 13.2% by the nested one, from 1/4 to 1/32.
+- **Local ruler:** only 6 of the 23 bearings have a visible full-rate line in measurement 1
+  (KA01, KA06, KA16, KI01, KI16 and KI18). There are 180 segments out of 1291 with a local
+  ruler.
+- **Nested ruler:** applies to all segments.
+  - It includes bearings without a visible signature, on which perhaps no method gets it right.
+  - The gate measures whether the test can detect the gain, not whether the gain is achievable.
+- **Measurements left out: 21.**
+  - 1 unreadable; 2 with ~3.9 s; 3 with a speed channel of the wrong duration.
+  - 15 are only 3 to 5 samples short of 4 s. This criterion was too strict, and the E15 run on
+    Paderborn relaxes it: it accepts up to 1 ms less.
+  - This does not change the verdict, with a power of 1.00.
+- **Consequence:** part (b) returns to the paper, conditional on E15 on Paderborn. It will have
+  its own pre-registration, the corrections from the adversarial review and 3 seeds per fold.
 
-## E15 no Paderborn (pré-registro, 2026-11-12)
+## E15 on Paderborn (pre-registration, 2026-11-12)
 
-Escrito antes de rodar, depois de a porta de poder passar. O config é `config/paderborn.yaml`,
-derivado de `config/base.yaml`. Valem as hipóteses H1 e H2, a regra de decisão, o Holm, a regra de
-avaliabilidade (B5) e o bootstrap por aglomerado da seção "Pré-registro", com as mudanças abaixo.
+Written before running, after the power gate passed. The config is `config/paderborn.yaml`,
+derived from `config/base.yaml`. Hypotheses H1 and H2, the decision rule, Holm, the evaluability
+rule (B5) and the cluster bootstrap of the "Pre-registration" section apply, with the changes
+below.
 
-- **Dados:** os da porta.
-  - 23 rolamentos (12 de pista externa e 11 de pista interna) nos três ajustes de 1500 rpm.
-  - A medição 1 calibra; as medições 2 a 20 são os segmentos, cortados em 255936 amostras.
-  - A medição que não abre ou que é mais curta que isso fica de fora.
-- **Divisões:** K-fold por rolamento, com as 4 dobras da porta (há teste que confere).
-  - A validação sai dos rolamentos fora do teste, com 25 % por pista e pelo menos 1.
-  - O aglomerado do bootstrap é o rolamento.
-- **Sementes:** 3 por dobra. A porta deu poder de 1,00 para +5 pontos com 3 sementes, e de 0,74
-  com 1.
-- **Réguas:** as da porta.
-  - A local só vale onde a raia é visível em taxa cheia (pico de pelo menos 5× a mediana).
-  - A aninhada vale em todos os segmentos.
-  - Tolerância de 0,025 ordem, busca da régua em ±1 % da nominal.
-- **Rótulos de treino e validação:** a régua aninhada, porque a local só existe em 6 dos 23
-  rolamentos.
-  - O decodificador não tem termo aprendido por ordem, então não consegue devolver a ordem da
-    pista sem uma raia no espectro.
-- **Métodos:** os do Ottawa, menos `dec_adaptativa` e `wdcnn`, que não decidem nada.
-- **Guarda:** 1,0 × 64 pontos por volta, como na porta.
-- **Correções da revisão adversarial:**
-  - adotadas: K-fold por rolamento e 3 sementes;
-  - não adotadas nesta rodada: o decodificador clássico sobre a máscara aprendida, o braço que
-    parte da melhor uniforme e o orçamento de treino igual. Ficam como limitação declarada.
-- **O que refuta:** o mesmo da seção "O que refutaria". Com a porta passando, um negativo aqui é
-  evidência de ausência de ganho de pelo menos 5 pontos nesta tarefa, e não falta de poder.
+- **Data:** those of the gate.
+  - 23 bearings (12 outer-race and 11 inner-race) in the three 1500 rpm operating settings.
+  - Measurement 1 calibrates; measurements 2 to 20 are the segments, cut at 255936 samples.
+  - A measurement that does not open or that is shorter than that is left out.
+- **Splits:** K-fold by bearing, with the 4 folds of the gate (a test checks this).
+  - Validation comes from the bearings outside the test set, with 25% per race and at least 1.
+  - The bootstrap cluster is the bearing.
+- **Seeds:** 3 per fold. The gate gave a power of 1.00 for +5 points with 3 seeds, and of 0.74
+  with 1.
+- **Rulers:** those of the gate.
+  - The local one is valid only where the line is visible at full rate (peak of at least 5× the
+    median).
+  - The nested one applies to all segments.
+  - Tolerance of 0.025 order, ruler search within ±1% of the nominal.
+- **Training and validation labels:** the nested ruler, because the local one exists only for 6
+  of the 23 bearings.
+  - The decoder has no learned per-order term, so it cannot return the race's order without a
+    line in the spectrum.
+- **Methods:** those of Ottawa, minus `dec_adaptativa` (adaptive) and `wdcnn`, which decide
+  nothing.
+- **Guard:** 1.0 × 64 points per revolution, as in the gate.
+- **Corrections from the adversarial review:**
+  - adopted: K-fold by bearing and 3 seeds;
+  - not adopted in this run: the classical decoder on the learned mask, the arm that starts from
+    the best uniform rate, and the equal training budget. They remain as a declared limitation.
+- **What refutes:** the same as in the "What would refute" section. With the gate passing, a
+  negative here is evidence of the absence of a gain of at least 5 points in this task, and not
+  a lack of power.
 
-### Execução paralela no Paderborn (2026-11-12)
+### Parallel execution on Paderborn (2026-11-12)
 
-O desenho, as dobras, as sementes, os métodos e os critérios ficam os do pré-registro acima. Muda só
-quantos processos calculam as células.
+The design, the folds, the seeds, the methods and the criteria remain those of the
+pre-registration above. Only the number of processes computing the cells changes.
 
-- **Por que.** A rodada principal começou o estágio de GPU às 15:27 UTC.
-  - Pelo NVML, a GPU ficou em cerca de 6 % de uso, com 3,2 GiB e 76 W.
-  - O processo principal ocupa um núcleo de CPU (87 %), então o treino é limitado pelo Python, e
-    não pela GPU.
-  - A primeira execução no Paderborn (`dec_uniforme`, 1/4, dobra 1, semente 1) levou 181 s. No
-    Ottawa, a média desse método foi de 55 s. A rodada tem 48 células (4 dobras × 3 sementes × 4
-    orçamentos) de 7 métodos.
-- **Como.** `shard.py` roda as células que recebe em outros processos, na mesma GPU.
-  - Ele usa o mesmo `run.py`, sem alteração, e grava cada execução em `runs/` com o mesmo `run_key`.
-  - O `run_key` cobre o config, o `run.py`, o código dos pacotes e a CLI que muda o resultado.
-    `--budgets` e `--workers` não entram nele.
-  - O processo principal, ao chegar numa célula já gravada, a retoma, e o manifest dele a marca
-    como `"retomado"`.
-- **O que garante que o resultado é o mesmo.**
-  - Os pedaços chamam `run.run_method` com o mesmo contexto. A semente de dados sai de
-    `derive_seed` por célula, e o cudnn é determinístico.
-  - Os pedaços saem antes de `summarize`. Por isso não escrevem `metrics.csv`, `summary.csv`,
-    `hypotheses.csv`, `masks.json` nem o manifest. Quem os escreve é o processo principal, que
-    passa por todas as células.
-  - Cada execução de pedaço é gravada de forma atômica (temporário + `os.replace`), e o processo
-    principal nunca lê um JSON pela metade.
-  - O estágio clássico dos pedaços vem de um cache. A chave dele é o hash do config, do `run.py` e
-    dos pacotes, e um cache de outra chave é recusado.
-- **Validação antes de usar** (local, CPU, config de fumaça do Ottawa, 4 métodos, 3 épocas):
-  - `metrics.csv`, `summary.csv`, `hypotheses.csv` e `comparisons.csv` saíram **idênticos** aos de
-    uma rodada sem pedaços.
-  - As execuções gravadas diferem só no tempo de relógio (`info/.../seconds`). Isso vale também
-    para as que o próprio processo principal calculou, então não vem do pedaço.
-  - O manifest do principal marca como `"retomado"` as 4 execuções calculadas pelo pedaço.
-  - Nenhum arquivo temporário ficou para trás.
-- **Proveniência.**
-  - O processo principal roda no checkout do servidor criado no commit `4e3bf37`. O
-    `readme_sha256` do manifest será o desse commit, porque este README só muda no repositório
-    local.
-  - `shard.py` entrou no checkout do servidor como arquivo novo, e não muda nenhum hash do
+- **Why.** The main run started the GPU stage at 15:27 UTC.
+  - According to NVML, the GPU stayed at about 6% utilization, with 3.2 GiB and 76 W.
+  - The main process occupies one CPU core (87%), so training is bound by Python, not by the
+    GPU.
+  - The first execution on Paderborn (`dec_uniforme`, 1/4, fold 1, seed 1) took 181 s. On
+    Ottawa, the mean for this method was 55 s. The run has 48 cells (4 folds × 3 seeds ×
+    4 budgets) of 7 methods.
+- **How.** `shard.py` runs the cells it receives in other processes, on the same GPU.
+  - It uses the same `run.py`, unchanged, and stores each execution in `runs/` with the same
+    `run_key`.
+  - The `run_key` covers the config, `run.py`, the package code and the CLI that changes the
+    result. `--budgets` and `--workers` are not part of it.
+  - The main process, on reaching a cell already stored, resumes it, and its manifest marks it
+    as `"retomado"` (resumed).
+- **What guarantees that the result is the same.**
+  - The shards call `run.run_method` with the same context. The data seed comes from
+    `derive_seed` per cell, and cudnn is deterministic.
+  - The shards exit before `summarize`. That is why they do not write `metrics.csv`,
+    `summary.csv`, `hypotheses.csv`, `masks.json` or the manifest. These are written by the
+    main process, which goes through all the cells.
+  - Each shard execution is stored atomically (temporary file + `os.replace`), and the main
+    process never reads a half-written JSON.
+  - The shards' classical stage comes from a cache. Its key is the hash of the config, of
+    `run.py` and of the packages, and a cache with another key is rejected.
+- **Validation before use** (local, CPU, Ottawa smoke config, 4 methods, 3 epochs):
+  - `metrics.csv`, `summary.csv`, `hypotheses.csv` and `comparisons.csv` came out **identical**
+    to those of a run without shards.
+  - The stored executions differ only in wall-clock time (`info/.../seconds`). This also holds
+    for those that the main process computed itself, so it does not come from the shard.
+  - The main process's manifest marks as `"retomado"` the 4 executions computed by the shard.
+  - No temporary file was left behind.
+- **Provenance.**
+  - The main process runs in the server checkout created at commit `4e3bf37`. The manifest's
+    `readme_sha256` will be that of this commit, because this README only changes in the local
+    repository.
+  - `shard.py` entered the server checkout as a new file, and it does not change any hash of the
     `run_key`.
 
-## Resultado no Paderborn (2026-11-13)
+## Result on Paderborn (2026-11-13)
 
-- **Rodada:** `results-paderborn/`, com 336 execuções, 4 dobras por rolamento × 3 sementes × 4
-  orçamentos × 7 métodos.
-  - O estágio clássico rodou uma vez e serviu de cache para os pedaços (`shard.py`).
-  - O `metrics.csv` vai comprimido (`metrics.csv.gz`); os `runs/` ficam no servidor.
-- **Avaliabilidade (B5), conferida antes das hipóteses:**
-  - A máscara restrita convergiu em 92, 83, 75 e 92 % das 12 execuções por orçamento, de 1/4 a
-    1/32. A selecionada convergiu em 83, 75, 83 e 92 %. **A H1 é avaliável nos quatro.**
-  - A livre projetada convergiu em 33, 0, 17 e 42 %. **A H2 não é avaliável em nenhum.**
-- **Veredito pré-registrado: a H1 não passa em nenhum orçamento, em nenhuma régua.** São 0 de 24
-  testes significativos.
-  - **Régua aninhada:**
-    - contra `dec_uniforme_treino`: −1,8, −2,2, −1,0 e −5,2 pontos;
-    - contra `dec_aleatoria`: −3,1, −0,5, +4,4 e −5,2;
-    - contra `uniforme_treino`: +8,3, +6,2, +8,8 e +12,6.
-    - O menor p unilateral é 0,037 (1/32, contra `uniforme_treino`, IC de −1,1 a +28,2). O Holm
-      o leva a 0,44.
-  - **Régua local** (17 registros, 7 aglomerados): de −16,9 a +18,9 pontos, sem nada
-    significativo.
-- **Acurácia balanceada, régua aninhada (%):**
+- **Run:** `results-paderborn/`, with 336 executions, 4 bearing-wise folds × 3 seeds ×
+  4 budgets × 7 methods.
+  - The classical stage ran once and served as a cache for the shards (`shard.py`).
+  - `metrics.csv` is stored compressed (`metrics.csv.gz`); the `runs/` stay on the server.
+- **Evaluability (B5), checked before the hypotheses:**
+  - The constrained mask converged in 92, 83, 75 and 92% of the 12 executions per budget, from
+    1/4 to 1/32. The selected one converged in 83, 75, 83 and 92%. **H1 is evaluable in all
+    four.**
+  - The free projected one converged in 33, 0, 17 and 42%. **H2 is not evaluable in any.**
+- **Pre-registered verdict: H1 does not pass in any budget, on either ruler.** 0 of 24 tests are
+  significant.
+  - **Nested ruler:**
+    - against `dec_uniforme_treino`: −1.8, −2.2, −1.0 and −5.2 points;
+    - against `dec_aleatoria`: −3.1, −0.5, +4.4 and −5.2;
+    - against `uniforme_treino`: +8.3, +6.2, +8.8 and +12.6.
+    - The smallest one-sided p is 0.037 (1/32, against `uniforme_treino`, CI from −1.1
+      to +28.2). Holm takes it to 0.44.
+  - **Local ruler** (17 records, 7 clusters): from −16.9 to +18.9 points, with nothing
+    significant.
+- **Balanced accuracy, nested ruler (%):**
 
-  | braço | 1/4 | 1/8 | 1/16 | 1/32 |
+  | arm | 1/4 | 1/8 | 1/16 | 1/32 |
   |---|---|---|---|---|
-  | `dec_aprendida_sel` | 25,7 | 24,4 | 27,5 | 25,4 |
-  | `dec_uniforme_treino` | 27,5 | 26,7 | 28,5 | 30,5 |
-  | `dec_aleatoria` | 28,7 | 25,0 | 23,1 | 30,6 |
-  | `dec_multicoset_vb` | 26,2 | 23,6 | 26,5 | 34,8 |
-  | `uniforme_treino` (pipeline clássico) | 17,4 | 18,3 | 18,8 | 12,7 |
+  | `dec_aprendida_sel` | 25.7 | 24.4 | 27.5 | 25.4 |
+  | `dec_uniforme_treino` | 27.5 | 26.7 | 28.5 | 30.5 |
+  | `dec_aleatoria` | 28.7 | 25.0 | 23.1 | 30.6 |
+  | `dec_multicoset_vb` | 26.2 | 23.6 | 26.5 | 34.8 |
+  | `uniforme_treino` (classical pipeline) | 17.4 | 18.3 | 18.8 | 12.7 |
 
-- **Leitura:**
-  - **A margem sobre o pipeline clássico é do decodificador, não da máscara.** A uniforme
-    treinada e a aleatória usam o mesmo decodificador e ficam tão à frente quanto a aprendida.
-  - **Com poder de 1,00 para +5 pontos** (porta no Paderborn), é evidência contra um ganho dessa
-    ordem da máscara aprendida sobre a decimação uniforme treinada e sobre a aleatória.
-  - **O limite é o pipeline clássico,** já capturado em taxa cheia no Paderborn (E24), e a régua
-    aninhada que rotula o treino.
-- **Números do artigo:** `papers/shared/figures/num_partB_paderborn.py` →
+- **Reading:**
+  - **The margin over the classical pipeline belongs to the decoder, not to the mask.** The
+    trained uniform mask and the random one use the same decoder and are as far ahead as the
+    learned one.
+  - **With a power of 1.00 for +5 points** (gate on Paderborn), this is evidence against a gain
+    of that size from the learned mask over trained uniform decimation and over the random mask.
+  - **The limit is the classical pipeline,** already captured at full rate on Paderborn (E24),
+    and the nested ruler that labels the training.
+- **Paper numbers:** `papers/shared/figures/num_partB_paderborn.py` →
   `papers/mssp-2026/numbers/partB_paderborn.json`.
 
 
-## De onde vem a margem do decodificador no Paderborn (exploratório, 2026-11-13)
+## Where the decoder's margin on Paderborn comes from (exploratory, 2026-11-13)
 
-Pedido pela revisão adversarial do manuscrito. Não é pré-registrado. Script:
-`explore_line_split.py` → `results-paderborn/exploratory/line_split.csv` (mesma agregação do
-`summary.csv`, régua aninhada).
+Requested by the adversarial review of the manuscript. It is not pre-registered. Script:
+`explore_line_split.py` → `results-paderborn/exploratory/line_split.csv` (same aggregation as
+`summary.csv`, nested ruler).
 
-- **16 rolamentos sem régua local** (sem raia visível em taxa cheia): o clássico fica em 7,7–8,0 %,
-  e os três braços com decodificador em 16,8–24,0 %. A margem sobre o clássico está aqui.
-- **7 rolamentos com régua local** (KA01, KA06, KA16, KI01, KI16, KI17, KI18): o clássico dá 42,4,
-  45,1 e 47,2 % de 1/4 a 1/16, e a aprendida 34,2, 31,5 e 43,8 %. Em 1/32 o clássico cai a 26,8 %, e
-  a aprendida fica em 45,2 %.
-- **Na régua local,** a aprendida fica 11,7, 15,6 e 6,4 pontos abaixo do clássico de 1/4 a 1/16, e
-  18,9 acima em 1/32. Nada disso é significativo.
-- **Correção do texto anterior:** "evidência contra um ganho de 5 pontos" não se sustenta. Os
-  limites superiores do IC 95 % contra `dec_uniforme_treino` e `dec_aleatoria` vão de +3,4 a +18,2
-  pontos. A porta de poder mediu poder só contra o clássico, que é determinístico.
-- **Leitura, não testada:** os decodificadores ganham onde o kurtograma está capturado, e são
-  treinados com rótulos que dizem que ordem procurar. Isso é compatível com escolha de banda guiada
-  pelos rótulos, o efeito da regra do E26 sem aprendizado. Não houve controle com rolamentos sãos.
+- **16 bearings without a local ruler** (no visible line at full rate): the classical method
+  stays at 7.7–8.0%, and the three arms with the decoder at 16.8–24.0%. The margin over the
+  classical method is here.
+- **7 bearings with a local ruler** (KA01, KA06, KA16, KI01, KI16, KI17, KI18): the classical
+  method gives 42.4, 45.1 and 47.2% from 1/4 to 1/16, and the learned mask 34.2, 31.5 and
+  43.8%. At 1/32 the classical method drops to 26.8%, and the learned mask stays at 45.2%.
+- **On the local ruler,** the learned mask is 11.7, 15.6 and 6.4 points below the classical
+  method from 1/4 to 1/16, and 18.9 above at 1/32. None of this is significant.
+- **Correction of the previous text:** "evidence against a 5-point gain" does not hold up. The
+  upper limits of the 95% CI against `dec_uniforme_treino` and `dec_aleatoria` range from +3.4
+  to +18.2 points. The power gate measured power only against the classical method, which is
+  deterministic.
+- **Reading, not tested:** the decoders win where the kurtogram is captured, and they are
+  trained with labels that say which order to look for. This is compatible with label-guided
+  band selection, the effect of the E26 rule without learning. There was no control with healthy
+  bearings.
 
-## Figura do Paderborn (2026-11-13)
+## Paderborn figure (2026-11-13)
 
-![Máscaras aprendidas nas duas réguas](results-paderborn/figures/e15_masks_paderborn.png)
+![Learned masks on the two rulers](results-paderborn/figures/e15_masks_paderborn.png)
 
-Gerada por `papers/shared/figures/fig_masks_paderborn.py`, com a estatística dos testes
-pré-registrados: média por (divisão, registro), depois média por pista, depois média das pistas.
-O script confere as diferenças entre a máscara aprendida e cada referência contra o `diff_points`
-do `hypotheses.csv` e para se algo divergir.
+Generated by `papers/shared/figures/fig_masks_paderborn.py`, with the statistic of the
+pre-registered tests: mean per (split, record), then mean per race, then mean over the races.
+The script checks the differences between the learned mask and each reference against the
+`diff_points` of `hypotheses.csv`, and stops if anything diverges.
 
-Na régua local, essa média por registro difere bastante do acerto agrupado por segmento do
-`summary.csv`, porque os registros têm números muito diferentes de segmentos com raia. Os números
-do artigo seguem a estatística dos testes.
+On the local ruler, this per-record mean differs considerably from the segment-pooled hit rate of
+`summary.csv`, because the records have very different numbers of segments with a line. The
+paper's numbers follow the statistic of the tests.

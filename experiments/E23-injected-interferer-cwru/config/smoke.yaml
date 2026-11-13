@@ -1,4 +1,4 @@
-# Fumaca: 1 portadora, 1 potencia, 3 fatores.
+# Smoke run: 1 carrier, 1 power, 3 factors.
 seed: 20261113
 catalog: datasets/catalogs/cwru-smith2015-categories.yaml
 subset: drive_end_48k

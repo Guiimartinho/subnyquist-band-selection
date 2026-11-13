@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -17,10 +17,10 @@ A = acc_table(lambda r, sel: pred_pc(r, t) if sel == "guiado" else pred_blind(r)
 tau = thresholds(95)
 A0 = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
 for lab, AA in (
-    ("limiar unico p95 (pre-registrado)", A0),
-    ("limiar por candidato p97,5 (post hoc)", A),
+    ("single p95 threshold (pre-registered)", A0),
+    ("per-candidate threshold p97.5 (post hoc)", A),
 ):
-    print(f"== {lab}: IC95 (troca de sinal invertida) de [fator] - [1x], por braco ==")
+    print(f"== {lab}: CI95 (inverted sign-flip test) of [factor] - [1x], per arm ==")
     for arm in ("guiado", "mediana_guiado"):
         dm = lambda f: {k: v for k, v in AA[(arm, f)].items() if k[0] in ("OR", "IR")}
         s = []
@@ -32,7 +32,7 @@ for lab, AA in (
             )
         print(f"  {arm:15s} " + " | ".join(s))
 print(
-    "\n== Limiar por candidato: H1 (mediana_guiado - kurtograma) e guiado em 1x contra kurtograma em 4x =="
+    "\n== Per-candidate threshold: H1 (mediana_guiado - kurtograma) and guiado at 1x against kurtograma at 4x =="
 )
 for f in FACTORS:
     a = {k: v for k, v in A[("mediana_guiado", f)].items() if k[0] in ("OR", "IR")}

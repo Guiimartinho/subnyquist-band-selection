@@ -1,12 +1,12 @@
-"""Exploratorio (revisao adversarial de 2026-11-13): de onde vem a margem do decodificador?
+"""Exploratory (adversarial review of 2026-11-13): where does the decoder's margin come from?
 
-Separa a acuracia balanceada pela regua aninhada do E15 no Paderborn em dois estratos de
-rolamentos: os que tem regua local valida (raia de falha visivel em taxa cheia em algum segmento)
-e os que nao tem. A agregacao e a do ``summary.csv``: acerto agrupado por pista, media das pistas.
+Splits the nested-ruler balanced accuracy of E15 on Paderborn into two strata of bearings: those
+with a valid local ruler (fault line visible at full rate in some segment) and those without. The
+aggregation is the one in ``summary.csv``: hits grouped by race, mean over the races.
 
-Nao e pre-registrado. Uso:
+Not preregistered. Usage:
     uv run python experiments/E15-learned-sampling-mask/explore_line_split.py
-Grava ``results-paderborn/exploratory/line_split.csv``.
+Writes ``results-paderborn/exploratory/line_split.csv``.
 """
 
 from __future__ import annotations
@@ -73,7 +73,7 @@ def main() -> None:
         w = csv.DictWriter(fh, fieldnames=list(out[0]))
         w.writeheader()
         w.writerows(out)
-    print("rolamentos com regua local:", sorted(with_line))
+    print("bearings with a local ruler:", sorted(with_line))
     for r in out:
         print(r)
 

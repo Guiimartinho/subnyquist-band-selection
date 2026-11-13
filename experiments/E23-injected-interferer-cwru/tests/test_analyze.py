@@ -1,4 +1,4 @@
-"""A analise pre-registrada do E23 acerta o veredicto num caso sintetico de resposta conhecida."""
+"""The pre-registered E23 analysis gets the verdict right on a synthetic known-answer case."""
 
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def synthetic(tmp_path: Path, surrogate_drops: bool) -> list[dict]:
     for rec in ("A", "B", "C", "D"):
         for f, ceil in ((2, 10000.0), (2, 5000.0)):
             rows.append(row(rec, "none", "", "", f, "uniforme", ceil, 1, "", 1))
-            pred = 1 if ceil == 10000.0 else 0  # imagem em 8 kHz: dentro com 10k, acima com 5k
+            pred = 1 if ceil == 10000.0 else 0  # image at 8 kHz: inside with 10k, above with 5k
             hit_imp = 0 if pred == 1 else 1
             rows.append(
                 row(
@@ -62,7 +62,7 @@ def synthetic(tmp_path: Path, surrogate_drops: bool) -> list[dict]:
                     ceil,
                     hit_imp,
                     pred,
-                    hit_imp,  # o TAT acompanha o acerto: acuracia balanceada 1
+                    hit_imp,  # the TAT tracks the hit: balanced accuracy 1
                 )
             )
             hit_sur = 0 if (surrogate_drops and pred == 1) else 1

@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -8,11 +8,9 @@ from common import *
 from collections import Counter
 
 tau = thresholds(95)
+print("== Band agreement: blind band == guided band of the TRUE fault (damaged) ==")
 print(
-    "== Concordancia de banda: banda do cego == banda guiada da falha VERDADEIRA (danificados) =="
-)
-print(
-    "   (onde as bandas coincidem, o escore guiado na banda do cego e o proprio escore guiado: a diferenca e so de regra)"
+    "   (where the bands coincide, the guided score in the blind band is the guided score itself: the difference is only the rule)"
 )
 for clean, blind_arm, g_arm in (
     ("bruto", "kurtograma", "guiado"),
@@ -32,9 +30,9 @@ for clean, blind_arm, g_arm in (
             d["ok_g"] += g
             d["ok_b"] += b
         print(
-            f"  {clean:8s} {f:2d}x | mesma banda: {100 * same['n'] / (same['n'] + diff['n']):4.1f}% dos segm.; acerto guiado={100 * same['ok_g'] / max(1, same['n']):4.1f} cego={100 * same['ok_b'] / max(1, same['n']):4.1f} | banda diferente: guiado={100 * diff['ok_g'] / max(1, diff['n']):4.1f} cego={100 * diff['ok_b'] / max(1, diff['n']):4.1f}"
+            f"  {clean:8s} {f:2d}x | same band: {100 * same['n'] / (same['n'] + diff['n']):4.1f}% of segm.; hit rate guided={100 * same['ok_g'] / max(1, same['n']):4.1f} blind={100 * same['ok_b'] / max(1, same['n']):4.1f} | different band: guided={100 * diff['ok_g'] / max(1, diff['n']):4.1f} blind={100 * diff['ok_b'] / max(1, diff['n']):4.1f}"
         )
-print("\n== Ordens do cego em 'piso' (2,015 a 2,2): valores mais frequentes, bruto ==")
+print("\n== Blind orders at the 'floor' (2.015 to 2.2): most frequent values, raw ==")
 c = Counter()
 h = Counter()
 for r in ROWS:
@@ -42,11 +40,9 @@ for r in ROWS:
         e = float(r["blind_order"])
         if 2.0 <= e < 2.2:
             (c if r["race"] != "H" else h)[round(e, 2)] += 1
-print("  danificados:", c.most_common(8))
-print("  saos:", h.most_common(8))
-print(
-    "\n== Bandas escolhidas: cego (kurtograma bruto) e guiado (falha verdadeira), mais frequentes =="
-)
+print("  damaged:", c.most_common(8))
+print("  healthy:", h.most_common(8))
+print("\n== Chosen bands: blind (raw kurtogram) and guided (true fault), most frequent ==")
 for f in FACTORS:
     rr = [
         r
@@ -58,5 +54,5 @@ for f in FACTORS:
     hh = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == "bruto" and r["race"] == "H"]
     ch = Counter(r["blind_band"] for r in hh)
     print(
-        f"  {f:2d}x cego: {cb.most_common(3)}\n      guiado: {cg.most_common(3)}\n      cego nos saos: {ch.most_common(2)}"
+        f"  {f:2d}x blind: {cb.most_common(3)}\n      guided: {cg.most_common(3)}\n      blind on healthy: {ch.most_common(2)}"
     )

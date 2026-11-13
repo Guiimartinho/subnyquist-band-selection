@@ -1,17 +1,17 @@
-"""Critério de recuperação do E20 aplicado a um metrics.csv, nas duas réguas.
+"""E20 recovery criterion applied to a metrics.csv, under both rulers.
 
-O critério é o pré-registrado no README (seções "Seletores robustos" e "Remoção depois de
-decimar"), na pista externa, em 4× e com teto de 25 kHz:
-- **recupera:** pelo menos 20 de 36 acertos e McNemar exato pareado contra ``none`` com p < 0,01;
-- **não recupera:** até 10 de 36;
-- **inconclusivo:** o resto.
+The criterion is the one pre-registered in the README (sections "Robust selectors" and "Removal
+after decimating"), on the outer race, at 4× and with a 25 kHz ceiling:
+- **recovers:** at least 20 of 36 hits and exact paired McNemar against ``none`` with p < 0.01;
+- **does not recover:** at most 10 of 36;
+- **inconclusive:** the rest.
 
-Vale para as duas réguas: a aninhada (coluna ``hit``, a mediana deixa-um-registro-de-fora do E07)
-e a local (``hit_local``).
+It holds for both rulers: the nested one (column ``hit``, the E07 leave-one-record-out median)
+and the local one (``hit_local``).
 
-**Sensibilidade, fora do pré-registro.** O McNemar trata os 36 segmentos como independentes, mas
-são 3 por registro (README, "Nível de segmento"). Por isso o script também reporta um teste do
-sinal exato sobre os 12 registros, com a diferença de acertos por registro.
+**Sensitivity, outside the pre-registration.** McNemar treats the 36 segments as independent, but
+there are 3 per record (README, "Segment level"). So the script also reports an exact sign test
+over the 12 records, on the per-record difference in hits.
 
     uv run python experiments/E20-fold-zone-rejection/recovery.py results-selectors/metrics.csv
 """
@@ -31,7 +31,7 @@ RECOVER_HITS, NO_RECOVERY_HITS, ALPHA = 20, 10, 0.01
 
 
 def mcnemar_exact_p(b: int, c: int) -> float:
-    """p bicaudal exato de McNemar (igual ao de ``run.py``)."""
+    """Exact two-sided McNemar p (same as in ``run.py``)."""
     n = b + c
     if n == 0:
         return 1.0
@@ -39,13 +39,15 @@ def mcnemar_exact_p(b: int, c: int) -> float:
 
 
 def sign_test_p(diffs: list[int]) -> float:
-    """p bicaudal exato do teste do sinal; zeros saem."""
+    """Exact two-sided sign-test p; zeros are dropped."""
     pos = sum(1 for d in diffs if d > 0)
     neg = sum(1 for d in diffs if d < 0)
     return mcnemar_exact_p(pos, neg)
 
 
 def verdict(hits: int, p: float) -> str:
+    # The labels are data (recovery.csv, tests) and stay as they are: "recupera" = recovers,
+    # "nao recupera" = does not recover, "inconclusivo" = inconclusive.
     if hits >= RECOVER_HITS and p < ALPHA:
         return "recupera"
     if hits <= NO_RECOVERY_HITS:
@@ -54,9 +56,9 @@ def verdict(hits: int, p: float) -> str:
 
 
 def load(path: Path) -> dict[tuple, dict[tuple, int]]:
-    """cell[(intervenção, régua, fator)] -> {(registro, segmento): acerto}.
+    """cell[(intervention, ruler, factor)] -> {(record, segment): hit}.
 
-    Só a pista externa e o teto de 25 kHz.
+    Only the outer race and the 25 kHz ceiling.
     """
     cell: dict[tuple, dict[tuple, int]] = defaultdict(dict)
     with path.open(encoding="utf-8") as f:
@@ -85,7 +87,7 @@ def compare(arm: dict[tuple, int], ctrl: dict[tuple, int]) -> dict:
         "hits_none": sum(ctrl.values()),
         "gain": b,
         "loss": c,
-        "mcnemar_p": float(f"{p:.3g}"),  # 3 algarismos: p pequeno não vira 0
+        "mcnemar_p": float(f"{p:.3g}"),  # 3 significant digits: a small p does not become 0
         "verdict": verdict(hits, p),
         "records_up": sum(1 for d in per_rec.values() if d > 0),
         "records_down": sum(1 for d in per_rec.values() if d < 0),
@@ -95,7 +97,7 @@ def compare(arm: dict[tuple, int], ctrl: dict[tuple, int]) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("metrics", type=Path, help="relativo ao diretório do E20 ou absoluto")
+    ap.add_argument("metrics", type=Path, help="relative to the E20 directory, or absolute")
     args = ap.parse_args()
     path = args.metrics if args.metrics.is_absolute() else EXP / args.metrics
     cell = load(path)
@@ -117,13 +119,13 @@ def main() -> int:
         r: " ".join(f"{f}x:{sum(cell.get(('none', r, f), {}).values())}" for f in factors)
         for r in RULERS
     }
-    print(f"pista externa, teto 25 kHz; none: aninhada {base['nested']} | local {base['local']}")
+    print(f"outer race, 25 kHz ceiling; none: nested {base['nested']} | local {base['local']}")
     for r in rows:
         print(
             f"{r['intervention']:<24} {r['ruler']:<6} 4x: {r['hits']}/{r['n']} "
             f"(none {r['hits_none']}) +{r['gain']}/-{r['loss']} McNemar p={r['mcnemar_p']:.2g} "
-            f"-> {r['verdict']} | registros +{r['records_up']}/-{r['records_down']} "
-            f"sinal p={r['sign_test_p_records']:.2g} | {r['hits_by_factor']}"
+            f"-> {r['verdict']} | records +{r['records_up']}/-{r['records_down']} "
+            f"sign p={r['sign_test_p_records']:.2g} | {r['hits_by_factor']}"
         )
     print(f"-> {out}")
     return 0

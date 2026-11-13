@@ -1,32 +1,32 @@
-"""Destilação Nyquist → sub-Nyquist — a Direção 2 do projeto.
+"""Nyquist → sub-Nyquist distillation — Direction 2 of the project.
 
-A técnica vem de `vol2024poweraware` (Vol, Danial & Shlezinger, IEEE TSP 2024), que
-provou destilação ciente de potência funcionar no eixo de **bits**, com ADC
-memristivo. Eles mantêm amostragem uniforme por construção. Aqui a mesma técnica é
-transposta para o eixo de **taxa**, que é o que resta aberto.
+The technique comes from `vol2024poweraware` (Vol, Danial & Shlezinger, IEEE TSP 2025), who
+proved that power-aware distillation works on the **bits** axis, with a memristive
+ADC. They keep uniform sampling by construction. Here the same technique is
+transposed to the **rate** axis, which is what remains open.
 
-O arranjo:
+The setup:
 
-- **Professor**: vê o sinal em taxa cheia e produz, pelo baseline clássico
-  (kurtograma → envelope → energia harmônica), uma distribuição sobre o conjunto
-  discreto de raias que a geometria admite.
-- **Aluno**: vê apenas as amostras sub-Nyquist e precisa produzir a mesma
-  distribuição.
-- **Perda**: divergência para o professor, mais entropia cruzada contra a verdade
-  geométrica.
+- **Teacher**: sees the signal at the full rate and produces, through the classical baseline
+  (kurtogram → envelope → harmonic energy), a distribution over the discrete
+  set of lines that the geometry admits.
+- **Student**: sees only the sub-Nyquist samples and has to produce the same
+  distribution.
+- **Loss**: divergence to the teacher, plus cross-entropy against the geometric
+  ground truth.
 
-Duas escolhas de projeto que não são estéticas:
+Two design choices that are not aesthetic:
 
-**O aluno decodifica para um conjunto finito de raias, não para forma de onda.**
-É o que torna a saída auditável: cada classe corresponde a uma frequência que a
-geometria do mancal pode produzir, então não há como o modelo inventar uma falha
-que o rolamento não é capaz de gerar. É a resposta operacional ao alerta de
-`vangorp2021adps`, cujos autores admitem que *"the sub-sampling regime could
+**The student decodes to a finite set of lines, not to a waveform.**
+That is what makes the output auditable: each class corresponds to a frequency that the
+bearing geometry can produce, so there is no way for the model to invent a fault
+that the bearing is not capable of generating. It is the operational answer to the warning
+in `vangorp2021adps`, whose authors admit that *"the sub-sampling regime could
 obfuscate the information required to recognize failure cases"*.
 
-**O aluno é pequeno de propósito.** O orçamento é 256 kB de RAM no nRF54L15, e
-`monga2021unrolling` mostra que estrutura vinda do modelo dá mais com menos
-parâmetros que uma rede genérica.
+**The student is small on purpose.** The budget is 256 kB of RAM on the nRF54L15, and
+`monga2021unrolling` shows that structure coming from the model gives more with fewer
+parameters than a generic network.
 """
 
 from __future__ import annotations
@@ -41,11 +41,11 @@ from torch import nn
 
 @dataclass(frozen=True)
 class DistillConfig:
-    """Hiperparâmetros. ``temperature`` e ``alpha`` seguem a destilação usual."""
+    """Hyperparameters. ``temperature`` and ``alpha`` follow the usual distillation."""
 
     temperature: float = 3.0
     alpha: float = 0.7
-    """Peso da divergência para o professor; ``1 - alpha`` fica com a verdade."""
+    """Weight of the divergence to the teacher; ``1 - alpha`` goes to the ground truth."""
 
     lr: float = 3e-3
     epochs: int = 60
@@ -54,12 +54,12 @@ class DistillConfig:
 
 
 class SubNyquistStudent(nn.Module):
-    """Aluno compacto: envelope subamostrado → distribuição sobre raias admissíveis.
+    """Compact student: undersampled envelope → distribution over admissible lines.
 
-    Arquitetura deliberadamente rasa. Um tronco convolucional 1D extrai estrutura
-    local do envelope, e uma camada linear projeta sobre as candidatas. O contador de
-    parâmetros é reportado por `budget_bytes` porque **caber é requisito, não
-    detalhe**: acima de 256 kB o modelo não roda no alvo.
+    Deliberately shallow architecture. A 1D convolutional trunk extracts local structure
+    from the envelope, and a linear layer projects onto the candidates. The parameter
+    count is reported by `budget_bytes` because **fitting is a requirement, not a
+    detail**: above 256 kB the model does not run on the target.
     """
 
     def __init__(self, n_input: int, n_candidates: int, width: int = 16) -> None:
@@ -82,22 +82,22 @@ class SubNyquistStudent(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
     def budget_bytes(self, bits: int = 8) -> int:
-        """Memória do modelo quantizado, em bytes. INT8 por padrão."""
+        """Memory of the quantized model, in bytes. INT8 by default."""
         return self.n_parameters() * bits // 8
 
 
 def teacher_distribution(
     scores: NDArray[np.float64], temperature: float = 1.0
 ) -> NDArray[np.float64]:
-    """Converte as energias harmônicas do baseline numa distribuição sobre candidatas.
+    """Converts the harmonic energies of the baseline into a distribution over candidates.
 
-    O professor não é uma rede: é o método clássico rodando em taxa cheia. Isso
-    importa porque significa que o conhecimento destilado é **verificável** — vem de
-    um procedimento que se pode auditar linha a linha, e não de outro modelo opaco.
+    The teacher is not a network: it is the classical method running at the full rate. This
+    matters because it means the distilled knowledge is **verifiable** — it comes from
+    a procedure that can be audited line by line, and not from another opaque model.
     """
     s = np.asarray(scores, dtype=float).ravel()
     if s.size == 0:
-        raise ValueError("professor sem candidatas")
+        raise ValueError("teacher without candidates")
     z = s / max(float(np.max(s)), 1e-12) / max(temperature, 1e-6)
     z = z - z.max()
     e = np.exp(z)
@@ -111,11 +111,11 @@ def distill(
     labels: NDArray[np.int64],
     cfg: DistillConfig | None = None,
 ) -> dict[str, list[float]]:
-    """Treina o aluno para reproduzir o professor e acertar a verdade geométrica.
+    """Trains the student to reproduce the teacher and match the geometric ground truth.
 
-    ``x_sub``: envelopes sub-Nyquist, forma ``(n, n_input)``.
-    ``teacher_probs``: distribuição do professor, ``(n, n_candidates)``.
-    ``labels``: índice da candidata verdadeira, ``(n,)``.
+    ``x_sub``: sub-Nyquist envelopes, shape ``(n, n_input)``.
+    ``teacher_probs``: teacher distribution, ``(n, n_candidates)``.
+    ``labels``: index of the true candidate, ``(n,)``.
     """
     cfg = cfg or DistillConfig()
     torch.manual_seed(cfg.seed)
@@ -155,7 +155,7 @@ def distill(
 def evaluate(
     student: SubNyquistStudent, x_sub: NDArray[np.float64], labels: NDArray[np.int64]
 ) -> float:
-    """Acurácia do aluno sobre a verdade geométrica."""
+    """Accuracy of the student against the geometric ground truth."""
     student.eval()
     with torch.no_grad():
         pred = student(torch.tensor(np.asarray(x_sub, dtype=np.float32))).argmax(1).numpy()

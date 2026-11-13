@@ -1,13 +1,13 @@
-"""Diagnóstico a partir do espectro de envelope, contra o prior geométrico.
+"""Diagnosis from the envelope spectrum, against the geometric prior.
 
-É aqui que o prior físico entra: o conjunto de frequências candidatas é **finito e
-sai da geometria do mancal**, não de um modelo aprendido. Por isso o projeto pode
-falar em recuperação em vez de alucinação — a decisão é um teste de hipóteses sobre
-um conjunto discreto conhecido a priori.
+This is where the physical prior enters: the set of candidate frequencies is **finite and
+comes from the bearing geometry**, not from a learned model. That is why the project can
+speak of recovery rather than hallucination — the decision is a hypothesis test over
+a discrete set known a priori.
 
-A métrica do projeto é **erro de estimação de frequência de falha**, contínuo, e não
-acurácia de classificação. Rótulo de classe é para classificação; erro em hertz diz
-quanto da informação sobreviveu à dobra espectral.
+The project's metric is **fault-frequency estimation error**, which is continuous, and not
+classification accuracy. A class label is for classification; an error in hertz tells
+how much of the information survived the spectral folding.
 """
 
 from __future__ import annotations
@@ -22,25 +22,25 @@ from snq_recon.envelope import EnvelopeSpectrum
 
 @dataclass(frozen=True)
 class FaultScore:
-    """Pontuação de uma hipótese de falha."""
+    """Score of one fault hypothesis."""
 
     fault: str
     expected_hz: float
     measured_hz: float
     error_hz: float
     fundamental_dominates: bool
-    """A fundamental é o maior harmônico da série? Se não, a candidata é suspeita
-    de ser subharmônica da raia verdadeira."""
+    """Is the fundamental the largest harmonic of the series? If not, the candidate is suspected
+    of being a subharmonic of the true line."""
 
     harmonic_energy: float
-    """Soma das magnitudes nos harmônicos, **ponderada por 1/h** e normalizada pelo
-    piso local do espectro.
+    """Sum of the magnitudes at the harmonics, **weighted by 1/h** and normalized by the
+    local floor of the spectrum.
 
-    **Só comparável dentro de um mesmo registro.** A normalização é pela mediana do
-    espectro, que num sinal limpo é minúscula e faz a razão explodir: medido em dado
-    real do CWRU, o registro normal 97DE pontuou 6x mais que o registro com falha
-    130DE. Serve para ordenar hipóteses num registro, não para detectar falha entre
-    registros.
+    **Only comparable within a single record.** The normalization is by the median of the
+    spectrum, which in a clean signal is tiny and makes the ratio blow up: measured on real
+    CWRU data, the normal record 97DE scored 6x more than the faulty record
+    130DE. It serves to rank hypotheses within a record, not to detect a fault across
+    records.
     """
 
     n_harmonics_found: int
@@ -60,15 +60,15 @@ class Diagnosis:
     def summary(self) -> str:
         rows = sorted(self.scores.values(), key=lambda s: -s.harmonic_energy)
         return "\n".join(
-            f"  {s.fault:<5} esperado {s.expected_hz:8.2f} Hz | medido {s.measured_hz:8.2f} Hz"
-            f" | erro {s.error_hz:6.2f} Hz | energia {s.harmonic_energy:6.2f}"
-            f" | {s.n_harmonics_found} harmônicos"
+            f"  {s.fault:<5} expected {s.expected_hz:8.2f} Hz | measured {s.measured_hz:8.2f} Hz"
+            f" | error {s.error_hz:6.2f} Hz | energy {s.harmonic_energy:6.2f}"
+            f" | {s.n_harmonics_found} harmonics"
             for s in rows
         )
 
 
 def _noise_floor(mag: np.ndarray) -> float:
-    """Mediana como estimador robusto do piso — imune às poucas raias grandes."""
+    """Median as a robust estimator of the floor — immune to the few large lines."""
     m = float(np.median(mag))
     return m if m > 0.0 else float(np.mean(mag)) or 1.0
 
@@ -82,29 +82,29 @@ def score_fault(
     name: str = "",
     fold_harmonics: bool = True,
 ) -> FaultScore:
-    """Pontua uma frequência candidata pela energia nos seus harmônicos.
+    """Scores a candidate frequency by the energy at its harmonics.
 
-    Somar harmônicos, em vez de olhar só a fundamental, é o que separa uma falha real
-    de uma raia qualquer: falha de rolamento produz trem de impactos, e trem de
-    impactos é rico em harmônicos.
+    Summing harmonics, instead of looking only at the fundamental, is what separates a real
+    fault from an arbitrary line: a bearing fault produces an impact train, and an impact
+    train is rich in harmonics.
 
-    **A soma é ponderada por 1/h, e o motivo não é estético.** Soma simples é
-    enviesada a favor de subharmônicos: a série de ``f/3`` contém ``f``, então ela
-    herda a energia da raia verdadeira e pode vencer. No prior geométrico de um
-    rolamento o engodo é garantido, porque os harmônicos de FTF caem exatamente sobre
-    ``BPFO/3``. Medido em dado real do CWRU no fator 12: os harmônicos de 35,77 Hz
-    valiam 18,8 / 22,0 / 232,5 (dominados pelo terceiro, que é a BPFO verdadeira),
-    contra 232,5 / 18,1 / 5,3 de 107,30 Hz. A soma simples elegia o subharmônico;
-    a ponderada elege a fundamental.
+    **The sum is weighted by 1/h, and the reason is not aesthetic.** A plain sum is
+    biased in favor of subharmonics: the series of ``f/3`` contains ``f``, so it
+    inherits the energy of the true line and can win. In the geometric prior of a
+    bearing the decoy is guaranteed, because the FTF harmonics fall exactly on
+    ``BPFO/3``. Measured on real CWRU data at factor 12: the harmonics of 35.77 Hz
+    were worth 18.8 / 22.0 / 232.5 (dominated by the third, which is the true BPFO),
+    against 232.5 / 18.1 / 5.3 for 107.30 Hz. The plain sum picked the subharmonic;
+    the weighted sum picks the fundamental.
 
-    ``fold_harmonics`` trata os harmônicos acima de Nyquist como **medições
-    dobradas** em vez de descartá-los. É o mecanismo central do projeto aplicado
-    aqui: sob subamostragem o quinto harmônico de BPFI não some, ele reaparece
-    numa posição previsível — e essa posição é informação, não perda.
+    ``fold_harmonics`` treats the harmonics above Nyquist as **folded
+    measurements** instead of discarding them. It is the project's central mechanism applied
+    here: under undersampling the fifth harmonic of BPFI does not vanish, it reappears
+    at a predictable position — and that position is information, not loss.
 
-    Isso só vale se o espectro de fato dobra. Quando ``spec.folds_above_nyquist`` é falso
-    (espectro de ordem com anti-alias angular), não há harmônico dobrado a procurar, e
-    procurá-lo seria somar o que quer que esteja naquela posição: a busca para no Nyquist.
+    This only holds if the spectrum actually folds. When ``spec.folds_above_nyquist`` is false
+    (order spectrum with angular anti-aliasing), there is no folded harmonic to look for, and
+    looking for it would add whatever is at that position: the search stops at Nyquist.
     """
     floor = _noise_floor(spec.magnitude)
     total = 0.0
@@ -112,7 +112,7 @@ def score_fault(
     measured = float("nan")
     nyquist = spec.freqs_hz[-1]
     per_harmonic: list[float] = []
-    # getattr: objeto com a mesma forma, mas sem o campo, mantem o comportamento antigo
+    # getattr: an object with the same shape but without the field keeps the old behavior
     folds = fold_harmonics and bool(getattr(spec, "folds_above_nyquist", True))
 
     for h in range(1, n_harmonics + 1):
@@ -121,11 +121,11 @@ def score_fault(
             if not folds:
                 break
             target = float(alias_frequency_hz(target, 2.0 * nyquist))
-            if target < tol_hz:  # dobrou em cima do DC, onde nao ha informacao
+            if target < tol_hz:  # folded onto DC, where there is no information
                 continue
         f_peak, mag = spec.peak_near(target, tol_hz)
         if mag > 2.0 * floor:
-            total += mag / floor / h  # 1/h: nao deixar harmonico alto dominar
+            total += mag / floor / h  # 1/h: keep the high harmonics from dominating
             found += 1
             per_harmonic.append(mag)
             if h == 1:
@@ -157,9 +157,9 @@ def diagnose(
     n_harmonics: int = 5,
     tol_hz: float = 2.0,
 ) -> Diagnosis:
-    """Testa as quatro hipóteses de falha do mancal contra o espectro de envelope.
+    """Tests the four bearing fault hypotheses against the envelope spectrum.
 
-    >>> # uso: diagnose(envelope_spectrum(x, fs, banda), geom, rpm/60)
+    >>> # usage: diagnose(envelope_spectrum(x, fs, band), geom, rpm/60)
     """
     expected = fault_frequencies_hz(geom, shaft_hz)
     return Diagnosis(
@@ -177,20 +177,21 @@ def estimate_from_candidates(
     n_harmonics: int = 3,
     tol_hz: float = 2.0,
 ) -> tuple[float, float]:
-    """Escolhe, num conjunto discreto, a candidata mais sustentada pelo espectro.
+    """Picks, from a discrete set, the candidate best supported by the spectrum.
 
-    É o modo "com prior" do E02: em vez de procurar o pico global, escolhe-se dentro
-    do conjunto que a geometria admite. Devolve ``(frequência, energia harmônica)``.
+    It is E02's `com_prior` ("with prior") mode: instead of searching for the global peak, the
+    choice is made within the set that the geometry admits. Returns
+    ``(frequency, harmonic energy)``.
 
-    **Candidatas acima da frequência de Nyquist do espectro são descartadas.** Uma
-    raia que não cabe na banda observada não pode ser a fundamental medida ali, e
-    mantê-la no conjunto degrada a estimativa em vez de ajudar — medido no E02, onde
-    o prior sem esse filtro derrubava o acerto a zero em fator 12.
+    **Candidates above the Nyquist frequency of the spectrum are discarded.** A
+    line that does not fit in the observed band cannot be the fundamental measured there, and
+    keeping it in the set degrades the estimate instead of helping — measured in E02, where
+    the prior without this filter brought the hit rate down to zero at factor 12.
     """
     cands = np.asarray(candidates_hz, dtype=float).ravel()
     cands = cands[cands <= spec.freqs_hz[-1]]
     if cands.size == 0:
-        raise ValueError("nenhuma candidata cabe abaixo do Nyquist do espectro")
+        raise ValueError("no candidate fits below the Nyquist frequency of the spectrum")
     scores = [score_fault(spec, float(f), n_harmonics=n_harmonics, tol_hz=tol_hz) for f in cands]
     best = max(scores, key=lambda s: s.harmonic_energy)
     return best.expected_hz, best.harmonic_energy
@@ -198,7 +199,7 @@ def estimate_from_candidates(
 
 @dataclass(frozen=True)
 class RefinedOrder:
-    """Resultado de `refine_order_detail`: centro do platô, largura e se ele toca a borda."""
+    """Result of `refine_order_detail`: plateau center, width, and whether it touches the edge."""
 
     center: float
     plateau_width: float
@@ -214,15 +215,15 @@ def refine_order_detail(
     tol: float,
     step: float = 0.005,
 ) -> RefinedOrder:
-    """Como `refine_order`, mas diz também a largura do platô e se ele encosta na borda.
+    """Like `refine_order`, but also reports the plateau width and whether it touches the edge.
 
-    Um platô que encosta em ``nominal·(1 ± span)`` não identifica raia nenhuma: o máximo pode
-    estar fora da grade. Quem usa o resultado como verdade deve descartá-lo (revisão de
-    2026-11-11: O-A-2 calibrava exatamente no limite inferior com ``samples_per_rev = 16``).
+    A plateau that touches ``nominal·(1 ± span)`` identifies no line at all: the maximum may
+    lie outside the grid. Anyone using the result as ground truth must discard it (review of
+    2026-11-11: O-A-2 calibrated exactly at the lower limit with ``samples_per_rev = 16``).
     """
     grid = np.arange(nominal * (1 - span), nominal * (1 + span), step)
     if grid.size == 0:
-        raise ValueError("grade de refinamento vazia: span ou step invalidos")
+        raise ValueError("empty refinement grid: invalid span or step")
     scores = np.array(
         [
             score_fault(spec, float(f), n_harmonics=n_harmonics, tol_hz=tol).harmonic_energy
@@ -251,19 +252,19 @@ def refine_order(
     tol: float,
     step: float = 0.005,
 ) -> float:
-    """Candidata de maior energia harmônica numa vizinhança relativa de ``nominal``.
+    """Candidate with the largest harmonic energy in a relative neighborhood of ``nominal``.
 
-    Varre ``nominal·(1 ± span)`` em passos de ``step`` e pontua cada candidata com
-    `score_fault`. O escore é constante por partes: ``peak_near`` toma a maior raia a ±tol
-    de cada harmônico, então há um **platô** de candidatas com o mesmo escore. A função
-    devolve o **centro** do platô contíguo que contém o primeiro máximo.
+    Sweeps ``nominal·(1 ± span)`` in steps of ``step`` and scores each candidate with
+    `score_fault`. The score is piecewise constant: ``peak_near`` takes the largest line within
+    ±tol of each harmonic, so there is a **plateau** of candidates with the same score. The
+    function returns the **center** of the contiguous plateau that contains the first maximum.
 
-    Tomar o primeiro ponto do platô (o que ``max`` do Python faz) enviesa para baixo em meia
-    largura do platô. Medido no Ottawa (revisão adversarial de 2026-11-11): platô de 0,035
-    ordem com ``samples_per_rev = 64`` e de 0,055–0,115 com 16, ou seja, viés de 0,0175 a
-    0,0575 ordem contra uma tolerância de 0,06. Pelo centro, as duas réguas coincidem em mediana.
+    Taking the first point of the plateau (which Python's ``max`` does) biases downward by half
+    the plateau width. Measured on Ottawa (adversarial review of 2026-11-11): a plateau of 0.035
+    order with ``samples_per_rev = 64`` and of 0.055–0.115 with 16, that is, a bias of 0.0175 to
+    0.0575 order against a tolerance of 0.06. With the center, the two rulers agree in median.
 
-    Um platô que encosta na borda da grade é truncado; use `refine_order_detail` para saber.
+    A plateau that touches the grid edge is truncated; use `refine_order_detail` to find out.
     """
     return refine_order_detail(
         spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol, step=step
@@ -271,10 +272,10 @@ def refine_order(
 
 
 def estimate_without_prior(spec: EnvelopeSpectrum, f_min_hz: float = 5.0) -> float:
-    """Maior raia do espectro de envelope acima de ``f_min_hz``.
+    """Largest line of the envelope spectrum above ``f_min_hz``.
 
-    É o modo "sem prior": nenhuma restrição sobre onde a falha pode estar. Serve de
-    contraste para medir quanto o prior geométrico acrescenta.
+    It is the `sem_prior` ("without prior") mode: no restriction on where the fault can be. It
+    serves as a contrast for measuring how much the geometric prior adds.
     """
     sel = spec.freqs_hz >= f_min_hz
     if not np.any(sel):

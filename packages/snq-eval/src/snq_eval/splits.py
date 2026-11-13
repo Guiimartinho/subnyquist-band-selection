@@ -1,30 +1,30 @@
-"""Divisões por registro repetidas e métricas balanceadas.
+"""Repeated per-record splits and balanced metrics.
 
-Um resultado de classificação obtido numa **única** divisão treino/teste não é um
-resultado: é uma amostra de tamanho um de uma variável aleatória cuja dispersão
-ninguém mediu. O E04 exibiu o sintoma em forma pura — 11 registros de uma classe
-contra 4 de outra, teste de 5 registros, e o controle de classe majoritária
-oscilando entre 80% e 100% conforme o sorteio. A diferença que sustentou a
-conclusão era menor que a variação do próprio sorteio.
+A classification result obtained on a **single** train/test split is not a result:
+it is a sample of size one of a random variable whose spread nobody measured. E04
+showed the symptom in pure form — 11 records of one class against 4 of another, a
+test set of 5 records, and the majority-class control swinging between 80% and 100%
+depending on the draw. The difference that supported the conclusion was smaller than
+the variation of the draw itself.
 
-Este módulo dá o arcabouço mínimo para não repetir isso:
+This module provides the minimum framework for not repeating that:
 
-* `record_splits` — divisão por **registro**, nunca por segmento, repetida, com as
-  sementes derivadas de uma semente mestra por `numpy.random.SeedSequence`. Duas
-  execuções com a mesma semente mestra produzem exatamente as mesmas divisões.
-* `classification_scores` — acurácia bruta, acurácia balanceada e F1 macro lado a
-  lado. Sob classes desbalanceadas as três respondem a perguntas diferentes, e
-  reportar só a primeira é o que torna um controle de maioria imbatível.
-* `wilson_halfwidth` / `wilson_interval` — incerteza da proporção, na mesma
-  convenção já usada nas figuras do projeto (`papers/shared/figures/`).
+* `record_splits` — split by **record**, never by segment, repeated, with the seeds
+  derived from a master seed via `numpy.random.SeedSequence`. Two runs with the same
+  master seed produce exactly the same splits.
+* `classification_scores` — raw accuracy, balanced accuracy and macro F1 side by
+  side. Under imbalanced classes the three answer different questions, and reporting
+  only the first is what makes a majority control unbeatable.
+* `wilson_halfwidth` / `wilson_interval` — uncertainty of the proportion, in the same
+  convention already used in the project's figures (`papers/shared/figures/`).
 
-**Qual incerteza vale para qual métrica.** O intervalo de Wilson é um intervalo
-para uma *proporção*: aplica-se à acurácia bruta, que é a fração de segmentos de
-teste corretos. Não se aplica à acurácia balanceada nem ao F1 macro, que são médias
-de proporções com denominadores distintos. Para essas, e para qualquer métrica
-agregada sobre divisões, a dispersão a reportar é a inter-divisão —
-`percentile_interval`. Usar Wilson onde ele não vale produz uma barra de erro
-otimista, que é pior que nenhuma.
+**Which uncertainty applies to which metric.** The Wilson interval is an interval for
+a *proportion*: it applies to raw accuracy, which is the fraction of correct test
+segments. It does not apply to balanced accuracy or to macro F1, which are averages
+of proportions with different denominators. For those, and for any metric aggregated
+over splits, the spread to report is the between-split one — `percentile_interval`.
+Using Wilson where it does not apply produces an optimistic error bar, which is worse
+than none.
 """
 
 from __future__ import annotations
@@ -49,18 +49,18 @@ __all__ = [
 
 
 # ----------------------------------------------------------------------------
-# incerteza
+# uncertainty
 # ----------------------------------------------------------------------------
 def wilson_halfwidth(p: float, n: int, z: float = 1.96) -> float:
-    """Meia-largura do intervalo de Wilson para uma proporção ``p`` com ``n`` ensaios.
+    """Half-width of the Wilson interval for a proportion ``p`` with ``n`` trials.
 
-    Mesma convenção das figuras do projeto (`fig_e01_frontier.py`,
-    `fig_e02_undersampling.py`, `fig_e07_order_domain.py`), reproduzida aqui para
-    que código e figura não divirjam. ``z = 1.96`` é o nível de 95%.
+    Same convention as the project's figures (`fig_e01_frontier.py`,
+    `fig_e02_undersampling.py`, `fig_e07_order_domain.py`), reproduced here so that
+    code and figure do not diverge. ``z = 1.96`` is the 95% level.
 
-    O intervalo de Wilson não é simétrico em torno de ``p``: esta meia-largura é a
-    do intervalo em torno do **centro deslocado**, e é o que as figuras desenham.
-    Quando o que se quer são os dois extremos, usar `wilson_interval`.
+    The Wilson interval is not symmetric around ``p``: this half-width is that of the
+    interval around the **shifted center**, and it is what the figures draw. When
+    what is wanted is the two endpoints, use `wilson_interval`.
     """
     if n <= 0:
         return 0.0
@@ -69,12 +69,12 @@ def wilson_halfwidth(p: float, n: int, z: float = 1.96) -> float:
 
 
 def wilson_interval(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
-    """Extremos ``(lo, hi)`` do intervalo de Wilson a 95% para ``successes`` em ``n``.
+    """Endpoints ``(lo, hi)`` of the 95% Wilson interval for ``successes`` out of ``n``.
 
-    Preferível ao intervalo normal justamente no regime deste projeto: ``n`` pequeno
-    e proporções perto de 0 ou de 1, onde o intervalo normal escapa de ``[0, 1]``.
-    Com ``n = 0`` devolve ``(0.0, 1.0)`` — ignorância total, e não uma barra de
-    largura zero.
+    Preferable to the normal interval precisely in this project's regime: small ``n``
+    and proportions close to 0 or 1, where the normal interval escapes ``[0, 1]``.
+    With ``n = 0`` it returns ``(0.0, 1.0)`` — total ignorance, and not a bar of zero
+    width.
     """
     if n <= 0:
         return (0.0, 1.0)
@@ -88,16 +88,16 @@ def wilson_interval(successes: int, n: int, z: float = 1.96) -> tuple[float, flo
 def percentile_interval(
     values: Sequence[float] | NDArray[np.float64], level: float = 0.95
 ) -> tuple[float, float, float]:
-    """``(mediana, percentil inferior, percentil superior)`` de uma amostra.
+    """``(median, lower percentile, upper percentile)`` of a sample.
 
-    É a incerteza correta para uma métrica agregada sobre divisões repetidas —
-    acurácia balanceada, F1 macro — porque não supõe que a métrica seja uma
-    proporção. Com uma única divisão devolve o mesmo valor três vezes, o que é a
-    resposta honesta: uma divisão não mede dispersão nenhuma.
+    It is the correct uncertainty for a metric aggregated over repeated splits —
+    balanced accuracy, macro F1 — because it does not assume that the metric is a
+    proportion. With a single split it returns the same value three times, which is
+    the honest answer: one split measures no spread at all.
     """
     v = np.asarray(values, dtype=float).ravel()
     if v.size == 0:
-        raise ValueError("amostra vazia")
+        raise ValueError("empty sample")
     tail = 100.0 * (1.0 - level) / 2.0
     return (
         float(np.median(v)),
@@ -107,37 +107,37 @@ def percentile_interval(
 
 
 # ----------------------------------------------------------------------------
-# métricas de classificação
+# classification metrics
 # ----------------------------------------------------------------------------
 @dataclass(frozen=True)
 class ClassificationScores:
-    """As três acurácias que só coincidem quando as classes são balanceadas."""
+    """The three accuracies, which only coincide when the classes are balanced."""
 
     n: int
     n_correct: int
 
     accuracy: float
-    """Fração de segmentos corretos. Sob desbalanceamento, mede prevalência."""
+    """Fraction of correct segments. Under imbalance, it measures prevalence."""
 
     balanced_accuracy: float
-    """Média das revocações sobre as classes **com suporte**. 1/k é o acaso."""
+    """Mean of the recalls over the classes **with support**. 1/k is chance."""
 
     macro_f1: float
-    """Média dos F1 sobre as classes com suporte. Penaliza o palpite constante."""
+    """Mean of the F1 scores over the classes with support. Penalizes the constant guess."""
 
     support: dict[int, int]
     recall: dict[int, float]
     f1: dict[int, float]
 
     scored_classes: tuple[int, ...]
-    """Classes com suporte > 0 — as únicas que entram nas médias macro."""
+    """Classes with support > 0 — the only ones that enter the macro averages."""
 
     n_absent_class_predictions: int
-    """Predições em classes de prevalência **zero** no conjunto de teste.
+    """Predictions in classes with **zero** prevalence in the test set.
 
-    Uma candidata que nunca ocorre não pode ser recuperada nem perdida; ela só pode
-    gerar falso positivo. O número fica separado das médias macro em vez de ser
-    diluído nelas, porque é um modo de erro distinto.
+    A candidate that never occurs can be neither recovered nor missed; it can only
+    produce false positives. The number is kept apart from the macro averages instead
+    of being diluted in them, because it is a distinct error mode.
     """
 
     def summary(self) -> str:
@@ -154,24 +154,24 @@ def classification_scores(
     y_pred: NDArray[np.int64] | Sequence[int],
     n_classes: int,
 ) -> ClassificationScores:
-    """Acurácia bruta, acurácia balanceada e F1 macro de uma predição.
+    """Raw accuracy, balanced accuracy and macro F1 of a prediction.
 
-    ``n_classes`` é o número de saídas do classificador, que pode ser maior que o
-    número de classes observadas — é o caso do E04/E05, onde a candidata FTF existe
-    na saída e não existe no conjunto de dados. Classes sem suporte em ``y_true``
-    ficam fora das médias macro (a revocação delas é indefinida, não zero) e
-    aparecem em `n_absent_class_predictions`.
+    ``n_classes`` is the number of outputs of the classifier, which may be larger than
+    the number of observed classes — this is the case in E04/E05, where the FTF
+    candidate exists in the output and does not exist in the dataset. Classes without
+    support in ``y_true`` are left out of the macro averages (their recall is
+    undefined, not zero) and show up in `n_absent_class_predictions`.
     """
     t = np.asarray(y_true, dtype=np.int64).ravel()
     p = np.asarray(y_pred, dtype=np.int64).ravel()
     if t.size != p.size:
-        raise ValueError(f"y_true tem {t.size} elementos e y_pred tem {p.size}")
+        raise ValueError(f"y_true has {t.size} elements and y_pred has {p.size}")
     if t.size == 0:
-        raise ValueError("conjunto de teste vazio")
+        raise ValueError("empty test set")
     if n_classes <= 0:
-        raise ValueError("n_classes precisa ser positivo")
+        raise ValueError("n_classes must be positive")
     if int(t.max(initial=0)) >= n_classes or int(p.max(initial=0)) >= n_classes:
-        raise ValueError(f"rótulo fora de [0, {n_classes})")
+        raise ValueError(f"label outside [0, {n_classes})")
 
     support: dict[int, int] = {}
     recall: dict[int, float] = {}
@@ -209,62 +209,63 @@ def classification_scores(
 
 
 def majority_label(labels: NDArray[np.int64] | Sequence[int], n_classes: int) -> int:
-    """Classe mais frequente — o controle que qualquer classificador tem de bater.
+    """Most frequent class — the control that any classifier has to beat.
 
-    Recebe os rótulos do **treino** de uma divisão específica. O controle é uma
-    função da divisão, não do conjunto de dados: calcular a maioria sobre o total e
-    aplicá-la a todas as divisões vaza informação do teste para o controle.
+    Takes the **training** labels of a specific split. The control is a function of
+    the split, not of the dataset: computing the majority over the whole set and
+    applying it to every split leaks information from the test set into the control.
     """
     y = np.asarray(labels, dtype=np.int64).ravel()
     if y.size == 0:
-        raise ValueError("conjunto de treino vazio")
+        raise ValueError("empty training set")
     return int(np.bincount(y, minlength=n_classes).argmax())
 
 
 # ----------------------------------------------------------------------------
-# divisão por registro
+# per-record split
 # ----------------------------------------------------------------------------
 @dataclass(frozen=True)
 class RecordSplit:
-    """Uma divisão treino/teste por registro, reprodutível a partir de ``seed``."""
+    """One per-record train/test split, reproducible from ``seed``."""
 
     index: int
     seed: int
-    """Semente desta divisão, derivada da mestra. Vai para o CSV e reproduz a divisão."""
+    """Seed of this split, derived from the master seed. It goes into the CSV and
+    reproduces the split."""
 
     train_records: tuple[str, ...]
     test_records: tuple[str, ...]
 
     train_index: NDArray[np.int64]
-    """Índices dos segmentos de treino no vetor original."""
+    """Indices of the training segments in the original vector."""
 
     test_index: NDArray[np.int64]
 
     majority_label: int
-    """Classe majoritária dos **segmentos de treino desta divisão**."""
+    """Majority class of the **training segments of this split**."""
 
     stratified: bool
     classes_never_tested: tuple[int, ...]
-    """Classes com um único registro: ficam sempre no treino (ver `record_splits`)."""
+    """Classes with a single record: they always stay in training (see `record_splits`)."""
 
 
 def record_labels(
     records: Sequence[str], labels: NDArray[np.int64] | Sequence[int]
 ) -> dict[str, int]:
-    """Rótulo de cada registro, exigindo que os segmentos dele concordem.
+    """Label of each record, requiring that its segments agree.
 
-    Um registro com segmentos de rótulos diferentes não tem divisão por registro
-    bem definida — estratificar por classe passaria a ser impossível, e o vazamento
-    voltaria pela porta dos fundos. O caso é erro, não aviso silencioso.
+    A record whose segments have different labels has no well-defined per-record
+    split — stratifying by class would become impossible, and the leakage would come
+    back in through the back door. The case is an error, not a silent warning.
     """
     y = np.asarray(labels, dtype=np.int64).ravel()
     if len(records) != y.size:
-        raise ValueError(f"{len(records)} registros para {y.size} rótulos")
+        raise ValueError(f"{len(records)} records for {y.size} labels")
     out: dict[str, int] = {}
     for name, lab in zip(records, y.tolist(), strict=True):
         prev = out.setdefault(name, int(lab))
         if prev != int(lab):
-            raise ValueError(f"registro {name!r} tem rótulos {prev} e {int(lab)}")
+            raise ValueError(f"record {name!r} has labels {prev} and {int(lab)}")
     return out
 
 
@@ -278,57 +279,57 @@ def record_splits(
     stratify: bool = True,
     min_test_per_class: int | None = None,
 ) -> list[RecordSplit]:
-    """Divisões treino/teste **por registro**, repetidas e reprodutíveis.
+    """Train/test splits **by record**, repeated and reproducible.
 
-    ``records`` é o identificador do registro de origem de cada segmento; segmentos
-    do mesmo registro caem sempre do mesmo lado. Divisão por segmento é vazamento:
-    segmentos de um registro compartilham montagem, rotação e rótulo, e o
-    classificador aprende a reconhecer o registro em vez da falha.
+    ``records`` is the identifier of the source record of each segment; segments of
+    the same record always fall on the same side. Splitting by segment is leakage:
+    segments of one record share mounting, shaft speed and label, and the classifier
+    learns to recognize the record instead of the fault.
 
-    ``test_fraction`` é a fração de **registros**, não de segmentos — os registros
-    têm contagens diferentes de segmentos e a fração de segmentos flutua junto com o
-    sorteio. Essa flutuação é parte do que se quer medir.
+    ``test_fraction`` is the fraction of **records**, not of segments — the records
+    have different segment counts, and the fraction of segments fluctuates with the
+    draw. That fluctuation is part of what one wants to measure.
 
-    Comportamento declarado da estratificação, para não virar surpresa:
+    Declared stratification behavior, so that it does not come as a surprise:
 
-    * cada classe contribui ``max(min_test_per_class, round(test_fraction * n_c))``
-      registros de teste, limitado a ``n_c - 1`` — o treino nunca perde uma classe
-      inteira;
-    * uma classe com **um único registro** fica sempre no treino, e o índice dela
-      aparece em `RecordSplit.classes_never_tested`. A alternativa seria alternar o
-      registro entre treino e teste, e aí o modelo nunca vê a classe em metade das
-      divisões, o que é pior e mais difícil de perceber;
-    * com ``stratify=False`` sorteiam-se registros sem olhar a classe. É o regime do
-      E04, e é o que permite um conjunto de teste inteiro de uma só classe — e um
-      teste de classe única faz a acurácia balanceada de **qualquer** preditor
-      constante valer 1,0, porque a única classe com suporte é acertada inteira.
+    * each class contributes ``max(min_test_per_class, round(test_fraction * n_c))``
+      test records, capped at ``n_c - 1`` — training never loses a whole class;
+    * a class with **a single record** always stays in training, and its index
+      appears in `RecordSplit.classes_never_tested`. The alternative would be to
+      alternate the record between training and test, and then the model never sees
+      the class in half of the splits, which is worse and harder to notice;
+    * with ``stratify=False`` records are drawn without looking at the class. This is
+      the E04 regime, and it is what allows a test set made entirely of one class —
+      and a single-class test set makes the balanced accuracy of a constant
+      predictor of that class equal 1.0, because the only class with support is
+      predicted entirely correctly (a constant predictor of any other class gets 0.0).
 
-    ``min_test_per_class`` **só existe sob estratificação**, e por isso o valor
-    padrão é ``None`` em vez de ``1``: passá-lo com ``stratify=False`` é erro, não
-    um parâmetro ignorado em silêncio. Foi exatamente esse silêncio que produziu
-    divisões de teste de classe única num braço em que o config declarava
-    ``min_test_per_class: 1``. Sob estratificação, ``None`` equivale a ``1``.
+    ``min_test_per_class`` **only exists under stratification**, and that is why the
+    default value is ``None`` instead of ``1``: passing it with ``stratify=False`` is
+    an error, not a parameter silently ignored. It was exactly this silence that
+    produced single-class test splits in an arm whose config declared
+    ``min_test_per_class: 1``. Under stratification, ``None`` is equivalent to ``1``.
 
-    As sementes vêm de ``SeedSequence(master_seed).generate_state(n_splits)``: a
-    mesma semente mestra dá as mesmas divisões, e cada divisão carrega a própria
-    semente inteira no CSV.
+    The seeds come from ``SeedSequence(master_seed).generate_state(n_splits)``: the
+    same master seed gives the same splits, and each split carries its own integer
+    seed in the CSV.
     """
     if n_splits <= 0:
-        raise ValueError("n_splits precisa ser positivo")
+        raise ValueError("n_splits must be positive")
     if not 0.0 < test_fraction < 1.0:
-        raise ValueError("test_fraction precisa estar em (0, 1)")
+        raise ValueError("test_fraction must be in (0, 1)")
     if not stratify and min_test_per_class is not None:
         raise ValueError(
-            "min_test_per_class só se aplica sob estratificação; com stratify=False o "
-            "sorteio não olha a classe e o parâmetro seria ignorado em silêncio"
+            "min_test_per_class only applies under stratification; with stratify=False "
+            "the draw does not look at the class and the parameter would be silently ignored"
         )
     min_per_class = 1 if min_test_per_class is None else int(min_test_per_class)
 
     y = np.asarray(labels, dtype=np.int64).ravel()
     per_record = record_labels(records, y)
-    names = sorted(per_record)  # ordem canônica: o sorteio não depende da de entrada
+    names = sorted(per_record)  # canonical order: the draw does not depend on the input order
     if len(names) < 2:
-        raise ValueError(f"divisão por registro exige ao menos 2 registros, há {len(names)}")
+        raise ValueError(f"per-record split requires at least 2 records, got {len(names)}")
     k = int(n_classes) if n_classes is not None else int(y.max()) + 1
 
     rec_array = np.asarray(records, dtype=object)
@@ -369,7 +370,7 @@ def record_splits(
         train_names = tuple(n for n in names if n not in held_set)
         test_names = tuple(n for n in names if n in held_set)
         if not train_names or not test_names:
-            raise ValueError(f"divisão {i} deixou um dos lados vazio")
+            raise ValueError(f"split {i} left one of the sides empty")
 
         tr = np.concatenate([index_of[n] for n in train_names]).astype(np.int64)
         te = np.concatenate([index_of[n] for n in test_names]).astype(np.int64)

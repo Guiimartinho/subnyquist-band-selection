@@ -1,269 +1,283 @@
-# E24 - Captura do seletor por picos sob decimação pura, no Paderborn
+# E24 - Selector capture by spikes under pure decimation, on Paderborn
 
-Réplica da Parte 1 do ADR 0006 num segundo conjunto real. No Ottawa, picos de uma amostra no
-registro bruto dobram sob decimação pura e capturam o kurtograma, o que produz o vale de 4×. A
-remoção dos picos antes de decimar desfaz o vale (E07, E20).
+Replication of Part 1 of ADR 0006 on a second real dataset. On Ottawa, single-sample spikes in the
+raw record fold under pure decimation and capture the kurtogram, which produces the 4× valley.
+Removing the spikes before decimating undoes the valley (E07, E20).
 
-Na checagem exploratória de 2026-11-12 (`docs/lab-notebook/2026-11-12.md`), o Paderborn mostrou o
-mesmo tipo de pico:
-- de 2 a 730 por segundo, de ~12 MAD;
-- eles respondem pela curtose do sinal bruto, de 13 a 16;
-- levam o kurtograma para 11–21,5 kHz, a faixa que contém o chaveamento de 16 kHz do inversor.
+In the exploratory check of 2026-11-12 (`docs/lab-notebook/2026-11-12.md`), Paderborn showed the
+same kind of spike:
+- from 2 to 730 per second, of ~12 MAD;
+- they account for the kurtosis of the raw signal, from 13 to 16;
+- they pull the kurtogram to 11–21.5 kHz, the band that contains the inverter's 16 kHz switching.
 
-## Hipóteses (pré-registro, 2026-11-12)
+## Hypotheses (pre-registration, 2026-11-12)
 
-Escrito e commitado antes de rodar. Mudar depois de ver um número invalida o pré-registro.
+Written and committed before running. Changing it after seeing a number invalidates the
+pre-registration.
 
-- **H1 (réplica).** Remover os picos antes de decimar (critério do E20) aumenta a acurácia
-  balanceada de ordem do pipeline clássico em pelo menos um dos orçamentos 1/4, 1/8, 1/16 e 1/32.
-- **H2 (seletor robusto).** Trocar o kurtograma pelo infograma SES (Antoni 2016), sem remover os
-  picos, aumenta a mesma acurácia em pelo menos um desses orçamentos.
-- **H3 (remoção realizável; pré-registrada em 2026-11-12, antes de qualquer número do E24).**
-  Remover os picos do fluxo **já decimado**, pelo mesmo critério, aumenta a acurácia do
-  pipeline clássico em pelo menos um dos orçamentos. É o `config/post_despike.yaml`, que tem o
-  mesmo bootstrap e o mesmo Holm. Se a H3 valer, a correção não exige a taxa cheia.
+- **H1 (replication).** Removing the spikes before decimating (E20 criterion) increases the
+  balanced order accuracy of the classical pipeline in at least one of the budgets 1/4, 1/8, 1/16
+  and 1/32.
+- **H2 (robust selector).** Replacing the kurtogram with the SES infogram (Antoni 2016), without
+  removing the spikes, increases the same accuracy in at least one of those budgets.
+- **H3 (realizable removal; pre-registered on 2026-11-12, before any E24 number).**
+  Removing the spikes from the **already-decimated** stream, by the same criterion, increases the
+  accuracy of the classical pipeline in at least one of the budgets. It is
+  `config/post_despike.yaml`, which has the same bootstrap and the same Holm. If H3 holds, the
+  correction does not require the full rate.
 
-## O que refutaria
+## What would refute
 
-- **H1:** nenhum dos quatro testes significativo depois do Holm, ou diferença pontual negativa. A
-  captura por picos não se reproduziria fora do Ottawa.
-- **H2:** o mesmo critério. O seletor robusto não bastaria sob decimação pura.
+- **H1:** none of the four tests significant after Holm, or a negative point difference. The
+  capture by spikes would not reproduce outside Ottawa.
+- **H2:** the same criterion. The robust selector would not be enough under pure decimation.
 
 ## Baseline
 
-O pipeline clássico do E07 e do E22: decimação pura, kurtograma (nível 4, piso de 500 Hz, teto no
-Nyquist efetivo), espectro de envelope em ordens e argmax sem prior acima da ordem 2. É o braço
-`kurtograma`.
+The classical pipeline of E07 and E22: pure decimation, kurtogram (level 4, 500 Hz floor, ceiling
+at the effective Nyquist), envelope order spectrum and argmax without prior above order 2. It is
+the `kurtograma` (kurtogram) arm.
 
-## Verdade fundamental
+## Ground truth
 
-As ordens de falha vêm da geometria do FAG 6203 (PHME16, tabela 1): BPFO 3,054 e BPFI 4,946. Elas
-são calibradas pelos dados de duas formas.
+The fault orders come from the geometry of the FAG 6203 (PHME16, table 1): BPFO 3.054 and
+BPFI 4.946. They are calibrated from the data in two ways.
 
-- **Régua aninhada (principal).** É a mediana, na mesma pista, das calibrações válidas da medição
-  1 dos **outros** rolamentos (deixa-um-rolamento-de-fora).
-  - A calibração usa taxa cheia, sinal bruto, refino em ±1 % da nominal e raia visível (pico de
-    pelo menos 5× a mediana).
-  - Ela não depende de nenhum braço e vale para todos os segmentos.
-- **Régua local (secundária).** É a raia em taxa cheia do próprio segmento, pelo mesmo critério.
-  Só vale onde a raia é visível.
+- **Nested ruler (primary).** It is the median, on the same race, of the valid calibrations from
+  measurement 1 of the **other** bearings (leave-one-bearing-out).
+  - The calibration uses full rate, raw signal, refinement within ±1 % of the nominal and a
+    visible line (peak of at least 5× the median).
+  - It does not depend on any arm and holds for all segments.
+- **Local ruler (secondary).** It is the full-rate line of the segment itself, by the same
+  criterion. It only holds where the line is visible.
 
-A tolerância é de 0,025 ordem: a BPFO e a BPFI ficam a 0,054 das harmônicas 3 e 5 do eixo.
+The tolerance is 0.025 order: the BPFO and the BPFI lie 0.054 from shaft harmonics 3 and 5.
 
-## Procedimento
+## Procedure
 
-- **Dados:** os do E15 no Paderborn.
-  - 23 rolamentos com dano de uma pista (12 de pista externa e 11 de pista interna), nos três
-    ajustes de 1500 rpm.
-  - As medições 2 a 20 são os segmentos, de 255936 amostras. A medição mais curta que isso ou
-    ilegível fica de fora.
-- **Braços** (`config/base.yaml`): `kurtograma`, `kurtograma_sem_picos`, `infograma_ses`,
-  `infograma_ses_sem_picos` e `gini`.
-  - A remoção de picos vem antes de decimar, em taxa cheia.
-- **Fatores:** 1, 4, 8, 16 e 32. O fator 1 é descritivo. A guarda é de 1,0 × 64 pontos por volta.
-- **Inferência:** bootstrap por aglomerado, com aglomerado = rolamento e reamostragem dentro de
-  cada pista.
-  - São 4000 reamostras, e o p unilateral é (1 + #{Δ* ≤ 0})/(1 + B).
-  - Holm sobre os 4 testes de cada hipótese, pela régua aninhada; α = 0,05.
-  - A régua local é reportada com o mesmo cálculo, como secundária.
+- **Data:** those of E15 on Paderborn.
+  - 23 bearings with damage on one race (12 outer race and 11 inner race), in the three
+    1500 rpm settings.
+  - Measurements 2 to 20 are the segments, of 255936 samples. A measurement shorter than that, or
+    unreadable, is left out.
+- **Arms** (`config/base.yaml`): `kurtograma`, `kurtograma_sem_picos` (kurtogram without spikes),
+  `infograma_ses` (SES infogram), `infograma_ses_sem_picos` (SES infogram without spikes) and
+  `gini`.
+  - Spike removal comes before decimating, at full rate.
+- **Factors:** 1, 4, 8, 16 and 32. Factor 1 is descriptive. The guard is 1.0 × 64 points per
+  revolution.
+- **Inference:** cluster bootstrap, with cluster = bearing and resampling within each race.
+  - There are 4000 resamples, and the one-sided p is (1 + #{Δ* ≤ 0})/(1 + B).
+  - Holm over the 4 tests of each hypothesis, under the nested ruler; α = 0.05.
+  - The local ruler is reported with the same computation, as secondary.
 
-## Métricas
+## Metrics
 
-- Acurácia balanceada de ordem: a média, sobre as pistas, do acerto médio por rolamento.
-- A banda escolhida por braço e fator, para mostrar para onde os picos levam o seletor.
-- Não há reconstrução de forma de onda, então a decomposição espaço-imagem/núcleo não se aplica.
+- Balanced order accuracy: the mean, over the races, of the mean hit rate per bearing.
+- The band chosen per arm and factor, to show where the spikes take the selector.
+- There is no waveform reconstruction, so the range/null-space decomposition does not apply.
 
-## Resultado (2026-11-12)
+## Result (2026-11-12)
 
-**Proveniência.**
-- Rodada base: `config/base.yaml`, commit `fb091b8`, das 14:13 às 20:52 UTC.
-- H3: `config/post_despike.yaml`, commit `6a95a72`, das 15:24 às 20:52 UTC, num checkout separado.
-- Os hashes de `run.py`, config, README e fonte (`8491841f…`) no manifest batem com esses commits.
-- São 69 registros e 1305 segmentos. A régua local cobre 7 rolamentos.
+**Provenance.**
+- Base run: `config/base.yaml`, commit `fb091b8`, from 14:13 to 20:52 UTC.
+- H3: `config/post_despike.yaml`, commit `6a95a72`, from 15:24 to 20:52 UTC, in a separate
+  checkout.
+- The hashes of `run.py`, config, README and source (`8491841f…`) in the manifest match those
+  commits.
+- There are 69 records and 1305 segments. The local ruler covers 7 bearings.
 
-**Vereditos pré-registrados** (a régua aninhada decide; Holm sobre os 4 orçamentos; α = 0,05):
+**Pre-registered verdicts** (the nested ruler decides; Holm over the 4 budgets; α = 0.05):
 
-| hipótese | resultado (régua aninhada) | veredicto |
+| hypothesis | result (nested ruler) | verdict |
 |---|---|---|
-| H1, remover os picos antes de decimar | +2,1 pontos em 8× [0,15; 4,49], p de Holm = 0,04999 (4 × 50/4001); nos outros orçamentos, +0,8, +1,6 e +2,2, sem significância | **apoiada só em 8×, no limite** |
-| H2, infograma SES sem remover os picos | +3,1 pontos em 32× [0,95; 5,78], p de Holm = 0,001; em 4×, +8,8 [−0,1; 19,1], p de Holm = 0,08 | **apoiada em 32×** |
-| H3, remover os picos depois de decimar | de −1,0 a +0,7 ponto, nenhum significativo | **não apoiada** |
+| H1, removing the spikes before decimating | +2.1 points at 8× [0.15, 4.49], Holm p = 0.04999 (4 × 50/4001); at the other budgets, +0.8, +1.6 and +2.2, not significant | **supported only at 8×, at the limit** |
+| H2, SES infogram without removing the spikes | +3.1 points at 32× [0.95, 5.78], Holm p = 0.001; at 4×, +8.8 [−0.1, 19.1], Holm p = 0.08 | **supported at 32×** |
+| H3, removing the spikes after decimating | from −1.0 to +0.7 points, none significant | **not supported** |
 
-Pela régua local (7 rolamentos), nenhuma das três passa.
+Under the local ruler (7 bearings), none of the three passes.
 
-**Descritivo:**
-- **Não há vale.** A acurácia balanceada do kurtograma, pela régua aninhada, é de 7,7, 16,1, 18,6,
-  19,2 e 13,0 % em 1×, 4×, 8×, 16× e 32×. A pior é a da taxa cheia.
-- **A captura já acontece em taxa cheia.** O kurtograma escolhe 11,0–21,5 kHz em 909 segmentos,
-  justamente a faixa que contém o chaveamento de 16 kHz do inversor.
-  - Remover os picos antes de decimar não o tira dali: 350 segmentos continuam em 11,0–21,5 kHz,
-    e 735 dos 955 restantes (77 %) ficam acima de 16 kHz.
-  - Sob decimação, a escolha vai para a banda mais baixa da busca, 0,5–1,1 kHz em 4× e 8×.
-- **Aritmética da dobra (hipótese, não testada).** A 64 kS/s, com os fatores 4, 8, 16 e 32, todo
-  múltiplo de 16 kHz cai exatamente em 0 Hz. As bandas laterais do chaveamento cairiam então no
-  fundo da faixa de busca.
-- **Visibilidade da raia.** Só 7 dos 23 rolamentos têm raia visível em algum segmento: KA01, KA06,
-  KA16, KI01, KI16, KI17 e KI18.
-  - A visibilidade é medida na banda que o kurtograma escolhe em taxa cheia, e essa banda está
-    capturada (`line_calibration`).
-  - Nos outros 16 rolamentos, o kurtograma não acerta nenhum segmento em taxa cheia pela régua
-    aninhada, o que vale por construção, porque a visibilidade é medida no mesmo espectro. O
-    infograma SES chega a 17,0 % de acurácia balanceada neles: 34,0 % na pista externa e 0 %
-    na interna.
-  - Por isso, "sem raia visível" é em parte uma falha do seletor, e não só do sinal.
+**Descriptive:**
+- **There is no valley.** The kurtogram's balanced accuracy, under the nested ruler, is 7.7, 16.1,
+  18.6, 19.2 and 13.0 % at 1×, 4×, 8×, 16× and 32×. The worst is at full rate.
+- **The capture already happens at full rate.** The kurtogram picks 11.0–21.5 kHz in 909
+  segments, precisely the band that contains the inverter's 16 kHz switching.
+  - Removing the spikes before decimating does not move it out of there: 350 segments stay at
+    11.0–21.5 kHz, and 735 of the remaining 955 (77 %) lie above 16 kHz.
+  - Under decimation, the choice goes to the lowest band of the search, 0.5–1.1 kHz at 4× and 8×.
+- **Folding arithmetic (hypothesis, not tested).** At 64 kS/s, with factors 4, 8, 16 and 32, every
+  multiple of 16 kHz lands exactly at 0 Hz. The switching sidebands would then land at the
+  bottom of the search band.
+- **Line visibility.** Only 7 of the 23 bearings have a visible line in some segment: KA01, KA06,
+  KA16, KI01, KI16, KI17 and KI18.
+  - Visibility is measured in the band that the kurtogram picks at full rate, and that band is
+    captured (`line_calibration`).
+  - On the other 16 bearings, the kurtogram hits no segment at full rate under the nested ruler,
+    which holds by construction, because visibility is measured on the same spectrum. The SES
+    infogram reaches 17.0 % balanced accuracy on them: 34.0 % on the outer race and 0 % on the
+    inner race.
+  - So "no visible line" is partly a failure of the selector, and not only of the signal.
 
-**Leitura:**
-- O vale do Ottawa não se reproduz no Paderborn. Ali o seletor já é capturado em taxa cheia pela
-  faixa do inversor, que é o cenário de `smith2016emi`.
-- A remoção de picos de uma amostra muda pouco. A H1 passa no limite, com efeito pequeno, e não
-  sustenta que "a captura por picos se reproduz fora do Ottawa".
-- O infograma SES ajuda no Paderborn, ao contrário do Ottawa.
-- **Antes de entrar no artigo:** revisão adversarial.
+**Reading:**
+- The Ottawa valley does not reproduce on Paderborn. There the selector is already captured at
+  full rate by the inverter band, which is the scenario of `smith2016emi`.
+- Removing the single-sample spikes changes little. H1 passes at the limit, with a small effect,
+  and does not support that "the capture by spikes reproduces outside Ottawa".
+- The SES infogram helps on Paderborn, unlike on Ottawa.
+- **Before it goes into the paper:** adversarial review.
 
-### Revisão adversarial (`reviewer-2`, 2026-11-12): revisão maior
+### Adversarial review (`reviewer-2`, 2026-11-12): major revision
 
-O revisor reproduziu o `hypotheses.csv` a partir do `metrics.csv` com as funções do `run.py`. Os
-números e a proveniência conferem, e os commits são anteriores às rodadas. O problema está na
-inferência e na leitura.
+The reviewer reproduced `hypotheses.csv` from `metrics.csv` with the functions of `run.py`. The
+numbers and the provenance check out, and the commits predate the runs. The problem is in the
+inference and in the reading.
 
-**Conferido por mim, com código no repositório** (`exploratory/robustness.py`, que grava
+**Checked by me, with code in the repository** (`exploratory/robustness.py`, which writes
 `results/exploratory/robustness.json`):
-- **A H1 não se sustenta.** Em 8×, o teste exato de troca de sinal, estratificado por pista, dá
-  p = 0,0625 e p de Holm = 0,25. O bootstrap pré-registrado com B = 200 000 dá p de Holm = 0,055.
-  - Só 6 rolamentos diferem, 5 deles a favor.
-  - Com 6 rolamentos que respondem, a troca de sinal não poderia passar no Holm nem com os 6 a
-    favor: o menor p seria 1/64.
-  - O "apoio" pré-registrado (p de Holm = 0,04999, com B = 4000) é erro de Monte Carlo.
-  - Pelo critério de refutação deste README, a H1 está refutada.
-- **A H2 se sustenta só em 1/32.** A troca de sinal dá p = 0,0039 e p de Holm = 0,016, com os 8
-  rolamentos que diferem a favor. Em 4× ela não passa: p de Holm de 0,20 pela troca de sinal e de
-  0,07 pelo bootstrap.
-- **A H3 tem resultado nulo** nos dois testes.
+- **H1 does not hold.** At 8×, the exact sign-flip test, stratified by race, gives
+  p = 0.0625 and Holm p = 0.25. The pre-registered bootstrap with B = 200 000 gives Holm p = 0.055.
+  - Only 6 bearings differ, 5 of them in favour.
+  - With 6 bearings that respond, the sign-flip test could not pass Holm even with all 6 in
+    favour: the smallest p would be 1/64.
+  - The pre-registered "support" (Holm p = 0.04999, with B = 4000) is Monte Carlo error.
+  - By this README's refutation criterion, H1 is refuted.
+- **H2 holds only at 1/32.** The sign-flip test gives p = 0.0039 and Holm p = 0.016, with all 8
+  bearings that differ in favour. At 4× it does not pass: Holm p of 0.20 by the sign-flip test and
+  of 0.07 by the bootstrap.
+- **H3 has a null result** in both tests.
 
-**Conferido por mim no sinal bruto** (`exploratory/inverter_lines.py`, checagem C4, medição 2 de
-cada registro, 68 legíveis):
-- **Não há raia de PWM na vibração.** Em nenhum registro aparece raia 10 dB acima da mediana local
-  em 16 kHz ± 2k·f_e ou em 32 kHz − (2k+1)·f_e. A f_e é medida na corrente de fase, com mediana de
-  101,6 Hz.
-- **A faixa de 15–17 kHz é mais impulsiva que a de 11–15 kHz** em 68 de 68 registros, com curtose
-  espectral mediana de 10,9 contra 5,8.
-- A captura em taxa cheia fica, portanto, associada a conteúdo impulsivo perto de 16 kHz, mas a
-  fonte não está estabelecida. A hipótese do inversor não é confirmada nem refutada.
+**Checked by me on the raw signal** (`exploratory/inverter_lines.py`, check C4, measurement 2 of
+each record, 68 readable):
+- **There is no PWM line in the vibration.** In no record does a line appear 10 dB above the local
+  median at 16 kHz ± 2k·f_e or at 32 kHz − (2k+1)·f_e. f_e is measured on the phase current, with a
+  median of 101.6 Hz.
+- **The 15–17 kHz band is more impulsive than the 11–15 kHz band** in 68 of 68 records, with a
+  median spectral kurtosis of 10.9 against 5.8.
+- The full-rate capture is therefore associated with impulsive content near 16 kHz, but the
+  source is not established. The inverter hypothesis is neither confirmed nor refuted.
 
-**Do revisor, sem script no repositório:**
-- **A régua não é neutra.** Ela vem de 12 calibrações em 6 rolamentos, todas medidas na banda
-  capturada.
-  - A variação das frequências cinemáticas entre fabricantes (1 a 2 %, PHME16) passa da tolerância
-    de 0,025 ordem.
-  - Há quase-acertos fora da janela: o SES no KA08 e o kurtograma sem picos no KI04.
-  - A régua tende a favorecer o kurtograma, o que torna a H2 conservadora.
-- **A réplica não testa o mecanismo do Ottawa.** O mecanismo pressupõe o seletor correto em taxa
-  cheia, e isso só vale em 2 dos 23 rolamentos: KA01, com 63 %, e KI01, com 98 %.
-  - No KI01 há uma parede, e não um vale: 98, 81, 75, 46 e 2 %.
-  - Em KA01, KA04 e KA16, a decimação ajuda, o que sugere efeito de teto de busca (não isolado).
-  - A grade não tem 2× nem 3×.
-- **A banda de 11,0–21,5 kHz é larga demais para apontar o inversor.** A dobra para 0 Hz não é
-  testável com fatores múltiplos de 4. A aritmética de amostrar num submúltiplo da portadora é
-  conhecida: `blasko1998pwmsampling`.
-- Correção: "de 2 a 730 picos por segundo" vem da checagem exploratória. No E24 são de 0 a 5553
-  picos por segmento de 4 s, até cerca de 1390/s no KI08.
+**From the reviewer, with no script in the repository:**
+- **The ruler is not neutral.** It comes from 12 calibrations on 6 bearings, all measured in the
+  captured band.
+  - The variation of the kinematic frequencies between manufacturers (1 to 2 %, PHME16) exceeds
+    the tolerance of 0.025 order.
+  - There are near-hits outside the window: the SES on KA08 and the kurtogram without spikes on
+    KI04.
+  - The ruler tends to favour the kurtogram, which makes H2 conservative.
+- **The replication does not test the Ottawa mechanism.** The mechanism presupposes the correct
+  selector at full rate, and that only holds on 2 of the 23 bearings: KA01, with 63 %, and KI01,
+  with 98 %.
+  - On KI01 there is a wall, and not a valley: 98, 81, 75, 46 and 2 %.
+  - On KA01, KA04 and KA16, decimation helps, which suggests a search-ceiling effect (not
+    isolated).
+  - The grid has neither 2× nor 3×.
+- **The 11.0–21.5 kHz band is too wide to point to the inverter.** Folding to 0 Hz is not
+  testable with factors that are multiples of 4. The arithmetic of sampling at a submultiple of the
+  carrier is known: `blasko1998pwmsampling`.
+- Correction: "from 2 to 730 spikes per second" comes from the exploratory check. In E24 there are
+  from 0 to 5553 spikes per 4 s segment, up to about 1390/s on KI08.
 
-**O que o artigo pode afirmar:**
-- No Paderborn, a decimação pura não produziu vale de 1/4 a 1/32.
-- Remover os picos de uma amostra, antes ou depois de decimar, muda pouco e sem significância
-  robusta.
-- Em taxa cheia, o kurtograma escolhe bandas acima de 11 kHz em 88 % dos segmentos, sem acerto
-  nelas. Isso é compatível com interferência impulsiva, e a fonte não foi verificada.
-- O infograma SES sem pré-branqueamento é melhor em 1/32 (+3,1 pontos, p de Holm = 0,016), quase só
-  na pista externa.
-- O Paderborn não testa o mecanismo do Ottawa.
+**What the paper can claim:**
+- On Paderborn, pure decimation produced no valley from 1/4 to 1/32.
+- Removing the single-sample spikes, before or after decimating, changes little and without robust
+  significance.
+- At full rate, the kurtogram picks bands above 11 kHz in 88 % of the segments, with no hit in
+  them. This is compatible with impulsive interference, and the source was not verified.
+- The SES infogram without pre-whitening is better at 1/32 (+3.1 points, Holm p = 0.016), almost
+  only on the outer race.
+- Paderborn does not test the Ottawa mechanism.
 
-**O que não pode:**
-- "H1 apoiada" ou "a captura por picos se reproduz";
-- "o inversor captura" ou "a dobra para 0 Hz explica", como fato;
-- "seletores robustos resolvem";
-- "a decimação melhora o diagnóstico";
-- "o mecanismo generaliza", ou que é refutado.
+**What it cannot claim:**
+- "H1 supported" or "the capture by spikes reproduces";
+- "the inverter captures" or "folding to 0 Hz explains", as fact;
+- "robust selectors solve it";
+- "decimation improves the diagnosis";
+- "the mechanism generalizes", or that it is refuted.
 
-**Checagens sugeridas e não feitas:**
-- C1: teto sem dobra em 1×.
-- C2: fatores 5, 7 e 9.
-- C3: *notch* em 15–17 kHz e 30,5–32 kHz, com controle.
-- C5: régua independente do braço.
+**Suggested checks, not done:**
+- C1: ceiling without folding at 1×.
+- C2: factors 5, 7 and 9.
+- C3: *notch* at 15–17 kHz and 30.5–32 kHz, with a control.
+- C5: ruler independent of the arm.
 
-## E24b: teto sem dobra e notch (pré-registro, 2026-11-12)
+## E24b: ceiling without folding and notch (pre-registration, 2026-11-12)
 
-Escrito e commitado antes de rodar, junto com a análise (`exploratory/teto_notch_analysis.py`). São
-as checagens C1 e C3 da revisão adversarial.
+Written and committed before running, together with the analysis
+(`exploratory/teto_notch_analysis.py`; `teto` = ceiling). They are checks C1 and C3 of the
+adversarial review.
 
-A pergunta: no Paderborn, a decimação ajuda porque estreita a faixa de busca (efeito de teto) ou
-por causa do que dobra? E o conteúdo perto de 16 kHz é o que captura o kurtograma em taxa cheia?
+The question: on Paderborn, does decimation help because it narrows the search band (ceiling
+effect) or because of what folds? And is the content near 16 kHz what captures the kurtogram at
+full rate?
 
-- **Braços** (`config/teto_notch.yaml`), todos sem remover os picos:
-  - **C1:** `kurtograma_teto8k`, `teto4k`, `teto2k` e `teto1k`, mais os mesmos quatro para o
-    infograma SES. Todos rodam em 1×, com o teto da busca em 8, 4, 2 e 1 kHz.
-  - A partição da busca é idêntica à de 4×, 8×, 16× e 32×, porque só depende de
-    [f_min, min(teto, fs/2)]. A diferença é o conteúdo dobrado e a taxa do envelope.
-  - **C3:** `kurtograma_notch` zera 15–17 kHz e 30,5–32 kHz em taxa cheia, antes de decimar, e roda
-    em 1× e 4×. `kurtograma_notch_controle` zera faixas de mesma largura em 12–14 kHz e
-    26,5–28 kHz.
-  - Os braços de referência sem teto e sem notch são lidos de `results/`. O código é o mesmo e é
-    determinístico.
-- **Critérios** (régua aninhada; troca de sinal exata por rolamento, estratificada por pista):
-  - **C1a, dobra.** É a fração de segmentos na banda do piso (início ≤ 501 Hz e fim ≤ 1200 Hz) com
-    teto de 8 kHz em 1×.
-    - Com ≥ 20 %, a escolha do piso em 4× (23 %) é conteúdo de banda base, e a dobra fica
-      refutada como causa.
-    - Com ≤ 10 %, a dobra está implicada. Entre os dois, inconclusivo.
-  - **C1b, teto.** É o kurtograma com teto contra o kurtograma sem teto, os dois em 1×, com Holm
-    sobre os 4 tetos. O teto alivia a captura se algum passar (Holm p < 0,05, diferença > 0).
-  - **C1c (descritivo).** É o teto em 1× contra a decimação de mesma partição. Diz se o ganho da
-    decimação vem do teto ou da dobra.
-  - **C3a, notch.** Entre os segmentos em que o kurtograma em 1× escolhe 11,0–21,5 kHz, é a fração
-    que muda de banda com o notch.
-    - Com ≥ 50 %, o conteúdo das faixas zeradas sustenta a escolha. Com < 20 %, não sustenta.
-    - Entre os dois, inconclusivo.
-  - **C3b, validade.** O notch de controle precisa mudar a banda em menos de 10 % dos segmentos em
-    1×. Se mudar mais, a C3a não é interpretável.
-- **Fora do escopo:** a C2 (fatores 5, 7 e 9) e a C5 (régua independente do braço).
+- **Arms** (`config/teto_notch.yaml`), all without removing the spikes:
+  - **C1:** `kurtograma_teto8k` (kurtogram with an 8 kHz ceiling), `teto4k`, `teto2k` and
+    `teto1k`, plus the same four for the SES infogram. All run at 1×, with the search ceiling at
+    8, 4, 2 and 1 kHz.
+  - The search partition is identical to that of 4×, 8×, 16× and 32×, because it only depends on
+    [f_min, min(ceiling, fs/2)]. The difference is the folded content and the envelope rate.
+  - **C3:** `kurtograma_notch` zeroes 15–17 kHz and 30.5–32 kHz at full rate, before decimating,
+    and runs at 1× and 4×. `kurtograma_notch_controle` (control notch) zeroes bands of the same
+    width at 12–14 kHz and 26.5–28 kHz.
+  - The reference arms with no ceiling and no notch are read from `results/`. The code is the same
+    and is deterministic.
+- **Criteria** (nested ruler; exact sign-flip test by bearing, stratified by race):
+  - **C1a, folding.** It is the fraction of segments in the floor band (start ≤ 501 Hz and
+    end ≤ 1200 Hz) with an 8 kHz ceiling at 1×.
+    - With ≥ 20 %, the floor choice at 4× (23 %) is baseband content, and folding is
+      refuted as the cause.
+    - With ≤ 10 %, folding is implicated. In between, inconclusive.
+  - **C1b, ceiling.** It is the kurtogram with a ceiling against the kurtogram without a ceiling,
+    both at 1×, with Holm over the 4 ceilings. The ceiling relieves the capture if any of them
+    passes (Holm p < 0.05, difference > 0).
+  - **C1c (descriptive).** It is the ceiling at 1× against the decimation with the same partition.
+    It tells whether the gain from decimation comes from the ceiling or from the folding.
+  - **C3a, notch.** Among the segments in which the kurtogram at 1× picks 11.0–21.5 kHz, it is the
+    fraction that changes band with the notch.
+    - With ≥ 50 %, the content of the zeroed bands sustains the choice. With < 20 %, it does not.
+    - In between, inconclusive.
+  - **C3b, validity.** The control notch must change the band in less than 10 % of the segments at
+    1×. If it changes more, C3a is not interpretable.
+- **Out of scope:** C2 (factors 5, 7 and 9) and C5 (ruler independent of the arm).
 
-### Resultado do E24b (2026-11-13)
+### E24b result (2026-11-13)
 
-- **Rodada:** `results-teto-notch/`, 69 registros em 20 108 s. Os hashes do config, do `run.py`
-  e do README no manifest batem com o commit do pré-registro (`2fbb1ac`).
-- **Análise:** `exploratory/teto_notch_analysis.py` gravou `results-teto-notch/analysis.json`. Os
-  números do artigo saem de `papers/shared/figures/num_partA_paderborn.py`.
-- **Acurácia balanceada,** régua aninhada:
+- **Run:** `results-teto-notch/`, 69 records in 20 108 s. The hashes of the config, of `run.py`
+  and of the README in the manifest match the pre-registration commit (`2fbb1ac`).
+- **Analysis:** `exploratory/teto_notch_analysis.py` wrote `results-teto-notch/analysis.json`. The
+  paper's numbers come from `papers/shared/figures/num_partA_paderborn.py`.
+- **Balanced accuracy,** nested ruler:
 
-  | braço | teto 8 kHz | teto 4 kHz | teto 2 kHz | teto 1 kHz | sem teto (E24) |
+  | arm | 8 kHz ceiling | 4 kHz ceiling | 2 kHz ceiling | 1 kHz ceiling | no ceiling (E24) |
   |---|---|---|---|---|---|
-  | kurtograma em 1× | 25,1 | 28,8 | 26,7 | 18,1 | 7,7 |
-  | infograma SES em 1× | 27,7 | 27,9 | 21,0 | 24,1 | 25,4 |
+  | kurtogram at 1× | 25.1 | 28.8 | 26.7 | 18.1 | 7.7 |
+  | SES infogram at 1× | 27.7 | 27.9 | 21.0 | 24.1 | 25.4 |
 
-- **C1a, dobra: refutada como causa do piso.** Com teto de 8 kHz em 1×, sem nada dobrado, o
-  kurtograma escolhe a banda do piso em 45,4 % dos segmentos. Em 4× são 28,4 %.
-  - A escolha do piso é conteúdo de banda base.
-  - Nos outros pares a fração também é maior sem dobra: 51 % contra 48 % (4 kHz e 8×), 61 %
-    contra 9 % (2 kHz e 16×) e 64 % contra 16 % (1 kHz e 32×).
-- **C1b, teto: não passou.** Nenhum teto passa o Holm sobre os 4.
-  - No kurtograma, as diferenças são de +17,3, +21,0, +19,0 e +10,4 pontos (8, 4, 2 e 1 kHz). Os
-    rolamentos a favor são 12 de 14, 13 de 14, 11 de 13 e 13 de 15.
-  - O p unilateral vai de 0,016 a 0,090, e o de Holm fica em 0,064, 0,064, 0,064 e 0,090.
-  - É ausência de evidência, não evidência de ausência. Com 13 a 15 rolamentos discordantes e
-    Holm sobre 4, o teste exato só passa com quase todos a favor em mais de um teto.
-  - No infograma SES o teto não muda nada: de −4,4 a +2,5 pontos, Holm 1,0.
-- **C1c (descritivo).** O teto em 1× fica acima da decimação de mesma partição no kurtograma:
-  +9,0 (8 kHz contra 4×), +10,1 (4 kHz contra 8×), +7,5 (2 kHz contra 16×) e +5,1 pontos (1 kHz
-  contra 32×), com p bilateral de 0,09 a 0,29.
-  - No Paderborn, a decimação ajuda por estreitar a busca, não pelo que dobra.
-- **C3, notch: não interpretável.** O notch de controle (12–14 e 26,5–28 kHz) mudou a banda em
-  27,3 % dos segmentos em 1×, acima do limite de 10 %.
-  - O notch de 15–17 e 30,5–32 kHz tirou da faixa de 11,0–21,5 kHz 19,4 % dos 909 segmentos
-    capturados.
-  - A acurácia mudou +1,2 ponto em 1× e +1,0 em 4×, com 1 rolamento discordante.
-  - A escolha do kurtograma é frágil a qualquer notch nessa região, e a C3a não isola o captor.
-- **Consequência para o artigo:**
-  - A leitura de que a decimação alivia a captura por estreitar a busca fica sustentada
-    descritivamente, mas não pelo teste pré-registrado.
-  - O captor de 15–17 kHz segue não estabelecido.
+- **C1a, folding: refuted as the cause of the floor.** With an 8 kHz ceiling at 1×, with nothing
+  folded, the kurtogram picks the floor band in 45.4 % of the segments. At 4× it is 28.4 %.
+  - The floor choice is baseband content.
+  - In the other pairs the fraction is also larger without folding: 51 % against 48 % (4 kHz and
+    8×), 61 % against 9 % (2 kHz and 16×) and 64 % against 16 % (1 kHz and 32×).
+- **C1b, ceiling: did not pass.** No ceiling passes Holm over the 4.
+  - For the kurtogram, the differences are +17.3, +21.0, +19.0 and +10.4 points (8, 4, 2 and
+    1 kHz). The bearings in favour are 12 of 14, 13 of 14, 11 of 13 and 13 of 15.
+  - The one-sided p ranges from 0.016 to 0.090, and the Holm one is 0.064, 0.064, 0.064 and 0.090.
+  - It is absence of evidence, not evidence of absence. With 13 to 15 discordant bearings and
+    Holm over 4, the exact test only passes with almost all in favour at more than one ceiling.
+  - For the SES infogram the ceiling changes nothing: from −4.4 to +2.5 points, Holm 1.0.
+- **C1c (descriptive).** The ceiling at 1× is above the decimation with the same partition for the
+  kurtogram: +9.0 (8 kHz against 4×), +10.1 (4 kHz against 8×), +7.5 (2 kHz against 16×) and
+  +5.1 points (1 kHz against 32×), with two-sided p from 0.09 to 0.29.
+  - On Paderborn, decimation helps by narrowing the search, not because of what folds.
+- **C3, notch: not interpretable.** The control notch (12–14 and 26.5–28 kHz) changed the band in
+  27.3 % of the segments at 1×, above the 10 % limit.
+  - The 15–17 and 30.5–32 kHz notch moved 19.4 % of the 909 captured segments out of the
+    11.0–21.5 kHz band.
+  - The accuracy changed by +1.2 points at 1× and +1.0 at 4×, with 1 discordant bearing.
+  - The kurtogram's choice is fragile to any notch in that region, and C3a does not isolate the
+    captor.
+- **Consequence for the paper:**
+  - The reading that decimation relieves the capture by narrowing the search is supported
+    descriptively, but not by the pre-registered test.
+  - The 15–17 kHz captor remains not established.
 

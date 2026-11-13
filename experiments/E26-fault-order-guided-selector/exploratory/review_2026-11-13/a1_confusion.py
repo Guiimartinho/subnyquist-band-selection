@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -20,7 +20,7 @@ print(
     "bearings w/ valid:",
     sorted({c["bearing"] for c in VALID}),
 )
-print("\n== Matriz de confusao (fracao de segmentos), linhas = verdade ==")
+print("\n== Confusion matrix (fraction of segments), rows = truth ==")
 for arm, (cl, sel) in ARMS.items():
     for f in FACTORS:
         cnt = defaultdict(lambda: defaultdict(int))
@@ -37,7 +37,9 @@ for arm, (cl, sel) in ARMS.items():
                 + " ".join(f"{p}={100 * cnt[race][p] / n:4.1f}" for p in ("OR", "IR", "none"))
             )
         print(f"{arm:20s} {f:2d}x | " + " | ".join(s))
-print("\n== Decomposicao guiado: P(deteccao) e P(pista certa | detectou), por pista (segmentos) ==")
+print(
+    "\n== Guided decomposition: P(detection) and P(right race | detected), per race (segments) =="
+)
 for arm in ("guiado", "mediana_guiado"):
     cl = ARMS[arm][0]
     for f in FACTORS:
@@ -49,9 +51,9 @@ for arm in ("guiado", "mediana_guiado"):
             p = [pred_guided(r, tau) for r in rr]
             det = [x for x in p if x != "none"]
             pc = sum(1 for x in det if x == race) / len(det) if det else float("nan")
-            out.append(f"{race}: det={100 * len(det) / len(p):4.1f} certo|det={100 * pc:4.1f}")
+            out.append(f"{race}: det={100 * len(det) / len(p):4.1f} right|det={100 * pc:4.1f}")
         print(f"{arm:15s} {f:2d}x | " + " | ".join(out))
-print("\n== Excedencia do limiar pelo candidato ERRADO (sem argmax) e pelo certo ==")
+print("\n== Threshold exceedance by the WRONG candidate (no argmax) and by the right one ==")
 for arm in ("guiado", "mediana_guiado"):
     cl = ARMS[arm][0]
     for f in FACTORS:
@@ -62,7 +64,7 @@ for arm in ("guiado", "mediana_guiado"):
             ]
             th = tau[(f, cl, None)]
             out.append(
-                f"{race}: certo>={100 * np.mean([sc(r, right) >= th for r in rr]):4.1f} errado>={100 * np.mean([sc(r, wrong) >= th for r in rr]):4.1f}"
+                f"{race}: right>={100 * np.mean([sc(r, right) >= th for r in rr]):4.1f} wrong>={100 * np.mean([sc(r, wrong) >= th for r in rr]):4.1f}"
             )
         hh = [r for r in ROWS if int(r["factor"]) == f and r["clean"] == cl and r["race"] == "H"]
         hO = np.mean([sc(r, "BPFO") >= tau[(f, cl, r["bearing"])] for r in hh])
@@ -78,7 +80,7 @@ def auc(pos, neg):
     pos, neg = np.asarray(pos), np.asarray(neg)
     allv = np.concatenate([pos, neg])
     rk = allv.argsort().argsort().astype(float) + 1
-    # ranks com empates medios
+    # ranks, with ties given the mean rank
     from collections import Counter
 
     order = np.argsort(allv)
@@ -96,7 +98,7 @@ def auc(pos, neg):
 
 
 print(
-    "\n== AUC (segmentos): deteccao = max(escores) danificado x sao; pista = log(BPFO/BPFI) OR x IR =="
+    "\n== AUC (segments): detection = max(scores) damaged x healthy; race = log(BPFO/BPFI) OR x IR =="
 )
 for cl in ("bruto", "mediana3"):
     for f in FACTORS:
@@ -113,14 +115,14 @@ for cl in ("bruto", "mediana3"):
             for r in rr
             if r["race"] == "IR" and np.isfinite(sc(r, "BPFO")) and np.isfinite(sc(r, "BPFI"))
         ]
-        # detecao do candidato certo: OR->BPFO vs H->BPFO ; IR->BPFI vs H->BPFI
+        # detection of the right candidate: OR->BPFO vs H->BPFO ; IR->BPFI vs H->BPFI
         oO = [sc(r, "BPFO") for r in rr if r["race"] == "OR"]
         hO = [sc(r, "BPFO") for r in rr if r["race"] == "H"]
         iI = [sc(r, "BPFI") for r in rr if r["race"] == "IR"]
         hI = [sc(r, "BPFI") for r in rr if r["race"] == "H"]
-        # candidato errado vs sao (deveria ser ~0,5 se o escore e especifico da falha)
+        # wrong candidate vs healthy (should be ~0.5 if the score is fault-specific)
         oI = [sc(r, "BPFI") for r in rr if r["race"] == "OR"]
         iO = [sc(r, "BPFO") for r in rr if r["race"] == "IR"]
         print(
-            f"{cl:8s} {f:2d}x | det AUC={auc(dmg, hea):.3f} | pista AUC={auc(lo, li):.3f} | BPFO: OR x H={auc(oO, hO):.3f}, IR x H={auc(iO, hO):.3f} | BPFI: IR x H={auc(iI, hI):.3f}, OR x H={auc(oI, hI):.3f}"
+            f"{cl:8s} {f:2d}x | det AUC={auc(dmg, hea):.3f} | race AUC={auc(lo, li):.3f} | BPFO: OR x H={auc(oO, hO):.3f}, IR x H={auc(iO, hO):.3f} | BPFI: IR x H={auc(iI, hI):.3f}, OR x H={auc(oI, hI):.3f}"
         )

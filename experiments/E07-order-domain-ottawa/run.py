@@ -1,31 +1,31 @@
-"""E07 — degradação por subamostragem no domínio de ordem, com folga real.
+"""E07 — undersampling degradation in the order domain, with real headroom.
 
-Curva **fator de subamostragem × acerto da ordem de falha** sobre Ottawa 2018, sob
-rotação variável, com três priors distintos. É o E02 refeito onde o dataset não é o
-gargalo — e onde a qualidade do prior vira variável independente em vez de suposição.
+Curve of **undersampling factor × fault-order hit rate** on Ottawa 2018, under variable
+rotation, with three distinct priors. It is E02 redone where the dataset is not the bottleneck
+— and where the quality of the prior becomes an independent variable instead of an assumption.
 
-Decisões de método, todas forçadas pelos dados e não escolhidas de antemão:
+Method decisions, all forced by the data and not chosen in advance:
 
-- **Rotação variável, prior em ordens.** Em hertz a frequência de falha se move com
-  o regime. Em ordens é constante da geometria. Só este dataset entre os candidatos
-  tem a referência angular que isso exige.
-- **Teto de 25 kHz na busca do kurtograma.** Sem ele, 12 de 12 registros de pista
-  externa escolhiam 50–100 kHz — banda com 0,1% da energia, onde a curtose mede
-  vazamento numérico — e a falha não aparecia. Com o teto, a mesma falha aparece na
-  ordem 3,4 em todos eles. O achado inverteu a conclusão: a pista externa parecia
-  não-diagnosticável e era escolha de banda.
-- **Três priors, não um.** O prior nominal vem do catálogo do ER16K e erra a pista
-  externa em ~4%; o calibrado vem de medição em taxa cheia nos *outros* registros.
-  A distância entre as duas curvas é o custo do desalinhamento de prior — que é
-  exatamente a fronteira medição/prior que o projeto se obriga a reportar.
-- **Verdade por deixa-um-de-fora.** A ordem de referência de um registro é a mediana
-  medida em taxa cheia nos demais registros da mesma condição. Nunca no próprio, ou
-  o fator 1 seria acerto por construção.
-- **O encoder não passa pelo ADC.** Contagem de pulsos numa entrada digital
-  (TIMER/GPIOTE no nRF54L15) não consome orçamento de amostragem. O que é decimado
-  é a vibração; o perfil de rotação acompanha porque varia devagar, e o CSV registra
-  quantos pontos por revolução sobram em cada fator.
-- **Decimação pura.** `snq_data.undersample` recusa aplicar filtro anti-aliasing.
+- **Variable rotation, prior in orders.** In hertz the fault frequency moves with
+  the operating regime. In orders it is a constant of the geometry. Among the candidates, only
+  this dataset has the angular reference that this requires.
+- **25 kHz ceiling on the kurtogram search.** Without it, 12 of 12 outer-race
+  records chose 50–100 kHz — a band with 0.1% of the energy, where kurtosis measures
+  numerical leakage — and the fault did not show up. With the ceiling, the same fault shows up at
+  order 3.4 in all of them. The finding inverted the conclusion: the outer race looked
+  non-diagnosable, and it was band choice.
+- **Three priors, not one.** The nominal prior comes from the ER16K catalog and misses the outer
+  race by ~4%; the calibrated one comes from full-rate measurement on the *other* records.
+  The distance between the two curves is the cost of prior misalignment — which is
+  exactly the measurement/prior boundary that the project commits to reporting.
+- **Leave-one-out truth.** The reference order of a record is the median
+  measured at full rate on the other records of the same condition. Never on the record itself,
+  or factor 1 would be a hit by construction.
+- **The encoder does not go through the ADC.** Pulse counting on a digital input
+  (TIMER/GPIOTE on the nRF54L15) does not consume sampling budget. What is decimated
+  is the vibration; the rotation profile follows along because it varies slowly, and the CSV
+  records how many points per revolution remain at each factor.
+- **Pure decimation.** `snq_data.undersample` refuses to apply an anti-aliasing filter.
 
     uv run python experiments/E07-order-domain-ottawa/run.py \
         --config experiments/E07-order-domain-ottawa/config/base.yaml
@@ -62,24 +62,24 @@ FAULT_OF = {"inner_race": "BPFI", "outer_race": "BPFO"}
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
 SOURCE_SHA256_SCHEME = (
-    "sha256 sobre a concatenacao, em ordem de caminho POSIX, de "
-    "'<caminho relativo ao repositorio>\\n<sha256 do conteudo do arquivo>\\n' "
-    "para cada packages/*/src/**/*.py"
+    "sha256 over the concatenation, in POSIX path order, of "
+    "'<path relative to the repository>\\n<sha256 of the file content>\\n' "
+    "for each packages/*/src/**/*.py"
 )
 
 
 def guard_verdict(n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: dict) -> str | None:
-    """Nome do guarda que descarta este segmento, ou ``None`` se ele passa nos três.
+    """Name of the guard that discards this segment, or ``None`` if it passes all three.
 
-    Os três guardas em um só lugar, para que a contagem de medições admitidas por
-    fator seja verificável sem rodar a varredura (``tests/test_guards.py``). A ordem
-    é a de aplicação e importa: o primeiro guarda a disparar é o reportado.
+    The three guards in one place, so that the count of admitted measurements per
+    factor can be verified without running the sweep (``tests/test_guards.py``). The order
+    is the order of application, and it matters: the first guard to fire is the one reported.
 
-    - ``min_samples``: comprimento do vetor decimado;
-    - ``f_min_hz``: a janela de busca do kurtograma ``[f_min_hz, fs_eff/2]`` precisa
-      existir;
-    - ``samples_per_rev``: a reamostragem angular exige pelo menos dois pontos por
-      incremento angular, na rotação de pior caso do segmento.
+    - ``min_samples``: length of the decimated vector;
+    - ``f_min_hz``: the kurtogram search window ``[f_min_hz, fs_eff/2]`` must
+      exist;
+    - ``samples_per_rev``: the angular resampling requires at least two points per
+      angular increment, at the worst-case rotation speed of the segment.
     """
     if n_samples < int(cfg["min_samples"]):
         return "min_samples"
@@ -91,24 +91,24 @@ def guard_verdict(n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: 
 
 
 def harmonics(fundamentals: dict[str, float], n: int) -> np.ndarray:
-    """Conjunto discreto de ordens admitidas: harmônicos de cada família de falha."""
+    """Discrete set of admitted orders: harmonics of each fault family."""
     h = np.arange(1, n + 1, dtype=float)
     return np.unique(np.concatenate([o * h for o in fundamentals.values() if np.isfinite(o)]))
 
 
 def refine(spec, nominal: float, span: float, n_harmonics: int, tol: float) -> float:
-    """Ordem de maior energia harmônica numa vizinhança relativa de ``nominal``.
+    """Order with the highest harmonic energy in a relative neighborhood of ``nominal``.
 
-    Refinar numa faixa em vez de pegar o pico global evita cair no 2º harmônico do
-    eixo, que domina o envelope de vários registros de pista externa e não é falha.
+    Refining within a range instead of taking the global peak avoids landing on the 2nd harmonic
+    of the shaft, which dominates the envelope of several outer-race records and is not a fault.
     """
-    # Centro do platô de escore, não o primeiro ponto: o max() antigo enviesava a verdade
-    # em meia largura do platô (0,0175 ordem com spr = 64; revisão de 2026-11-11).
+    # Center of the score plateau, not the first point: the old max() biased the truth
+    # by half the plateau width (0.0175 order with spr = 64; review of 2026-11-11).
     return refine_order(spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol)
 
 
 def analyse(x, fs_hz, speed, cfg) -> tuple[object, object]:
-    """Kurtograma restrito + espectro de envelope em ordens."""
+    """Restricted kurtogram + envelope spectrum in orders."""
     kg = cfg["kurtogram"]
     k = fast_kurtogram(
         x,
@@ -141,12 +141,12 @@ def _git(*args: str) -> str | None:
 
 
 def source_sha256(root: Path = REPO_ROOT) -> tuple[str | None, int]:
-    """Hash do conteúdo dos fontes que este experimento importa.
+    """Hash of the content of the sources that this experiment imports.
 
-    O ``git_sha`` sozinho não identifica o código que rodou: a árvore pode estar suja,
-    e a versão de pacote (``0.1.0``) não muda quando o fonte muda. Este hash muda.
-    O esquema está declarado em ``SOURCE_SHA256_SCHEME`` e gravado no manifest junto
-    com o valor, para que o hash seja recomputável sem ler este arquivo.
+    ``git_sha`` alone does not identify the code that ran: the tree may be dirty,
+    and the package version (``0.1.0``) does not change when the source changes. This hash does.
+    The scheme is declared in ``SOURCE_SHA256_SCHEME`` and recorded in the manifest together
+    with the value, so that the hash can be recomputed without reading this file.
     """
     files = sorted((root / "packages").glob("*/src/**/*.py"))
     if not files:
@@ -165,7 +165,7 @@ def write_manifest(
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     head = _git("rev-parse", "HEAD")
     porcelain = _git("status", "--porcelain")
     dirty = [line[3:] for line in porcelain.splitlines()] if porcelain else []
@@ -182,15 +182,15 @@ def write_manifest(
                 "input_sha256": {p.name: sha256_file(p) for p in inputs if p.exists()},
                 "dataset": "University of Ottawa 2018 (Mendeley v43hmbwxpm), CC BY 4.0",
                 "pulses_per_rev": cfg["pulses_per_rev"],
-                "ppr_provenance": "determinado empiricamente; nao documentado pelos autores",
+                "ppr_provenance": "determined empirically; not documented by the authors",
                 "packages": versions,
                 "python": platform.python_version(),
                 "platform": platform.platform(),
                 "git_sha": head.strip() if head else None,
-                # git_sha aponta para o commit, nao para a arvore que rodou. Os tres
-                # campos abaixo cobrem a diferenca: se git_dirty e verdadeiro, o
-                # commit NAO descreve o codigo executado, e source_sha256 e o unico
-                # identificador do que de fato rodou.
+                # git_sha points to the commit, not to the tree that ran. The three
+                # fields below cover the difference: if git_dirty is true, the
+                # commit does NOT describe the executed code, and source_sha256 is the only
+                # identifier of what actually ran.
                 "git_dirty": bool(dirty),
                 "git_dirty_paths": dirty,
                 "source_sha256": src_sha,
@@ -213,7 +213,7 @@ def main() -> int:
 
     root = args.config.parent.parent
     results = root / cfg["output"]["results_dir"]
-    # T0.1: data_dir relativo vale a partir da raiz do repositorio, nao do cwd.
+    # T0.1: a relative data_dir is resolved from the repository root, not from the cwd.
     raw = Path(cfg["data_dir"])
     raw = raw if raw.is_absolute() else REPO_ROOT / raw
     tol = float(cfg["tolerance_order"])
@@ -229,12 +229,10 @@ def main() -> int:
     names = record_names(
         tuple(cfg["conditions"]), tuple(cfg["scenarios"]), tuple(int(t) for t in cfg["trials"])
     )
-    print(
-        f"{len(names)} registros; nominal " + ", ".join(f"{k}={v:.3f}" for k, v in nominal.items())
-    )
+    print(f"{len(names)} records; nominal " + ", ".join(f"{k}={v:.3f}" for k, v in nominal.items()))
 
     # ------------------------------------------------------------------
-    # passe 1 — calibrar as ordens em taxa cheia, um valor por registro
+    # pass 1 — calibrate the orders at full rate, one value per record
     # ------------------------------------------------------------------
     records: dict[str, object] = {}
     calib: dict[str, float] = {}
@@ -244,7 +242,7 @@ def main() -> int:
             path = download(name, raw)
             rec = load(name, raw)
         except (OSError, KeyError, ValueError) as exc:
-            print(f"  {name}: pulado ({type(exc).__name__}: {str(exc)[:70]})")
+            print(f"  {name}: skipped ({type(exc).__name__}: {str(exc)[:70]})")
             continue
         speed = rec.speed_profile_hz(ppr)
         _, spec = analyse(rec.vibration[:seg_n], FS_HZ, speed[:seg_n], cfg)
@@ -253,15 +251,15 @@ def main() -> int:
         records[rec.name] = (rec, speed)
         inputs.append(path)
         print(
-            f"  {rec.name}: {fault} calibrado = {calib[rec.name]:.3f}"
+            f"  {rec.name}: {fault} calibrated = {calib[rec.name]:.3f}"
             f" (nominal {nominal[fault]:.3f})"
         )
 
     if not records:
-        print("\nnenhum registro carregado")
+        print("\nno record loaded")
         return 1
 
-    # Verdade por deixa-um-de-fora: mediana dos demais registros da mesma condicao.
+    # Leave-one-out truth: median of the other records of the same condition.
     def truth_loo(name: str, condition: str) -> float:
         others = [v for k, v in calib.items() if k != name and records[k][0].condition == condition]
         return float(np.median(others)) if others else float("nan")
@@ -273,12 +271,12 @@ def main() -> int:
     for c, v in by_cond.items():
         nom = nominal[FAULT_OF[c]]
         print(
-            f"  {c}: calibrado {np.median(v):.3f} (min {min(v):.3f}, max {max(v):.3f}), "
-            f"nominal {nom:.3f}, desvio {100 * (np.median(v) / nom - 1):+.1f}%"
+            f"  {c}: calibrated {np.median(v):.3f} (min {min(v):.3f}, max {max(v):.3f}), "
+            f"nominal {nom:.3f}, deviation {100 * (np.median(v) / nom - 1):+.1f}%"
         )
 
     # ------------------------------------------------------------------
-    # passe 2 — varredura de subamostragem
+    # pass 2 — undersampling sweep
     # ------------------------------------------------------------------
     rows: list[dict] = []
     for name, (rec, speed) in records.items():
@@ -292,7 +290,7 @@ def main() -> int:
             if b > rec.vibration.size:
                 break
             vib_seg, spd_seg = rec.vibration[a:b], speed[a:b]
-            # regua local: a raia em taxa cheia deste segmento (so para pontuar)
+            # local ruler: the full-rate spectral line of this segment (for scoring only)
             _, spec_full = analyse(vib_seg, FS_HZ, spd_seg, cfg)
             loc = refine_order_detail(
                 spec_full, nominal[fault], span=span, n_harmonics=nh_score, tol=tol
@@ -320,7 +318,7 @@ def main() -> int:
                         )[0],
                     }
                 except ValueError as exc:
-                    print(f"    {name} f={factor}: pulado ({str(exc)[:55]})")
+                    print(f"    {name} f={factor}: skipped ({str(exc)[:55]})")
                     continue
 
                 for mode, value in est.items():
@@ -357,10 +355,10 @@ def main() -> int:
                             "n_samples": x.size,
                         }
                     )
-        print(f"    {name}: acumulado {len(rows)} linhas")
+        print(f"    {name}: {len(rows)} rows accumulated")
 
     if not rows:
-        print("\nnenhuma linha produzida")
+        print("\nno rows produced")
         return 1
 
     write_manifest(
@@ -371,9 +369,9 @@ def main() -> int:
             "nominal_orders": {k: round(v, 4) for k, v in nominal.items()},
             "calibrated_per_record": {k: round(v, 4) for k, v in calib.items()},
             "records": sorted(records),
-            # A verdade fundamental depende de samples_per_rev: as ordens acima sao
-            # medidas na reamostragem angular deste config. Comparar duas rodadas com
-            # spr diferente e comparar duas referencias distintas.
+            # The ground truth depends on samples_per_rev: the orders above are
+            # measured in the angular resampling of this config. Comparing two runs with
+            # different spr is comparing two distinct references.
             "samples_per_rev": int(cfg["samples_per_rev"]),
             "min_samples": int(cfg["min_samples"]),
         },
@@ -384,7 +382,7 @@ def main() -> int:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"\n{len(rows)} linhas -> {out}")
+    print(f"\n{len(rows)} rows -> {out}")
     return 0
 
 

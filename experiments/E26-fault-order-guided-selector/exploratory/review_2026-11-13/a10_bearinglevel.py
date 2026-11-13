@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -10,7 +10,7 @@ from math import comb
 tau = thresholds(95)
 A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
 print(
-    "== Nivel de rolamento: identificado se > 50% dos segmentos certos; sao com alarme se < 50% de 'nenhuma' =="
+    "== Bearing level: identified if > 50% of the segments are right; healthy with alarm if < 50% of 'none' =="
 )
 for f in FACTORS:
     s = []
@@ -19,7 +19,7 @@ for f in FACTORS:
         idd = sum(1 for k, v in d.items() if k[0] in ("OR", "IR") and v > 0.5)
         fa = sum(1 for k, v in d.items() if k[0] == "H" and v < 0.5)
         s.append(f"{arm} {idd}/23 (FA {fa}/6)")
-    # McNemar exato: mediana_guiado x kurtograma
+    # exact McNemar: mediana_guiado x kurtograma
     g = A[("mediana_guiado", f)]
     k = A[("kurtograma", f)]
     b10 = sum(1 for kk in g if kk[0] in ("OR", "IR") and g[kk] > 0.5 and k[kk] <= 0.5)
@@ -29,5 +29,5 @@ for f in FACTORS:
     print(
         f"  {f:2d}x: "
         + " | ".join(s)
-        + f" || McNemar mg x k: {b10} so guiado, {b01} so cego, p unilateral={p:.4f}"
+        + f" || McNemar mg x k: {b10} guided only, {b01} blind only, one-sided p={p:.4f}"
     )

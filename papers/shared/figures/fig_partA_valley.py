@@ -1,14 +1,15 @@
-"""Figura principal da Parte (a): acerto de ordem contra o fator de decimação no Ottawa (E20).
+"""Main figure of Part (a): order accuracy against the decimation factor on Ottawa (E20).
 
-Regra do projeto: a figura nasce de metrics.csv, nunca de número transcrito.
+Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
-- **Fontes:** o E20 (`results/`) para `none` e `despike`. Os braços que existirem em
-  `results-selectors/` (`infograma_ses`, `gini`) e em `results-post-despike/` (`despike_decimado`)
-  entram sozinhos.
-- **Recorte:** teto de 25 kHz e régua local, ou a aninhada (mediana deixa-um-registro-de-fora,
-  a do E07) com ``--ruler nested``.
-- **Incerteza:** banda de 95 % por bootstrap dos aglomerados condição × cenário (4 por pista), os
-  mesmos da análise. Com 4 aglomerados, a banda é larga, e isso é parte do resultado.
+- **Sources:** E20 (`results/`) for `none` and `despike`. The arms present in
+  `results-selectors/` (`infograma_ses`, `gini`) and in `results-post-despike/`
+  (`despike_decimado`) come in on their own.
+- **Selection:** 25 kHz ceiling and the local ruler, or the nested one (leave-one-record-out
+  median, the one of E07) with ``--ruler nested``.
+- **Uncertainty:** 95 % band by bootstrap over the condition × scenario clusters (4 per race),
+  the same ones as in the analysis. With 4 clusters the band is wide, and that is part of the
+  result.
 
     uv run python papers/shared/figures/fig_partA_valley.py [--ruler local|nested]
 """
@@ -24,12 +25,12 @@ import matplotlib
 import matplotlib.ticker
 
 matplotlib.use("Agg")
-matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 reprova no PDF eXpress (T0.8)
+matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 fonts fail PDF eXpress (T0.8)
 matplotlib.rcParams["ps.fonttype"] = 42
 matplotlib.rcParams["font.size"] = 8
 matplotlib.rcParams["axes.labelsize"] = 8
 matplotlib.rcParams["legend.fontsize"] = 7
-# a fonte do corpo do elsarticle (preprint, 12pt) e a Computer Modern
+# the body font of elsarticle (preprint, 12pt) is Computer Modern
 matplotlib.rcParams["font.family"] = "serif"
 matplotlib.rcParams["font.serif"] = ["CMU Serif", "Computer Modern Roman", "cmr10"]
 matplotlib.rcParams["mathtext.fontset"] = "cm"
@@ -48,7 +49,7 @@ OUT = ROOT / "papers/mssp-2026/figures"
 PNG = E20 / "results/figures"
 FS_FULL_KSPS = 200.0
 CEILING_HZ = 25000.0
-# braço -> (rótulo, cor, marcador, traço, ordem de desenho)
+# arm -> (label, colour, marker, line style, drawing order)
 ARMS = {
     "none": ("raw (baseline)", "0.55", "o", "--", 1),
     "despike": ("spikes removed before decimation", "black", "s", "-", 3),
@@ -72,7 +73,7 @@ def load(ruler: str):
                     continue
                 if r[col] == "":
                     continue
-                cluster = r["record"].rsplit("-", 1)[0]  # condição x cenário
+                cluster = r["record"].rsplit("-", 1)[0]  # condition x scenario
                 key = (r["condition"], r["intervention"], int(r["factor"]))
                 hits[key][(cluster, r["record"], r["segment"])] = int(r[col])
     return hits
@@ -96,7 +97,7 @@ def main() -> None:
     ap.add_argument("--ruler", choices=("local", "nested"), default="local")
     args = ap.parse_args()
     hits = load(args.ruler)
-    # largura do texto do elsarticle; legenda embaixo, fora dos painéis
+    # elsarticle text width; legend below, outside the panels
     fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.3), sharey=True)
     present = sorted({k[1] for k in hits}, key=lambda a: ARMS[a][4])
     for ax, (race, label) in zip(axes, RACES.items(), strict=True):
@@ -119,14 +120,14 @@ def main() -> None:
         ax.set_xlabel("decimation factor $M$")
         ax.set_ylim(-3, 103)
         ax.grid(alpha=0.25, lw=0.5)
-        # rótulo do painel acima do eixo de taxa, para não cobrir dados nem a legenda
+        # panel label above the rate axis, so that it covers neither data nor the legend
         ax.set_title(label, loc="left", fontsize=8, pad=24)
         top = ax.secondary_xaxis(
             "top", functions=(lambda m: FS_FULL_KSPS / m, lambda r: FS_FULL_KSPS / r)
         )
         top.set_xticks([200, 100, 66.7, 50, 40, 33.3, 25])
         top.set_xticklabels(["200", "100", "66.7", "50", "40", "33.3", "25"], fontsize=7)
-        top.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())  # sem rótulos 6×10¹
+        top.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())  # no 6×10¹ labels
         ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
         top.set_xlabel("effective rate $f_s/M$ [kS/s]", fontsize=7)
     ruler = f"{args.ruler} ruler"
@@ -137,10 +138,10 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / f"fig_valley_{args.ruler}.pdf"
     fig.savefig(out)
-    # copia PNG para o relatorio em Markdown (docs/resultados-subnyquist.md)
+    # PNG copy for the Markdown report (docs/resultados-subnyquist.md)
     PNG.mkdir(parents=True, exist_ok=True)
     fig.savefig(PNG / f"e20_valley_{args.ruler}.png", dpi=200)
-    print(f"braços: {present} -> {out}")
+    print(f"arms: {present} -> {out}")
 
 
 if __name__ == "__main__":

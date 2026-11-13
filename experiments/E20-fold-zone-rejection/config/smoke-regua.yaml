@@ -1,4 +1,4 @@
-# Fumaca da regua local: 2 registros, fatores 1 e 4.
+# Smoke test of the local ruler: 2 records, factors 1 and 4.
 seed: 20261110
 data_dir: datasets/raw/ottawa
 conditions:

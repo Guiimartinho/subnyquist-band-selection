@@ -1,13 +1,13 @@
-"""Números da Parte (a) no Ottawa citados no texto do artigo, recalculados dos metrics.csv.
+"""Numbers of Part (a) on Ottawa cited in the text of the paper, recomputed from metrics.csv.
 
-Regra do projeto: número do artigo sai de metrics.csv, nunca de transcrição.
+Project rule: a number in the paper comes from metrics.csv, never from transcription.
 
-- **Banda escolhida (E20).** Pista externa, teto de 25 kHz, em 1× e 4×, por intervenção: quantos
-  segmentos ficam com banda acima de 12,75 kHz, exatamente em [12,75; 25] kHz, e entre 2,0 e
-  4,6 kHz.
-- **Parede de taxa (E07 estendido, `sem_prior`).** Por fator: acerto nas duas réguas, largura
-  mediana da banda escolhida, frequência de falha mediana (ordem verdadeira x rotação) e fração das
-  estimativas em [2,0; 2,2) ordem, junto do limite inferior da busca.
+- **Chosen band (E20).** Outer race, 25 kHz ceiling, at 1× and 4×, per intervention: how many
+  segments end up with a band above 12.75 kHz, exactly in [12.75; 25] kHz, and between 2.0 and
+  4.6 kHz.
+- **Rate wall (extended E07, `sem_prior`).** Per factor: accuracy under both rulers, median width
+  of the chosen band, median fault frequency (true order x rotation speed) and fraction of the
+  estimates in [2.0; 2.2) order, next to the lower limit of the search.
 
     uv run python papers/shared/figures/num_partA_ottawa.py
 """
@@ -100,7 +100,7 @@ def _rows(name: str) -> list[dict]:
 
 
 def mitigations() -> dict:
-    """Bandas dos seletores, teto de 12,5 kHz contra a limpeza e a limpeza na pista interna."""
+    """Selector bands, 12.5 kHz ceiling against cleaning, and cleaning on the inner race."""
     base, sel, post = _rows("results"), _rows("results-selectors"), _rows("results-post-despike")
     out: dict = {"selector_bands": {}, "ceiling_vs_cleaning": {}, "inner_cleaning": {}}
     for arm in ("infograma_ses", "gini"):

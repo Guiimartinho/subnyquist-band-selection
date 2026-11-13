@@ -1,4 +1,4 @@
-"""snq-eval - metricas, com enfase em separar medicao de prior."""
+"""snq-eval - metrics, with emphasis on separating measurement from prior."""
 
 from snq_eval.attribution import Attribution, attribute, hf_recovery_ratio
 from snq_eval.splits import (

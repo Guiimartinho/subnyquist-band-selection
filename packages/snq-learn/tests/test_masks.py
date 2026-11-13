@@ -1,4 +1,4 @@
-"""Conjunto viável, projeção exata e máscaras do E15."""
+"""Feasible set, exact projection and masks of E15."""
 
 import itertools
 
@@ -49,7 +49,7 @@ def test_projecao_respeita_k_e_espacamento_circular(period, k, gap):
     fs = FeasibleSet(period, k, gap)
     rng = np.random.default_rng(0)
     for _ in range(20):
-        # escores que favorecem posicoes coladas: o espacamento precisa ser imposto
+        # scores that favor adjacent positions: the spacing has to be enforced
         w = rng.normal(size=period)
         w[:k] += 5.0
         p = project_to_feasible(w, fs)
@@ -60,7 +60,7 @@ def test_projecao_respeita_k_e_espacamento_circular(period, k, gap):
 
 def test_espacamento_inclui_a_volta_do_periodo():
     fs = FeasibleSet(8, 2, 3)
-    # 0 e 7 estao a 1 tick pela volta: inviavel mesmo com 7 ticks no sentido direto
+    # 0 and 7 are 1 tick apart across the wrap-around: infeasible despite 7 ticks forward
     assert not fs.is_feasible([0, 7])
     assert fs.is_feasible([0, 4])
     w = np.zeros(8)
@@ -70,7 +70,7 @@ def test_espacamento_inclui_a_volta_do_periodo():
 
 
 def test_conjunto_vazio_e_erro():
-    with pytest.raises(ValueError, match="vazio"):
+    with pytest.raises(ValueError, match="empty"):
         FeasibleSet(8, 4, 3)
     with pytest.raises(ValueError):
         FeasibleSet(4, 5, 1)
@@ -110,7 +110,7 @@ def test_projetado_espalha_o_alias_que_o_uniforme_concentra():
     fs = FeasibleSet(16, 4, 2)
     u, d = uniform_positions(fs), designed_positions(fs)
     assert alias_weights(u, 16)[0] == pytest.approx(4 / 16)
-    assert alias_weights(u, 16)[1:].max() == pytest.approx(4 / 16)  # replicas de peso cheio
+    assert alias_weights(u, 16)[1:].max() == pytest.approx(4 / 16)  # full-weight replicas
     assert alias_weights(d, 16)[1:].max() < alias_weights(u, 16)[1:].max()
 
 
@@ -118,7 +118,7 @@ def test_agenda_do_timer_gira_o_padrao_e_confere_contagens():
     s = timer_schedule([3, 7, 12, 14], 16, 200_000.0, 16e6)
     assert s["rotation_ticks"] == 3
     assert s["compare_ticks"] == [4, 9, 11, 16]
-    assert s["counts_are_integer"]  # 80 contagens por tick a 200 kSPS
+    assert s["counts_are_integer"]  # 80 counts per tick at 200 kSPS
     assert s["compare_registers"] == 4
     assert not timer_schedule([0, 1], 4, 48_000.0, 16e6)["counts_are_integer"]
 
@@ -126,7 +126,7 @@ def test_agenda_do_timer_gira_o_padrao_e_confere_contagens():
 def test_penalidade_de_espacamento():
     soft = torch.tensor([[1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]])
     assert float(spacing_penalty(soft, 1)) == 0.0
-    assert float(spacing_penalty(soft, 2)) == pytest.approx(1.0)  # o par (0, 1)
+    assert float(spacing_penalty(soft, 2)) == pytest.approx(1.0)  # the pair (0, 1)
     assert float(spacing_penalty(soft, 5)) > float(spacing_penalty(soft, 2))
 
 
@@ -146,14 +146,14 @@ def test_mascara_aprendida_tem_k_por_periodo_e_avalia_pela_projecao():
     assert np.flatnonzero(m_eval).tolist() == expected.tolist()
     pos = mask.freeze()
     assert not mask.logits.requires_grad
-    mask.train()  # congelada, treino e avaliacao usam a mesma mascara projetada
+    mask.train()  # frozen: training and evaluation use the same projected mask
     assert np.flatnonzero(mask(x)[0, :16].numpy()).tolist() == pos.tolist()
 
 
 def test_mascara_fixa_repete_o_padrao():
     m = FixedMask([0, 3], 4)(torch.zeros(2, 12))
     assert m[0].tolist() == [1, 0, 0, 1] * 3
-    with pytest.raises(ValueError, match="multiplo"):
+    with pytest.raises(ValueError, match="multiple"):
         FixedMask([0], 4)(torch.zeros(1, 10))
 
 
@@ -169,8 +169,8 @@ def test_loupe_casa_a_taxa_e_projeta_no_conjunto_viavel():
 
 
 def test_loupe_recupera_a_mascara_de_baixa_frequencia_num_brinquedo():
-    """Validação da reimplementação (README do E15): o LOUPE tem de concentrar a amostragem
-    nas frequências baixas quando o sinal só tem energia nelas, como em MRI no espaço k."""
+    """Validation of the reimplementation (E15 README): LOUPE has to concentrate sampling at
+    the low frequencies when the signal only has energy there, as in MRI in k-space."""
     torch.manual_seed(0)
     n, n_bins = 64, 33
     loupe = LoupeMask(n_bins, 0.25, seed=5)
@@ -195,7 +195,7 @@ def test_adaptativa_viavel_por_bloco_e_nas_emendas():
     torch.manual_seed(0)
     fs = FeasibleSet(16, 4, 3)
     adps = BlockAdaptiveMask(fs, n_blocks=4, n_features=8, hidden=8, seed=6)
-    with torch.no_grad():  # politica nao nula, para os blocos diferirem
+    with torch.no_grad():  # non-zero policy, so that the blocks differ
         for p in adps.policy.parameters():
             p.normal_(0.0, 1.0)
     x = torch.randn(2, 16 * 40)
@@ -209,20 +209,20 @@ def test_adaptativa_viavel_por_bloco_e_nas_emendas():
         assert len(row) == 4 and all(fs.is_feasible(pos) for pos in row)
     for b in range(2):
         idx = np.flatnonzero(m[b].numpy() > 0.5)
-        assert np.diff(idx).min() >= 3  # inclusive nas emendas entre blocos
+        assert np.diff(idx).min() >= 3  # including at the seams between blocks
 
 
 # ----------------------------------------------------------------------
-# revisao de 2026-11-11: mascara livre, suporte conhecido, diagnosticos
+# review of 2026-11-11: free mask, known support, diagnostics
 # ----------------------------------------------------------------------
 def test_dobra_e_projeta_a_mascara_livre_exatamente():
     fs = FeasibleSet(8, 2, 2)
     w = np.zeros(32)
-    w[[0, 8, 16, 24]] = 5.0  # posicao 0 do periodo em todas as 4 copias
-    w[[1, 9, 25]] = 4.0  # posicao 1 em 3 copias, mas colada na 0 (g = 2)
-    w[3] = 3.0  # posicao 3 em 1 copia
+    w[[0, 8, 16, 24]] = 5.0  # period position 0 in all 4 copies
+    w[[1, 9, 25]] = 4.0  # position 1 in 3 copies, but adjacent to 0 (g = 2)
+    w[3] = 3.0  # position 3 in 1 copy
     assert fold_project(w, 8, fs).tolist() == [0, 3]
-    # e a projecao euclidiana exata: confere contra forca bruta sobre o conjunto viavel
+    # and it is the exact Euclidean projection: check against brute force over the feasible set
     rng = np.random.default_rng(1)
     combos = [c for c in itertools.combinations(range(8), 2) if fs.is_feasible(c)]
 
@@ -238,11 +238,11 @@ def test_dobra_e_projeta_a_mascara_livre_exatamente():
 
 
 def test_suporte_conhecido_celulas_e_desenho_contra_forca_bruta():
-    # banda de uma celula e o espelho: 2 celulas ativas
+    # a one-cell band and its mirror: 2 active cells
     sup = band_support_cells((21_937.5, 25_000.0), 200_000.0, 16)
     assert [s for _w, s in sup] == [(1,), (14,)]
-    # banda e espelho cobrem, cada um, 1/4 da celula de 12,5 kHz, em deslocamentos disjuntos;
-    # deslocamento sem celula ativa nao entra no peso
+    # band and mirror each cover 1/4 of the 12.5 kHz cell, at disjoint offsets;
+    # an offset with no active cell does not enter the weight
     assert [w for w, _s in sup] == pytest.approx([0.25, 0.25])
     fs = FeasibleSet(12, 3, 2)
     sup = [(0.5, (1, 10)), (0.5, (1, 2, 10))]
@@ -257,8 +257,9 @@ def test_suporte_conhecido_celulas_e_desenho_contra_forca_bruta():
 
 
 def test_suporte_que_atravessa_a_zona_do_uniforme_deixa_o_uniforme_singular():
-    """O caso em que o desenho importa: banda que cruza a borda de uma zona de Nyquist da taxa
-    uniforme. O uniforme sobrepõe réplicas (``A_S`` singular) e o desenhado reconstrói."""
+    """The case where the design matters: a band that crosses the edge of a Nyquist zone of the
+    uniform rate. The uniform pattern overlaps replicas (singular ``A_S``) and the designed one
+    reconstructs."""
     fs = FeasibleSet.for_budget(16, 4, 2)
     band = shrink_band_to_support((12_750.0, 25_000.0), 200_000.0, fs.period_ticks, 4)
     sup = band_support_cells(band, 200_000.0, fs.period_ticks)
@@ -266,7 +267,7 @@ def test_suporte_que_atravessa_a_zona_do_uniforme_deixa_o_uniforme_singular():
     assert noise_amplification(uniform_positions(fs), fs.period_ticks, sup) == float("inf")
     d = support_designed_positions(fs, sup)
     assert np.isfinite(noise_amplification(d, fs.period_ticks, sup))
-    with pytest.raises(ValueError, match="encolha"):
+    with pytest.raises(ValueError, match="shrink"):
         support_designed_positions(fs, [(1.0, (1, 2, 3, 4, 5))])
 
 
@@ -275,9 +276,9 @@ def test_diagnosticos_da_mascara_e_semente_que_reproduz_o_inicio():
     m = GumbelTopKMask(fs, seed=7)
     d0 = m.diagnostics()
     assert d0["moved"] is False and d0["positions_initial"] == d0["positions_final"]
-    assert d0["margin_k"] < d0["gumbel_std"]  # iniciada no ruido
+    assert d0["margin_k"] < d0["gumbel_std"]  # initialized in the noise
     assert GumbelTopKMask(fs, seed=7).diagnostics()["positions_initial"] == d0["positions_initial"]
-    with torch.no_grad():  # empurra quatro logits viaveis para longe do resto
+    with torch.no_grad():  # pushes four feasible logits far from the rest
         m.logits[[0, 4, 9, 13]] += 10.0
     d1 = m.diagnostics()
     assert d1["positions_final"] == [0, 4, 9, 13] and d1["margin_k"] > d1["gumbel_std"]
@@ -286,12 +287,12 @@ def test_diagnosticos_da_mascara_e_semente_que_reproduz_o_inicio():
 
 def test_auditoria_conta_mascaras_duras_que_violam_o_espacamento_alvo():
     torch.manual_seed(0)
-    free = GumbelTopKMask(FeasibleSet(32, 16, 1), seed=1, audit_gap=2)  # metade das posicoes
+    free = GumbelTopKMask(FeasibleSet(32, 16, 1), seed=1, audit_gap=2)  # half of the positions
     free.train()
     free(torch.zeros(10, 64))
     diag = free.diagnostics()
     assert diag["audit_masks_seen"] == 10
-    assert diag["audit_violating_fraction"] == pytest.approx(1.0)  # 16 de 32 sem g: sempre cola
+    assert diag["audit_violating_fraction"] == pytest.approx(1.0)  # 16 of 32, no g: always adjacent
     constrained = GumbelTopKMask(FeasibleSet(32, 4, 2), seed=1)
     constrained.train()
     constrained(torch.zeros(10, 64))
@@ -304,5 +305,5 @@ def test_loupe_treina_com_mascara_dura_na_taxa_do_orcamento():
     loupe.train()
     m = loupe(torch.zeros(8, 64 * 200))
     vals = torch.unique(torch.round(m.detach() * 1e4) / 1e4)
-    assert set(vals.tolist()) <= {0.0, 1.0}  # forward duro (straight-through)
+    assert set(vals.tolist()) <= {0.0, 1.0}  # hard forward pass (straight-through)
     assert loupe.last_train_rate == pytest.approx(1 / 16, abs=0.01)

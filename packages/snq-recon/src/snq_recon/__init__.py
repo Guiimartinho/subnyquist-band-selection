@@ -1,23 +1,24 @@
-"""snq-recon - algoritmos classicos de reconstrucao e estimacao.
+"""snq-recon - classical reconstruction and estimation algorithms.
 
-Baseline oficial do projeto: amostragem passa-faixa + analise de envelope.
-Se um metodo aprendido nao bate isso, ele nao existe.
+The project's official baseline: bandpass sampling + envelope analysis.
+If a learned method does not beat it, it does not exist.
 
-Implementado, e este docstring lista **so** o que existe de fato. A versao anterior
-anunciava `robust_crt` e `omp / fista` como se existissem; nenhum dos dois existia, e
-`omp` so passou a existir com o E13. Anunciar funcao inexistente e defeito, nao plano.
+Implemented, and this docstring lists **only** what actually exists. The previous version
+advertised `robust_crt` and `omp / fista` as if they existed; neither of them existed, and
+`omp` only came into existence with E13. Advertising a nonexistent function is a defect,
+not a plan.
 
   envelope            baseline; bandpass_analytic, envelope_spectrum, headroom
-  kurtogram           selecao da banda ressonante a subamostrar (Antoni 2007)
-  diagnosis           escore contra o prior geometrico, estimacao com e sem prior
-  estimation          candidatas de alias, multi-taxa, faixa nao-ambigua
-  highres             esprit, reamostragem angular, espectro de ordem
-  sparse              amostragem em instantes aleatorios, base de ordem, OMP
+  kurtogram           selection of the resonant band to undersample (Antoni 2007)
+  diagnosis           score against the geometric prior, estimation with and without prior
+  estimation          alias candidates, multi-rate, unambiguous range
+  highres             esprit, angular resampling, order spectrum
+  sparse              sampling at random instants, order basis, OMP
 
-Nao existe, e nao deve ser citado como se existisse:
-  robust_crt          desambiguacao da ordem do alias por taxas coprimas
-  fista               reconstrucao esparsa por l1
-  prony               estimacao de linhas espectrais (ha ESPRIT, que resolve o mesmo)
+Does not exist, and must not be cited as if it existed:
+  robust_crt          alias-order disambiguation by coprime rates
+  fista               sparse reconstruction by l1
+  prony               spectral line estimation (ESPRIT is available and solves the same problem)
 """
 
 from snq_recon.diagnosis import (

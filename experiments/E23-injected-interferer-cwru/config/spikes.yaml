@@ -1,5 +1,5 @@
-# E23, braco de trem de picos de uma amostra (o captor real do Ottawa, revisao de 2026-11-11).
-# Escrito antes de qualquer resultado do E23. Herda tudo de base.yaml, menos o interferente.
+# E23, single-sample spike-train arm (the real captor in Ottawa, review of 2026-11-11).
+# Written before any E23 result. It inherits everything from base.yaml except the interferer.
 seed: 20261113
 catalog: datasets/catalogs/cwru-smith2015-categories.yaml
 subset: drive_end_48k

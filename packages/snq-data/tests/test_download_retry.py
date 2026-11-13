@@ -1,4 +1,4 @@
-"""Um corte no meio do arquivo (IncompleteRead) precisa cair na retentativa."""
+"""A cut in the middle of the file (IncompleteRead) has to be caught by the retry."""
 
 from __future__ import annotations
 

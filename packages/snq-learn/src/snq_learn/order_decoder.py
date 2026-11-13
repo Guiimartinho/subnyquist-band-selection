@@ -1,32 +1,34 @@
-"""Decodificador desdobrado do E15: o pipeline clássico de ordem, com peças aprendíveis.
+"""Unrolled decoder of E15: the classical order pipeline, with learnable pieces.
 
-**Não é uma CNN genérica** (ADR 0006). Cada etapa é uma etapa do pipeline do E07/E22,
-reescrita de forma diferenciável (algorithm unrolling, `monga2021unrolling`):
+**It is not a generic CNN** (ADR 0006). Each stage is a stage of the E07/E22 pipeline,
+rewritten in differentiable form (algorithm unrolling, `monga2021unrolling`):
 
-1. **sinal mascarado e preenchido com zeros**, ``z = x·m`` (a máscara vem de
+1. **masked, zero-filled signal**, ``z = x·m`` (the mask comes from
    `snq_learn.masks`);
-2. **banco de filtros complexos aprendíveis** sobre ``Z = FFT(z)``:
-   ``Y_c(f) = Σ_r G_{c,r}(f)·Z(f - r·fs/L)``. Só com ``r = 0`` o banco é LTI e, na máscara
-   uniforme, iniciado nas bandas do kurtograma, reproduz o pipeline clássico (decimar, filtrar a
-   banda dobrada, demodular). Com vários deslocamentos ele é periódico no tempo com período
-   ``L`` (LPTV), a forma da reconstrução linear multi-coset de uma banda: combina réplicas que
-   o padrão não uniforme separou, e com isso pode anular a réplica de um interferente;
-3. **envelope ao quadrado** ``|y_c|²`` (ou ``|y_c|``, para comparar com o `snq_recon`);
-4. **redução da taxa do envelope** por passa-baixas ideal (truncamento da FFT) e
-   **reamostragem angular** por interpolação linear na fase do tacômetro ou do encoder. A
-   interpolação é linear nos valores do envelope, então o gradiente passa; a fase é dado, não
-   parâmetro;
-5. **espectro de ordem**: janela de Hann e FFT com zeros até ``n_fft``, numa grade fixa de
-   ordens, e **logits por bin**: ``β·log(Σ_c a_c·S_c/mediana(S_c))``.
+2. **bank of learnable complex filters** on ``Z = FFT(z)``:
+   ``Y_c(f) = Σ_r G_{c,r}(f)·Z(f - r·fs/L)``. Only with ``r = 0`` is the bank LTI and, with the
+   uniform mask and initialized at the kurtogram bands, it reproduces the classical pipeline
+   (decimate, filter the folded band, demodulate). With several shifts it is periodic in time
+   with period ``L`` (LPTV), the form of the linear multi-coset reconstruction of a band: it
+   combines replicas that the non-uniform pattern separated, and can thereby cancel the replica
+   of an interferer;
+3. **squared envelope** ``|y_c|²`` (or ``|y_c|``, to compare with `snq_recon`);
+4. **envelope rate reduction** by an ideal low-pass (FFT truncation) and
+   **angular resampling** by linear interpolation on the tachometer or encoder phase. The
+   interpolation is linear in the envelope values, so the gradient passes through; the phase is
+   data, not a parameter;
+5. **order spectrum**: Hann window and FFT zero-padded to ``n_fft``, on a fixed grid of
+   orders, and **logits per bin**: ``β·log(Σ_c a_c·S_c/median(S_c))``.
 
-A seleção de canal ``a_c = softmax(τ·SK_c + b_c)`` é o kurtograma desdobrado: o clássico toma o
-argmax da curtose espectral, e aqui o argmax vira uma softmax com temperatura aprendida.
+The channel selection ``a_c = softmax(τ·SK_c + b_c)`` is the unrolled kurtogram: the classical
+one takes the argmax of the spectral kurtosis, and here the argmax becomes a softmax with a
+learned temperature.
 
-**O que o modelo não pode fazer, por construção:** não há termo aprendido por bin de ordem. O
-logit de uma ordem é função do espectro medido naquela ordem, então o modelo não pinta um pico
-onde o dado não tem; ele só escolhe onde olhar (bandas, réplicas) e como combinar canais. Não há
-reconstrução de forma de onda, então a decomposição espaço-imagem/núcleo não se define; o controle
-de alucinação do E15 é o conjunto saudável (ver o runner).
+**What the model cannot do, by construction:** there is no learned term per order bin. The
+logit of an order is a function of the spectrum measured at that order, so the model does not
+paint a peak where the data has none; it only chooses where to look (bands, replicas) and how to
+combine channels. There is no waveform reconstruction, so the range/null-space decomposition is
+not defined; the hallucination control of E15 is the healthy set (see the runner).
 """
 
 from __future__ import annotations
@@ -56,11 +58,11 @@ __all__ = [
 
 
 # ----------------------------------------------------------------------
-# eixo de ordens e plano angular
+# order axis and angular plan
 # ----------------------------------------------------------------------
 @dataclass(frozen=True)
 class OrderAxis:
-    """Grade fixa de ordens: bins ``k·spr/n_fft`` dentro de ``[order_min, order_max]``."""
+    """Fixed grid of orders: bins ``k·spr/n_fft`` within ``[order_min, order_max]``."""
 
     samples_per_rev: int
     n_fft: int
@@ -69,22 +71,22 @@ class OrderAxis:
 
     def __post_init__(self) -> None:
         if self.samples_per_rev < 2 or self.n_fft < 2:
-            raise ValueError("samples_per_rev e n_fft precisam ser >= 2")
+            raise ValueError("samples_per_rev and n_fft must be >= 2")
         if not 0.0 <= self.order_min < self.order_max:
-            raise ValueError("precisa 0 <= order_min < order_max")
+            raise ValueError("requires 0 <= order_min < order_max")
         if self.order_max > self.samples_per_rev / 2.0:
             raise ValueError(
-                f"order_max={self.order_max} acima do Nyquist angular {self.samples_per_rev / 2}"
+                f"order_max={self.order_max} above the angular Nyquist {self.samples_per_rev / 2}"
             )
 
     @property
     def step(self) -> float:
-        """Espaçamento entre bins, em ordens."""
+        """Spacing between bins, in orders."""
         return self.samples_per_rev / self.n_fft
 
     @property
     def bin_range(self) -> tuple[int, int]:
-        """``[lo, hi)`` dos bins do ``rfft`` de ``n_fft`` pontos que caem no intervalo de ordens."""
+        """``[lo, hi)`` of the bins of the ``n_fft``-point ``rfft`` that fall in the order range."""
         lo = math.ceil(self.order_min / self.step - 1e-9)
         hi = math.floor(self.order_max / self.step + 1e-9) + 1
         return lo, min(hi, self.n_fft // 2 + 1)
@@ -96,30 +98,30 @@ class OrderAxis:
 
 
 def envelope_sample_positions(n_samples: int, n_env: int) -> NDArray[np.float64]:
-    """Posições, em amostras da grade cheia, das ``n_env`` amostras do envelope de taxa reduzida.
+    """Positions, in samples of the full grid, of the ``n_env`` reduced-rate envelope samples.
 
-    O truncamento da FFT de ``N`` pontos para ``n_env`` devolve a interpolação de banda limitada
-    nos instantes ``k·N/n_env``; é aí que a fase precisa ser avaliada.
+    Truncating the ``N``-point FFT to ``n_env`` returns the band-limited interpolation
+    at the instants ``k·N/n_env``; that is where the phase has to be evaluated.
     """
     return np.arange(int(n_env)) * (float(n_samples) / float(n_env))
 
 
 def angular_plan(phase_rev_env: ArrayLike, samples_per_rev: int, n_fft: int) -> dict[str, object]:
-    """Pesos da interpolação linear do envelope para a grade angular uniforme.
+    """Weights of the linear interpolation of the envelope onto the uniform angular grid.
 
-    ``phase_rev_env`` é a fase, em revoluções, nas amostras do envelope reduzido. A grade
-    angular é ``θ_0 + j/spr`` cobrindo ``[θ_0, θ_fim)``, como em `snq_recon.angular_resample`.
-    A janela de Hann tem o comprimento válido; o resto, até ``n_fft``, é preenchimento com zeros.
+    ``phase_rev_env`` is the phase, in revolutions, at the samples of the reduced envelope. The
+    angular grid is ``θ_0 + j/spr`` covering ``[θ_0, θ_end)``, as in `snq_recon.angular_resample`.
+    The Hann window has the valid length; the rest, up to ``n_fft``, is zero padding.
     """
     th = np.asarray(phase_rev_env, dtype=np.float64).ravel()
     if th.size < 2 or np.any(np.diff(th) <= 0.0):
-        raise ValueError("fase precisa ser estritamente crescente")
+        raise ValueError("phase must be strictly increasing")
     total = float(th[-1] - th[0])
     if total < 1.0:
-        raise ValueError(f"janela cobre so {total:.2f} revolucao")
+        raise ValueError(f"window covers only {total:.2f} revolution")
     grid = th[0] + np.arange(0.0, total, 1.0 / float(samples_per_rev))
     if grid.size > n_fft:
-        raise ValueError(f"grade angular de {grid.size} pontos excede n_fft={n_fft}")
+        raise ValueError(f"angular grid of {grid.size} points exceeds n_fft={n_fft}")
     pos = np.interp(grid, th, np.arange(th.size, dtype=np.float64))
     idx = np.minimum(np.floor(pos).astype(np.int64), th.size - 2)
     return {
@@ -133,7 +135,7 @@ def angular_plan(phase_rev_env: ArrayLike, samples_per_rev: int, n_fft: int) -> 
 
 @dataclass
 class AngularPlan:
-    """Planos angulares empilhados, ``(B, A)``, com preenchimento de peso zero."""
+    """Stacked angular plans, ``(B, A)``, with zero-weight padding."""
 
     index: torch.Tensor
     frac: torch.Tensor
@@ -152,10 +154,10 @@ class AngularPlan:
 
 
 def stack_plans(plans: Sequence[dict[str, object]]) -> AngularPlan:
-    """Empilha planos de janelas com o mesmo ``n_env`` (comprimentos angulares podem variar)."""
+    """Stacks the plans of windows with the same ``n_env`` (angular lengths may differ)."""
     n_env = {int(p["n_env"]) for p in plans}  # type: ignore[call-overload]
     if len(n_env) != 1:
-        raise ValueError(f"planos com n_env diferentes: {sorted(n_env)}")
+        raise ValueError(f"plans with different n_env: {sorted(n_env)}")
     a = max(int(p["n_valid"]) for p in plans)  # type: ignore[call-overload]
     b = len(plans)
     index = np.zeros((b, a), dtype=np.int64)
@@ -179,15 +181,15 @@ def stack_plans(plans: Sequence[dict[str, object]]) -> AngularPlan:
 def kurtogram_bands_hz(
     f_lo_hz: float, f_hi_hz: float, levels: Sequence[float]
 ) -> list[tuple[float, float]]:
-    """Bandas dos níveis 1/3-binários de Antoni (2007) sobre ``[f_lo, f_hi]``.
+    """Bands of the 1/3-binary levels of Antoni (2007) over ``[f_lo, f_hi]``.
 
-    Nível ``λ`` divide a faixa em ``round(2^λ)`` bandas iguais (2, 3, 4, 6, 8, ... para
-    ``λ = 1, log2 3, 2, ...``), a mesma partição de `snq_recon.fast_kurtogram` com
-    ``f_min_hz``/``f_max_hz``. É a inicialização do banco: na máscara uniforme, o decodificador
-    começa onde o kurtograma clássico procura.
+    Level ``λ`` divides the range into ``round(2^λ)`` equal bands (2, 3, 4, 6, 8, ... for
+    ``λ = 1, log2 3, 2, ...``), the same partition as `snq_recon.fast_kurtogram` with
+    ``f_min_hz``/``f_max_hz``. It is the initialization of the bank: with the uniform mask, the
+    decoder starts where the classical kurtogram searches.
     """
     if not f_hi_hz > f_lo_hz >= 0.0:
-        raise ValueError("faixa de bandas vazia")
+        raise ValueError("empty band range")
     out: list[tuple[float, float]] = []
     for lv in levels:
         edges = np.linspace(f_lo_hz, f_hi_hz, int(round(2.0 ** float(lv))) + 1)
@@ -196,13 +198,13 @@ def kurtogram_bands_hz(
 
 
 # ----------------------------------------------------------------------
-# banco de filtros
+# filter bank
 # ----------------------------------------------------------------------
 def _band_response(f_frac: NDArray[np.float64], lo: float, hi: float, transition: float) -> NDArray:
-    """Resposta analítica: 2 na banda positiva ``[lo, hi)`` (fração de fs), 0 fora.
+    """Analytic response: 2 in the positive band ``[lo, hi)`` (fraction of fs), 0 outside.
 
-    Bordas em cosseno levantado de largura ``transition·(hi - lo)``, centradas nas bordas
-    nominais; ``transition = 0`` dá a máscara ideal do `snq_recon.bandpass_analytic`.
+    Raised-cosine edges of width ``transition·(hi - lo)``, centered on the nominal
+    edges; ``transition = 0`` gives the ideal mask of `snq_recon.bandpass_analytic`.
     """
     if transition <= 0.0:
         return 2.0 * ((f_frac >= lo) & (f_frac < hi)).astype(np.float64)
@@ -213,24 +215,24 @@ def _band_response(f_frac: NDArray[np.float64], lo: float, hi: float, transition
         return 0.5 - 0.5 * np.cos(np.pi * s)
 
     resp = ramp((f_frac - lo) / t + 0.5) * ramp((hi - f_frac) / t + 0.5)
-    resp[f_frac >= 0.5] = 0.0  # frequências negativas: nada, o sinal é analítico
+    resp[f_frac >= 0.5] = 0.0  # negative frequencies: nothing, the signal is analytic
     return 2.0 * resp
 
 
 class ComplexFilterBank(nn.Module):
-    """``C`` canais × ``R`` deslocamentos de resposta complexa livre.
+    """``C`` channels × ``R`` shifts of free complex response.
 
-    Cada resposta é dada em ``n_control`` pontos sobre ``[0, fs)`` (circular) e interpolada
-    linearmente até os bins da FFT do sinal. Deslocamento ``r`` combina ``Z(f - r·fs/L)``.
+    Each response is given at ``n_control`` points over ``[0, fs)`` (circular) and interpolated
+    linearly to the FFT bins of the signal. Shift ``r`` combines ``Z(f - r·fs/L)``.
     """
 
     def __init__(self, n_channels: int, shifts: Sequence[int], n_control: int) -> None:
         super().__init__()
         self.shifts = tuple(int(s) for s in shifts)
         if 0 not in self.shifts:
-            raise ValueError("o deslocamento 0 precisa estar no banco")
+            raise ValueError("shift 0 must be in the bank")
         if len(set(self.shifts)) != len(self.shifts):
-            raise ValueError("deslocamentos repetidos")
+            raise ValueError("repeated shifts")
         self.n_control = int(n_control)
         self.control = nn.Parameter(
             torch.zeros(int(n_channels), len(self.shifts), self.n_control, 2)
@@ -241,9 +243,9 @@ class ComplexFilterBank(nn.Module):
         return int(self.control.shape[0])
 
     def init_bands(self, bands_frac: Sequence[tuple[float, float]], transition_frac: float) -> None:
-        """Canal ``c`` passa a banda ``bands_frac[c]`` (fração de fs) no deslocamento 0."""
+        """Channel ``c`` passes the band ``bands_frac[c]`` (fraction of fs) at shift 0."""
         if len(bands_frac) != self.n_channels:
-            raise ValueError(f"{len(bands_frac)} bandas para {self.n_channels} canais")
+            raise ValueError(f"{len(bands_frac)} bands for {self.n_channels} channels")
         f = np.arange(self.n_control) / self.n_control
         ctrl = torch.zeros_like(self.control)
         r0 = self.shifts.index(0)
@@ -261,16 +263,16 @@ class ComplexFilterBank(nn.Module):
         return i0, i1, a
 
     def responses(self, n_bins: int) -> torch.Tensor:
-        """``(C, R, n_bins)`` complexo: as respostas interpoladas nos bins de uma FFT."""
+        """``(C, R, n_bins)`` complex: the responses interpolated at the bins of an FFT."""
         i0, i1, a = self._interp(n_bins, self.control.device)
         ctrl = torch.view_as_complex(self.control)
         return ctrl[..., i0] * (1.0 - a) + ctrl[..., i1] * a
 
     def forward(self, spectrum: torch.Tensor, period_ticks: int) -> torch.Tensor:
-        """``spectrum`` ``(B, N)`` complexo (FFT cheia de ``z``) → ``(B, C, N)`` complexo."""
+        """``spectrum`` ``(B, N)`` complex (full FFT of ``z``) → ``(B, C, N)`` complex."""
         n = spectrum.shape[-1]
         if any(self.shifts) and n % int(period_ticks):
-            raise ValueError(f"N={n} precisa ser multiplo de L={period_ticks} para deslocar")
+            raise ValueError(f"N={n} must be a multiple of L={period_ticks} to shift")
         i0, i1, a = self._interp(n, spectrum.device)
         ctrl = torch.view_as_complex(self.control)
         out: torch.Tensor | None = None
@@ -288,14 +290,14 @@ class ComplexFilterBank(nn.Module):
 
 
 # ----------------------------------------------------------------------
-# decodificador
+# decoder
 # ----------------------------------------------------------------------
 def _inv_softplus(y: float) -> float:
     return float(y + math.log(-math.expm1(-y)))
 
 
 class OrderDecoder(nn.Module):
-    """Banco de filtros → envelope → ordem → logits por bin de ordem (ver docstring do módulo)."""
+    """Filter bank → envelope → order → logits per order bin (see the module docstring)."""
 
     def __init__(
         self,
@@ -315,9 +317,9 @@ class OrderDecoder(nn.Module):
     ) -> None:
         super().__init__()
         if envelope_power not in (1, 2):
-            raise ValueError("envelope_power precisa ser 1 (|y|) ou 2 (|y|^2)")
+            raise ValueError("envelope_power must be 1 (|y|) or 2 (|y|^2)")
         if selection not in ("sk", "static"):
-            raise ValueError(f"selecao desconhecida: {selection}")
+            raise ValueError(f"unknown selection: {selection}")
         self.fs_hz = float(fs_hz)
         self.fs_env_hz = float(fs_env_hz)
         self.axis = axis
@@ -333,15 +335,15 @@ class OrderDecoder(nn.Module):
         self.register_buffer("orders", torch.from_numpy(axis.orders.astype(np.float32)))
 
     def n_env(self, n_samples: int) -> int:
-        """Amostras do envelope de taxa reduzida para uma janela de ``n_samples``."""
+        """Samples of the reduced-rate envelope for a window of ``n_samples``."""
         return max(2, int(round(n_samples * self.fs_env_hz / self.fs_hz)))
 
     def spectra(self, z: torch.Tensor, plan: AngularPlan) -> tuple[torch.Tensor, torch.Tensor]:
-        """Espectros de ordem por canal ``(B, C, n_bins)`` e a curtose espectral ``(B, C)``."""
+        """Order spectra per channel ``(B, C, n_bins)`` and the spectral kurtosis ``(B, C)``."""
         b, n = z.shape
         n_env = self.n_env(n)
         if plan.n_env != n_env:
-            raise ValueError(f"plano feito para n_env={plan.n_env}, decodificador usa {n_env}")
+            raise ValueError(f"plan made for n_env={plan.n_env}, decoder uses {n_env}")
         y = torch.fft.ifft(self.bank(torch.fft.fft(z), self.period_ticks))
         p2 = y.real**2 + y.imag**2
         g0 = int(n * self.sk_guard_frac)
@@ -375,15 +377,15 @@ class OrderDecoder(nn.Module):
         return logits, {"weights": weights, "sk": sk}
 
     def estimate(self, logits: torch.Tensor) -> NDArray[np.float64]:
-        """Ordem do maior logit em ``[order_min, order_max]``: o ``estimate_without_prior``."""
+        """Order of the top logit in ``[order_min, order_max]``: the ``estimate_without_prior``."""
         return self.orders[logits.argmax(dim=-1)].detach().cpu().numpy().astype(np.float64)
 
 
 class SampledOrderModel(nn.Module):
-    """Máscara + decodificador.
+    """Mask + decoder.
 
-    A escala vem do RMS das amostras **adquiridas**, não da taxa cheia: o nó não conhece o
-    sinal que não converteu.
+    The scale comes from the RMS of the **acquired** samples, not from the full rate: the node
+    does not know the signal it did not convert.
     """
 
     def __init__(self, sampler: nn.Module, decoder: OrderDecoder) -> None:
@@ -408,12 +410,12 @@ class SampledOrderModel(nn.Module):
 
 
 def soft_order_target(orders: torch.Tensor, truth: torch.Tensor, sigma: float) -> torch.Tensor:
-    """Alvo suave: gaussiana de desvio ``sigma`` na ordem verdadeira, normalizada por linha."""
+    """Soft target: Gaussian with standard deviation ``sigma`` at the true order, row-normalized."""
     d = orders.unsqueeze(0) - truth.unsqueeze(1)
     q = torch.exp(-0.5 * (d / float(sigma)) ** 2)
     return q / q.sum(-1, keepdim=True).clamp_min(1e-20)
 
 
 def order_cross_entropy(logits: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
-    """Entropia cruzada com alvo suave, média no lote."""
+    """Cross-entropy with a soft target, averaged over the batch."""
     return -(target * torch.log_softmax(logits, dim=-1)).sum(-1).mean()

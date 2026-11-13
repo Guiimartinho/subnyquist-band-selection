@@ -1,20 +1,20 @@
-"""Atribuição medição vs. prior — a métrica que separa recuperação de alucinação.
+"""Measurement vs. prior attribution — the metric that separates recovery from hallucination.
 
-Regra do projeto: **toda reconstrução reporta esta decomposição**. Um resultado
-bonito sem ela é alucinação com boa aparência.
+Project rule: **every reconstruction reports this decomposition**. A pretty result
+without it is good-looking hallucination.
 
-Dado um operador de aquisição linear ``A`` e uma estimativa ``x_hat``, decompõe::
+Given a linear acquisition operator ``A`` and an estimate ``x_hat``, it decomposes::
 
-    x_hat = A⁺A·x_hat        (espaço-imagem: determinado pelos dados)
-          + (I - A⁺A)·x_hat  (núcleo: escolhido pelo prior, não medido)
+    x_hat = A⁺A·x_hat        (range space: determined by the data)
+          + (I - A⁺A)·x_hat  (null space: chosen by the prior, not measured)
 
-A componente no núcleo é invisível às observações: qualquer valor ali produz
-exatamente os mesmos dados. Ela pode ser plausível, útil e correta — mas **não é
-medida**, e reportá-la como recuperação é erro metodológico.
+The null-space component is invisible to the observations: any value there produces
+exactly the same data. It can be plausible, useful and correct — but it is **not
+measured**, and reporting it as recovery is a methodological error.
 
-Base conceitual: decomposição range/null-space, usada em reconstrução com prior
-aprendido (deep null-space learning; DDNM). Aqui ela é usada como *auditoria*, e
-não como método de reconstrução.
+Conceptual basis: range/null-space decomposition, used in reconstruction with a
+learned prior (deep null-space learning; DDNM). Here it is used as an *audit*, and
+not as a reconstruction method.
 """
 
 from __future__ import annotations
@@ -27,26 +27,27 @@ from numpy.typing import NDArray
 
 @dataclass(frozen=True)
 class Attribution:
-    """Resultado da auditoria de uma reconstrução."""
+    """Result of the audit of a reconstruction."""
 
     measured_energy: float
-    """Energia de ``x_hat`` no espaço-imagem de ``Aᴴ`` — vem dos dados."""
+    """Energy of ``x_hat`` in the range space of ``Aᴴ`` — comes from the data."""
 
     prior_energy: float
-    """Energia de ``x_hat`` no núcleo de ``A`` — vem do prior."""
+    """Energy of ``x_hat`` in the null space of ``A`` — comes from the prior."""
 
     data_consistency: float
-    """``||A·x_hat - y|| / ||y||``. Grande = a reconstrução nem reproduz o medido."""
+    """``||A·x_hat - y|| / ||y||``. Large = the reconstruction does not even reproduce
+    what was measured."""
 
     rank: int
     n_unknowns: int
 
     @property
     def measured_fraction(self) -> float:
-        """Fração da energia da estimativa que é efetivamente medida, em [0, 1].
+        """Fraction of the estimate's energy that is actually measured, in [0, 1].
 
-        É o número que vai no paper. Perto de 1: recuperação. Perto de 0: o prior
-        escreveu quase tudo.
+        It is the number that goes into the paper. Close to 1: recovery. Close to 0:
+        the prior wrote almost everything.
         """
         total = self.measured_energy + self.prior_energy
         return float(self.measured_energy / total) if total > 0.0 else 0.0
@@ -57,10 +58,10 @@ class Attribution:
 
     def summary(self) -> str:
         return (
-            f"medido {100 * self.measured_fraction:.1f}% | "
+            f"measured {100 * self.measured_fraction:.1f}% | "
             f"prior {100 * self.null_fraction:.1f}% | "
-            f"consistencia {self.data_consistency:.2e} | "
-            f"posto {self.rank}/{self.n_unknowns}"
+            f"consistency {self.data_consistency:.2e} | "
+            f"rank {self.rank}/{self.n_unknowns}"
         )
 
 
@@ -70,33 +71,33 @@ def attribute(
     y: NDArray[np.complex128] | NDArray[np.float64],
     rcond: float = 1e-10,
 ) -> Attribution:
-    """Decompõe ``x_hat`` em componente medida e componente vinda do prior.
+    """Decomposes ``x_hat`` into a measured component and a component coming from the prior.
 
-    ``a``     operador de aquisição, forma ``(n_obs, n_unknowns)``
-    ``x_hat`` estimativa, forma ``(n_unknowns,)``
-    ``y``     observações, forma ``(n_obs,)``
+    ``a``     acquisition operator, shape ``(n_obs, n_unknowns)``
+    ``x_hat`` estimate, shape ``(n_unknowns,)``
+    ``y``     observations, shape ``(n_obs,)``
 
-    O projetor no espaço-imagem é construído da SVD, e não de ``pinv(a) @ a``,
-    para que ``rcond`` controle explicitamente o que conta como direção medida.
-    Direções com valor singular abaixo do corte são tratadas como núcleo: elas
-    são formalmente medidas, mas com amplificação de ruído que as torna inúteis
-    sob 12 bits.
+    The projector onto the range space is built from the SVD, and not from
+    ``pinv(a) @ a``, so that ``rcond`` explicitly controls what counts as a measured
+    direction. Directions with a singular value below the cutoff are treated as null
+    space: they are formally measured, but with a noise amplification that makes them
+    useless under 12 bits.
     """
     op = np.atleast_2d(np.asarray(a))
     xh = np.asarray(x_hat).ravel()
     obs = np.asarray(y).ravel()
 
     if op.shape[1] != xh.size:
-        raise ValueError(f"a tem {op.shape[1]} colunas mas x_hat tem {xh.size} elementos")
+        raise ValueError(f"a has {op.shape[1]} columns but x_hat has {xh.size} elements")
     if op.shape[0] != obs.size:
-        raise ValueError(f"a tem {op.shape[0]} linhas mas y tem {obs.size} elementos")
+        raise ValueError(f"a has {op.shape[0]} rows but y has {obs.size} elements")
 
     _, s, vh = np.linalg.svd(op, full_matrices=False)
     cutoff = rcond * (s[0] if s.size else 0.0)
     keep = s > cutoff
     rank = int(np.count_nonzero(keep))
 
-    v_meas = vh[keep].conj().T  # base ortonormal do espaco-imagem de A^H
+    v_meas = vh[keep].conj().T  # orthonormal basis of the range space of A^H
     coeffs = v_meas.conj().T @ xh
     measured = float(np.real(np.vdot(coeffs, coeffs)))
     total = float(np.real(np.vdot(xh, xh)))
@@ -121,21 +122,21 @@ def hf_recovery_ratio(
     fs_hz: float,
     f_cut_hz: float,
 ) -> float:
-    """Energia recuperada acima de ``f_cut_hz`` sobre a energia verdadeira ali.
+    """Energy recovered above ``f_cut_hz`` over the true energy there.
 
-    Métrica espectral pedida no escopo original. Use **junto** com `attribute`:
-    sozinha ela não distingue energia recuperada de energia inventada que por
-    acaso caiu na banda certa.
+    Spectral metric requested in the original scope. Use it **together** with
+    `attribute`: on its own it does not distinguish recovered energy from invented
+    energy that happened to fall in the right band.
     """
     x_hat = np.asarray(x_hat, dtype=float).ravel()
     x_true = np.asarray(x_true, dtype=float).ravel()
     if x_hat.size != x_true.size:
-        raise ValueError("x_hat e x_true precisam ter o mesmo tamanho")
+        raise ValueError("x_hat and x_true must have the same size")
 
     freqs = np.fft.rfftfreq(x_true.size, d=1.0 / fs_hz)
     band = freqs >= f_cut_hz
     e_true = float(np.sum(np.abs(np.fft.rfft(x_true)[band]) ** 2))
     if e_true <= 0.0:
-        raise ValueError("nao ha energia acima de f_cut_hz no sinal verdadeiro")
+        raise ValueError("there is no energy above f_cut_hz in the true signal")
     e_hat = float(np.sum(np.abs(np.fft.rfft(x_hat)[band]) ** 2))
     return e_hat / e_true

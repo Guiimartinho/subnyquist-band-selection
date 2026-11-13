@@ -1,8 +1,8 @@
-"""Modelo de energia: a decomposição fecha, escala como deve, e sabe dizer 'não sei'.
+"""Energy model: the breakdown adds up, scales as it should, and can say 'I don't know'.
 
-O terceiro grupo é o que mais importa. Um coeficiente ausente tratado como zero
-produz um µJ por diagnóstico apresentável e falso, e é a forma mais fácil de a
-métrica de sistema do projeto virar ficção.
+The third group is the one that matters most. A missing coefficient treated as zero
+produces a presentable and false µJ per diagnosis, and it is the easiest way for the
+project's system metric to turn into fiction.
 """
 
 import math
@@ -10,10 +10,10 @@ import math
 import pytest
 from snq_embed import energy as E
 
-# Coeficientes fictícios, usados SÓ para exercitar a álgebra do modelo. Nenhum
-# deles é do nRF54L15 - a plataforma real está em datasheet_overview_parameters()
-# e tem todos os campos de energia desconhecidos.
-FICTICIOUS_SOURCE = "valor ficticio de teste; nao e do nRF54L15"
+# Fictitious coefficients, used ONLY to exercise the algebra of the model. None of
+# them is from the nRF54L15 - the real platform is in datasheet_overview_parameters()
+# and has all of its energy fields unknown.
+FICTICIOUS_SOURCE = "fictitious test value; not from the nRF54L15"
 
 
 def complete_params(**over) -> E.PlatformParameters:
@@ -35,7 +35,7 @@ def complete_params(**over) -> E.PlatformParameters:
 
 
 # ---------------------------------------------------------------------------
-# a decomposicao soma o total
+# the breakdown adds up to the total
 # ---------------------------------------------------------------------------
 def test_o_total_e_exatamente_a_soma_das_tres_parcelas():
     w = E.workload(fs_hz=25_000.0, window_s=2.5, payload_bytes=32)
@@ -60,7 +60,7 @@ def test_a_parcela_dominante_e_a_de_maior_valor():
 
 
 # ---------------------------------------------------------------------------
-# monotonicidade em numero de amostras
+# monotonicity in the number of samples
 # ---------------------------------------------------------------------------
 def test_aquisicao_cresce_com_o_numero_de_conversoes():
     p = complete_params()
@@ -83,10 +83,10 @@ def test_processamento_cresce_com_o_tamanho_da_fft():
 
 
 def test_radio_com_payload_fixo_nao_depende_da_taxa():
-    """É a assimetria de onde sai a hipótese do E06.
+    """This is the asymmetry the E06 hypothesis comes from.
 
-    Com payload de features, a parcela de rádio é constante enquanto a de aquisição
-    cai com a taxa. Sem essa assimetria não existe cruzamento nenhum.
+    With a features payload, the radio part is constant while the acquisition part
+    falls with the rate. Without this asymmetry there is no crossover at all.
     """
     p = complete_params()
     values = {
@@ -99,7 +99,7 @@ def test_radio_com_payload_fixo_nao_depende_da_taxa():
 
 
 def test_a_razao_de_troca_e_conhecida_por_contagem():
-    """O ponto de cruzamento se enuncia sem nenhum coeficiente de plataforma."""
+    """The crossover point can be stated without any platform coefficient."""
     w = E.workload(fs_hz=200_000.0, window_s=2.5, payload_bytes=32)
     assert w.n_conversions == 500_000
     assert w.conversions_per_payload_byte == pytest.approx(500_000 / 32)
@@ -107,14 +107,15 @@ def test_a_razao_de_troca_e_conhecida_por_contagem():
 
 
 # ---------------------------------------------------------------------------
-# o limiar publicado tem de ser o que o modelo calcula
+# the published threshold has to be what the model computes
 # ---------------------------------------------------------------------------
 def test_o_limiar_de_r_incorpora_o_termo_de_repouso_que_a_aquisicao_soma():
-    """``R > A`` não é o critério: a aquisição soma repouso, e o limiar sobe com ele.
+    """``R > A`` is not the criterion: acquisition includes idle, and the threshold rises with it.
 
-    Com ``R`` posto exatamente em ``A``, a parcela de rádio empata com as conversões
-    e **perde** para a aquisição inteira, porque sobra o repouso. É a divergência
-    entre o critério publicado e o modelo, exercitada numericamente.
+    With ``R`` set exactly at ``A``, the radio part ties with the conversions and
+    **loses** to the whole acquisition, because the idle energy is left over. It is
+    the divergence between the published criterion and the model, exercised
+    numerically.
     """
     w = E.workload(fs_hz=200_000.0, window_s=2.5, payload_bytes=32)
     a = w.conversions_per_payload_byte
@@ -126,7 +127,7 @@ def test_o_limiar_de_r_incorpora_o_termo_de_repouso_que_a_aquisicao_soma():
     t = E.dominance_thresholds(w, p)
     assert t.radio_over_acquisition_min == pytest.approx(a)
     assert t.radio_over_acquisition_exact > a
-    # com R exatamente no limiar exato, o empate acontece
+    # with R exactly at the exact threshold, the tie happens
     no_limiar = complete_params(
         energy_per_conversion_uj=1.0,
         energy_per_ble_byte_uj=t.radio_over_acquisition_exact,
@@ -150,17 +151,17 @@ def test_s_e_o_deslocamento_do_limiar_e_sai_desconhecido_na_plataforma_real():
     real = E.dominance_thresholds(w, E.datasheet_overview_parameters())
     assert real.idle_conversions_equivalent is None
     assert real.radio_over_acquisition_exact is None
-    # a contagem sobrevive: os dois limiares contados continuam conhecidos
+    # counting survives: the two counted thresholds remain known
     assert real.radio_over_acquisition_min == pytest.approx(500_000 / 32)
     assert real.radio_over_processing == pytest.approx(w.n_butterflies / 32)
 
 
 def test_dominar_e_vencer_as_duas_outras_parcelas_nao_so_a_aquisicao():
-    """Com ``R`` acima do limiar de aquisição o rádio ainda pode perder para a FFT.
+    """With ``R`` above the acquisition threshold the radio can still lose to the FFT.
 
-    É o defeito de comparar duas parcelas de três: ``cycles_per_butterfly`` é
-    desconhecido, e um valor alto o bastante põe o processamento no topo em
-    qualquer ponto da varredura.
+    This is the flaw of comparing two parts out of three: ``cycles_per_butterfly`` is
+    unknown, and a high enough value puts processing on top at any point of the
+    sweep.
     """
     w = E.workload(fs_hz=200_000.0, window_s=2.5, payload_bytes=32)
     t = E.dominance_thresholds(w, complete_params())
@@ -173,18 +174,18 @@ def test_dominar_e_vencer_as_duas_outras_parcelas_nao_so_a_aquisicao():
     assert b.radio_uj > b.acquisition_uj
     assert b.dominant_part() == "processing_uj"
 
-    # Q abaixo de B e exatamente o que descreve essa derrota.
+    # Q below B is exactly what describes this defeat.
     q = p.energy_per_ble_byte_uj / E.energy_per_butterfly_uj(p)
     assert q < t.radio_over_processing
 
 
 def test_no_braco_raw_o_limiar_de_processamento_nao_e_constante():
-    """Refuta a afirmação de que no braço ``raw`` nada pode cruzar.
+    """Refutes the claim that nothing can cross over in the ``raw`` arm.
 
-    ``A`` é 0,5 em todos os fatores porque ``payload = 2·n_conversions``. ``B`` não:
-    ``n_butterflies`` acompanha a FFT, que é a potência de dois abaixo da contagem, e
-    a razão anda entre os fatores — inclusive não monotonicamente, porque o tamanho
-    da FFT salta em degraus. Logo a parcela dominante pode mudar dentro do braço.
+    ``A`` is 0.5 at every factor because ``payload = 2·n_conversions``. ``B`` is not:
+    ``n_butterflies`` follows the FFT, which is the power of two below the count, and
+    the ratio moves across the factors — even non-monotonically, because the FFT size
+    jumps in steps. So the dominant part can change within the arm.
     """
     b_por_fator = {}
     for factor in (1, 2, 4, 8, 16, 24, 32, 48, 64):
@@ -194,15 +195,15 @@ def test_no_braco_raw_o_limiar_de_processamento_nao_e_constante():
         b_por_fator[factor] = w.butterflies_per_payload_byte
 
     assert len(set(round(v, 6) for v in b_por_fator.values())) > 1
-    assert b_por_fator[24] > b_por_fator[16]  # nao monotono: a FFT salta em degraus
+    assert b_por_fator[24] > b_por_fator[16]  # not monotonic: the FFT jumps in steps
     assert min(b_por_fator.values()) < 0.7 * max(b_por_fator.values())
 
 
 def test_no_braco_raw_o_termo_de_repouso_tambem_move_o_limiar_de_r():
-    """Mesmo a comparação rádio × aquisição não é constante no braço ``raw``.
+    """Even the radio × acquisition comparison is not constant in the ``raw`` arm.
 
-    ``S/payload_bytes`` cresce quando o payload encolhe, e no braço ``raw`` ele
-    encolhe junto com a taxa.
+    ``S/payload_bytes`` grows when the payload shrinks, and in the ``raw`` arm the
+    payload shrinks along with the rate.
     """
     p = complete_params()
     exato = {}
@@ -214,7 +215,7 @@ def test_no_braco_raw_o_termo_de_repouso_tambem_move_o_limiar_de_r():
 
 
 # ---------------------------------------------------------------------------
-# desconhecido propaga como desconhecido, nunca como zero
+# unknown propagates as unknown, never as zero
 # ---------------------------------------------------------------------------
 def test_coeficiente_ausente_propaga_para_a_parcela_e_para_o_total():
     w = E.workload(fs_hz=25_000.0, window_s=2.5, payload_bytes=32)
@@ -226,13 +227,13 @@ def test_coeficiente_ausente_propaga_para_a_parcela_e_para_o_total():
 
 
 def test_parcela_desconhecida_nao_vira_zero_silencioso():
-    """O total com uma parcela ausente não pode ser a soma das outras duas.
+    """The total with one part missing cannot be the sum of the other two.
 
-    A asserção que existia aqui era ``b.total_uj is not piso``, que é vacuamente
-    verdadeira: ``None`` nunca é o mesmo objeto que um float, então ela passava sem
-    exercitar nada. O que precisa ser verificado é que **nenhuma via pública** do
-    modelo devolve o piso silencioso no lugar do total, e que o total verdadeiro é
-    estritamente maior que ele.
+    The assertion that used to be here was ``b.total_uj is not piso``, which is
+    vacuously true: ``None`` is never the same object as a float, so it passed
+    without exercising anything. What needs to be checked is that **no public path**
+    of the model returns the silent floor in place of the total, and that the true
+    total is strictly greater than it.
     """
     w = E.workload(fs_hz=25_000.0, window_s=2.5, payload_bytes=32)
     b = E.diagnosis_energy_uj(w, complete_params(energy_per_ble_byte_uj=None))
@@ -249,7 +250,7 @@ def test_parcela_desconhecida_nao_vira_zero_silencioso():
 
 
 def test_tensao_ausente_derruba_processamento_e_aquisicao_juntos():
-    """A tensão entra nas duas parcelas; ausência dela não pode sobrar em uma só."""
+    """Voltage enters both parts; its absence cannot affect only one of them."""
     w = E.workload(fs_hz=25_000.0, window_s=2.5, payload_bytes=32)
     b = E.diagnosis_energy_uj(w, complete_params(supply_voltage_v=None))
     assert b.acquisition_uj is None
@@ -259,7 +260,7 @@ def test_tensao_ausente_derruba_processamento_e_aquisicao_juntos():
 
 
 def test_a_plataforma_real_declara_todos_os_campos_de_energia_como_desconhecidos():
-    """Estado real da evidência no repositório, e o modelo tem de rodar assim."""
+    """Actual state of the evidence in the repository, and the model has to run like this."""
     p = E.datasheet_overview_parameters()
     unknown = p.unknown_parameters()
     for name in (
@@ -280,7 +281,7 @@ def test_a_plataforma_real_declara_todos_os_campos_de_energia_como_desconhecidos
 
 
 def test_procedencia_e_obrigatoria_em_todo_campo():
-    with pytest.raises(ValueError, match="procedencia ausente"):
+    with pytest.raises(ValueError, match="missing provenance"):
         E.PlatformParameters(
             energy_per_conversion_uj=1.0,
             current_active_ma=None,
@@ -293,12 +294,12 @@ def test_procedencia_e_obrigatoria_em_todo_campo():
             supply_voltage_min_v=None,
             supply_voltage_max_v=None,
             ram_bytes=None,
-            sources={"energy_per_conversion_uj": "fonte"},
+            sources={"energy_per_conversion_uj": "source"},
         )
 
 
 # ---------------------------------------------------------------------------
-# eixo bits x taxa
+# bits x rate axis
 # ---------------------------------------------------------------------------
 @pytest.mark.parametrize(
     ("fs_hz", "n_bits"),
@@ -320,13 +321,13 @@ def test_todo_ponto_de_operacao_carrega_procedencia():
 
 
 # ---------------------------------------------------------------------------
-# guardas de contagem
+# counting guards
 # ---------------------------------------------------------------------------
 def test_fft_maior_que_a_janela_e_recusada():
-    with pytest.raises(ValueError, match="maior que"):
+    with pytest.raises(ValueError, match="larger than"):
         E.workload(fs_hz=1_000.0, window_s=1.0, payload_bytes=8, fft_size=2048)
 
 
 def test_taxa_ou_janela_nao_positiva_e_recusada():
-    with pytest.raises(ValueError, match="positivos"):
+    with pytest.raises(ValueError, match="positive"):
         E.workload(fs_hz=0.0, window_s=1.0, payload_bytes=8)

@@ -1,5 +1,5 @@
-"""Piloto exploratório do E25 (2026-11-12, NÃO pré-registrado): co-arranjo coprimo contra a
-decimação uniforme, no CWRU 48k com o interferente impulsivo do E23. Ver o README.
+"""Exploratory pilot of E25 (2026-11-12, NOT pre-registered): co-prime co-array against
+uniform decimation, on CWRU 48k with the impulsive interferer of E23. See the README.
 
     uv run python experiments/E25-coprime-coarray/pilot.py [--workers N]
 """
@@ -27,15 +27,15 @@ _spec = importlib.util.spec_from_file_location("e23run", E23 / "run.py")
 e23 = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(e23)
 
-PATTERNS = {  # nome -> (padrão, passo, segundo passo)
+PATTERNS = {  # name -> (pattern, step, second step)
     "taxa_cheia": ("full", 1, None),
     "uniforme_4": ("uniform", 4, None),
     "coprimo_8_9": ("coprime", 8, 9),
 }
 CARRIERS_HZ = [13000.0, 16000.0, 19000.0, 22000.0]
-REL_DB = 20.0  # rótulo do E23; a dose real é 3 dB menor (README do E23)
+REL_DB = 20.0  # E23 label; the real dose is 3 dB lower (E23 README)
 MAX_LAG = 192
-F_MIN_HZ, F_MAX_HZ = 20.0, 330.0  # coprimo (8, 9): o produto de cada atraso sai a fs/72 -> 333 Hz
+F_MIN_HZ, F_MAX_HZ = 20.0, 330.0  # co-prime (8, 9): each lag's product comes at fs/72 -> 333 Hz
 TOL_HZ = 2.0
 
 
@@ -65,7 +65,7 @@ def run_record(task) -> list[dict]:
     h = x.size // 2
     xc, xt = x[:h], x[h:]
     truth = float(e23.fault_frequencies_hz(e23.GEOM, rec.shaft_hz)[fault])
-    k_cal = e23.kurtogram(xc, fs, e23.ceiling_at(fs, cfg), cfg)  # comissionamento, sem injeção
+    k_cal = e23.kurtogram(xc, fs, e23.ceiling_at(fs, cfg), cfg)  # commissioning, no injection
     band = (float(k_cal.f_lo_hz), float(k_cal.f_hi_hz))
     p_ref = e23.band_power(xc, fs, *band)
     seed_rec = int(hashlib.sha256(f"{number}{point}".encode()).hexdigest()[:8], 16)
@@ -74,7 +74,7 @@ def run_record(task) -> list[dict]:
     for fc in [None, *CARRIERS_HZ]:
         if fc is None:
             xtest = xt
-        else:  # o mesmo sinal de teste do E23 (semente e dose)
+        else:  # the same test signal as E23 (seed and dose)
             amp = math.sqrt(p_ref * 10.0 ** (REL_DB / 10.0))
             parts = [int(cfg["seed"]), seed_rec, int(round(fc))]
             xtest = xt + amp * e23.interferer(xt.size, fs, "impulsive", fc, cfg, [*parts, 1])
@@ -102,7 +102,7 @@ def run_record(task) -> list[dict]:
 
 
 def e23_reference(records: set[str]) -> dict[str, float]:
-    """Acerto do kurtograma cego do E23 em 4× (braço uniforme, teto de referência)."""
+    """Accuracy of the E23 blind kurtogram at 4× (uniforme arm, reference ceiling)."""
     hits: dict[str, list[int]] = defaultdict(list)
     with (E23 / "results/metrics.csv").open(encoding="utf-8") as f:
         for r in csv.DictReader(f):

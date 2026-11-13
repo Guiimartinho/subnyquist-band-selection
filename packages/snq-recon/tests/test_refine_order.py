@@ -1,4 +1,4 @@
-"""refine_order devolve o centro do platô de escore, não o primeiro ponto (revisão 2026-11-11)."""
+"""refine_order returns the center of the score plateau, not the first point (review 2026-11-11)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from snq_recon import EnvelopeSpectrum, refine_order, score_fault
 
 
 def line_spectrum(lines: dict[float, float], step: float = 0.0261, top: float = 32.0):
-    """Espectro de ordem sintético: raias exatas na grade de passo ``step`` (1/revoluções)."""
+    """Synthetic order spectrum: exact lines on the grid with step ``step`` (1/revolutions)."""
     f = np.arange(0.0, top, step)
     mag = np.full(f.size, 1e-3)
     for order, amp in lines.items():
@@ -30,13 +30,13 @@ def test_center_of_plateau_not_first_point():
         [score_fault(spec, float(c), n_harmonics=3, tol_hz=tol).harmonic_energy for c in grid]
     )
     first = float(grid[int(np.argmax(scores))])
-    assert first < got  # o primeiro ponto fica abaixo do centro
-    assert abs(got - order) < abs(first - order)  # e o centro fica mais perto da raia
-    assert abs(got - order) <= 0.005  # a menos de um passo da grade
+    assert first < got  # the first point lies below the center
+    assert abs(got - order) < abs(first - order)  # and the center is closer to the line
+    assert abs(got - order) <= 0.005  # within one grid step
 
 
 def test_unique_maximum_is_returned_unchanged():
-    # escore com maximo isolado (sem plato): centro == primeiro ponto
+    # score with an isolated maximum (no plateau): center == first point
     spec = line_spectrum({3.40: 1.0}, step=0.001)
     got = refine_order(spec, 3.40, span=0.05, n_harmonics=1, tol=0.0004)
     assert abs(got - 3.40) <= 0.0026
@@ -51,7 +51,7 @@ def test_empty_grid_raises():
 def test_detail_flags_a_plateau_touching_the_grid_edge():
     from snq_recon import refine_order_detail
 
-    # a unica raia esta fora da grade (abaixo de nominal*(1-span)): o maximo cai na borda
+    # the only line is outside the grid (below nominal*(1-span)): the maximum falls on the edge
     spec = line_spectrum({3.0: 1.0}, step=0.0261)
     d = refine_order_detail(spec, 3.573, span=0.12, n_harmonics=1, tol=0.06)
     assert d.at_edge

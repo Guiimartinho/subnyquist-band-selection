@@ -1,13 +1,13 @@
-"""Ingestão do CWRU, com a triagem de Smith & Randall aplicada.
+"""CWRU ingestion, with the Smith & Randall screening applied.
 
-Regra do E02, e a razão de este módulo existir: **medir degradação por subamostragem
-sobre um registro que não é diagnosticável na taxa cheia mede ruído, não degradação.**
-Smith & Randall (MSSP 2015) classificaram cada registro; usar o CWRU sem essa triagem
-produz curva plana que seria lida como falha do método.
+Rule from E02, and the reason this module exists: **measuring undersampling degradation
+on a record that is not diagnosable at the full rate measures noise, not degradation.**
+Smith & Randall (MSSP 2015) classified every record; using CWRU without that screening
+produces a flat curve that would be read as a failure of the method.
 
-Os autores também pedem, explicitamente, que se **reporte número de registro e ponto
-de medição**. Quase nenhum paper de aprendizado sobre CWRU faz isso. Aqui é obrigatório
-por construção: `CwruRecord` carrega os dois.
+The authors also explicitly ask that the **record number and measurement point be
+reported**. Almost no learning paper on CWRU does this. Here it is mandatory
+by construction: `CwruRecord` carries both.
 """
 
 from __future__ import annotations
@@ -34,19 +34,19 @@ _ID_RE = re.compile(r"^(\d+)(DE|FE|BA)?$")
 
 
 def parse_record_id(rid: str | int) -> tuple[int, str | None]:
-    """``"120DE"`` vira ``(120, "DE")``; ``"130"`` vira ``(130, None)``.
+    """``"120DE"`` becomes ``(120, "DE")``; ``"130"`` becomes ``(130, None)``.
 
-    Sem sufixo, a classificação vale para todos os pontos de medição do registro.
+    Without a suffix, the classification applies to all measurement points of the record.
     """
     m = _ID_RE.match(str(rid).strip())
     if not m:
-        raise ValueError(f"identificador de registro inválido: {rid!r}")
+        raise ValueError(f"invalid record identifier: {rid!r}")
     return int(m.group(1)), m.group(2)
 
 
 @dataclass(frozen=True)
 class CwruCatalog:
-    """Triagem carregada de `datasets/catalogs/cwru-smith2015-categories.yaml`."""
+    """Screening loaded from `datasets/catalogs/cwru-smith2015-categories.yaml`."""
 
     raw: dict[str, Any]
 
@@ -56,10 +56,10 @@ class CwruCatalog:
 
     @property
     def human_checked(self) -> bool:
-        """A tabela já foi conferida a olho contra o PDF?
+        """Has the table already been checked by eye against the PDF?
 
-        Extração de tabela multi-coluna de PDF é falível. Enquanto isto for ``False``,
-        `screen` recusa subconjuntos marcados como não confiáveis.
+        Extracting a multi-column table from a PDF is fallible. While this is ``False``,
+        `screen` uses only the subsets listed in `reliable_subsets`.
         """
         return bool(self.raw.get("verification", {}).get("human_checked", False))
 
@@ -79,11 +79,11 @@ class CwruCatalog:
     def screen(
         self, record: int, point: str | None = None, *, require_reliable: bool = True
     ) -> Category:
-        """Categoria do registro: ``classical``, ``undiagnosable`` ou ``other``.
+        """Category of the record: ``classical``, ``undiagnosable`` or ``other``.
 
-        Com ``require_reliable``, subconjuntos ainda não conferidos visualmente são
-        tratados como ``other`` em vez de silenciosamente classificados — é melhor
-        deixar um registro de fora do que classificá-lo errado.
+        With ``require_reliable``, subsets not yet checked visually are
+        treated as ``other`` instead of being silently classified — it is better
+        to leave a record out than to classify it wrongly.
         """
         for table, label in (("undiagnosable", "undiagnosable"), ("classical", "classical")):
             for n, p, subset in self._members(table):
@@ -99,11 +99,11 @@ class CwruCatalog:
         return "other"
 
     def records(self, table: str, subset: str | None = None) -> list[tuple[int, str | None]]:
-        """Registros de uma tabela, opcionalmente restritos a um subconjunto."""
+        """Records of a table, optionally restricted to one subset."""
         return sorted({(n, p) for n, p, s in self._members(table) if subset is None or s == subset})
 
-    # A chave de tipo de falha no catalogo mapeia para a frequencia caracteristica
-    # que a geometria preve. E o elo entre rotulo do dataset e prior fisico.
+    # The fault-type key in the catalog maps to the characteristic frequency that the
+    # geometry predicts. It is the link between the dataset label and the physical prior.
     FAULT_TO_FREQUENCY = {
         "inner_race": "BPFI",
         "ball": "BSF",
@@ -113,9 +113,9 @@ class CwruCatalog:
     }
 
     def fault_of(self, record: int, point: str | None = None) -> tuple[str, str] | None:
-        """Tipo de falha do registro e a frequência característica correspondente.
+        """Fault type of the record and the corresponding characteristic frequency.
 
-        Devolve ``("outer_race_centred", "BPFO")`` ou ``None`` se não catalogado.
+        Returns ``("outer_race_centred", "BPFO")``, or ``None`` if not cataloged.
         """
         for table in ("classical", "undiagnosable"):
             for subset, faults in self.raw.get(table, {}).items():
@@ -129,10 +129,10 @@ class CwruCatalog:
         return None
 
     def selection(self, table: str, subset: str, point: str = "DE") -> list[tuple[int, str, str]]:
-        """Registros de um subconjunto, como ``(número, ponto, frequência esperada)``.
+        """Records of a subset, as ``(number, point, expected frequency)``.
 
-        Inclui os identificadores sem sufixo (que valem para todos os pontos) e os
-        marcados com o ponto pedido. Registros com ceifamento são excluídos.
+        Includes the identifiers without a suffix (which apply to all points) and those
+        marked with the requested point. Records with clipping are excluded.
         """
         out: list[tuple[int, str, str]] = []
         for fault, ids in self.raw.get(table, {}).get(subset, {}).items():
@@ -144,7 +144,7 @@ class CwruCatalog:
         return sorted(set(out))
 
     def is_clipped(self, record: int, point: str | None = None) -> bool:
-        """Registro com ceifamento em trechos — não-linearidade que contamina o espectro."""
+        """Record with clipping in sections — a nonlinearity that contaminates the spectrum."""
         for rid in self.raw.get("clipped_in_sections", []):
             n, p = parse_record_id(rid)
             if n == record and (p is None or point is None or p == point):
@@ -154,7 +154,7 @@ class CwruCatalog:
 
 @dataclass(frozen=True)
 class CwruRecord:
-    """Um registro carregado, sempre carregando a própria procedência."""
+    """A loaded record, always carrying its own provenance."""
 
     number: int
     point: str
@@ -168,7 +168,7 @@ class CwruRecord:
         return self.rpm / 60.0 if self.rpm else None
 
     def cite(self) -> str:
-        """Como reportar no paper, conforme Smith & Randall pedem."""
+        """How to report it in the paper, as Smith & Randall ask."""
         rpm = f", {self.rpm:.0f} rpm" if self.rpm else ""
         return f"CWRU {self.number}{self.point} ({self.fs_hz / 1e3:.0f} kHz{rpm}) [{self.category}]"
 
@@ -176,12 +176,12 @@ class CwruRecord:
 def download_record(
     number: int, dest_dir: str | Path, *, overwrite: bool = False, tries: int = 4
 ) -> Path:
-    """Baixa ``<number>.mat`` do CWRU Bearing Data Center, com retentativa.
+    """Downloads ``<number>.mat`` from the CWRU Bearing Data Center, with retries.
 
-    O servidor corta a conexão no meio de arquivos grandes com alguma frequência
-    (``IncompleteRead``). Sem retentativa, um único registro problemático aborta o
-    experimento inteiro; sem conferir ``Content-Length``, um arquivo truncado seria
-    gravado e só apareceria como erro estranho muito depois.
+    The server fairly often cuts the connection in the middle of large files
+    (``IncompleteRead``). Without retries, a single problematic record aborts the
+    whole experiment; without checking ``Content-Length``, a truncated file would be
+    written and would only show up as a strange error much later.
     """
     dest = Path(dest_dir) / f"{number}.mat"
     if dest.exists() and not overwrite and dest.stat().st_size > 0:
@@ -198,18 +198,18 @@ def download_record(
                 expected = r.headers.get("Content-Length")
                 data = r.read()
             if expected and len(data) != int(expected):
-                raise OSError(f"truncado: {len(data)} de {expected} bytes")
+                raise OSError(f"truncated: {len(data)} of {expected} bytes")
             if not data.startswith(b"MATLAB"):
-                raise OSError("resposta não é um arquivo MAT")
+                raise OSError("response is not a MAT file")
             dest.write_bytes(data)
             return dest
-        # IncompleteRead herda de HTTPException, nao de OSError: sem ela na tupla, o corte
-        # no meio do arquivo escapava da retentativa (servidor remoto, 2026-11-11).
+        # IncompleteRead inherits from HTTPException, not from OSError: without it in the
+        # tuple, a cut in the middle of the file escaped the retry (remote server, 2026-11-11).
         except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
             last = exc
             if attempt < tries - 1:
                 time.sleep(2.0 * (attempt + 1))
-    raise OSError(f"registro {number}: falhou em {tries} tentativas ({last})")
+    raise OSError(f"record {number}: failed after {tries} attempts ({last})")
 
 
 def load_record(
@@ -219,9 +219,9 @@ def load_record(
     catalog: CwruCatalog | None = None,
     fs_hz: float = 12_000.0,
 ) -> CwruRecord:
-    """Carrega um registro do ``.mat``, escolhendo o canal do ponto de medição.
+    """Loads a record from the ``.mat``, choosing the channel of the measurement point.
 
-    As chaves do CWRU seguem o padrão ``X<num>_<PONTO>_time``, com ``RPM`` à parte.
+    The CWRU keys follow the pattern ``X<num>_<POINT>_time``, with ``RPM`` separate.
     """
     from scipy.io import loadmat
 
@@ -229,7 +229,7 @@ def load_record(
     suffix = {"DE": "DE_time", "FE": "FE_time", "BA": "BA_time"}[point]
     keys = [k for k in mat if k.endswith(suffix)]
     if not keys:
-        raise KeyError(f"registro {number} não tem canal {point}; disponíveis: {sorted(mat)}")
+        raise KeyError(f"record {number} has no {point} channel; available: {sorted(mat)}")
 
     rpm_keys = [k for k in mat if k.endswith("RPM")]
     rpm = float(np.ravel(mat[rpm_keys[0]])[0]) if rpm_keys else None

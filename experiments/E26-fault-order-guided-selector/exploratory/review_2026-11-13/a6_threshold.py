@@ -1,13 +1,13 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
 from common import *
 
 print(
-    "== Sensibilidade ao percentil do limiar dos saos (LOO nos saos): bal / espec ; H1 = mediana_guiado - kurtograma =="
+    "== Sensitivity to the percentile of the healthy threshold (LOO on the healthy): bal / spec ; H1 = mediana_guiado - kurtograma =="
 )
 base = acc_table(lambda r, sel: pred_blind(r))
 for q in (90, 95, 97.5, 99, 100):
@@ -22,7 +22,7 @@ for q in (90, 95, 97.5, 99, 100):
             f"{f}x {balanced(A[('mediana_guiado', f)]):4.1f}/{balanced(A[('mediana_guiado', f)], races=('H',)):5.1f} H1={o:+5.1f}"
         )
     print(f"  p{q:<5} " + " | ".join(s))
-print("\n== Especificidade pooled com IC (t, 5 gl, sobre os 6 saos), p95 ==")
+print("\n== Pooled specificity with CI (t, 5 df, over the 6 healthy), p95 ==")
 tau = thresholds(95)
 A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
 t5 = 2.5706
@@ -34,7 +34,7 @@ for arm in ("guiado", "mediana_guiado"):
         s.append(f"{f}x {m:4.1f} [{m - t5 * se:4.1f}, {m + t5 * se:5.1f}] min={v.min():4.1f}")
     print(f"  {arm:15s} " + " | ".join(s))
 print(
-    "\n== Limiares dos saos por fator (p95) e escore mediano dos danificados no candidato certo =="
+    "\n== Healthy thresholds per factor (p95) and median score of the damaged on the right candidate =="
 )
 for cl in ("bruto", "mediana3"):
     s = []

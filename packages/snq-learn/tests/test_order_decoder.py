@@ -1,7 +1,7 @@
-"""Decodificador desdobrado do E15: ordem sintética, gradiente e consistência interna.
+"""Unrolled decoder of E15: synthetic order, gradient and internal consistency.
 
-A concordância com `snq_recon.envelope_order_spectrum` fica nos testes do E15, porque este
-pacote não importa snq-recon (regra de dependência do CLAUDE.md).
+Agreement with `snq_recon.envelope_order_spectrum` is checked in the E15 tests, because this
+package does not import snq-recon (dependency rule in CLAUDE.md).
 """
 
 import numpy as np
@@ -26,14 +26,15 @@ from snq_learn import (
 )
 
 FS = 20_000.0
-ORDER = 5.43  # ordem de falha não inteira, como BPFI do Ottawa
+ORDER = 5.43  # non-integer fault order, like the Ottawa BPFI
 
 
 def synthetic_bearing(n: int, seed: int = 0, order: float = ORDER):
-    """Trem de impactos numa ordem fixa, cada um excitando uma ressonância de 4 kHz.
+    """Impact train at a fixed order, each impact exciting a 4 kHz resonance.
 
-    Rotação em rampa de 15 a 20 Hz (o espectro em Hz borra; o de ordem não), mais ruído
-    branco e uma componente forte na ordem 1. Devolve sinal, fase em revoluções e rotação.
+    Rotation ramping from 15 to 20 Hz (the spectrum in Hz smears; the order spectrum does not),
+    plus white noise and a strong component at order 1. Returns signal, phase in revolutions and
+    rotation.
     """
     rng = np.random.default_rng(seed)
     t = np.arange(n) / FS
@@ -73,24 +74,24 @@ def test_eixo_de_ordens_cobre_a_faixa_pedida():
     o = axis.orders
     assert o[0] == pytest.approx(2.0) and o[-1] == pytest.approx(32.0)
     assert np.allclose(np.diff(o), 256 / 32768)
-    with pytest.raises(ValueError, match="Nyquist angular"):
+    with pytest.raises(ValueError, match="angular Nyquist"):
         OrderAxis(32, 1024, 2.0, 32.0)
 
 
 def test_plano_angular_de_rotacao_constante_e_regular():
     n_env, spr = 2000, 64
-    th = np.arange(n_env) * 0.01  # 100 amostras por revolução
+    th = np.arange(n_env) * 0.01  # 100 samples per revolution
     p = angular_plan(th, spr, 4096)
     assert p["n_valid"] == int(np.ceil((th[-1] - th[0]) * spr))
     pos = p["index"] + p["frac"]
     assert np.allclose(np.diff(pos), 100 / spr, atol=1e-4)
-    with pytest.raises(ValueError, match="excede"):
+    with pytest.raises(ValueError, match="exceeds"):
         angular_plan(th, spr, 128)
 
 
 def test_decodificador_com_mascara_cheia_acha_a_ordem_sintetica():
-    """Iniciado nas bandas do kurtograma, o decodificador é o pipeline clássico desdobrado:
-    sem treino nenhum ele já tem de achar a ordem de um trem de impactos sintético."""
+    """Initialized at the kurtogram bands, the decoder is the unrolled classical pipeline:
+    without any training it already has to find the order of a synthetic impact train."""
     n = 40960
     x, theta, _ = synthetic_bearing(n)
     dec = make_decoder()
@@ -98,7 +99,7 @@ def test_decodificador_com_mascara_cheia_acha_a_ordem_sintetica():
     with torch.no_grad():
         logits, aux = model(torch.tensor(x[None, :], dtype=torch.float32), plan_for(theta, n, dec))
     assert abs(dec.estimate(logits)[0] - ORDER) < 0.06
-    # a selecao por curtose espectral prefere uma banda que contem a ressonancia de 4 kHz
+    # the spectral-kurtosis selection prefers a band that contains the 4 kHz resonance
     bands = kurtogram_bands_hz(500.0, 10_000.0, [1, 1.585, 2])
     best = bands[int(aux["weights"][0].argmax())]
     assert best[0] <= 4000.0 <= best[1]
@@ -125,13 +126,14 @@ def test_gradiente_chega_a_mascara_e_aos_filtros():
         assert mask_param.grad is not None and float(mask_param.grad.abs().sum()) > 0.0
         ctrl = dec.bank.control.grad
         assert ctrl is not None and float(ctrl.abs().sum()) > 0.0
-        # o gradiente chega tambem aos deslocamentos r != 0, iniciados em zero
+        # the gradient also reaches the shifts r != 0, initialized at zero
         assert float(ctrl[:, 0].abs().sum()) > 0.0 and float(ctrl[:, 2].abs().sum()) > 0.0
 
 
 def test_mascara_uniforme_com_zeros_equivale_a_decimar():
-    """Na máscara uniforme, filtrar o sinal com zeros numa banda da 1a zona de Nyquist da taxa
-    reduzida é o mesmo que decimar e filtrar a banda dobrada: o espectro de ordem coincide."""
+    """With the uniform mask, filtering the zero-filled signal in a band of the 1st Nyquist zone
+    of the reduced rate is the same as decimating and filtering the folded band: the order
+    spectrum coincides."""
     n, factor = 40960, 4
     x, theta, _ = synthetic_bearing(n, seed=2)
     xt = torch.tensor(x[None, :], dtype=torch.float32)
@@ -140,7 +142,7 @@ def test_mascara_uniforme_com_zeros_equivale_a_decimar():
     with torch.no_grad():
         z = xt * masked.sampler(xt)
         spec_zero_filled, _ = dec_full.spectra(z, plan_for(theta, n, dec_full))
-    # decimado: mesma banda em Hz, grade de amostragem fs/4, fase nas mesmas posições de tempo
+    # decimated: same band in Hz, sampling grid fs/4, phase at the same time positions
     dec_dec = OrderDecoder(
         fs_hz=FS / factor,
         fs_env_hz=2048.0,
@@ -155,7 +157,7 @@ def test_mascara_uniforme_com_zeros_equivale_a_decimar():
     b = spec_dec[0].numpy()
     for c in range(a.shape[0]):
         corr = np.corrcoef(a[c], b[c])[0, 1]
-        assert corr > 0.99, f"canal {c}: correlacao {corr:.4f}"
+        assert corr > 0.99, f"channel {c}: correlation {corr:.4f}"
         assert abs(int(np.argmax(a[c])) - int(np.argmax(b[c]))) <= 1
 
 

@@ -1,6 +1,6 @@
-# E20, mediana de 3 no fluxo ja decimado (rodada de confirmacao, NAO cega, 2026-11-12):
-# o reviewer-2 ja calculou o braco de forma exploratoria. Ver README, 'Mediana de 3 no fluxo
-# decimado'. Derivado de config/post_despike.yaml; so mudam os bracos.
+# E20, median of 3 on the already-decimated stream (confirmation run, NOT blind, 2026-11-12):
+# reviewer-2 already computed the arm in exploratory form. See README, 'Median of 3 on the
+# decimated stream'. Derived from config/post_despike.yaml; only the arms change.
 seed: 20261110
 data_dir: datasets/raw/ottawa
 conditions:

@@ -1,17 +1,17 @@
-"""Análise de envelope — o baseline oficial do projeto.
+"""Envelope analysis — the project's official baseline.
 
-É o método que a indústria já usa, e o número que qualquer coisa aprendida tem de
-bater. `CLAUDE.md`: o baseline a bater é amostragem passa-faixa clássica + envelope,
-não uma CNN.
+It is the method that industry already uses, and the number that anything learned has to
+beat. `CLAUDE.md`: the baseline to beat is classical bandpass sampling + envelope,
+not a CNN.
 
-Uma armadilha descoberta em bancada de simulação e registrada no caderno de
-2026-09-02: **tomar a magnitude de um sinal real dobra a largura de banda**. Se a
-banda dobrada ocupa `[0, fs/2]` inteiro, `|y|` aliasa sobre si mesmo e o espectro de
-envelope vira lixo. Por isso o envelope aqui é sempre calculado sobre o **sinal
-analítico** (Hilbert), e `envelope_headroom_ok` existe para checar a folga antes de
-confiar no resultado.
+A pitfall found on a simulation bench and recorded in the lab notebook of
+2026-09-02: **taking the magnitude of a real signal doubles the bandwidth**. If the
+doubled band occupies the whole of `[0, fs/2]`, `|y|` aliases onto itself and the envelope
+spectrum turns into garbage. That is why the envelope here is always computed on the
+**analytic signal** (Hilbert), and `envelope_headroom_ok` exists to check the headroom before
+trusting the result.
 
-Referências: Randall & Antoni, *Rolling element bearing diagnostics — a tutorial*,
+References: Randall & Antoni, *Rolling element bearing diagnostics — a tutorial*,
 MSSP 2011; Antoni, *Fast computation of the kurtogram*, MSSP 2007.
 """
 
@@ -27,14 +27,14 @@ from scipy import signal
 def _band_analytic_from_spectrum(
     spec: NDArray[np.complex128], freqs: NDArray[np.float64], f_lo_hz: float, f_hi_hz: float
 ) -> NDArray[np.complex128]:
-    """Sinal analítico da banda a partir da FFT já calculada: ``2·X`` nas positivas, ``X`` no DC.
+    """Band analytic signal from an already computed FFT: ``2·X`` at positive bins, ``X`` at DC.
 
-    O DC entra com peso 1, não 2: o sinal analítico é ``x + j·H{x}`` e ``H`` anula o DC,
-    então ``X_a(0) = X(0)``. Com peso 2 a parte real ganhava a média de novo (corrigido em
-    2026-11-11; só afeta bandas com ``f_lo_hz <= 0``). O bin de ``fs/2`` cai nas negativas de
-    ``fftfreq`` e fica fora, como antes.
+    DC enters with weight 1, not 2: the analytic signal is ``x + j·H{x}`` and ``H`` cancels DC,
+    so ``X_a(0) = X(0)``. With weight 2 the real part gained the mean again (fixed on
+    2026-11-11; only affects bands with ``f_lo_hz <= 0``). The ``fs/2`` bin falls among the
+    negative frequencies of ``fftfreq`` and stays out, as before.
     """
-    keep = (freqs >= f_lo_hz) & (freqs < f_hi_hz)  # só positivas => analítico
+    keep = (freqs >= f_lo_hz) & (freqs < f_hi_hz)  # positive frequencies only => analytic
     out = np.zeros(spec.size, dtype=complex)
     out[keep] = 2.0 * spec[keep]
     if keep[0]:
@@ -43,17 +43,18 @@ def _band_analytic_from_spectrum(
 
 
 def bandpass_analytic(x: ArrayLike, fs_hz: float, f_lo_hz: float, f_hi_hz: float) -> NDArray:
-    """Sinal analítico da banda ``[f_lo, f_hi)``, por filtragem no domínio da FFT.
+    """Analytic signal of the band ``[f_lo, f_hi)``, by filtering in the FFT domain.
 
-    Zera tudo fora da banda e as frequências negativas de uma vez — o que produz o
-    sinal analítico da banda sem precisar filtrar e depois aplicar Hilbert. Com a banda
-    inteira ``[0, fs/2)`` coincide com ``scipy.signal.hilbert`` (salvo o bin de ``fs/2``).
+    Zeroes everything outside the band and the negative frequencies in one go — which yields
+    the analytic signal of the band without having to filter and then apply Hilbert. With the
+    whole band ``[0, fs/2)`` it coincides with ``scipy.signal.hilbert`` (except for the
+    ``fs/2`` bin).
 
-    **A filtragem é circular.** Ela é exata para a extensão periódica do registro, e
-    essa extensão tem um salto na emenda ``x[-1] -> x[0]``: o salto aparece como um
-    transiente nas duas bordas de ``z``. Nos espectros de envelope deste módulo a janela
-    de Hann o apaga. Numa estatística sem janela, como a curtose, ele vira um falso
-    transiente — por isso `fast_kurtogram` não usa esta função diretamente.
+    **The filtering is circular.** It is exact for the periodic extension of the record, and
+    that extension has a jump at the seam ``x[-1] -> x[0]``: the jump shows up as a
+    transient at both edges of ``z``. In the envelope spectra of this module the Hann window
+    erases it. In a statistic without a window, such as the kurtosis, it becomes a false
+    transient — which is why `fast_kurtogram` does not use this function directly.
     """
     x = np.asarray(x, dtype=float).ravel()
     spec = np.fft.fft(x)
@@ -62,9 +63,9 @@ def bandpass_analytic(x: ArrayLike, fs_hz: float, f_lo_hz: float, f_hi_hz: float
 
 
 def envelope(x: ArrayLike, fs_hz: float, band_hz: tuple[float, float] | None = None) -> NDArray:
-    """Envelope do sinal, opcionalmente restrito a uma banda.
+    """Envelope of the signal, optionally restricted to a band.
 
-    Sem banda, usa a transformada de Hilbert do sinal inteiro.
+    Without a band, it uses the Hilbert transform of the whole signal.
     """
     if band_hz is None:
         return np.abs(signal.hilbert(np.asarray(x, dtype=float).ravel()))
@@ -73,11 +74,11 @@ def envelope(x: ArrayLike, fs_hz: float, band_hz: tuple[float, float] | None = N
 
 @dataclass(frozen=True)
 class EnvelopeSpectrum:
-    """Espectro de envelope em hertz, ou em ordens (ver `envelope_order_spectrum`).
+    """Envelope spectrum in hertz, or in orders (see `envelope_order_spectrum`).
 
-    ``magnitude`` é ``|rfft(env·hann)|·2/n``: uma raia de amplitude ``A`` sai com ``A/2``,
-    porque o ganho coerente da Hann não é compensado. Serve para argmax e razões, que é
-    como o pacote a usa, e não como amplitude calibrada.
+    ``magnitude`` is ``|rfft(env·hann)|·2/n``: a line of amplitude ``A`` comes out as ``A/2``,
+    because the coherent gain of the Hann window is not compensated. It is meant for argmax and
+    ratios, which is how the package uses it, and not as a calibrated amplitude.
     """
 
     freqs_hz: NDArray[np.float64]
@@ -85,16 +86,16 @@ class EnvelopeSpectrum:
     fs_hz: float
     band_hz: tuple[float, float] | None
     folds_above_nyquist: bool = True
-    """O conteúdo acima de ``fs_hz/2`` reaparece dobrado no espectro?
+    """Does the content above ``fs_hz/2`` reappear folded in the spectrum?
 
-    Verdadeiro para envelope calculado sobre amostras uniformes (`envelope_spectrum`):
-    os harmônicos acima de Nyquist estão lá, na posição do mapa de alias. Falso quando
-    esse conteúdo foi removido antes, como no espectro de ordem com anti-alias angular.
-    `score_fault` só procura harmônico dobrado quando este campo é verdadeiro.
+    True for an envelope computed on uniform samples (`envelope_spectrum`):
+    the harmonics above Nyquist are there, at the position given by the alias map. False when
+    that content was removed beforehand, as in the order spectrum with angular anti-aliasing.
+    `score_fault` only looks for a folded harmonic when this field is true.
     """
 
     def peak_near(self, f_hz: float, tol_hz: float) -> tuple[float, float]:
-        """Maior raia dentro de ``f_hz ± tol_hz``. Devolve ``(frequência, magnitude)``."""
+        """Largest line within ``f_hz ± tol_hz``. Returns ``(frequency, magnitude)``."""
         sel = np.abs(self.freqs_hz - f_hz) <= tol_hz
         if not np.any(sel):
             return (float("nan"), 0.0)
@@ -110,10 +111,10 @@ def envelope_spectrum(
     *,
     detrend: bool = True,
 ) -> EnvelopeSpectrum:
-    """Espectro do envelope — onde as frequências de falha aparecem.
+    """Envelope spectrum — where the fault frequencies show up.
 
-    O valor médio do envelope é removido por padrão: ele é uma componente DC grande
-    que domina o espectro e não carrega informação de falha.
+    The mean value of the envelope is removed by default: it is a large DC component
+    that dominates the spectrum and carries no fault information.
     """
     env = envelope(x, fs_hz, band_hz)
     if detrend:
@@ -129,11 +130,11 @@ def envelope_spectrum(
 
 
 def envelope_headroom_ok(band_hz: tuple[float, float], fs_hz: float, factor: float = 2.5) -> bool:
-    """A taxa deixa folga para o envelope, ou ele vai aliasar?
+    """Does the rate leave headroom for the envelope, or will it alias?
 
-    A largura de banda do envelope é ~2× a da banda do sinal. Amostrar em exatamente
-    ``2·B`` acomoda a portadora dobrada mas **não** o envelope. A regra prática do
-    projeto é ``fs >= 2.5·B``.
+    The bandwidth of the envelope is ~2× that of the signal band. Sampling at exactly
+    ``2·B`` accommodates the folded carrier but **not** the envelope. The project's rule of
+    thumb is ``fs >= 2.5·B``.
 
     >>> envelope_headroom_ok((140e3, 160e3), fs_hz=40e3)
     False
@@ -147,11 +148,11 @@ def envelope_headroom_ok(band_hz: tuple[float, float], fs_hz: float, factor: flo
 def squared_envelope_spectrum(
     x: ArrayLike, fs_hz: float, band_hz: tuple[float, float] | None = None
 ) -> EnvelopeSpectrum:
-    """Espectro do envelope **ao quadrado**.
+    """**Squared** envelope spectrum.
 
-    Randall & Antoni argumentam que o envelope quadrático é preferível ao de
-    magnitude: é o que sai naturalmente da teoria ciclo-estacionária e evita a
-    distorção introduzida pela raiz quadrada implícita em ``|·|``.
+    Randall & Antoni argue that the squared envelope is preferable to the magnitude
+    envelope: it is what follows naturally from cyclostationary theory, and it avoids the
+    distortion introduced by the square root implicit in ``|·|``.
     """
     env = (
         np.abs(bandpass_analytic(x, fs_hz, *band_hz)) ** 2

@@ -1,13 +1,13 @@
-"""Manifests de dataset, subamostragem artificial e verdade fundamental.
+"""Dataset manifests, artificial undersampling and ground truth.
 
-Regra do projeto: **dados brutos nunca sao versionados.** O repositorio guarda
-`datasets/manifests/*.yaml` e este codigo; `raw/` e `processed/` estao no
+Project rule: **raw data is never versioned.** The repository keeps
+`datasets/manifests/*.yaml` and this code; `raw/` and `processed/` are in
 `.gitignore`.
 
-O presente que os datasets publicos dao a este projeto e que foram adquiridos
-**acima** do Nyquist necessario. Isso permite subamostrar artificialmente e ter
-verdade fundamental exata - que e o unico jeito de medir erro de estimacao de
-frequencia de falha, em vez de acuracia de classificacao.
+The gift that public datasets give this project is that they were acquired
+**above** the required Nyquist rate. This makes it possible to undersample artificially
+and have exact ground truth - which is the only way to measure fault-frequency
+estimation error, instead of classification accuracy.
 """
 
 from __future__ import annotations
@@ -25,16 +25,16 @@ from snq_core import bearing as _bearing
 
 
 class AntiAliasFilterUsedError(RuntimeError):
-    """Levantado quando se tenta decimar com filtro anti-aliasing.
+    """Raised when one tries to decimate with an anti-aliasing filter.
 
-    Decimacao com AAF destroi exatamente o efeito que este projeto estuda. Se um
-    resultado parecer bom demais, este e o primeiro ponto a conferir.
+    Decimation with an AAF destroys exactly the effect this project studies. If a
+    result looks too good, this is the first place to check.
     """
 
 
 @dataclass(frozen=True)
 class Manifest:
-    """Descricao versionada de um dataset publico."""
+    """Versioned description of a public dataset."""
 
     name: str
     full_name: str
@@ -53,24 +53,24 @@ class Manifest:
         return cls(**{k: v for k, v in raw.items() if k in known})
 
     def geometry(self, channel: str | None = None) -> BearingGeometry:
-        """Geometria do rolamento declarada no manifest, resolvida por nome.
+        """Bearing geometry declared in the manifest, resolved by name.
 
-        O nome aponta para uma constante de ``snq_core.bearing`` - assim a
-        geometria mora num lugar so e nao e redigitada por dataset.
+        The name points to a constant in ``snq_core.bearing`` - this way the
+        geometry lives in a single place and is not retyped for each dataset.
         """
         if not self.bearing:
-            raise ValueError(f"manifest {self.name!r} nao declara geometria de rolamento")
+            raise ValueError(f"manifest {self.name!r} does not declare a bearing geometry")
         key = channel or next(iter(self.bearing))
         const = self.bearing[key]
         geom = getattr(_bearing, const, None)
         if not isinstance(geom, BearingGeometry):
-            raise ValueError(f"{const!r} nao e uma BearingGeometry em snq_core.bearing")
+            raise ValueError(f"{const!r} is not a BearingGeometry in snq_core.bearing")
         return geom
 
     def fault_truth_hz(self, shaft_hz: float, channel: str | None = None) -> dict[str, float]:
-        """Verdade fundamental **continua**: as frequencias de falha da geometria.
+        """**Continuous** ground truth: the fault frequencies from the geometry.
 
-        E isto que o projeto mede o erro contra, e nao o rotulo de classe.
+        This is what the project measures the error against, not the class label.
         """
         return fault_frequencies_hz(self.geometry(channel), shaft_hz)
 
@@ -86,34 +86,34 @@ def sha256(path: str | Path) -> str:
 def undersample(
     x: ArrayLike, factor: int, *, anti_alias: bool = False, offset: int = 0
 ) -> NDArray[np.float64]:
-    """Decimacao **pura** por ``factor``, sem filtro anti-aliasing.
+    """**Plain** decimation by ``factor``, without an anti-aliasing filter.
 
-    ``anti_alias=True`` levanta ``AntiAliasFilterUsedError`` de proposito: a
-    assinatura existe para que quem tentar filtrar antes de decimar receba um
-    erro explicativo em vez de um resultado silenciosamente errado.
+    ``anti_alias=True`` raises ``AntiAliasFilterUsedError`` on purpose: the
+    signature exists so that whoever tries to filter before decimating gets an
+    explanatory error instead of a silently wrong result.
 
     >>> undersample(np.arange(10.0), 3).tolist()
     [0.0, 3.0, 6.0, 9.0]
     """
     if anti_alias:
         raise AntiAliasFilterUsedError(
-            "Decimar com AAF destroi a informacao super-Nyquist em estudo. "
-            "Use decimacao pura; se precisa selecionar banda, use um AAF "
-            "PASSA-FAIXA na cadeia analogica (snq_sim.AntiAliasFilter)."
+            "Decimating with an AAF destroys the super-Nyquist information under study. "
+            "Use plain decimation; if you need to select a band, use a BAND-PASS "
+            "AAF in the analog chain (snq_sim.AntiAliasFilter)."
         )
     if factor < 1:
         raise ValueError("factor >= 1")
     if not 0 <= offset < factor:
-        raise ValueError("offset precisa estar em [0, factor)")
+        raise ValueError("offset must be in [0, factor)")
     return np.asarray(x, dtype=float).ravel()[offset::factor]
 
 
 def undersample_cosets(x: ArrayLike, factor: int, offsets: ArrayLike) -> list[NDArray[np.float64]]:
-    """Multi-coset: um fluxo por deslocamento inteiro de amostra.
+    """Multi-coset: one stream per integer sample offset.
 
-    E a versao discreta do que o DPPI/TIMER do nRF54L15 faz em hardware. Cada
-    coset ve o mesmo sinal com fase de amostragem diferente, e e a diferenca
-    entre eles que carrega a ordem do alias.
+    It is the discrete version of what the DPPI/TIMER of the nRF54L15 does in hardware.
+    Each coset sees the same signal with a different sampling phase, and it is the
+    difference between them that carries the alias order.
     """
     return [undersample(x, factor, offset=int(o)) for o in np.asarray(offsets).ravel()]
 
@@ -123,13 +123,13 @@ def effective_rate_hz(fs_original_hz: float, factor: int) -> float:
 
 
 def undersampling_report(fs_original_hz: float, factor: int, band_hz: tuple[float, float]) -> dict:
-    """Resumo do que a subamostragem faz com uma banda de interesse.
+    """Summary of what undersampling does to a band of interest.
 
-    Devolve a taxa efetiva, a dobra resultante e se a banda colide consigo mesma.
-    Chamar isto antes de gerar um split evita gastar horas num fator que destroi
-    a informacao.
+    Returns the effective rate, the resulting fold and whether the band collides with
+    itself. Calling this before generating a split avoids spending hours on a factor
+    that destroys the information.
     """
-    from snq_core import fold_band  # import local: evita ciclo na leitura do modulo
+    from snq_core import fold_band  # local import: avoids a cycle when the module is loaded
 
     fs = effective_rate_hz(fs_original_hz, factor)
     fb = fold_band(band_hz[0], band_hz[1], fs)
@@ -146,10 +146,10 @@ def undersampling_report(fs_original_hz: float, factor: int, band_hz: tuple[floa
 
 
 def load_all_manifests(manifest_dir: str | Path) -> dict[str, Manifest]:
-    """Carrega todos os manifests de um diretorio, indexados por nome.
+    """Loads all manifests in a directory, indexed by name.
 
-    Apenas manifests de dataset. Catalogos de triagem (por exemplo a classificacao
-    de registros do CWRU) vivem em ``datasets/catalogs/`` e tem outro esquema.
+    Dataset manifests only. Screening catalogs (for example the classification
+    of CWRU records) live in ``datasets/catalogs/`` and have a different schema.
     """
     out: dict[str, Manifest] = {}
     for p in sorted(Path(manifest_dir).glob("*.yaml")):

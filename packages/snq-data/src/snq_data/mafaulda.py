@@ -1,34 +1,34 @@
-"""MAFAULDA - Machinery Fault Database (UFRJ), subconjuntos de rolamento.
+"""MAFAULDA - Machinery Fault Database (UFRJ), bearing subsets.
 
-Fatos conferidos na pagina oficial em 2026-11-11
+Facts checked on the official page on 2026-11-11
 (https://www02.smt.ufrj.br/~offshore/mfs/page_01.html):
 
-- Sequencias em CSV, 8 colunas, 250.000 amostras. A pagina declara **50 kHz** e 5 s, e diz
-  que os modulos NI 9234 amostram a 51,2 kHz.
+- Sequences in CSV, 8 columns, 250,000 samples. The page declares **50 kHz** and 5 s, and says
+  that the NI 9234 modules sample at 51.2 kHz.
 
-**A taxa real e 51,2 kHz, nao 50 kHz.** Isto foi inferido em 2026-11-11 sobre as 1120
-sequencias (``FS_HZ``; a declarada fica em ``DECLARED_FS_HZ``), por duas evidencias
-independentes:
+**The actual rate is 51.2 kHz, not 50 kHz.** This was inferred on 2026-11-11 over the 1120
+sequences (``FS_HZ``; the declared one is kept in ``DECLARED_FS_HZ``), from two independent
+pieces of evidence:
 
-1. **Tacometro contra o nome do arquivo**, que e a rotacao nominal. A razao mediana e
-   0,9769 assumindo 50 kHz (vies de -2,3 %) e 1,0004 assumindo 51,2 kHz (IQR 0,9988 a
-   1,0022). Os nomes sao multiplos de 1,024 = 51,2/50.
-2. **Linha de rede (120 Hz, 2o harmonico de 60 Hz) no microfone.** Ela cai em 117,18 Hz no
-   eixo de 50 kHz, exatamente 120 x 50/51,2. Isso vale para 863 das 1120 sequencias a
-   +-0,15 Hz, contra 3 a +-0,15 Hz de 120 Hz.
+1. **Tachometer against the file name**, which is the nominal rotation. The median ratio is
+   0.9769 assuming 50 kHz (bias of -2.3 %) and 1.0004 assuming 51.2 kHz (IQR 0.9988 to
+   1.0022). The names are multiples of 1.024 = 51.2/50.
+2. **Mains line (120 Hz, 2nd harmonic of 60 Hz) in the microphone.** It falls at 117.18 Hz on
+   the 50 kHz axis, exactly 120 x 50/51.2. This holds for 863 of the 1120 sequences within
+   +-0.15 Hz, against 3 within +-0.15 Hz of 120 Hz.
 
-Consequencias: cada sequencia dura 4,883 s. Frequencias em Hz calculadas com 50 kHz saem 2,3 %
-baixas. A analise de ordem pelo tacometro nao e afetada, porque tacometro e vibracao
-compartilham o relogio.
-- Colunas: tacometro; acelerometro do mancal *underhang* (axial, radial, tangencial);
-  acelerometro do mancal *overhang* (axial, radial, tangencial); microfone.
-- Rolamento: 8 esferas, esfera de 0,7145 cm, gaiola de 2,8519 cm, angulo de contato
-  nao declarado. As ordens documentadas (FTF 0,3750; BPFO 2,9980; BPFI 5,0020;
-  BSF 1,8710) batem com essa geometria e angulo zero (``computed_orders``).
-- Nao ha falha de pista interna: as falhas de rolamento sao ``outer_race``,
-  ``ball_fault`` e ``cage_fault``, nos mancais ``underhang`` e ``overhang``, com massas
-  de desbalanceamento adicionais de 0, 6, 20 e 35 g.
-- Licenca e termos de uso: **nao declarados** na pagina.
+Consequences: each sequence lasts 4.883 s. Frequencies in Hz computed with 50 kHz come out
+2.3 % low. Order analysis from the tachometer is not affected, because tachometer and
+vibration share the clock.
+- Columns: tachometer; *underhang* bearing accelerometer (axial, radial, tangential);
+  *overhang* bearing accelerometer (axial, radial, tangential); microphone.
+- Bearing: 8 balls, ball diameter 0.7145 cm, cage diameter 2.8519 cm, contact angle
+  not declared. The documented orders (FTF 0.3750; BPFO 2.9980; BPFI 5.0020;
+  BSF 1.8710) match this geometry with zero angle (``computed_orders``).
+- There is no inner-race fault: the bearing faults are ``outer_race``,
+  ``ball_fault`` and ``cage_fault``, in the ``underhang`` and ``overhang`` bearings, with
+  additional unbalance masses of 0, 6, 20 and 35 g.
+- License and terms of use: **not declared** on the page.
 """
 
 from __future__ import annotations
@@ -41,9 +41,9 @@ import numpy as np
 from numpy.typing import NDArray
 
 FS_HZ = 51_200.0
-"""Taxa real, inferida pelo tacometro e pela linha de rede (ver o docstring do modulo)."""
+"""Actual rate, inferred from the tachometer and the mains line (see the module docstring)."""
 DECLARED_FS_HZ = 50_000.0
-"""Taxa declarada na pagina oficial; usar so para comparar com trabalhos que a adotaram."""
+"""Rate declared on the official page; use only to compare with works that adopted it."""
 BASE_URL = "https://www02.smt.ufrj.br/~offshore/mfs/database/mafaulda"
 ARCHIVES = ("normal.tgz", "underhang.tgz", "overhang.tgz")
 
@@ -65,14 +65,14 @@ COLUMNS = (
 )
 BEARINGS = ("underhang", "overhang")
 MAX_ROTATION_HZ = 70.0
-"""Acima da maior rotacao do dataset (61,44 Hz); define o bloqueio do tacometro."""
+"""Above the highest rotation in the dataset (61.44 Hz); sets the tachometer hold-off."""
 FAULT_FAMILY = {"outer_race": "BPFO", "ball_fault": "BSF", "cage_fault": "FTF"}
 
 _LOAD = re.compile(r"^(\d+)g$")
 
 
 def computed_orders(geom_ratio: float = GEOM_RATIO, n: int = N_ELEMENTS) -> dict[str, float]:
-    """Ordens de falha pela geometria, com angulo de contato zero."""
+    """Fault orders from the geometry, with zero contact angle."""
     return {
         "FTF": 0.5 * (1 - geom_ratio),
         "BPFO": 0.5 * n * (1 - geom_ratio),
@@ -82,26 +82,26 @@ def computed_orders(geom_ratio: float = GEOM_RATIO, n: int = N_ELEMENTS) -> dict
 
 
 def parse_path(rel_path: str) -> tuple[str | None, str, int | None, float]:
-    """``(mancal, falha, massa_g, rotacao_nominal_hz)`` a partir do caminho relativo.
+    """``(bearing, fault, load_g, nominal_rotation_hz)`` from the relative path.
 
-    Exemplos: ``normal/12.288.csv`` e ``underhang/outer_race/6g/30.1056.csv``. O nome do
-    arquivo e a rotacao nominal em Hz.
+    Examples: ``normal/12.288.csv`` and ``underhang/outer_race/6g/30.1056.csv``. The file
+    name is the nominal rotation in Hz.
     """
     parts = Path(rel_path).parts
     rotation = float(Path(rel_path).stem)
     if parts[0] == "normal":
         return None, "normal", None, rotation
     if parts[0] not in BEARINGS or len(parts) < 4:
-        raise ValueError(f"caminho fora do esquema MAFAULDA: {rel_path}")
+        raise ValueError(f"path outside the MAFAULDA scheme: {rel_path}")
     m = _LOAD.match(parts[2])
     if parts[1] not in FAULT_FAMILY or m is None:
-        raise ValueError(f"caminho fora do esquema MAFAULDA: {rel_path}")
+        raise ValueError(f"path outside the MAFAULDA scheme: {rel_path}")
     return parts[0], parts[1], int(m.group(1)), rotation
 
 
 @dataclass(frozen=True)
 class MafauldaRecord:
-    """Uma sequencia, sempre carregando a propria procedencia."""
+    """One sequence, always carrying its own provenance."""
 
     path: str
     bearing: str | None
@@ -115,7 +115,7 @@ class MafauldaRecord:
         return self.data[:, COLUMNS.index(name)].astype(np.float64)
 
     def vibration(self, axis: str = "radial", side: str | None = None) -> NDArray[np.float64]:
-        """Acelerometro do mancal com falha (ou ``side``), no eixo pedido."""
+        """Accelerometer of the faulty bearing (or ``side``), on the requested axis."""
         bearing = side or self.bearing or "underhang"
         return self.channel(f"{bearing}_{axis}")
 
@@ -125,14 +125,14 @@ class MafauldaRecord:
         return DOCUMENTED_ORDERS[family] if family else None
 
     def tachometer_edges_s(self) -> NDArray[np.float64]:
-        """Instantes dos flancos de subida do tacometro (um pulso por revolucao).
+        """Instants of the tachometer rising edges (one pulse per revolution).
 
-        Usa histerese (sobe acima de 60 % da excursao e so rearma abaixo de 40 %) e um tempo
-        de bloqueio fisico: depois de cada flanco, ignora novos flancos por
-        ``1/(2*MAX_ROTATION_HZ)``. Sem isso, ruido no tacometro gera flancos espurios: uma
-        sequencia chegou a dar 6,3 x a rotacao nominal com o limiar simples. Um filtro pela
-        mediana dos intervalos falha quando ha um glitch por pulso, porque a mediana passa a
-        ser o intervalo do glitch.
+        Uses hysteresis (rises above 60 % of the swing and only re-arms below 40 %) and a
+        physical hold-off time: after each edge, it ignores new edges for
+        ``1/(2*MAX_ROTATION_HZ)``. Without this, tachometer noise produces spurious edges: one
+        sequence went as far as 6.3 x the nominal rotation with the simple threshold. A filter
+        on the median of the intervals fails when there is one glitch per pulse, because the
+        median becomes the glitch interval.
         """
         tach = self.channel("tachometer")
         lo_v, hi_v = float(tach.min()), float(tach.max())
@@ -143,7 +143,7 @@ class MafauldaRecord:
         armed = bool(tach[0] < lo)
         for i in np.flatnonzero((tach >= hi) | (tach <= lo)):
             if edges and i - edges[-1] < holdoff:
-                continue  # dentro do bloqueio nada conta: nem flanco nem rearme (glitch)
+                continue  # inside the hold-off nothing counts: neither edge nor re-arm (glitch)
             if armed and tach[i] >= hi:
                 edges.append(int(i))
                 armed = False
@@ -151,16 +151,16 @@ class MafauldaRecord:
                 armed = True
         e = np.asarray(edges, dtype=np.int64)
         if e.size < 3:
-            raise ValueError(f"{self.path}: tacometro sem pulsos suficientes")
+            raise ValueError(f"{self.path}: tachometer without enough pulses")
         return e / self.fs_hz
 
     def tachometer_rotation_hz(self) -> float:
-        """Rotacao media pelos pulsos, para conferir contra ``nominal_rotation_hz``."""
+        """Mean rotation from the pulses, to check against ``nominal_rotation_hz``."""
         edges = self.tachometer_edges_s()
         return float((edges.size - 1) / (edges[-1] - edges[0]))
 
     def speed_profile_hz(self) -> NDArray[np.float64]:
-        """Rotacao instantanea em Hz, na grade da vibracao (interpolada entre pulsos)."""
+        """Instantaneous rotation in Hz, on the vibration grid (interpolated between pulses)."""
         edges = self.tachometer_edges_s()
         rot = 1.0 / np.diff(edges)
         t = np.arange(self.data.shape[0]) / self.fs_hz
@@ -168,7 +168,7 @@ class MafauldaRecord:
 
 
 def list_records(root: str | Path, subsets: tuple[str, ...] = ("normal", *BEARINGS)) -> list[str]:
-    """Caminhos relativos de todas as sequencias dos subconjuntos, em ordem deterministica."""
+    """Relative paths of all sequences in the subsets, in deterministic order."""
     root = Path(root)
     out: list[str] = []
     for sub in subsets:
@@ -177,7 +177,7 @@ def list_records(root: str | Path, subsets: tuple[str, ...] = ("normal", *BEARIN
 
 
 def load(rel_path: str, root: str | Path, cache_dir: str | Path | None = None) -> MafauldaRecord:
-    """Carrega uma sequencia. Com ``cache_dir``, guarda/le uma copia ``.npy`` (float32)."""
+    """Loads one sequence. With ``cache_dir``, stores/reads a ``.npy`` copy (float32)."""
     bearing, fault, load_g, rotation = parse_path(rel_path)
     cache = Path(cache_dir) / Path(rel_path).with_suffix(".npy") if cache_dir else None
     if cache is not None and cache.exists():
@@ -188,7 +188,7 @@ def load(rel_path: str, root: str | Path, cache_dir: str | Path | None = None) -
             cache.parent.mkdir(parents=True, exist_ok=True)
             np.save(cache, data)
     if data.ndim != 2 or data.shape[1] != len(COLUMNS):
-        raise ValueError(f"{rel_path}: esperava {len(COLUMNS)} colunas, veio {data.shape}")
+        raise ValueError(f"{rel_path}: expected {len(COLUMNS)} columns, got {data.shape}")
     return MafauldaRecord(
         path=rel_path,
         bearing=bearing,

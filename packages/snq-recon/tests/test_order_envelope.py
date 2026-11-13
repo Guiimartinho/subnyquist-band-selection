@@ -1,8 +1,8 @@
-"""Teste do envelope no domínio de ordem.
+"""Test of the envelope in the order domain.
 
-A propriedade que interessa é a que o E07 explora: sob rotação **variável**, a
-frequência de falha em hertz se move e a ordem não. Um teste que use rotação
-constante não distingue o código certo do errado, então aqui a rotação varre.
+The property of interest is the one E07 exploits: under **variable** shaft speed, the
+fault frequency in hertz moves and the order does not. A test that uses a constant
+speed cannot tell the right code from the wrong one, so here the speed sweeps.
 """
 
 from __future__ import annotations
@@ -13,18 +13,18 @@ from snq_recon import envelope_order_spectrum
 
 
 def _impactos_modulados(fs_hz=50_000.0, seconds=2.0, order=5.43, f_res=8000.0):
-    """Trem de impactos travado numa ordem, sob rotação que varre 15→30 Hz."""
+    """Impact train locked to an order, under a shaft speed that sweeps 15→30 Hz."""
     n = int(fs_hz * seconds)
-    rot = np.linspace(15.0, 30.0, n)  # rotacao variavel: e o ponto do teste
+    rot = np.linspace(15.0, 30.0, n)  # variable shaft speed: the whole point of the test
     revs = np.cumsum(rot) / fs_hz
 
-    # Um impacto a cada 1/order de revolucao, nao a cada intervalo fixo de tempo.
+    # One impact every 1/order of a revolution, not every fixed time interval.
     fase = revs * order
     impacto = np.zeros(n)
     impacto[np.flatnonzero(np.diff(np.floor(fase)) > 0)] = 1.0
 
-    # Ressonancia fixa em HERTZ - nao acompanha a rotacao. E o motivo de o envelope
-    # ter de ser tomado em tempo, antes da reamostragem angular.
+    # Resonance fixed in HERTZ - it does not follow the shaft speed. That is why the envelope
+    # has to be taken in time, before the angular resampling.
     decay = np.exp(-np.arange(int(0.002 * fs_hz)) * 900.0 / fs_hz)
     ring = decay * np.sin(2 * np.pi * f_res * np.arange(decay.size) / fs_hz)
     return np.convolve(impacto, ring)[:n], rot
@@ -39,12 +39,12 @@ def test_ordem_de_falha_aparece_apesar_da_rotacao_variar():
 
 
 def test_a_mesma_falha_em_hertz_se_espalha():
-    """Controle: em hertz a raia borra porque a rotação varre 15→30 Hz.
+    """Control: in hertz the line smears because the shaft speed sweeps 15→30 Hz.
 
-    Sem este contraste o teste acima não prova que a reamostragem angular fez alguma
-    coisa. A métrica é concentração em janela **relativa** ao redor do pico, e não
-    max/média, porque os dois espectros têm número de raias muito diferente e
-    max/média premia quem tem menos raias.
+    Without this contrast the test above does not prove that the angular resampling did
+    anything. The metric is the concentration in a **relative** window around the peak, and
+    not max/mean, because the two spectra have very different numbers of lines and
+    max/mean rewards the one with fewer lines.
     """
     from snq_recon import envelope_spectrum
 
@@ -60,7 +60,7 @@ def test_a_mesma_falha_em_hertz_se_espalha():
         largo = (eixo >= 0.5 * pico) & (eixo <= 2.0 * pico)
         return float(mag[perto].sum() / mag[largo].sum())
 
-    # Em hertz a falha ocupa 81-163 Hz (5,43 x 15 a 5,43 x 30); em ordens, uma raia.
+    # In hertz the fault occupies 81-163 Hz (5.43 x 15 to 5.43 x 30); in orders, a single line.
     assert concentracao(ordem.freqs_hz, ordem.magnitude, 2.0) > 3.0 * concentracao(
         hertz.freqs_hz, hertz.magnitude, 20.0
     )
@@ -69,6 +69,6 @@ def test_a_mesma_falha_em_hertz_se_espalha():
 def test_unidades_do_objeto_devolvido_sao_ordens():
     x, rot = _impactos_modulados()
     spec = envelope_order_spectrum(x, 50_000.0, rot, (6000.0, 11000.0), samples_per_rev=64)
-    # fs_hz carrega samples_per_rev e a maior "frequencia" e a ordem de Nyquist.
+    # fs_hz carries samples_per_rev, and the largest "frequency" is the Nyquist order.
     assert spec.fs_hz == pytest.approx(64.0)
     assert spec.freqs_hz[-1] == pytest.approx(32.0, rel=0.01)

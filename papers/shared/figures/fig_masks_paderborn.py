@@ -1,21 +1,22 @@
-"""Figura das máscaras aprendidas no Paderborn (E15): acurácia balanceada contra o orçamento.
+"""Figure of the learned masks on Paderborn (E15): balanced accuracy against the budget.
 
-Regra do projeto: a figura nasce de metrics.csv, nunca de número transcrito.
+Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
-- **Fonte:** `experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv.gz`, fluxo
-  bruto, com todas as dobras e sementes.
-- **Braços:** a melhor taxa uniforme do pipeline clássico escolhida no treino (`uniforme_treino`),
-  e o mesmo decodificador com a decimação uniforme treinada (`dec_uniforme_treino`), com a máscara
-  aleatória (`dec_aleatoria`) e com a máscara aprendida (`dec_aprendida_sel`).
-- **Métrica:** a dos testes pré-registrados (`per_record` e `cluster_bootstrap` do `run.py`):
-  acerto médio por (divisão, registro), sobre segmentos e sementes; média por pista; média das
-  pistas. Na régua local, os registros têm números muito diferentes de segmentos com raia, e o
-  acerto agrupado por segmento do `summary.csv` daria outro peso a eles.
-- **Incerteza:** banda de 95 % por bootstrap dos rolamentos dentro de cada pista (4000).
-- **Painéis:** (a) régua aninhada, 23 rolamentos; (b) régua local, os 7 rolamentos com raia visível
-  em taxa cheia.
-- **Conferência:** a diferença entre a máscara aprendida e cada referência tem de bater com o
-  `diff_points` do `hypotheses.csv` (±0,06 ponto); senão o script para.
+- **Source:** `experiments/E15-learned-sampling-mask/results-paderborn/metrics.csv.gz`, raw
+  stream, with all folds and seeds.
+- **Arms:** the best uniform rate of the classical pipeline chosen in training
+  (`uniforme_treino`), and the same decoder with the trained uniform decimation
+  (`dec_uniforme_treino`), with the random mask (`dec_aleatoria`) and with the learned mask
+  (`dec_aprendida_sel`).
+- **Metric:** that of the pre-registered tests (`per_record` and `cluster_bootstrap` of `run.py`):
+  mean hit per (split, record), over segments and seeds; mean per race; mean over the races.
+  Under the local ruler, the records have very different numbers of segments with a line, and the
+  per-segment pooled hit rate of `summary.csv` would weight them differently.
+- **Uncertainty:** 95 % band by bootstrap over the bearings within each race (4000).
+- **Panels:** (a) nested ruler, 23 bearings; (b) local ruler, the 7 bearings with a line visible
+  at full rate.
+- **Check:** the difference between the learned mask and each reference has to match the
+  `diff_points` of `hypotheses.csv` (±0.06 point); otherwise the script stops.
 
     uv run python papers/shared/figures/fig_masks_paderborn.py
 """
@@ -30,7 +31,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 reprova no PDF eXpress (T0.8)
+matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 fonts fail PDF eXpress (T0.8)
 matplotlib.rcParams["ps.fonttype"] = 42
 matplotlib.rcParams["font.size"] = 8
 matplotlib.rcParams["axes.labelsize"] = 8
@@ -50,7 +51,7 @@ PNG = E15 / "figures/e15_masks_paderborn.png"
 FS_FULL_KSPS = 64.0
 BUDGETS = (4, 8, 16, 32)
 LEARNED = "dec_aprendida_sel"
-# paleta conferida no validador da skill dataviz (croma, daltonismo, contraste)
+# palette checked with the validator of the dataviz skill (chroma, colour blindness, contrast)
 GRAY, TEAL, PURPLE = "0.55", "#0089A3", "#7B4CC0"
 ARMS = {
     "uniforme_treino": ("classical, best uniform rate", GRAY, "o", "--", 1),
@@ -68,7 +69,7 @@ def bearing(record: str) -> str:
 
 
 def load() -> tuple[dict[tuple[str, str, int], Cell], dict[str, str]]:
-    """cells[(braço, régua, orçamento)] -> {(divisão, registro): [acertos]}; pista por registro."""
+    """cells[(arm, ruler, budget)] -> {(split, record): [hits]}; race per record."""
     cells: dict[tuple[str, str, int], Cell] = defaultdict(lambda: defaultdict(list))
     race: dict[str, str] = {}
     with gzip.open(E15 / "metrics.csv.gz", "rt", encoding="utf-8") as f:
@@ -96,7 +97,7 @@ def balanced(pr: dict[tuple[str, str], float], race: dict[str, str]) -> float:
 
 
 def balanced_ci(pr: dict[tuple[str, str], float], race: dict[str, str], n_boot: int = 4000):
-    """IC 95 % por bootstrap dos rolamentos dentro de cada pista."""
+    """95 % CI by bootstrap over the bearings within each race."""
     groups: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
     for (_s, rec), v in pr.items():
         groups[race[rec]][bearing(rec)].append(v)
@@ -126,7 +127,7 @@ def reference_diffs() -> dict[tuple[str, str, int], float]:
 def main() -> None:
     cells, race = load()
     ref = reference_diffs()
-    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.4))  # largura do texto do elsarticle
+    fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.4))  # elsarticle text width
     for ax, (ru, title) in zip(axes, RULERS.items(), strict=True):
         for b in BUDGETS:
             learned = per_record(cells[(LEARNED, ru, b)])
@@ -138,7 +139,7 @@ def main() -> None:
                 )
                 if abs(d - ref[(base, ru, b)]) > 0.06:
                     raise SystemExit(
-                        f"{ru} 1/{b} {LEARNED}-{base}: {d:.2f} contra {ref[(base, ru, b)]}"
+                        f"{ru} 1/{b} {LEARNED}-{base}: {d:.2f} against {ref[(base, ru, b)]}"
                     )
         for arm, (label, color, marker, ls, z) in ARMS.items():
             pts = []
@@ -171,7 +172,7 @@ def main() -> None:
     fig.savefig(OUT)
     PNG.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(PNG, dpi=200)
-    print(f"diferenças conferidas contra o hypotheses.csv; escrito: {OUT} e {PNG}")
+    print(f"differences checked against hypotheses.csv; written: {OUT} and {PNG}")
 
 
 if __name__ == "__main__":

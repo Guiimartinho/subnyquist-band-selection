@@ -1,8 +1,8 @@
-"""Verificação numérica dos resultados de referência do projeto.
+"""Numerical verification of the project's reference results.
 
-Regra do projeto (skill `derive-dsp`): toda derivação simbólica termina em
-verificação numérica, e todo teste positivo tem um teste negativo que confere a
-fronteira da região de validade.
+Project rule (skill `derive-dsp`): every symbolic derivation ends in a numerical
+check, and every positive test has a negative test that checks the boundary of the
+region of validity.
 """
 
 import numpy as np
@@ -18,18 +18,18 @@ def test_landau_muito_menor_que_nyquist_para_banda_estreita():
     band = [(140e3, 160e3)]
     assert S.landau_rate_hz(band) == pytest.approx(40e3)
     assert S.nyquist_rate_hz(band) == pytest.approx(320e3)
-    # exatamente 8x menos: e o numero citado na revisao SOTA
+    # exactly 8x lower: this is the number quoted in the SOTA review
     assert S.nyquist_rate_hz(band) / S.landau_rate_hz(band) == pytest.approx(8.0)
 
 
 def test_landau_iguala_nyquist_para_sinal_de_banda_base():
-    """Fronteira: para banda que começa em zero, Landau degenera em Nyquist."""
+    """Boundary: for a band that starts at zero, Landau degenerates into Nyquist."""
     band = [(0.0, 20e3)]
     assert S.landau_rate_hz(band) == pytest.approx(S.nyquist_rate_hz(band))
 
 
 # --------------------------------------------------------------------------
-# Dobra espectral, caso canônico do projeto
+# Spectral folding, the project's canonical case
 # --------------------------------------------------------------------------
 
 
@@ -51,8 +51,8 @@ def test_fold_band_zona_impar_inverte_e_nao_sobrepoe():
 
 
 def test_fold_band_detecta_sobreposicao_quando_banda_cruza_zona():
-    """Teste negativo: com fs errada a banda se dobra sobre si mesma e a
-    informação é destruída de forma irrecuperável."""
+    """Negative test: with the wrong fs the band folds onto itself and the
+    information is irrecoverably destroyed."""
     fb = S.fold_band(140e3, 160e3, 50e3)
     assert fb.self_overlap is True
 
@@ -64,7 +64,7 @@ def test_alias_e_periodico_em_fs():
 
 
 # --------------------------------------------------------------------------
-# Amostragem passa-faixa (Vaughan, Scott & White, 1991)
+# Bandpass sampling (Vaughan, Scott & White, 1991)
 # --------------------------------------------------------------------------
 
 
@@ -79,28 +79,28 @@ def test_taxas_validas_cabem_no_conversor_do_nrf54l15():
 
 
 def test_toda_taxa_valida_realmente_evita_sobreposicao():
-    """A condição de Vaughan tem que concordar com a dobra calculada."""
+    """Vaughan's condition has to agree with the computed fold."""
     for fs_min, _, _ in S.valid_bandpass_rates_hz(140e3, 160e3, fs_max_hz=250e3):
         assert S.fold_band(140e3, 160e3, fs_min).self_overlap is False
 
 
 def test_taxa_invalida_produz_sobreposicao():
-    """Teste negativo: 5% abaixo da menor taxa válida já quebra."""
+    """Negative test: 5% below the lowest valid rate already fails."""
     fs_bad = 0.95 * S.min_bandpass_rate_hz(140e3, 160e3)
     assert S.fold_band(140e3, 160e3, fs_bad).self_overlap is True
 
 
 # --------------------------------------------------------------------------
-# Multi-coset: a fase carrega a frequência verdadeira
+# Multi-coset: the phase carries the true frequency
 # --------------------------------------------------------------------------
 
 
 def test_fase_relativa_codifica_a_ordem_do_alias():
-    """Resultado central do projeto.
+    """Central result of the project.
 
-    Uma exponencial complexa amostrada com deslocamento delta aplicado antes da
-    amostragem produz um fator exp(-j2*pi*f0*delta). A frequência observada é a
-    aliasada, mas a amplitude complexa carrega f0 verdadeiro.
+    A complex exponential sampled with an offset delta applied before sampling
+    produces a factor exp(-j2*pi*f0*delta). The observed frequency is the aliased
+    one, but the complex amplitude carries the true f0.
     """
     fs = 40e3
     ts = 1.0 / fs
@@ -117,7 +117,7 @@ def test_fase_relativa_codifica_a_ordem_do_alias():
 
 
 def test_coset_uniforme_tem_condicionamento_otimo():
-    """Deslocamentos m*Ts/M dão uma DFT: número de condição igual a 1."""
+    """Offsets m*Ts/M give a DFT: condition number equal to 1."""
     fs = 40e3
     m = 4
     offsets = S.uniform_coset_offsets_s(m, fs)
@@ -126,7 +126,7 @@ def test_coset_uniforme_tem_condicionamento_otimo():
 
 
 def test_coset_quase_degenerado_e_mal_condicionado():
-    """Teste negativo: deslocamentos agrupados destroem o condicionamento."""
+    """Negative test: clustered offsets destroy the conditioning."""
     fs = 40e3
     m = 4
     ts = 1.0 / fs
@@ -136,7 +136,7 @@ def test_coset_quase_degenerado_e_mal_condicionado():
 
 
 def test_dois_cosets_resolvem_apenas_paridade():
-    """delta = Ts/2 distingue apenas k mod 2, ou seja extensão de banda de 2x."""
+    """delta = Ts/2 distinguishes only k mod 2, i.e. a bandwidth extension of 2x."""
     fs = 40e3
     ts = 1.0 / fs
     delta = ts / 2.0

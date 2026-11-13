@@ -1,13 +1,13 @@
-# E15 - mascara de amostragem aprendida sob conjunto viavel (ADR 0006, Parte 2). Roda na GPU.
+# E15 - learned sampling mask under a feasible set (ADR 0006, Part 2). Runs on the GPU.
 #
-# Protocolo corrigido em 2026-11-11 pela revisao adversarial (ver o README, "Correcoes da
-# revisao" e "Pre-registro"). O teste que decide esta no bloco `preregistration` e no README;
-# mudar um dos dois depois de ver numero invalida o pre-registro.
+# Protocol corrected on 2026-11-11 by the adversarial review (see the README, "Corrections from
+# the review" and "Preregistration"). The deciding test is in the `preregistration` block and in
+# the README; changing either of them after seeing a number invalidates the preregistration.
 #
-# Conjuntos: so o Ottawa decide. O CWRU 48k sai da decisao (opcao (b) da revisao): 12 registros
-# de pista externa, 1 de interna que nunca vai a teste, classe unica no teste e 3 unidades
-# fisicas. Fica desligado, com o adaptador pronto. O MAFAULDA tambem fica desligado: no
-# rolamento dele BPFO e BPFI coincidem com o 3o e o 5o harmonicos do eixo (E21).
+# Datasets: only Ottawa decides. CWRU 48k is out of the decision (option (b) of the review): 12
+# outer-race records, 1 inner-race record that never goes to test, a single class in the test
+# set and 3 physical units. It stays disabled, with the adapter ready. MAFAULDA also stays
+# disabled: on its bearing, BPFO and BPFI coincide with the 3rd and 5th shaft harmonics (E21).
 seed: 20261113
 
 datasets:
@@ -20,26 +20,26 @@ datasets:
     trials: [1, 2, 3]
     pulses_per_rev: 1024
     segment_samples: 500000
-    calibration_segment: 0           # regua aninhada: calibracao do segmento 0, como no E22
+    calibration_segment: 0           # nested ruler: calibration from segment 0, as in E22
     test_segments: [1, 2]
-    ceiling0_hz: 25000.0             # teto do E07/E22
+    ceiling0_hz: 25000.0             # E07/E22 ceiling
     nominal: {n_elements: 9, geom_ratio: 0.206}
-    # Acrescentar 48 e 64 aqui, se desejado. Nao usar 96 a 160 como alvo: ali o kurtograma
-    # escolhe bandas mais estreitas que a falha em Hz, e a parede e do pipeline, nao da taxa.
+    # Add 48 and 64 here, if desired. Do not use 96 to 160 as a target: there the kurtogram
+    # picks bands narrower than the fault in Hz, and the wall is the pipeline's, not the rate's.
     budgets: [4, 8, 16, 32]
     factor_grid_max: 48
-    guard_points_per_rev_factor: 2.0 # a guarda do E22
-    min_gap_ticks: 2                 # 10 us a 200 kSPS; o valor realizavel no SAADC e medida de bancada nao feita
-    # Rodada corrigida (decisao do usuario, 2026-11-12): so a variante decisiva, a `bruto`. A
-    # `sem_picos` (exige taxa cheia, nao decide nada) fica para uma rodada secundaria posterior.
+    guard_points_per_rev_factor: 2.0 # the E22 guard
+    min_gap_ticks: 2                 # 10 us at 200 kSPS; the value achievable on the SAADC is a bench measurement not yet made
+    # Corrected run (user's decision, 2026-11-12): only the deciding variant, `bruto`. The
+    # `sem_picos` one (requires full rate, decides nothing) is left for a later secondary run.
     despike_variants: [false]
     healthy_control: {enabled: true, conditions: [H]}
-    window_samples: 500000           # janela de treino = segmento (2,5 s), e o trecho da regua local
-    # regua local: refino em taxa cheia numa grade deslizante de janelas de `window_samples`
+    window_samples: 500000           # training window = segment (2.5 s), and the local ruler's excerpt
+    # local ruler: full-rate refinement on a sliding grid of `window_samples` windows
     local_calibration: {hop_samples: 50000}
     decoder: {fs_env_hz: 2048.0, spr_ang: 256, n_fft: 32768}
   cwru48k:
-    enabled: false                   # FORA DA DECISAO (opcao (b) da revisao), ver o cabecalho
+    enabled: false                   # OUT OF THE DECISION (option (b) of the review), see the header
     kind: cwru
     data_dir: datasets/raw/cwru
     catalog: datasets/catalogs/cwru-smith2015-categories.yaml
@@ -50,15 +50,15 @@ datasets:
     ceiling0_hz: null
     budgets: [2, 4, 8, 16]
     factor_grid_max: 24
-    guard_points_per_rev_factor: 1.0 # 2,0 descartaria todo fator acima de 12 a ~30 Hz de eixo
-    min_samples: 2048                # 4096 descartaria as metades de 148 e 161 em 1/16
+    guard_points_per_rev_factor: 1.0 # 2.0 would discard every factor above 12 at ~30 Hz shaft speed
+    min_samples: 2048                # 4096 would discard the halves of 148 and 161 at 1/16
     min_gap_ticks: 1
     despike_variants: [false]
     window_samples: 61440
     local_calibration: {hop_samples: 24000}
     decoder: {fs_env_hz: 2048.0, spr_ang: 128, n_fft: 32768}
   mafaulda:
-    enabled: false                   # OPCAO DESLIGADA, ver o cabecalho
+    enabled: false                   # OPTION DISABLED, see the header
     kind: mafaulda
     data_dir: datasets/raw/mafaulda
     cache_dir: datasets/processed/mafaulda
@@ -77,25 +77,25 @@ datasets:
     local_calibration: {hop_samples: 51200}
     decoder: {fs_env_hz: 4096.0, spr_ang: 512, n_fft: 131072}
 
-# pipeline classico: identico ao E22
+# classical pipeline: identical to E22
 min_samples: 4096
 kurtogram: {max_level: 4, f_min_hz: 500.0}
 prior: {score_harmonics: 3, calibration_span: 0.12}
 tolerance_order: 0.06
 samples_per_rev: 64
 order_min: 2.0
-order_max: 32.0                      # = samples_per_rev/2: a mesma faixa do argmax do E22
-despike: {k_mad: 10.0}               # criterio do E20/E22
+order_max: 32.0                      # = samples_per_rev/2: the same argmax range as in E22
+despike: {k_mad: 10.0}               # E20/E22 criterion
 
 feasible:
-  active_per_period: 4               # K; o periodo e L = K x orcamento
-  timer_clock_hz: 16000000.0         # so para conferir se as contagens do TIMER saem inteiras
+  active_per_period: 4               # K; the period is L = K x budget
+  timer_clock_hz: 16000000.0         # only to check that the TIMER counts come out as integers
 
-protocol:                            # divisoes por registro (arcabouco do E05)
+protocol:                            # per-record splits (E05 framework)
   n_splits: 5
-  # Uma semente de treino por divisao: a variabilidade de semente fica CONFUNDIDA com a de
-  # divisao, e o bootstrap reamostra as divisoes (pre-registro). Subir este numero separa as
-  # duas fontes; as linhas ganham a coluna `seed` e a media por registro passa sobre elas.
+  # One training seed per split: the seed variability is CONFOUNDED with the split variability,
+  # and the bootstrap resamples the splits (preregistration). Raising this number separates the
+  # two sources; the rows get the `seed` column and the per-record mean is taken over them.
   seeds_per_split: 1
   test_fraction: 0.25
   val_fraction: 0.25
@@ -105,7 +105,7 @@ training:
   patience: 40
   windows_per_epoch: 64
   batch_size: 8
-  # Uma taxa so, a mesma para todos os metodos aprendidos: orcamento de ajuste igual e nulo.
+  # A single rate, the same for all learned methods: an equal, zero tuning budget.
   lr_grid: [0.003]
   weight_decay: 0.0
   grad_clip: 5.0
@@ -113,14 +113,14 @@ training:
   tau_start: 2.0
   tau_end: 0.3
   tau_anneal_epochs: 100
-  # Regra B5, 2a aplicacao (2026-11-11): com lr x30, 1/16 ficou em 2/5; as 8 divisoes que nao
-  # convergiram pararam antes do fim do recozimento (melhor epoca 22-84 < 100). Parada antecipada e
-  # escolha de checkpoint so contam depois do recozimento, nos bracos com mascara aprendida.
+  # Rule B5, 2nd application (2026-11-11): with lr x30, 1/16 stayed at 2/5; the 8 splits that did
+  # not converge stopped before the end of annealing (best epoch 22-84 < 100). Early stopping and
+  # checkpoint selection only count after annealing, in the arms with a learned mask.
   stop_after_anneal: true
 
 decoder:
-  init_levels: [1, 1.585, 2]         # bandas do kurtograma: 2 + 3 + 4 = 9 canais
-  shifts: [-2, -1, 0, 1, 2]          # deslocamentos de fs/L do banco LPTV (R = 5 >= K = 4)
+  init_levels: [1, 1.585, 2]         # kurtogram bands: 2 + 3 + 4 = 9 channels
+  shifts: [-2, -1, 0, 1, 2]          # fs/L shifts of the LPTV bank (R = 5 >= K = 4)
   n_control: 1024
   transition_frac: 0.1
   envelope_power: 2
@@ -138,47 +138,47 @@ methods:
   - dec_livre
   - dec_adaptativa
   - wdcnn
-  # dec_loupe: opcional (LOUPE com straight-through); o gap de projecao da H2 usa dec_livre
+  # dec_loupe: optional (LOUPE with straight-through); the H2 projection gap uses dec_livre
 
 mask:
   init: flat
   init_scale: 0.01
   relaxation: topk_st
-  # A mascara tem taxa de aprendizado propria: com a do decodificador (0,003) e 8 passos por
-  # epoca, os logits nao saem do ruido de Gumbel (desvio ~1,28). Os diagnosticos de saida
-  # estao em masks.json (margem do top-K, posicoes iniciais e finais).
-  # Regra B5 aplicada em 2026-11-11: na rodada com 10, mask_converged_frac de dec_aprendida
-  # (bruto) foi 0,6 / 0,4 / 0,4 / 0,2 em 1/4 a 1/32 -> refazer com 30 (ver README).
+  # The mask has its own learning rate: with the decoder's (0.003) and 8 steps per epoch, the
+  # logits do not get out of the Gumbel noise (std ~1.28). The output diagnostics are in
+  # masks.json (top-K margin, initial and final positions).
+  # Rule B5 applied on 2026-11-11: in the run with 10, mask_converged_frac of dec_aprendida
+  # (bruto) was 0.6 / 0.4 / 0.4 / 0.2 at 1/4 to 1/32 -> redo with 30 (see README).
   lr_multiplier: 30.0
-livre: {period_multiple: 4}          # horizonte da mascara sem restricao: 4 periodos, 4K posicoes
+livre: {period_multiple: 4}          # horizon of the unconstrained mask: 4 periods, 4K positions
 loupe: {slope: 5.0, sample_slope: 12.0, period_multiple: 1}
 adps: {n_blocks: 4, n_features: 16, hidden: 32}
 multicoset: {criterion: min_peak_alias, max_enumeration: 3000000}
 wdcnn: {input_length: 2048, batch_size: 64, windows_per_epoch: 512, max_val_windows_per_segment: 16}
 
-# PRE-REGISTRO (espelho do README; o README e o registro de referencia)
+# PREREGISTRATION (mirror of the README; the README is the reference record)
 preregistration:
   dataset: ottawa
   variant: bruto
-  rulers: [local, nested]            # H1 e H2 so valem se as duas reguas concordarem
+  rulers: [local, nested]            # H1 and H2 only hold if the two rulers agree
   metric: acuracia balanceada de ordem (media sobre as pistas do acerto |est - regua| < 0,06)
   alpha: 0.05
-  correction: holm                   # sobre os testes de cada hipotese, por regua
+  correction: holm                   # over the tests of each hypothesis, per ruler
   min_budgets: 2
-  min_clusters_per_group: 3         # teste com menos aglomerados por pista nao e elegivel (p = 1)
+  min_clusters_per_group: 3         # a test with fewer clusters per race is not eligible (p = 1)
   min_splits: 2
-  # B5, avaliabilidade (2026-11-12, antes de qualquer numero de teste da rodada corrigida): um
-  # orcamento so e avaliavel numa hipotese se a mascara de cada braco de `convergence_arms` saiu
-  # do ruido em pelo menos esta fracao das divisoes; senao, seus testes entram no Holm com p = 1.
+  # B5, evaluability (2026-11-12, before any test number of the corrected run): a budget is only
+  # evaluable in a hypothesis if the mask of every arm in `convergence_arms` got out of the noise
+  # in at least this fraction of the splits; otherwise, its tests enter Holm with p = 1.
   min_mask_converged_frac: 0.5
   h1:
     arm: dec_aprendida_sel
     baselines: [uniforme_treino, dec_uniforme_treino, dec_aleatoria]
-    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 como pre-registrado + mascara usada
+    convergence_arms: [dec_aprendida, dec_aprendida_sel]  # B5 as preregistered + mask used
   h2:
     arm: dec_aprendida
     baseline: dec_livre_projetada
-    convergence_arms: [dec_aprendida, dec_livre_projetada]  # sem isso, baseline preso no ruido
+    convergence_arms: [dec_aprendida, dec_livre_projetada]  # without this, a baseline stuck in the noise
 
 analysis: {bootstrap_resamples: 4000}
 

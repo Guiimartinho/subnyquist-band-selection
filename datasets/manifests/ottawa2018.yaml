@@ -1,64 +1,64 @@
 name: ottawa2018
 full_name: University of Ottawa constant/variable speed rolling-element bearing vibration dataset (2018)
 url: https://data.mendeley.com/datasets/v43hmbwxpm/1
-license: CC BY 4.0 - redistribuivel com atribuicao
+license: CC BY 4.0 - redistributable with attribution
 fs_hz: [200000.0]
-channels: [Channel_1 (acelerometro), Channel_2 (encoder)]
+channels: [Channel_1 (accelerometer), Channel_2 (encoder)]
 notes: |
-  VERIFICADO POR DRY-RUN EM 2026-09-03, nao apenas lido da pagina.
+  VERIFIED BY A DRY RUN ON 2026-09-03, not just read from the page.
 
-  36 arquivos .mat, ~12-15 MB cada, 481 MB no total. Nomenclatura
-  <condicao>-<cenario>-<tentativa>.mat com condicao em {H, I, O} (healthy, inner,
-  outer), cenario em {A, B, C, D} e tentativa em {1, 2, 3}.
-  Cada registro tem 2.000.000 amostras = 10 s a 200 kSPS, duas colunas.
+  36 .mat files, ~12-15 MB each, 481 MB in total. Naming
+  <condition>-<scenario>-<trial>.mat with condition in {H, I, O} (healthy, inner,
+  outer), scenario in {A, B, C, D} and trial in {1, 2, 3}.
+  Each record has 2,000,000 samples = 10 s at 200 kSPS, two columns.
 
-  ENCODER: 1024 pulsos por revolucao. Isto NAO esta obvio na pagina e foi
-  determinado empiricamente: e o unico valor candidato que faz a ordem 1 (eixo)
-  aparecer no espectro de ordem junto com a BPFI. Com 1024 ppr a rotacao fica em
-  torno de 1172 rpm com variacao ampla ao longo dos 10 s.
+  ENCODER: 1024 pulses per revolution. This is NOT obvious on the page and was
+  determined empirically: it is the only candidate value that makes order 1 (shaft)
+  appear in the order spectrum together with the BPFI. With 1024 ppr the speed is
+  around 1172 rpm, with a wide variation over the 10 s.
 
-  VALIDACAO PONTA A PONTA: o registro I-A-1 (inner race) reamostrado em angulo
-  produz ordem dominante 5,43, que e a BPFI teorica para 9 esferas e razao ~0,2,
-  mais a ordem 1 (eixo) e a ordem 10,87 (segundo harmonico). O rotulo do dataset,
-  a resolucao do encoder e o codigo de analise de ordem se confirmam mutuamente.
+  END-TO-END VALIDATION: record I-A-1 (inner race), resampled in angle, gives a
+  dominant order of 5.43, which is the theoretical BPFI for 9 balls and ratio ~0.2,
+  plus order 1 (shaft) and order 10.87 (second harmonic). The dataset label,
+  the encoder resolution and the order analysis code confirm one another.
 
-  BANDA INFORMATIVA: 97% da energia esta em 0-50 Hz (conteudo estrutural, nao
-  falha). A banda ressonante da falha, achada pelo kurtograma ignorando abaixo de
-  500 Hz, esta em 6,8-10 kHz com curtose 34,4 - contra 3,88 do melhor registro do
-  CWRU. E muito mais impulsivo.
+  INFORMATIVE BAND: 97% of the energy is in 0-50 Hz (structural content, not the
+  fault). The resonant band of the fault, found by the kurtogram while ignoring everything
+  below 500 Hz, is at 6.8-10 kHz with kurtosis 34.4 - against 3.88 for the best CWRU
+  record. It is much more impulsive.
 
-  FOLGA REAL DE SUBAMOSTRAGEM: a taxa de 200 kSPS e sobreamostragem; so 0,1% da
-  energia esta acima de 20 kHz. O que importa e a folga a partir do Nyquist
-  EFETIVO da banda informativa (2 x 10 kHz = 20 kSPS) ate o piso da frequencia de
-  falha (~700 Hz para 3 harmonicos de BPFI): cerca de 28x de operacao sub-Nyquist
-  genuina. Muito melhor que o CWRU 12k, e com velocidade variavel.
+  REAL UNDERSAMPLING MARGIN: the 200 kSPS rate is oversampling; only 0.1% of the
+  energy is above 20 kHz. What matters is the margin from the EFFECTIVE Nyquist
+  of the informative band (2 x 10 kHz = 20 kSPS) down to the floor of the fault
+  frequency (~700 Hz for 3 harmonics of the BPFI): about 28x of genuine sub-Nyquist
+  operation. Much better than CWRU 12k, and with variable speed.
 
-  CORRIGIDO PELO E07 EM 2026-09-04, com os 24 registros de falha:
+  CORRECTED BY E07 ON 2026-09-04, with the 24 fault records:
 
-  - A ordem BPFI de 5,43 do dry-run se confirma nos 12 registros de pista interna
-    (5,376 a 5,431), com bandas laterais espacadas de exatamente 1,00 - a
-    assinatura de pista interna, e confirmacao independente dos 1024 ppr.
-  - A geometria de catalogo do ER16K NAO serve como verdade fundamental. Prevista
-    BPFO = 3,573; medida 3,414 nos 12 registros de pista externa, desvio de -4,4%.
-    A BPFI erra so -0,5%. A soma medida 8,82 viola a identidade BPFO + BPFI = n em
-    2%, o que descarta escorregamento puro de gaiola como explicacao unica. O
-    mecanismo nao foi determinado. USAR ORDENS CALIBRADAS, nao as de catalogo.
-  - O desvio depende do cenario: A e C (comecam acelerando) dao ordens mais altas
-    que B e D (comecam desacelerando).
-  - TETO DE BUSCA DO KURTOGRAMA: obrigatorio limitar a 25 kHz. Sem teto, 12 de 12
-    registros de pista externa escolhem 50-100 kHz - faixa com 0,1% da energia,
-    onde a curtose mede vazamento numerico - e a falha nao aparece em ordem
-    nenhuma. Com o teto, ela aparece na ordem 3,4 nos 12. O guarda min_energy_frac
-    do kurtograma tem limiar frouxo demais para este dataset.
+  - The BPFI order of 5.43 from the dry run is confirmed in the 12 inner-race records
+    (5.376 to 5.431), with sidebands spaced by exactly 1.00 - the
+    inner-race signature, and an independent confirmation of the 1024 ppr.
+  - The catalogue geometry of the ER16K does NOT serve as ground truth. Predicted
+    BPFO = 3.573; measured 3.414 in the 12 outer-race records, a deviation of -4.4%.
+    The BPFI is off by only -0.5%. The measured sum 8.82 violates the identity BPFO + BPFI = n
+    by 2%, which rules out pure cage slip as the sole explanation. The
+    mechanism was not determined. USE CALIBRATED ORDERS, not the catalogue ones.
+  - The deviation depends on the scenario: A and C (which start by accelerating) give higher
+    orders than B and D (which start by decelerating).
+  - KURTOGRAM SEARCH CEILING: limiting it to 25 kHz is mandatory. Without a ceiling, 12 of 12
+    outer-race records choose 50-100 kHz - a range with 0.1% of the energy,
+    where the kurtosis measures numerical leakage - and the fault does not appear at any
+    order. With the ceiling, it appears at order 3.4 in all 12. The min_energy_frac guard
+    of the kurtogram has too loose a threshold for this dataset.
 
 undersampling:
   method: decimacao_pura
   effective_nyquist_hz: 20000.0
   fault_floor_hz: 700.0
   factors: [1, 2, 4, 8, 16, 24, 32, 48, 64, 96, 128]
-  # Medido no E07: acerto nao degrada ate 64x (3,12 kSPS efetivos).
+  # Measured in E07: the accuracy does not degrade up to 64x (3.12 kSPS effective).
 
 access:
   programmatic: true
   api: https://data.mendeley.com/public-api/datasets/v43hmbwxpm/files?folder_id=root&version=1
-  note: unico dos candidatos, junto com o CWRU, com download por script sem cadastro
+  note: the only candidate, along with CWRU, with a scripted download without registration

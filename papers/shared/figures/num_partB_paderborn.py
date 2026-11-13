@@ -1,4 +1,4 @@
-"""Números da Parte (b) no Paderborn (E15), lidos dos resultados, nunca digitados à mão.
+"""Numbers of Part (b) on Paderborn (E15), read from the results, never typed by hand.
 
 uv run python papers/shared/figures/num_partB_paderborn.py
 """

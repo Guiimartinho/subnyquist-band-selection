@@ -3,19 +3,19 @@ full_name: Paderborn University KAt-DataCenter bearing dataset
 url: https://mb.uni-paderborn.de/en/kat/research/bearing-datacenter
 download_url: https://groups.uni-paderborn.de/kat/BearingDataCenter/
 license: >
-  CC BY-NC 4.0 (conferido em 2026-11-12 na pagina oficial): "The data is licensed under the
+  CC BY-NC 4.0 (checked on 2026-11-12 on the official page): "The data is licensed under the
   Creative Commons Attribution-NonCommercial 4.0 International Licence." "Non-commercial
   academic use of the data is permitted, but a citation of the source is required."
-  Dado bruto nao e versionado nem redistribuido.
+  The raw data is neither versioned nor redistributed.
 citation: >
   Christian Lessmeier et al., KAt-DataCenter: mb.uni-paderborn.de/en/kat/research/bearing-datacenter,
-  Chair of Design and Drive Technology, Paderborn University. Artigo: Lessmeier, Kimotho, Zimmer
-  e Sextro, "Condition Monitoring of Bearing Damage in Electromechanical Drive Systems by Using
+  Chair of Design and Drive Technology, Paderborn University. Paper: Lessmeier, Kimotho, Zimmer
+  and Sextro, "Condition Monitoring of Bearing Damage in Electromechanical Drive Systems by Using
   Motor Current Signals of Electric Motors: A Benchmark Data Set for Data-Driven
   Classification", European Conference of the PHM Society 2016 (PHME16).
-fs_hz: [64000]  # vibracao e correntes; inferida do arquivo (256001 amostras em 4 s)
+fs_hz: [64000]  # vibration and currents; inferred from the file (256001 samples in 4 s)
 channels:
-  vibration_1: {raster: HostService, fs_hz: 64000, note: acelerometro PCB 336C04 no adaptador do modulo}
+  vibration_1: {raster: HostService, fs_hz: 64000, note: PCB 336C04 accelerometer on the module adapter}
   phase_current_1: {raster: HostService, fs_hz: 64000}
   phase_current_2: {raster: HostService, fs_hz: 64000}
   speed: {raster: Mech_4kHz, fs_hz: 4000, unit: rpm}
@@ -23,36 +23,36 @@ channels:
   torque: {raster: Mech_4kHz, fs_hz: 4000, unit: Nm}
   temp_2_bearing_module: {raster: Temp_1Hz, fs_hz: 1}
 structure: >
-  <codigo>/<ajuste>_<codigo>_<n>.mat, n = 1..20, MATLAB 5. Variavel unica com o nome do
-  arquivo; struct com Info, X (eixos de tempo por raster), Y (sinais: Name, Raster, Data, ...),
-  Description. Cada pasta traz tambem a ficha <codigo>.pdf do rolamento.
-operating_conditions:  # pagina "operating conditions", conferida em 2026-11-12
+  <code>/<setting>_<code>_<n>.mat, n = 1..20, MATLAB 5. A single variable named after the
+  file; a struct with Info, X (time axes per raster), Y (signals: Name, Raster, Data, ...),
+  Description. Each folder also holds the bearing's data sheet <code>.pdf.
+operating_conditions:  # "operating conditions" page, checked on 2026-11-12
   N15_M07_F10: {rpm: 1500, torque_nm: 0.7, radial_force_n: 1000}
   N09_M07_F10: {rpm: 900, torque_nm: 0.7, radial_force_n: 1000}
   N15_M01_F10: {rpm: 1500, torque_nm: 0.1, radial_force_n: 1000}
   N15_M07_F04: {rpm: 1500, torque_nm: 0.7, radial_force_n: 400}
-measurements: 20 por ajuste, 4 s cada; temperatura mantida em ~45-50 C
+measurements: 20 per setting, 4 s each; temperature kept at ~45-50 C
 bearing:
-  type: rolamento de esferas 6203 (FAG, MTK e IBU/IBB; PHME16, secao 3)
+  type: 6203 ball bearing (FAG, MTK and IBU/IBB; PHME16, section 3)
   manufacturer_spread: >
-    "the characteristic kinematic frequencies do not vary more than 1-2%" (PHME16, secao 3).
-geometry:  # PHME16, tabela 1 (FAG)
+    "the characteristic kinematic frequencies do not vary more than 1-2%" (PHME16, section 3).
+geometry:  # PHME16, table 1 (FAG)
   n_elements: 8
   ball_diameter_mm: 6.75
   pitch_diameter_mm: 28.55
   contact_angle_deg: 0
-  computed_orders: {BPFO: 3.0543, BPFI: 4.9457}  # 4 (1 -+ d/D), d/D = 0,23643
+  computed_orders: {BPFO: 3.0543, BPFI: 4.9457}  # 4 (1 -+ d/D), d/D = 0.23643
   measured_orders: >
-    Checagem de 2026-11-12 (datasets/scripts/paderborn_suitability.py, N15_M07_F10, taxa cheia):
-    KA01 3,060; KI01 e KI18 4,931. Dentro de 0,2-0,3 % das calculadas.
-bearings:  # PHME16, tabelas 4 e 5; pagina "data sets and download" (6 saudaveis, 12 artificiais, 14 reais)
+    Check of 2026-11-12 (datasets/scripts/paderborn_suitability.py, N15_M07_F10, full rate):
+    KA01 3.060; KI01 and KI18 4.931. Within 0.2-0.3 % of the computed ones.
+bearings:  # PHME16, tables 4 and 5; "data sets and download" page (6 healthy, 12 artificial, 14 real)
   healthy: [K001, K002, K003, K004, K005, K006]
   artificial:
     outer: {KA01: [1, EDM], KA03: [2, engraver], KA05: [1, engraver], KA06: [2, engraver],
             KA07: [1, drilling], KA08: [2, drilling], KA09: [2, drilling]}
     inner: {KI01: [1, EDM], KI03: [1, engraver], KI05: [1, engraver], KI07: [2, engraver],
             KI08: [2, engraver]}
-  real:  # ensaio de vida acelerado; [nivel, sintoma, combinacao]
+  real:  # accelerated lifetime test; [level, symptom, combination]
     outer: {KA04: [1, pitting, S], KA15: [1, indentations, S], KA16: [2, pitting, R],
             KA22: [1, pitting, S], KA30: [1, indentations, R]}
     inner: {KI04: [1, pitting, M], KI14: [1, pitting, M], KI16: [3, pitting, S],
@@ -60,26 +60,27 @@ bearings:  # PHME16, tabelas 4 e 5; pagina "data sets and download" (6 saudaveis
     combined: {KB23: [2, pitting, "IR (+OR)"], KB24: [3, pitting, "IR (+OR)"],
                KB27: [1, indentations, "OR + IR"]}
 rig: >
-  PMSM de 425 W, 4 pares de polos, acionado por inversor KEB Combivert com chaveamento de
-  16 kHz (PHME16, secao 4.1). As correntes passam por filtro passa-baixas de 25 kHz antes de
-  amostrar a 64 kHz.
+  425 W PMSM, 4 pole pairs, driven by a KEB Combivert inverter with 16 kHz switching
+  (PHME16, section 4.1). The currents go through a 25 kHz low-pass filter before being
+  sampled at 64 kHz.
 notes: |
-  INGERIDO EM 2026-11-12 no servidor remoto, em datasets/raw/paderborn (fora do git): 32
-  arquivos, 2560 .mat, 21 GB extraidos. Os .rar sao RAR4; o 7z do servidor nao tem o codec, e
-  a extracao usa unrar-cffi (datasets/scripts/extract_rar.py).
+  INGESTED ON 2026-11-12 on the remote server, in datasets/raw/paderborn (outside git): 32
+  files, 2560 .mat, 21 GB extracted. The .rar files are RAR4; the server's 7z lacks the codec,
+  and the extraction uses unrar-cffi (datasets/scripts/extract_rar.py).
   readme_versions.txt: "2016-07-13: update of profile of bearing damage KI03 (correction of
   mistakes in description of damage geometry)".
-  Checagem de adequacao (2026-11-12, taxa cheia, kurtograma nivel 4 com piso de 500 Hz):
-  - A raia de falha aparece e se separa da harmonica do eixo em KA01 (EDM), KI01 (EDM) e KI18
-    (real, nivel 2). Nao aparece em KA05, KA07, KI05 (artificiais nivel 1), KA04, KA15, KA22,
-    KI04, KI14 (reais nivel 1).
-  - Nos reais de pista externa, o pico da janela da BPFO e a 3a harmonica do eixo (2,98-3,01).
-    A BPFO fica a 0,054 ordem de 3,0 e a BPFI a 0,054 ordem de 5,0: com a tolerancia de 0,06
-    ordem do Ottawa, travar na harmonica contaria como acerto. Neste conjunto a tolerancia tem de
-    ficar abaixo de ~0,027 ordem. A resolucao de 4 s e 0,010 ordem a 1500 rpm e 0,017 a 900 rpm.
-  - O kurtograma escolhe 11-21,5 kHz na maioria dos registros sem raia, faixa que contem o
-    chaveamento de 16 kHz do inversor. Hipotese para a Parte 1 do ADR 0006, nao testada.
-archives:  # sha256 dos arquivos baixados em 2026-11-12 (a pagina nao publica checksum); ver paderborn.sha256
+  Suitability check (2026-11-12, full rate, level-4 kurtogram with a 500 Hz floor):
+  - The fault line appears and separates from the shaft harmonic in KA01 (EDM), KI01 (EDM) and
+    KI18 (real, level 2). It does not appear in KA05, KA07, KI05 (artificial, level 1), KA04,
+    KA15, KA22, KI04, KI14 (real, level 1).
+  - In the real outer-race bearings, the peak of the BPFO window is the 3rd shaft harmonic
+    (2.98-3.01). The BPFO lies 0.054 order from 3.0 and the BPFI 0.054 order from 5.0: with the
+    Ottawa tolerance of 0.06 order, locking onto the harmonic would count as a hit. On this
+    dataset the tolerance has to stay below ~0.027 order. The resolution of 4 s is 0.010 order
+    at 1500 rpm and 0.017 at 900 rpm.
+  - The kurtogram chooses 11-21.5 kHz in most records without a line, a range that contains the
+    inverter's 16 kHz switching. Hypothesis for Part 1 of ADR 0006, not tested.
+archives:  # sha256 of the files downloaded on 2026-11-12 (the page publishes no checksums); see paderborn.sha256
   K001.rar: {bytes: 173881721, sha256: 0f119ebdb28fb2f4d9fac1beb1319429f63f7ae1256c23c872f280f3560918e5}
   K002.rar: {bytes: 161981588, sha256: 1040da8b74d169c4e8c8545afa335d7a3a320bcaf36a471250c3e434bc4caffd}
   K003.rar: {bytes: 173194389, sha256: d7d1edf6047fac088efe118198abd0856c5280dd8653496fbac9a5d877180f1e}

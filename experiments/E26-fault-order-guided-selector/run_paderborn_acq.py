@@ -1,25 +1,26 @@
-"""E26c no Paderborn: decimação pura contra anti-alias e passa-faixa, com a regra guiada fixa.
+"""E26c on Paderborn: pure decimation against anti-alias and band-pass, with the guided rule fixed.
 
-A revisão do E26 mostrou que o ganho do guiado já existe na taxa cheia. A pergunta que sobra para
-a tese: na mesma taxa, deixar tudo dobrar (``x[::M]``) perde ou ganha informação frente a filtrar
-antes de decimar? Só no fluxo bruto (a mediana não contribuiu no E26).
+The E26 review showed that the gain of the guided arm already exists at full rate. The question
+left for the thesis: at the same rate, does letting everything fold (``x[::M]``) lose or gain
+information compared with filtering before decimating? Only on the raw stream (the median did not
+contribute in E26).
 
-- **Aquisições,** todas na taxa ``FS/M``:
-  - ``pura``: ``x[::M]``;
-  - ``antialias``: passa-baixas ideal em ``FS/(2M)``, depois ``[::M]``;
-  - ``zona{k}`` (só ``M`` em ``zone_factors``): passa-faixa ideal na zona
-    ``[k, k+1]·FS/(2M)``, depois ``[::M]``. É a amostragem passa-faixa clássica; a ``zona0`` é o
+- **Acquisitions,** all at the rate ``FS/M``:
+  - ``pura`` (pure): ``x[::M]``;
+  - ``antialias``: ideal low-pass at ``FS/(2M)``, then ``[::M]``;
+  - ``zona{k}`` (zone k; only ``M`` in ``zone_factors``): ideal band-pass on the zone
+    ``[k, k+1]·FS/(2M)``, then ``[::M]``. It is classical band-pass sampling; ``zona0`` is the
     anti-alias.
-- **Bandas,** com a regra guiada do E26 (proeminência média nas janelas das harmônicas):
-  - ``guiado``: o máximo sobre a partição de 23 bandas, só em ``pura`` e ``antialias``;
-  - ``kurtograma_regra``: a banda do kurtograma rápido, só em ``pura`` e ``antialias``;
-  - ``banda_larga_regra``: [f_min, fs/2], em todas as aquisições.
-- **Colunas extras para o vazamento** (revisão, ataque 6):
-  - a ordem do pico na janela da 1ª harmônica, na banda escolhida;
-  - o escore com exclusão de ±0,03 em torno das ordens inteiras;
-  - os escores de 4 janelas-isca, em 0,9 e 1,1 vez a BPFO e a BPFI.
-- **Comissionamento:** a banda do kurtograma em taxa cheia na medição 1 de cada rolamento e ajuste,
-  gravada em ``commission.csv``.
+- **Bands,** with the guided rule of E26 (mean prominence in the harmonic windows):
+  - ``guiado``: the maximum over the partition of 23 bands, only in ``pura`` and ``antialias``;
+  - ``kurtograma_regra``: the band of the fast kurtogram, only in ``pura`` and ``antialias``;
+  - ``banda_larga_regra``: [f_min, fs/2], in all acquisitions.
+- **Extra columns for leakage** (review, attack 6):
+  - the order of the peak in the window of the 1st harmonic, in the chosen band;
+  - the score with an exclusion of ±0.03 around the integer orders;
+  - the scores of 4 decoy windows, at 0.9 and 1.1 times the BPFO and the BPFI.
+- **Commissioning:** the full-rate kurtogram band on measurement 1 of each bearing and setting,
+  recorded in ``commission.csv``.
 
     uv run python experiments/E26-fault-order-guided-selector/run_paderborn_acq.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn_acq.yaml
@@ -70,7 +71,7 @@ TARGETS = {**ORDERS, **DECOYS}
 
 
 def ideal_band(x: np.ndarray, lo_hz: float, hi_hz: float) -> np.ndarray:
-    """Filtro ideal por máscara na FFT, em taxa cheia: mantém [lo, hi)."""
+    """Ideal filter by masking the FFT, at full rate: keeps [lo, hi)."""
     spec = np.fft.rfft(x)
     f = np.fft.rfftfreq(x.size, 1.0 / FS)
     spec[(f < lo_hz) | (f >= hi_hz)] = 0.0
@@ -78,7 +79,7 @@ def ideal_band(x: np.ndarray, lo_hz: float, hi_hz: float) -> np.ndarray:
 
 
 def score_spectrum(orders: np.ndarray, mag: np.ndarray, cfg: dict) -> dict:
-    """Escores de todos os alvos, com as duas exclusões, e a ordem do pico na 1ª harmônica."""
+    """Scores of all targets, with both exclusions, and the peak order at the 1st harmonic."""
     g = cfg["guided"]
     out = {}
     for c, order in TARGETS.items():
@@ -112,9 +113,9 @@ def scores_in(x, v, fs, band, cfg) -> dict | None:
 
 
 def guided_best(x, v, fs, cfg) -> dict:
-    """Por alvo, o máximo do escore (exclusão de ±0,015) sobre a partição.
+    """Per target, the maximum of the score (exclusion of ±0.015) over the partition.
 
-    O escore com exclusão de ±0,03 e a ordem do pico vêm da mesma banda.
+    The score with the ±0.03 exclusion and the order of the peak come from the same band.
     """
     f_min = float(cfg["kurtogram"]["f_min_hz"])
     best: dict = {}
@@ -155,7 +156,7 @@ def task(job) -> dict:
     for n in [cal, *[int(t) for t in cfg["test_measurements"]]]:
         path = pb.measurement_path(root, code, setting, n)
         if not path.exists():
-            out["unreadable"][n] = "ausente"
+            out["unreadable"][n] = "missing"
             continue
         out["sha256"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         try:
@@ -164,7 +165,7 @@ def task(job) -> dict:
             out["unreadable"][n] = str(exc)[:120]
             continue
         x, v = m.vibration, m.speed_profile_hz()
-        if n == cal:  # comissionamento: a banda do kurtograma em taxa cheia
+        if n == cal:  # commissioning: the full-rate kurtogram band
             kg = cfg["kurtogram"]
             try:
                 b = fast_kurtogram(
@@ -243,11 +244,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=None)
-    ap.add_argument("--bearings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--settings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--factors", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--results", type=str, default=None, help="só para fumaça")
+    ap.add_argument("--bearings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--settings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--factors", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--results", type=str, default=None, help="smoke test only")
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     if args.measurements:
@@ -260,7 +261,7 @@ def main() -> int:
     t0 = time.time()
     with ProcessPoolExecutor(max_workers=args.workers or int(cfg["compute"]["workers"])) as pool:
         res = list(pool.map(task, jobs))
-    print(f"{len(res)} registros em {time.time() - t0:.0f} s", flush=True)
+    print(f"{len(res)} records in {time.time() - t0:.0f} s", flush=True)
     out = EXP / (args.results or cfg["output"]["results_dir"])
     out.mkdir(parents=True, exist_ok=True)
     rows = [r for o in res for r in o["rows"]]
@@ -271,7 +272,7 @@ def main() -> int:
         src.update(p.relative_to(ROOT).as_posix().encode())
         src.update(p.read_bytes())
     manifest = {
-        "experiment": "E26c-fault-order-guided-selector (Paderborn, aquisicao)",
+        "experiment": "E26c-fault-order-guided-selector (Paderborn, acquisition)",
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "config_path": args.config.as_posix(),
         "config_sha256": base.sha256_file(args.config),

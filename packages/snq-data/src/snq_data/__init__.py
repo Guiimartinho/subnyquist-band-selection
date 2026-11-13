@@ -1,13 +1,13 @@
-"""snq-data - loaders de datasets publicos e subamostragem artificial.
+"""snq-data - public dataset loaders and artificial undersampling.
 
-Regra: dados brutos nunca sao versionados. O repositorio versiona apenas os
-manifests em datasets/manifests/ e o codigo que baixa, valida e prepara.
+Rule: raw data is never versioned. The repository versions only the
+manifests in datasets/manifests/ and the code that downloads, validates and prepares them.
 
-Regra de subamostragem: NAO decimar com filtro anti-aliasing. Decimacao com AAF
-destroi exatamente o efeito em estudo. Usar x[::M] puro, ou reamostrar nos
-instantes nao-uniformes do padrao em teste.
+Undersampling rule: do NOT decimate with an anti-aliasing filter. Decimation with an AAF
+destroys exactly the effect under study. Use plain x[::M], or resample at the
+non-uniform instants of the pattern under test.
 
-Ver a skill dataset-ingest para o procedimento de ingestao.
+See the dataset-ingest skill for the ingestion procedure.
 """
 
 from snq_data.cwru import (

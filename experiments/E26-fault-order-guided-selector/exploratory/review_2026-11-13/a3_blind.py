@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -16,23 +16,23 @@ def cat(est, race, b):
         own = truth(b, race, race)
         o = own
         if abs(est - o) <= TOL:
-            return "falha_1x"
+            return "fault_1x"
         if abs(est - 2 * o) <= 2 * TOL:
-            return "falha_2x"
+            return "fault_2x"
         if abs(est - 3 * o) <= 3 * TOL:
-            return "falha_3x"
+            return "fault_3x"
     if abs(est - round(est)) <= 0.015:
-        return f"inteira"
+        return f"integer"
     if est < 2.2:
-        return "piso(<2,2)"
+        return "floor(<2.2)"
     for c, o in ORD.items():
         for k in (1, 2, 3):
             if abs(est - k * o) <= 0.02 * k * o:
-                return f"janela_{c}x{k}"
-    return "outra"
+                return f"window_{c}x{k}"
+    return "other"
 
 
-print("== Para onde vai o argmax do cego (fracao de segmentos) ==")
+print("== Where the blind argmax goes (fraction of segments) ==")
 for clean in ("bruto", "mediana3"):
     for race in ("OR", "IR", "H"):
         for f in FACTORS:
@@ -51,9 +51,7 @@ for clean in ("bruto", "mediana3"):
                 f"{clean:8s} {race} {f:2d}x n={n:4d} | "
                 + "  ".join(f"{k}={100 * v / n:.1f}" for k, v in top[:7])
             )
-print(
-    "\n== Ordens inteiras mais frequentes no argmax do cego (bruto, todos os fatores, danificados) =="
-)
+print("\n== Most frequent integer orders in the blind argmax (raw, all factors, damaged) ==")
 from collections import Counter
 
 c = Counter()
@@ -64,7 +62,7 @@ for r in ROWS:
             c[int(round(e))] += 1
 print(c.most_common(10))
 print(
-    "\n== Cego com a MESMA aceitacao do guiado: |est - k*o| <= 2% de k*o, k=1,2, com inteiras +-0,015 excluidas =="
+    "\n== Blind with the SAME acceptance as the guided arm: |est - k*o| <= 2% of k*o, k=1,2, with integers +-0.015 excluded =="
 )
 
 
@@ -85,7 +83,9 @@ def pred_blind_wide(r, rule):
             o = ORD[c]
             if in_guided_window(est, o):
                 hits.append(rc)
-        elif rule == "nested12":  # tolerancia 0,025 no 1o e 0,05 no 2o harmonico em torno da regua
+        elif (
+            rule == "nested12"
+        ):  # tolerance 0.025 at the 1st and 0.05 at the 2nd harmonic around the ruler
             o = truth(r["bearing"], r["race"], rc)
             if abs(est - o) <= TOL or abs(est - 2 * o) <= 2 * TOL:
                 hits.append(rc)
@@ -102,8 +102,8 @@ for rule in ("nested12", "geo"):
             bal = balanced(A[(arm, f)])
             spec = balanced(A[(arm, f)], races=("H",))
             s.append(f"{f}x {bal:5.1f}/{spec:5.1f}")
-        print(f"  regra={rule:8s} {arm:20s} bal/espec: " + " | ".join(s))
-print("\n== Tolerancia do cego (regua aninhada, so 1o harmonico): bal/espec ==")
+        print(f"  rule={rule:8s} {arm:20s} bal/spec: " + " | ".join(s))
+print("\n== Tolerance of the blind arm (nested ruler, 1st harmonic only): bal/spec ==")
 for tol in (0.01, 0.025, 0.05, 0.10):
     A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r, tol=tol))
     s = []
@@ -112,7 +112,7 @@ for tol in (0.01, 0.025, 0.05, 0.10):
             f"{f}x {balanced(A[('kurtograma', f)]):5.1f}/{balanced(A[('kurtograma', f)], races=('H',)):5.1f}"
         )
     print(f"  tol={tol:.3f} kurtograma: " + " | ".join(s))
-print("\n== Regua nominal (geometria) em vez da aninhada, tol 0,025 ==")
+print("\n== Nominal ruler (geometry) instead of the nested one, tol 0.025 ==")
 A = acc_table(
     lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r, rule="nominal")
 )

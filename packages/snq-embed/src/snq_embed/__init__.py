@@ -1,15 +1,15 @@
-"""snq-embed - quantizacao, geracao de C e orcamento para o MCU.
+"""snq-embed - quantization, C generation and budgeting for the MCU.
 
-Pacote folha: nada do projeto importa daqui.
+Leaf package: nothing in the project imports from here.
 
-Implementado: modelo de energia (`energy`) - microjoules por diagnostico decomposto
-em aquisicao, processamento e radio, com procedencia obrigatoria por coeficiente e
-propagacao explicita de valor desconhecido. E modelo, nao medicao: a Medida 2 de
-bancada valida.
+Implemented: energy model (`energy`) - microjoules per diagnosis broken down into
+acquisition, processing and radio, with mandatory provenance per coefficient and
+explicit propagation of unknown values. It is a model, not a measurement: bench
+Measurement 2 validates it.
 
-A ser implementado: quantize_int8, export_c_kernel, ram_budget, cycle_estimate.
-Alvo: nRF54L15, Cortex-M33 @128 MHz, 256 kB RAM, 1.5 MB NVM.
-Metrica reportada: microjoules por diagnostico e bytes de BLE por diagnostico.
+To be implemented: quantize_int8, export_c_kernel, ram_budget, cycle_estimate.
+Target: nRF54L15, Cortex-M33 @128 MHz, 256 kB RAM, 1.5 MB NVM.
+Reported metric: microjoules per diagnosis and BLE bytes per diagnosis.
 """
 
 from snq_embed.energy import (

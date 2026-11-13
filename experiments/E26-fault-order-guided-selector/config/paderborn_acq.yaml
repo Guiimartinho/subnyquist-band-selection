@@ -1,6 +1,7 @@
-# E26c no Paderborn (pre-registro: README, "E26c: decimacao pura contra anti-alias e
-# passa-faixa"). Copia do paderborn.yaml do E26, com as aquisicoes do E26c. Fixado antes de rodar. Os campos kurtogram, prior, tolerance_order, prominence_window e min_line_prominence
-# repetem o E24 (config/base.yaml), porque a regua aninhada usa a line_calibration do E24.
+# E26c on Paderborn (pre-registration: README, "E26c: pure decimation against anti-alias and
+# band-pass"). Copy of the E26 paderborn.yaml, with the E26c acquisitions. Fixed before running.
+# The fields kurtogram, prior, tolerance_order, prominence_window and min_line_prominence
+# repeat E24 (config/base.yaml), because the nested ruler uses the line_calibration of E24.
 data_dir: datasets/raw/paderborn
 settings: [N15_M07_F10, N15_M01_F10, N15_M07_F04]
 outer: [KA01, KA03, KA05, KA06, KA07, KA08, KA09, KA04, KA15, KA16, KA22, KA30]
@@ -10,34 +11,34 @@ calibration_measurement: 1
 test_measurements: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 segment_samples: 255936
 factors: [4, 8, 16, 32]
-zone_factors: [4, 8]            # passa-faixa ideal em cada zona de Nyquist
-exclusion_wide: 0.03            # sensibilidade ao vazamento das ordens inteiras (revisao)
+zone_factors: [4, 8]            # ideal band-pass on each Nyquist zone
+exclusion_wide: 0.03            # sensitivity to leakage from the integer orders (review)
 guard_points_per_rev_factor: 1.0
 min_samples: 4096
 samples_per_rev: 64
 order_min: 2.0
-kurtogram: {max_level: 4, f_min_hz: 500.0}      # o seletor cego (E24), teto = Nyquist efetivo
+kurtogram: {max_level: 4, f_min_hz: 500.0}      # blind selector (E24), ceiling = effective Nyquist
 prior: {score_harmonics: 3, calibration_span: 0.01}
 tolerance_order: 0.025
 prominence_window: 0.07
 min_line_prominence: 5.0
 guided:
-  max_level: 3                  # particao do kurtograma, niveis 1 a 3 (23 bandas)
-  window_frac: 0.02             # dispersao de 1-2 % entre fabricantes (PHME16, secao 3)
-  integer_exclusion_order: 0.015  # harmonicas inteiras do eixo; resolucao de 0,01 ordem em 4 s
+  max_level: 3                  # kurtogram partition, levels 1 to 3 (23 bands)
+  window_frac: 0.02             # 1-2 % spread between manufacturers (PHME16, section 3)
+  integer_exclusion_order: 0.015  # integer shaft harmonics; resolution of 0.01 order in 4 s
   harmonics: [1, 2]
-  false_alarm: 0.05             # limiar = percentil 95 dos escores dos sadios
+  false_alarm: 0.05             # threshold = 95th percentile of the healthy scores
 analysis:
   alpha: 0.05
   decisive_factors: [4, 8, 16, 32]
   min_specificity: 0.90
-  signflip_exact_max: 18        # troca de sinal exata ate 2^18; acima, Monte Carlo
+  signflip_exact_max: 18        # exact sign-flip test up to 2^18; above that, Monte Carlo
   signflip_mc: 1000000
   seed: 20261113
 compute: {workers: 28}
 output: {results_dir: results-paderborn-aquisicao}
 analysis_acq:
-  guided_results: results-paderborn  # para a checagem de integridade do guiado em pura
+  guided_results: results-paderborn  # for the integrity check of the guided arm in pura
   alpha: 0.05
   h5_factors: [4, 8, 16, 32]
   h6_factors: [4, 8]

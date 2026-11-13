@@ -1,34 +1,34 @@
-"""Paderborn - KAt-DataCenter (Universidade de Paderborn), rolamentos 6203.
+"""Paderborn - KAt-DataCenter (Paderborn University), 6203 bearings.
 
-Fatos conferidos em 2026-11-12 nas páginas oficiais e no artigo PHME16 (Lessmeier, Kimotho,
-Zimmer e Sextro, 2016). O detalhe está em ``datasets/manifests/paderborn.yaml``.
+Facts checked on 2026-11-12 on the official pages and in the PHME16 paper (Lessmeier, Kimotho,
+Zimmer and Sextro, 2016). The details are in ``datasets/manifests/paderborn.yaml``.
 
-- **Licença:** CC BY-NC 4.0, com citação obrigatória. O dado bruto não é versionado.
-- **Rolamentos:** 32, sendo 6 saudáveis (K001-K006), 12 com dano artificial e 14 com dano real
-  de ensaio de vida acelerado (tabelas 4 e 5 do PHME16).
-- **Medições:** 4 ajustes de operação (``SETTINGS``), com 20 medições de 4 s cada.
-- **Arquivo:** ``<código>/<ajuste>_<código>_<n>.mat``, em MATLAB 5. A variável única leva o nome
-  do arquivo e é um struct com ``X`` (eixos de tempo) e ``Y`` (sinais).
-  - ``vibration_1`` e as duas correntes de fase estão a 64 kHz (256001 amostras).
-  - ``speed`` (rpm), ``force`` e ``torque`` estão a 4 kHz (16001 amostras).
-- **Geometria:** tabela 1 do PHME16 (FAG), com 8 esferas, d = 6,75 mm, D = 28,55 mm e ângulo de
-  contato 0°.
-  - Pelo PHME16, os fabricantes usados (FAG, MTK, IBU/IBB) variam "não mais que 1-2 %" nas
-    frequências características.
-  - A BPFO (3,054) e a BPFI (4,946) ficam a 0,054 ordem das harmônicas 3 e 5 do eixo, então a
-    tolerância de ordem tem de ficar abaixo de ~0,027.
+- **License:** CC BY-NC 4.0, with mandatory citation. The raw data is not versioned.
+- **Bearings:** 32, of which 6 are healthy (K001-K006), 12 have artificial damage and 14 have
+  real damage from accelerated lifetime tests (tables 4 and 5 of PHME16).
+- **Measurements:** 4 operating settings (``SETTINGS``), with 20 measurements of 4 s each.
+- **File:** ``<code>/<setting>_<code>_<n>.mat``, in MATLAB 5. The single variable is named
+  after the file and is a struct with ``X`` (time axes) and ``Y`` (signals).
+  - ``vibration_1`` and the two phase currents are at 64 kHz (256001 samples).
+  - ``speed`` (rpm), ``force`` and ``torque`` are at 4 kHz (16001 samples).
+- **Geometry:** table 1 of PHME16 (FAG), with 8 balls, d = 6.75 mm, D = 28.55 mm and contact
+  angle 0°.
+  - According to PHME16, across the manufacturers used (FAG, MTK, IBU/IBB) "the characteristic
+    kinematic frequencies do not vary more than 1-2%".
+  - BPFO (3.054) and BPFI (4.946) lie 0.054 order away from shaft harmonics 3 and 5, so the
+    order tolerance has to stay below ~0.027.
 
-**Base de tempo (conferida em 2026-11-12, nos 2560 arquivos).**
-- O número de amostras de 64 kHz varia: 256001 em 1042 arquivos, até 262062 nos mais longos.
-- O eixo ``HostService`` vai sempre de 0 a 4 s, o que sugeriria taxa variável.
-- **A taxa é de 64 kHz fixos.** O PMSM tem 4 pares de polos, então a corrente gira a exatamente 4×
-  a rotação medida no canal de 4 kHz. Com 64 kHz fixos, a razão entre as duas tem mediana
-  0,99998 (P1 0,99936; P99 1,00057), e só 1 arquivo passa de 0,5 %. Pela hipótese do eixo de
-  tempo, 185 arquivos passam de 0,5 %, até 8 %.
-- Os registros mais longos são só mais longos. O carregador corta a vibração nas primeiras 256001
-  amostras (4 s), alinhadas com o canal de rotação.
-- **Um arquivo não abre no scipy:** ``KA08/N15_M01_F10_KA08_2.mat`` ("Expecting matrix here").
-  O carregador levanta ``ValueError``, e quem chama pula a medição.
+**Time base (checked on 2026-11-12, over the 2560 files).**
+- The number of 64 kHz samples varies: 256001 in 1042 files, up to 262062 in the longest ones.
+- The ``HostService`` axis always runs from 0 to 4 s, which would suggest a variable rate.
+- **The rate is a fixed 64 kHz.** The PMSM has 4 pole pairs, so the current rotates at exactly
+  4× the rotation measured on the 4 kHz channel. With a fixed 64 kHz, the ratio between the
+  two has median 0.99998 (P1 0.99936; P99 1.00057), and only 1 file exceeds 0.5 %. Under the
+  time-axis hypothesis, 185 files exceed 0.5 %, up to 8 %.
+- The longer records are just longer. The loader cuts the vibration to the first 256001
+  samples (4 s), aligned with the rotation channel.
+- **One file does not open in scipy:** ``KA08/N15_M01_F10_KA08_2.mat`` ("Expecting matrix here").
+  The loader raises ``ValueError``, and the caller skips the measurement.
 """
 
 from __future__ import annotations
@@ -54,7 +54,7 @@ SETTINGS: dict[str, dict[str, float]] = {
 }
 MEASUREMENTS = tuple(range(1, 21))
 
-# código -> (origem, componente, nível de extensão). PHME16, tabelas 4 e 5.
+# code -> (origin, component, damage extent level). PHME16, tables 4 and 5.
 BEARINGS: dict[str, tuple[str, str, int]] = {
     **{f"K00{i}": ("healthy", "none", 0) for i in range(1, 7)},
     "KA01": ("artificial", "OR", 1),
@@ -89,7 +89,7 @@ _NAME = re.compile(r"^(N\d\d_M\d\d_F\d\d)_(K[0-9A-Z]{3})_(\d{1,2})$")
 
 
 def computed_orders(geom_ratio: float = GEOM_RATIO, n: int = N_ELEMENTS) -> dict[str, float]:
-    """Ordens de falha pela geometria, com ângulo de contato zero."""
+    """Fault orders from the geometry, with zero contact angle."""
     return {
         "FTF": 0.5 * (1 - geom_ratio),
         "BPFO": 0.5 * n * (1 - geom_ratio),
@@ -99,16 +99,16 @@ def computed_orders(geom_ratio: float = GEOM_RATIO, n: int = N_ELEMENTS) -> dict
 
 
 def parse_name(stem: str) -> tuple[str, str, int]:
-    """``N15_M07_F10_KA01_3`` -> (ajuste, código, medição)."""
+    """``N15_M07_F10_KA01_3`` -> (setting, code, measurement)."""
     m = _NAME.match(stem)
     if not m or m.group(1) not in SETTINGS or m.group(2) not in BEARINGS:
-        raise ValueError(f"nome fora do esquema do KAt-DataCenter: {stem}")
+        raise ValueError(f"name outside the KAt-DataCenter scheme: {stem}")
     return m.group(1), m.group(2), int(m.group(3))
 
 
 def measurement_path(root: str | Path, code: str, setting: str, n: int) -> Path:
     if code not in BEARINGS or setting not in SETTINGS or n not in MEASUREMENTS:
-        raise ValueError(f"medição inexistente: {code} {setting} {n}")
+        raise ValueError(f"nonexistent measurement: {code} {setting} {n}")
     return Path(root) / code / f"{setting}_{code}_{n}.mat"
 
 
@@ -131,13 +131,13 @@ class Measurement:
     speed_fs_hz: float = SPEED_FS_HZ
 
     def speed_profile_hz(self) -> np.ndarray:
-        """Rotação em Hz no eixo de tempo da vibração (interpolação linear do canal de 4 kHz)."""
+        """Rotation in Hz on the vibration time axis (linear interpolation of the 4 kHz channel)."""
         t_v = np.arange(self.vibration.size) / self.fs_hz
         t_s = np.arange(self.speed_rpm.size) / self.speed_fs_hz
         return np.interp(t_v, t_s, self.speed_rpm) / 60.0
 
 
-N_VIB = 256_001  # 4 s a 64 kHz, alinhados com as 16001 amostras de rotação a 4 kHz
+N_VIB = 256_001  # 4 s at 64 kHz, aligned with the 16001 rotation samples at 4 kHz
 
 
 def load_measurement(
@@ -148,10 +148,10 @@ def load_measurement(
     n_samples: int = N_VIB,
     min_samples: int | None = None,
 ) -> Measurement:
-    """Lê uma medição, com a vibração cortada em 4 s a 64 kHz fixos (ver o docstring do módulo).
+    """Reads a measurement, with the vibration cut to 4 s at a fixed 64 kHz (see module docstring).
 
-    Confere o nome da variável, os rasters, a duração do canal de rotação e o comprimento mínimo
-    da vibração. Arquivo ilegível vira ``ValueError``.
+    Checks the variable name, the rasters, the duration of the rotation channel and the minimum
+    length of the vibration. An unreadable file becomes a ``ValueError``.
     """
     from scipy.io import loadmat
 
@@ -159,10 +159,10 @@ def load_measurement(
     try:
         m = loadmat(path, squeeze_me=False, struct_as_record=False)
     except (TypeError, ValueError) as exc:  # KA08/N15_M01_F10_KA08_2.mat
-        raise ValueError(f"{path.name}: ilegível pelo scipy ({exc})") from exc
+        raise ValueError(f"{path.name}: unreadable by scipy ({exc})") from exc
     keys = [k for k in m if not k.startswith("__")]
     if keys != [path.stem]:
-        raise ValueError(f"{path.name}: variáveis inesperadas {keys}")
+        raise ValueError(f"{path.name}: unexpected variables {keys}")
     s = m[keys[0]][0, 0]
     sig = {}
     for i in range(s.Y.shape[1]):
@@ -170,12 +170,12 @@ def load_measurement(
         sig[str(_flat(e.Name))] = (str(_flat(e.Raster)), np.asarray(e.Data, dtype=float).ravel())
     for name, raster in (("vibration_1", "HostService"), ("speed", "Mech_4kHz")):
         if name not in sig or sig[name][0] != raster:
-            raise ValueError(f"{path.name}: canal {name} ausente ou fora do raster {raster}")
+            raise ValueError(f"{path.name}: channel {name} missing or outside raster {raster}")
     vib, spd = sig["vibration_1"][1], sig["speed"][1]
     dur_s = (spd.size - 1) / SPEED_FS_HZ
     if not 3.99 < dur_s < 4.01:
-        raise ValueError(f"{path.name}: rotação com {dur_s:.4f} s, esperado 4 s")
+        raise ValueError(f"{path.name}: rotation with {dur_s:.4f} s, expected 4 s")
     lo = N_VIB - 2 if min_samples is None else int(min_samples)
     if vib.size < lo:
-        raise ValueError(f"{path.name}: vibração com {vib.size} amostras, menos de {lo}")
+        raise ValueError(f"{path.name}: vibration with {vib.size} samples, fewer than {lo}")
     return Measurement(code, setting, n, vib[:n_samples], spd)

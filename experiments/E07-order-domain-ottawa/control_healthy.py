@@ -1,19 +1,19 @@
-"""E07, controle negativo — o estimador com prior inventa falha onde não há?
+"""E07, negative control — does the estimator with a prior invent a fault where there is none?
 
-O E07 mede acerto sobre registros que **têm** falha. Isso não diz nada sobre falso
-positivo, e um estimador restrito a um conjunto de candidatas sempre devolve uma
-candidata: ele não tem como responder "nenhuma". A pergunta que este controle
-responde é se a candidata escolhida separa rolamento com falha de rolamento
-saudável, e se essa separação sobrevive à subamostragem.
+E07 measures the hit rate on records that **have** a fault. That says nothing about false
+positives, and an estimator restricted to a set of candidates always returns a
+candidate: it has no way of answering "none". The question this control
+answers is whether the chosen candidate separates a faulty bearing from a healthy
+bearing, and whether that separation survives undersampling.
 
-Sem isto, os 88% em 32× do experimento principal são compatíveis com um estimador
-que aponta a mesma ordem sempre.
+Without this, the 88% at 32× of the main experiment are compatible with an estimator
+that always points to the same order.
 
-**Duas estatísticas, porque a primeira se mostrou enganosa.** `snr` normaliza pela
-mediana do espectro, e sob subamostragem forte esse piso desaba nos registros
-saudáveis — o que infla a razão sem que nada físico tenha acontecido. `rank` é a
-fração de raias da faixa de ordens que ficam **abaixo** do pico na ordem alvo: é
-livre de escala e de piso, e é a que deve ser lida.
+**Two statistics, because the first one turned out to be misleading.** `snr` normalizes by the
+median of the spectrum, and under strong undersampling that floor collapses in the healthy
+records — which inflates the ratio without anything physical having happened. `rank` is the
+fraction of spectral lines in the order range that lie **below** the peak at the target order: it
+is free of scale and of floor, and it is the one that should be read.
 
     uv run python experiments/E07-order-domain-ottawa/control_healthy.py \
         --config experiments/E07-order-domain-ottawa/config/base.yaml
@@ -28,7 +28,7 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from run import FAULT_OF, analyse  # noqa: F401  (mesmo diretório)
+from run import FAULT_OF, analyse  # noqa: F401  (same directory)
 from snq_data import effective_rate_hz, undersample
 from snq_data.ottawa import FS_HZ, download, load, record_names
 from snq_recon import score_fault
@@ -37,25 +37,25 @@ from snq_recon import score_fault
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
-    ap.add_argument("--segments", type=int, default=None, help="sobrescreve segments_per_record")
+    ap.add_argument("--segments", type=int, default=None, help="overrides segments_per_record")
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
 
     root = args.config.parent.parent
     results = root / cfg["output"]["results_dir"]
-    # T0.1: data_dir relativo vale a partir da raiz do repositorio, nao do cwd.
+    # T0.1: a relative data_dir is resolved from the repository root, not from the cwd.
     raw = Path(cfg["data_dir"])
     raw = raw if raw.is_absolute() else Path(__file__).resolve().parents[2] / raw
     manifest = json.loads((results / "manifest.json").read_text(encoding="utf-8"))
     calib: dict[str, float] = manifest["calibrated_per_record"]
 
-    # As ordens de falha calibradas no experimento principal. Sao elas que o
-    # controle procura nos registros saudaveis - onde nao deveria haver energia.
+    # The fault orders calibrated in the main experiment. They are what the
+    # control looks for in the healthy records - where there should be no energy.
     targets = {
         "BPFI": float(np.median([v for k, v in calib.items() if k.startswith("I-")])),
         "BPFO": float(np.median([v for k, v in calib.items() if k.startswith("O-")])),
     }
-    print("ordens alvo:", {k: round(v, 3) for k, v in targets.items()})
+    print("target orders:", {k: round(v, 3) for k, v in targets.items()})
 
     seg_n = int(cfg["segment_samples"])
     n_seg = int(args.segments or cfg["segments_per_record"])
@@ -70,7 +70,7 @@ def main() -> int:
             download(name, raw)
             rec = load(name, raw)
         except (OSError, KeyError, ValueError) as exc:
-            print(f"  {name}: pulado ({type(exc).__name__}: {str(exc)[:60]})")
+            print(f"  {name}: skipped ({type(exc).__name__}: {str(exc)[:60]})")
             continue
         speed = rec.speed_profile_hz(ppr)
 
@@ -112,18 +112,18 @@ def main() -> int:
                             "rank": round(rank, 5),
                         }
                     )
-        print(f"  {rec.name} ({rec.condition}): {len(rows)} linhas")
+        print(f"  {rec.name} ({rec.condition}): {len(rows)} rows")
 
     out = results / "healthy_control.csv"
     with out.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
-    print(f"\n{len(rows)} linhas -> {out}")
+    print(f"\n{len(rows)} rows -> {out}")
 
-    # Resumo em AUC: probabilidade de um segmento com falha pontuar acima de um
-    # segmento saudavel na ordem alvo. 0,5 e ausencia total de separacao; abaixo de
-    # 0,5 a separacao esta invertida. Nao depende de escala nem de piso.
+    # AUC summary: probability of a faulty segment scoring above a
+    # healthy segment at the target order. 0.5 is total absence of separation; below
+    # 0.5 the separation is inverted. It does not depend on scale or floor.
     def auc(f: int, fault: str, cond: str, key: str) -> float:
         a = [
             r[key]
@@ -139,7 +139,7 @@ def main() -> int:
             return float("nan")
         return sum((x > y) + 0.5 * (x == y) for x in a for y in b) / (len(a) * len(b))
 
-    print(f"\n{'fator':>6} {'AUC BPFI':>10} {'AUC BPFO':>10}   (estatística rank)")
+    print(f"\n{'factor':>6} {'AUC BPFI':>10} {'AUC BPFO':>10}   (rank statistic)")
     for f in sorted({r["factor"] for r in rows}):
         print(
             f"{f:6d} {auc(f, 'BPFI', 'inner_race', 'rank'):10.3f}"

@@ -1,12 +1,12 @@
-"""Laço de treino com teto de épocas, parada antecipada por paciência e melhor checkpoint.
+"""Training loop with an epoch cap, early stopping by patience and best checkpoint.
 
-É o protocolo do E15 e vale igual para todos os métodos aprendidos, para que a comparação meça
-o método e não o laço: teto de épocas, perda de validação a cada época, parada quando a perda
-não melhora por ``patience`` épocas seguidas, e o modelo devolvido é o do **melhor** checkpoint
-de validação, não o da última época.
+It is the E15 protocol and applies equally to all learned methods, so that the comparison
+measures the method and not the loop: epoch cap, validation loss at every epoch, stop when the
+loss does not improve for ``patience`` consecutive epochs, and the returned model is the one
+from the **best** validation checkpoint, not the one from the last epoch.
 
-O laço não sabe nada de dados: recebe funções que produzem os lotes de uma época, a perda de um
-lote e a perda de validação. Quem carrega dados é o runner do experimento.
+The loop knows nothing about data: it receives functions that produce the batches of an epoch,
+the loss of a batch and the validation loss. The experiment runner is what loads the data.
 """
 
 from __future__ import annotations
@@ -31,14 +31,14 @@ class FitConfig:
     weight_decay: float = 0.0
     grad_clip: float | None = 5.0
     min_delta: float = 0.0
-    """Melhora mínima da perda de validação para zerar a contagem de paciência."""
+    """Minimum improvement of the validation loss to reset the patience count."""
     min_epochs: int = 0
-    """Épocas antes das quais a parada antecipada não conta e nenhum checkpoint é escolhido.
+    """Epochs before which early stopping does not count and no checkpoint is chosen.
 
-    Para máscaras com recozimento de temperatura, vale o fim do recozimento. Antes disso a
-    máscara ainda está mole, e um checkpoint dessa fase devolve uma máscara que não saiu do
-    ruído (E15, 2026-11-11: todas as divisões que não convergiram pararam antes do fim do
-    recozimento).
+    For masks with temperature annealing, use the end of the annealing. Before that the
+    mask is still soft, and a checkpoint from that phase returns a mask that has not left the
+    noise (E15, 2026-11-11: all the splits that did not converge stopped before the end of the
+    annealing).
     """
 
 
@@ -62,18 +62,19 @@ def fit(
     on_epoch_start: Callable[[int], None] | None = None,
     param_groups: list[dict[str, Any]] | None = None,
 ) -> FitResult:
-    """Treina ``model`` e o deixa no estado do melhor checkpoint de validação.
+    """Trains ``model`` and leaves it in the state of the best validation checkpoint.
 
-    ``train_batches(epoch)`` devolve os lotes da época; ``batch_loss(model, lote)`` a perda a
-    minimizar (com penalidades, se houver); ``val_loss(model)`` é chamada com o modelo em
-    ``eval()`` e sem gradiente. Só os parâmetros com ``requires_grad`` entram no otimizador.
+    ``train_batches(epoch)`` returns the batches of the epoch; ``batch_loss(model, batch)`` the
+    loss to minimize (with penalties, if any); ``val_loss(model)`` is called with the model in
+    ``eval()`` and without gradient. Only the parameters with ``requires_grad`` enter the
+    optimizer.
 
-    ``param_groups`` segue o formato do ``torch.optim``: grupos com ``lr`` próprio (a máscara,
-    por exemplo, que precisa sair do ruído de Gumbel mais depressa que o decodificador). Sem
-    ele, todos os parâmetros treináveis usam ``cfg.lr``.
+    ``param_groups`` follows the ``torch.optim`` format: groups with their own ``lr`` (the mask,
+    for example, which needs to leave the Gumbel noise faster than the decoder). Without
+    it, all trainable parameters use ``cfg.lr``.
 
-    Uma perda não finita interrompe o treino (``diverged``) e devolve o melhor checkpoint
-    anterior; se nenhum existir, o estado inicial.
+    A non-finite loss interrupts training (``diverged``) and returns the best previous
+    checkpoint; if none exists, the initial state.
     """
     if param_groups is None:
         groups: list[dict[str, Any]] = [
@@ -86,7 +87,7 @@ def fit(
     groups = [g for g in groups if g["params"]]
     params = [p for g in groups for p in g["params"]]
     if not params:
-        raise ValueError("nenhum parametro treinavel")
+        raise ValueError("no trainable parameter")
     opt = torch.optim.Adam(groups, lr=cfg.lr, weight_decay=cfg.weight_decay)
     best_state = copy.deepcopy(model.state_dict())
     best_loss, best_epoch = math.inf, -1
@@ -122,7 +123,7 @@ def fit(
             diverged = True
             break
         if epoch < int(cfg.min_epochs):
-            # fase de recozimento: nem checkpoint nem contagem de paciencia
+            # annealing phase: neither checkpoint nor patience count
             best_state = copy.deepcopy(model.state_dict())
             continue
         if v < best_loss - cfg.min_delta:
@@ -134,7 +135,7 @@ def fit(
                 stopped = True
                 break
     if best_epoch < 0:
-        # o treino acabou antes de `min_epochs`: vale o ultimo estado finito, ja guardado
+        # training ended before `min_epochs`: the last finite state, already stored, is used
         finite = [h for h in history if math.isfinite(h["val_loss"])]
         if finite:
             best_epoch, best_loss = int(finite[-1]["epoch"]), float(finite[-1]["val_loss"])

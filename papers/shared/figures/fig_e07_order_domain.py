@@ -1,6 +1,6 @@
-"""Figura E07 — degradação por subamostragem no domínio de ordem, Ottawa 2018.
+"""Figure E07 — degradation under undersampling in the order domain, Ottawa 2018.
 
-Regra do projeto: figura nasce de metrics.csv, nunca de número transcrito.
+Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
     uv run python papers/shared/figures/fig_e07_order_domain.py
 """
@@ -13,7 +13,7 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-# Type 3 e o default do matplotlib e costuma reprovar no PDF eXpress do IEEE (T0.8).
+# Type 3 is matplotlib's default and tends to fail the IEEE PDF eXpress check (T0.8).
 matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 import matplotlib.pyplot as plt  # noqa: E402
@@ -25,15 +25,15 @@ OUT = ROOT / "experiments/E07-order-domain-ottawa/results/figures"
 FS_FULL = 200_000.0
 
 MODES = {
-    "sem_prior": ("sem prior", "o", "0.45", "--"),
-    "prior_nominal": ("prior nominal (catálogo)", "s", "#B4502B", ":"),
-    "prior_calibrado": ("prior calibrado", "D", "#0F6E78", "-"),
+    "sem_prior": ("no prior", "o", "0.45", "--"),
+    "prior_nominal": ("nominal prior (catalogue)", "s", "#B4502B", ":"),
+    "prior_calibrado": ("calibrated prior", "D", "#0F6E78", "-"),
 }
 ACCENT = "#0F6E78"
 WARM = "#B4502B"
 CONDS = {
-    "inner_race": ("#0F6E78", "^", "pista interna"),
-    "outer_race": ("#B4502B", "s", "pista externa"),
+    "inner_race": ("#0F6E78", "^", "inner race"),
+    "outer_race": ("#B4502B", "s", "outer race"),
 }
 
 
@@ -55,7 +55,7 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(7.16, 2.7), constrained_layout=True)
 
-    # --- (a) acerto x fator, por qualidade do prior ---------------------
+    # --- (a) hit rate x factor, by quality of the prior -----------------
     for key, (label, mk, color, ls) in MODES.items():
         y, e = [], []
         for f in factors:
@@ -67,11 +67,11 @@ def main() -> None:
             factors, y, yerr=e, marker=mk, color=color, ls=ls, ms=4, lw=1.4, capsize=2, label=label
         )
     ax1.axhline(50, color="0.85", lw=0.8, zorder=0)
-    ax1.set_ylabel("acerto da ordem de falha [%]")
-    ax1.set_title("(a) só sem prior mede estimação", fontsize=9, loc="left")
+    ax1.set_ylabel("fault-order hit rate [%]")
+    ax1.set_title("(a) only no prior tests estimation", fontsize=9, loc="left")
     ax1.legend(fontsize=6.6, frameon=False, loc="lower left")
 
-    # --- (b) por condicao, com o prior calibrado ------------------------
+    # --- (b) by condition, with the calibrated prior --------------------
     for cond, (color, mk, label) in CONDS.items():
         y, e = [], []
         for f in factors:
@@ -86,39 +86,53 @@ def main() -> None:
         ax2.errorbar(
             factors, y, yerr=e, marker=mk, color=color, lw=1.4, ms=4, capsize=2, label=label
         )
-    ax2.set_ylabel("acerto [%]")
-    ax2.set_title("(b) por tipo de falha, sem prior", fontsize=9, loc="left")
-    ax2.legend(fontsize=6.6, frameon=False, loc="lower left")
+    ax2.set_ylabel("hit rate [%]")
+    ax2.set_title("(b) by fault type, no prior", fontsize=9, loc="left")
+    # Lower right: at lower left the outer-race error bar at 4x ran through the legend.
+    ax2.legend(fontsize=6.6, frameon=False, loc="lower right")
 
-    # --- (c) o mecanismo do mergulho em 4x ------------------------------
-    # Em M=4 o acerto cai e o kurtograma escolhe a banda alta (>12 kHz) em 2 de 3
-    # segmentos. A 50 kSPS o conteudo de 75-87 kHz dobra exatamente sobre 12,8-25
-    # kHz; medido, a curtose dessa banda sobe 2,4x a 4,8x nos registros com mais
-    # energia acima de 50 kHz - justo os que mais perdem acerto. Nao e a taxa que
-    # falha, e a interacao entre a taxa e o conteudo fora da banda. ADR 0002 em
-    # dado real, e o argumento de que a taxa precisa ser ESCOLHIDA, nao so reduzida.
+    # --- (c) the mechanism of the dip at 4x -----------------------------
+    # At M=4 the hit rate drops and the kurtogram chooses the high band (>12 kHz) in 2 of 3
+    # segments. At 50 kSPS the 75-87 kHz content folds exactly onto 12.8-25
+    # kHz; as measured, the kurtosis of that band rises 2.4x to 4.8x in the records with the
+    # most energy above 50 kHz - precisely the ones that lose the most hits. It is not the
+    # rate that fails, it is the interaction between the rate and the out-of-band content.
+    # ADR 0002 on real data, and the argument that the rate has to be CHOSEN, not just reduced.
     high, acc = [], []
     for f in factors:
-        # T0.2: so sem_prior mede estimacao; as colunas com prior contem o gabarito
+        # T0.2: only sem_prior measures estimation; the columns with prior contain the answer key
         s_ = [r for r in rows if r["factor"] == f and r["mode"] == "sem_prior"]
         high.append(100 * float(np.mean([float(r["band_lo_hz"]) >= 12000 for r in s_])))
         acc.append(100 * float(np.mean([r["hit"] for r in s_])))
-    ax3.plot(factors, high, marker="o", color=WARM, lw=1.4, ms=4, label="banda escolhida > 12 kHz")
-    ax3.plot(factors, acc, marker="D", color=ACCENT, lw=1.4, ms=4, label="acerto (sem prior)")
+    ax3.plot(factors, high, marker="o", color=WARM, lw=1.4, ms=4, label="chosen band > 12 kHz")
+    ax3.plot(factors, acc, marker="D", color=ACCENT, lw=1.4, ms=4, label="hit rate (no prior)")
     worst = factors[int(np.argmin(acc))]
     ax3.axvline(worst, color="0.7", lw=0.8, ls=":", zorder=0)
+    # In three lines and past the two segments that cross just right of the dip: at the top,
+    # in two lines, the note ran over the hit-rate line and out of the axes.
     ax3.annotate(
-        "picos de 1 amostra\ndobrados sobre 12,75–25 kHz",
-        xy=(worst, 95),
-        xytext=(5, 0),
+        "1-sample spikes\nfolded onto\n12.75–25 kHz",
+        xy=(worst, 68),
+        xytext=(16, 0),
         textcoords="offset points",
         fontsize=6.4,
         color="0.35",
         va="top",
     )
     ax3.set_ylabel("[%]")
-    ax3.set_title("(c) falha a escolha de banda", fontsize=9, loc="left")
-    ax3.legend(fontsize=6.6, frameon=False, loc="lower left")
+    ax3.set_title("(c) the band choice fails", fontsize=9, loc="left")
+    # The legend is wider than any gap between the curves, so it gets an edgeless white
+    # background and sits above the zero line: the dotted 4x line and the falling segment pass
+    # behind it instead of through the text, and no marker is covered.
+    ax3.legend(
+        fontsize=6.6,
+        loc="lower left",
+        bbox_to_anchor=(0.0, 0.08),
+        frameon=True,
+        facecolor="white",
+        edgecolor="none",
+        framealpha=1.0,
+    )
 
     for ax in (ax1, ax2, ax3):
         ax.set_xscale("log", base=2)
@@ -127,21 +141,21 @@ def main() -> None:
             [str(f) if f in (1, 2, 4, 8, 16, 32, 64) else "" for f in factors], fontsize=6.2
         )
         ax.minorticks_off()
-        ax.set_xlabel("fator de subamostragem")
+        ax.set_xlabel("subsampling factor")
         ax.grid(alpha=0.25, lw=0.5)
     for ax in (ax1, ax2, ax3):
         ax.set_ylim(-5, 105)
 
-    # A taxa efetiva e o numero que decide o orcamento do no; o fator sozinho nao.
+    # The effective rate is the number that decides the node's budget; the factor alone is not.
     shown = factors[::3]
     top = ax1.secondary_xaxis("top")
     top.set_xticks(shown)
     top.set_xticklabels([f"{FS_FULL / f / 1000:.1f}" for f in shown], fontsize=7.0)
-    top.set_xlabel("taxa efetiva [kSPS]", fontsize=8)
+    top.set_xlabel("effective rate [kS/s]", fontsize=8)
 
     for ext in ("pdf", "png"):
         fig.savefig(OUT / f"e07_order_domain.{ext}", dpi=200)
-    print(f"escrito: {OUT / 'e07_order_domain.pdf'}")
+    print(f"written: {OUT / 'e07_order_domain.pdf'}")
 
 
 if __name__ == "__main__":

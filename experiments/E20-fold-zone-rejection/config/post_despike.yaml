@@ -1,5 +1,5 @@
-# E20, remocao de picos no fluxo ja decimado (pre-registro no README, 'Remocao depois de
-# decimar', 2026-11-12). Derivado de config/base.yaml; so mudam os bracos.
+# E20, spike removal on the already-decimated stream (pre-registration in the README, 'Removal
+# after decimating', 2026-11-12). Derived from config/base.yaml; only the arms change.
 seed: 20261110
 data_dir: datasets/raw/ottawa
 conditions:

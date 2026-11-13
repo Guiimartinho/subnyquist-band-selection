@@ -1,27 +1,31 @@
-"""Análise pré-registrada do E24b (README, "E24b: teto sem dobra e notch"), escrita antes de rodar.
+"""Pre-registered analysis of E24b (README, "E24b: ceiling without folding and notch"), written
+before running.
 
-Os braços de referência (``kurtograma`` e ``infograma_ses`` sem teto e sem notch) são lidos de
-``results/metrics.csv``. O código é o mesmo e é determinístico. Os novos vêm de
-``results-teto-notch/metrics.csv``. As acurácias usam a régua aninhada, e as comparações usam a
-troca de sinal exata por rolamento, estratificada por pista (``robustness.sign_flip_p``).
+The reference arms (``kurtograma`` = kurtogram and ``infograma_ses`` = SES infogram, with no
+ceiling and no notch) are read from ``results/metrics.csv``. The code is the same and is
+deterministic. The new ones come from ``results-teto-notch/metrics.csv``. The accuracies use the
+nested ruler, and the comparisons use the exact sign-flip test by bearing, stratified by race
+(``robustness.sign_flip_p``).
 
-- **C1a (dobra).** É a fração de segmentos na banda do piso (início ≤ 501 Hz e fim ≤ 1200 Hz) com
-  teto de 8 kHz em 1×, contra o kurtograma em 4×.
-  - Com ≥ 20 %, a escolha do piso é conteúdo de banda base, e a dobra fica refutada como causa.
-  - Com ≤ 10 %, a dobra está implicada.
-  - Entre os dois, inconclusivo.
-- **C1b (teto).** É o kurtograma com teto em 1× contra o kurtograma sem teto em 1×, com Holm sobre
-  os 4 tetos. O teto alivia a captura se algum passar (Holm p < 0,05 e diferença > 0).
-- **C1c (descritivo).** É o teto em 1× contra a decimação no fator de mesma partição (8 kHz e 4×,
-  4 kHz e 8×, 2 kHz e 16×, 1 kHz e 32×), com p bilateral. O mesmo vale para o infograma SES.
-- **C3a (notch).** Entre os segmentos em que o kurtograma sem notch escolhe 11,0–21,5 kHz em 1×, é
-  a fração que muda de banda com o notch de 15–17 kHz e 30,5–32 kHz.
-  - Com ≥ 50 %, o conteúdo dessas faixas sustenta a escolha.
-  - Com < 20 %, não sustenta.
-  - Entre os dois, inconclusivo.
-- **C3b (validade).** O notch de controle (12–14 kHz e 26,5–28 kHz) precisa mudar a banda em menos
-  de 10 % de todos os segmentos em 1×. Se mudar mais, a C3a não é interpretável.
-- **C3c (descritivo).** É a mudança de acurácia com o notch, em 1× e em 4×.
+- **C1a (folding).** It is the fraction of segments in the floor band (start ≤ 501 Hz and
+  end ≤ 1200 Hz) with an 8 kHz ceiling at 1×, against the kurtogram at 4×.
+  - With ≥ 20 %, the floor choice is baseband content, and folding is refuted as the cause.
+  - With ≤ 10 %, folding is implicated.
+  - In between, inconclusive.
+- **C1b (ceiling).** It is the kurtogram with a ceiling at 1× against the kurtogram without a
+  ceiling at 1×, with Holm over the 4 ceilings. The ceiling relieves the capture if any of them
+  passes (Holm p < 0.05 and difference > 0).
+- **C1c (descriptive).** It is the ceiling at 1× against decimation at the factor with the same
+  partition (8 kHz and 4×, 4 kHz and 8×, 2 kHz and 16×, 1 kHz and 32×), with a two-sided p. The
+  same holds for the SES infogram.
+- **C3a (notch).** Among the segments in which the kurtogram without notch picks 11.0–21.5 kHz at
+  1×, it is the fraction that changes band with the 15–17 kHz and 30.5–32 kHz notch.
+  - With ≥ 50 %, the content of those bands sustains the choice.
+  - With < 20 %, it does not.
+  - In between, inconclusive.
+- **C3b (validity).** The control notch (12–14 kHz and 26.5–28 kHz) must change the band in less
+  than 10 % of all segments at 1×. If it changes more, C3a is not interpretable.
+- **C3c (descriptive).** It is the change in accuracy with the notch, at 1× and at 4×.
 
     uv run python experiments/E24-paderborn-spike-capture/exploratory/teto_notch_analysis.py
 """
@@ -38,7 +42,7 @@ _spec = importlib.util.spec_from_file_location("e24robust", EXP / "exploratory" 
 rb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rb)
 e24 = rb.e24
-PAIRS = {8: 4, 4: 8, 2: 16, 1: 32}  # teto em kHz -> fator de mesma partição
+PAIRS = {8: 4, 4: 8, 2: 16, 1: 32}  # ceiling in kHz -> factor with the same partition
 
 
 def rows_of(name: str) -> list[dict]:
@@ -75,6 +79,12 @@ def compare(rows_a, arm_a, f_a, rows_b, arm_b, f_b) -> dict:
     }
 
 
+# Verdict labels are data (analysis.json, read by the paper's number scripts) and stay as they are:
+# "inconclusivo" = inconclusive; "dobra refutada como causa do piso" / "dobra implicada" = folding
+# refuted as the cause of the floor / folding implicated; "teto alivia a captura" / "teto nao
+# alivia" = the ceiling relieves / does not relieve the capture; "o conteudo notcheado (nao)
+# sustenta a escolha" = the notched content does (not) sustain the choice; "controle invalido" =
+# invalid control.
 def three(x: float, hi: float, lo: float, yes: str, no: str) -> str:
     return yes if x >= hi else (no if x <= lo else "inconclusivo")
 

@@ -1,4 +1,4 @@
-"""Co-arranjo de diferenças: correlação cíclica de amostras coprimas (snq_recon.coarray)."""
+"""Difference coarray: cyclic correlation of coprime samples (snq_recon.coarray)."""
 
 import numpy as np
 import pytest
@@ -12,7 +12,7 @@ FS = 64000.0
 
 
 def am_band_noise(n, fs, f_lo, f_hi, alpha, depth, rng):
-    """Ruído de banda [f_lo, f_hi] modulado em amplitude a ``alpha`` Hz (cicloestacionário)."""
+    """Band noise [f_lo, f_hi] amplitude-modulated at ``alpha`` Hz (cyclostationary)."""
     xf = np.fft.rfft(rng.normal(size=n))
     f = np.fft.rfftfreq(n, 1 / fs)
     xf[(f < f_lo) | (f > f_hi)] = 0.0
@@ -44,25 +44,25 @@ def test_stationary_correlation_from_coprime_matches_full_rate():
 
 
 def test_coprime_ses_sees_a_band_above_the_decimated_nyquist_without_folding():
-    """Banda modulada em 20-24 kHz e a imagem dela sob decimação por 4 (fs_eff = 16 kHz).
+    """Modulated band at 20-24 kHz and its image under decimation by 4 (fs_eff = 16 kHz).
 
-    Com decimação uniforme por 4, 20-24 kHz dobra sobre 4-8 kHz: o espectro do envelope da banda
-    4-8 kHz mostra a modulação, que não está lá. Com amostras coprimas (8, 9), é a banda 20-24 kHz
-    que mostra a modulação; a 4-8 kHz e a 0,5-4 kHz, não.
+    With uniform decimation by 4, 20-24 kHz folds onto 4-8 kHz: the envelope spectrum of the
+    4-8 kHz band shows the modulation, which is not there. With coprime samples (8, 9), it is the
+    20-24 kHz band that shows the modulation; the 4-8 kHz and 0.5-4 kHz bands do not.
     """
     rng = np.random.default_rng(2)
     n, alpha = 2**18, 75.0
     x = am_band_noise(n, FS, 20000, 24000, alpha, 0.9, rng)
-    x += 0.5 * am_band_noise(n, FS, 600, 3800, 0.0, 0.0, rng)  # banda baixa sem modulação
+    x += 0.5 * am_band_noise(n, FS, 600, 3800, 0.0, 0.0, rng)  # low band without modulation
     lag = 64
     cop = cyclic_autocorrelation(x, sample_mask(n, "coprime", 8, 9), lag, FS, 200.0)
     k = int(np.argmin(np.abs(cop.alphas_hz - alpha)))
 
-    def cyc(cc, lo, hi):  # conteúdo cíclico da banda em alpha
+    def cyc(cc, lo, hi):  # cyclic content of the band at alpha
         return band_ses(cc, lo, hi)[k]
 
     hi_c, mid_c, lo_c = cyc(cop, 20000, 24000), cyc(cop, 4000, 8000), cyc(cop, 500, 4000)
-    assert hi_c > 10 * mid_c and hi_c > 10 * lo_c  # coprimo: a modulação está em 20-24 kHz
-    xd = x[::4]  # decimação uniforme: a banda alta dobra sobre 4-8 kHz
+    assert hi_c > 10 * mid_c and hi_c > 10 * lo_c  # coprime: the modulation is at 20-24 kHz
+    xd = x[::4]  # uniform decimation: the high band folds onto 4-8 kHz
     uni = cyclic_autocorrelation(xd, sample_mask(xd.size, "full"), lag // 4, FS / 4, 200.0)
-    assert cyc(uni, 4000, 8000) > 10 * cyc(uni, 500, 4000)  # uniforme: aparece em 4-8 kHz
+    assert cyc(uni, 4000, 8000) > 10 * cyc(uni, 500, 4000)  # uniform: it shows up at 4-8 kHz

@@ -1,46 +1,46 @@
-"""Reconstrução esparsa sobre **base de ordem**, e amostragem em instantes aleatórios.
+"""Sparse reconstruction over an **order basis**, and sampling at random instants.
 
-É a implementação do concorrente mais direto do projeto: Kato & Otaka,
+It is the implementation of the project's most direct competitor: Kato & Otaka,
 *Sensors* 25(10):3167, 2025 (`sensors2025csvibration`, doi:10.3390/s25103167).
 
-**A leitura corrente do método deles estava errada e foi corrigida na fonte.** O
-relatório interno descrevia "matriz de medição aleatória gaussiana". A fonte diz
-outra coisa, no texto da Seção 2 e da Figura 1a: *"both the rotational speed and
+**The prevailing reading of their method was wrong and was corrected against the source.**
+The internal report described a "random Gaussian measurement matrix". The source says
+something else, in the text of Section 2 and of Figure 1a: *"both the rotational speed and
 vibration signals are first randomly sampled. The rotational speed data are then
 interpolated and integrated to obtain the rotational phase. Using this rotational
-phase information, the order basis is constructed"*. A menção a matriz gaussiana
-aparece como fundamentação genérica de RIP, não como o operador de aquisição usado.
-O que eles fazem é **seleção aleatória de instantes de amostragem**. No caso de
-vibração de rolamento a fonte reporta ``α = 0,0391``.
+phase information, the order basis is constructed"*. The mention of a Gaussian matrix
+appears as a generic justification of RIP, not as the acquisition operator used.
+What they do is **random selection of sampling instants**. For the bearing vibration
+case the source reports ``α = 0.0391``.
 
-A distinção importa para este projeto e não é cosmética: multiplicar o sinal por uma
-matriz gaussiana densa exige adquirir o sinal inteiro primeiro — não economiza
-conversão nenhuma. Selecionar instantes economiza conversões, e é exatamente o que
-DPPI + TIMER → SAADC realiza em hardware no nRF54L15, com a CPU dormindo.
+The distinction matters for this project and is not cosmetic: multiplying the signal by a
+dense Gaussian matrix requires acquiring the whole signal first — it saves no
+conversions at all. Selecting instants saves conversions, and it is exactly what
+DPPI + TIMER → SAADC does in hardware on the nRF54L15, with the CPU asleep.
 
-As peças, e nada além disso:
+The pieces, and nothing beyond them:
 
-``random_time_indices``   quais instantes converter;
-``interpolated_speed_hz`` rotação interpolada sobre a grade original;
-``order_basis``           dicionário cos/sin nas ordens da rotação, avaliado nesses instantes;
-``omp``                   Orthogonal Matching Pursuit sobre esse dicionário;
-``reconstruct_from_orders`` a forma de onda de volta no tempo, que a fonte **demodula**.
+``random_time_indices``   which instants to convert;
+``interpolated_speed_hz`` shaft speed interpolated onto the original grid;
+``order_basis``           cos/sin dictionary at the shaft orders, evaluated at those instants;
+``omp``                   Orthogonal Matching Pursuit over that dictionary;
+``reconstruct_from_orders`` the waveform back in time, which the source **demodulates**.
 
-O último passo não é opcional se o objetivo for reproduzir a fonte. No caso
-experimental de rolamento ela reconstrói e **depois** demodula: *"the envelope
+The last step is not optional if the goal is to reproduce the source. In the experimental
+bearing case it reconstructs and **then** demodulates: *"the envelope
 processing results of the reconstructed waveform in the time domain and its Fourier
 transform are shown in Figure 17b […] envelope processing of the CS results using the
-order basis can detect outer ring failures"*. Parar no espectro de ordem da portadora
-reconstruída é uma versão amputada do método deles, não o método deles.
+order basis can detect outer ring failures"*. Stopping at the order spectrum of the
+reconstructed carrier is an amputated version of their method, not their method.
 
-O que **não** está implementado aqui, e por que: FISTA (l1) e CRT robusto. Nenhum dos
-dois é necessário para a comparação controlada do E13, e anunciar função inexistente
-foi um defeito real deste pacote — ver o docstring de ``snq_recon/__init__.py``.
+What is **not** implemented here, and why: FISTA (l1) and robust CRT. Neither of them
+is needed for the controlled comparison of E13, and advertising a nonexistent function
+was a real defect of this package — see the docstring of ``snq_recon/__init__.py``.
 
-Limite declarado: nenhuma restrição de intervalo mínimo entre conversões é imposta por
-padrão. O parâmetro ``min_gap_samples`` existe porque o núcleo SAR tem tempo de
-conversão finito e um agendamento com dois disparos colados não é realizável — mas o
-valor realizável no nRF54L15 é medida de bancada que ainda não foi feita.
+Declared limitation: no minimum-interval constraint between conversions is imposed by
+default. The ``min_gap_samples`` parameter exists because the SAR core has a finite
+conversion time and a schedule with two back-to-back triggers is not realizable — but the
+realizable value on the nRF54L15 is a bench measurement that has not been made yet.
 """
 
 from __future__ import annotations
@@ -68,14 +68,14 @@ __all__ = [
 
 
 # ----------------------------------------------------------------------
-# agendamento de amostragem
+# sampling schedule
 # ----------------------------------------------------------------------
 def uniform_time_indices(n_samples: int, factor: int) -> NDArray[np.int64]:
-    """Instantes da decimação uniforme: ``0, factor, 2·factor, …``.
+    """Instants of uniform decimation: ``0, factor, 2·factor, …``.
 
-    É o controle do E13. Separado de ``snq_data.undersample`` de propósito: aqui o
-    que interessa é o **conjunto de instantes**, para que os três braços possam ser
-    comparados pelo número de conversões e não pelo sinal resultante.
+    It is the control of E13. Kept separate from ``snq_data.undersample`` on purpose: here
+    what matters is the **set of instants**, so that the three arms can be
+    compared by the number of conversions and not by the resulting signal.
 
     >>> uniform_time_indices(10, 3).tolist()
     [0, 3, 6, 9]
@@ -95,26 +95,26 @@ def random_time_indices(
     n_selected: int | None = None,
     min_gap_samples: int = 1,
 ) -> NDArray[np.int64]:
-    """Instantes escolhidos ao acaso, sem repetição, em ordem crescente.
+    """Instants chosen at random, without repetition, in increasing order.
 
-    Exatamente um de ``alpha`` (fração da grade original) ou ``n_selected`` (número
-    absoluto de conversões). O segundo existe para casar o orçamento de conversões
-    com o do braço uniforme **exatamente**, e não a menos de um arredondamento — a
-    comparação do E13 é em amostras por segundo absolutas.
+    Exactly one of ``alpha`` (fraction of the original grid) or ``n_selected`` (absolute
+    number of conversions). The latter exists to match the conversion budget to that of
+    the uniform arm **exactly**, and not up to a rounding — the
+    E13 comparison is in absolute samples per second.
 
-    ``min_gap_samples`` garante espaçamento mínimo entre conversões consecutivas. A
-    construção sorteia num intervalo encolhido e re-expande, o que é uniforme sobre
-    as configurações válidas; ``min_gap_samples=1`` recai no sorteio simples.
+    ``min_gap_samples`` guarantees a minimum spacing between consecutive conversions. The
+    construction draws on a shrunken interval and re-expands, which is uniform over
+    the valid configurations; ``min_gap_samples=1`` reduces to the simple draw.
     """
     n = int(n_samples)
     if n < 1:
         raise ValueError("n_samples >= 1")
     if (alpha is None) == (n_selected is None):
-        raise ValueError("informe exatamente um de alpha ou n_selected")
+        raise ValueError("give exactly one of alpha or n_selected")
 
     m = int(round(float(alpha) * n)) if alpha is not None else int(n_selected)  # type: ignore[arg-type]
     if not 1 <= m <= n:
-        raise ValueError(f"numero de conversoes ({m}) precisa estar em [1, {n}]")
+        raise ValueError(f"number of conversions ({m}) must be in [1, {n}]")
 
     gap = int(min_gap_samples)
     if gap < 1:
@@ -123,8 +123,8 @@ def random_time_indices(
     available = n - (m - 1) * (gap - 1)
     if available < m:
         raise ValueError(
-            f"min_gap_samples={gap} nao cabe: {m} conversoes em {n} amostras exigem "
-            f"pelo menos {(m - 1) * gap + 1} amostras de grade"
+            f"min_gap_samples={gap} does not fit: {m} conversions in {n} samples require "
+            f"at least {(m - 1) * gap + 1} grid samples"
         )
     base = np.sort(rng.choice(available, size=m, replace=False))
     return (base + np.arange(m, dtype=np.int64) * (gap - 1)).astype(np.int64)
@@ -135,22 +135,22 @@ def interpolated_speed_hz(
     speed_hz_at_indices: ArrayLike,
     n_samples: int,
 ) -> NDArray[np.float64]:
-    """Rotação em hertz interpolada sobre a **grade original**, a partir dos instantes.
+    """Shaft speed in hertz interpolated onto the **original grid**, from the instants.
 
-    É o primeiro passo do método da fonte — *"the rotational speed data are then
+    It is the first step of the source's method — *"the rotational speed data are then
     interpolated and integrated to obtain the rotational phase"*.
 
-    Existe separada de `interpolated_phase_rev` porque demodular o sinal reconstruído
-    (o passo da Figura 17b da fonte) exige o perfil **denso** de rotação, e não só a
-    fase nos instantes convertidos. Sem ela, quem precisasse do perfil denso teria de
-    reimplementar a interpolação — e duas cópias divergem.
+    It exists separately from `interpolated_phase_rev` because demodulating the reconstructed
+    signal (the step of Figure 17b of the source) requires the **dense** speed profile, and
+    not only the phase at the converted instants. Without it, anyone who needed the dense
+    profile would have to reimplement the interpolation — and two copies diverge.
     """
     idx = np.asarray(indices, dtype=np.int64).ravel()
     speed = np.asarray(speed_hz_at_indices, dtype=float).ravel()
     if idx.size != speed.size:
-        raise ValueError(f"{idx.size} instantes contra {speed.size} valores de rotacao")
+        raise ValueError(f"{idx.size} instants against {speed.size} shaft speed values")
     if idx.size < 2:
-        raise ValueError("interpolacao de rotacao exige pelo menos 2 instantes")
+        raise ValueError("shaft speed interpolation requires at least 2 instants")
     grid = np.arange(int(n_samples), dtype=float)
     return np.interp(grid, idx.astype(float), speed)
 
@@ -161,16 +161,16 @@ def interpolated_phase_rev(
     fs_hz: float,
     n_samples: int,
 ) -> NDArray[np.float64]:
-    """Fase de rotação, em **revoluções**, a partir da rotação medida só nos instantes.
+    """Rotation phase, in **revolutions**, from the shaft speed measured only at the instants.
 
-    Reproduz o passo da fonte: interpola a rotação amostrada esparsamente sobre a
-    grade original e integra para obter a fase. Devolve a fase **nos instantes de
-    ``indices``**, que é o que a base de ordem precisa.
+    Reproduces the source's step: interpolates the sparsely sampled shaft speed onto the
+    original grid and integrates it to obtain the phase. Returns the phase **at the instants
+    of ``indices``**, which is what the order basis needs.
 
-    A rotação, neste projeto, não passa pelo ADC: vem de contagem de pulsos numa
-    entrada digital (TIMER/GPIOTE). O orçamento de conversões contabilizado é o da
-    vibração. Ainda assim ela é subamostrada aqui, para que o braço reproduza o
-    método da fonte e não uma versão facilitada dele.
+    In this project the shaft speed does not go through the ADC: it comes from pulse counting
+    on a digital input (TIMER/GPIOTE). The conversion budget accounted for is that of the
+    vibration. Even so, it is undersampled here, so that the arm reproduces the
+    source's method and not an easier version of it.
     """
     idx = np.asarray(indices, dtype=np.int64).ravel()
     dense = interpolated_speed_hz(idx, speed_hz_at_indices, int(n_samples))
@@ -178,24 +178,24 @@ def interpolated_phase_rev(
 
 
 # ----------------------------------------------------------------------
-# dicionario de ordem
+# order dictionary
 # ----------------------------------------------------------------------
 def order_basis(phase_rev: ArrayLike, orders: ArrayLike) -> NDArray[np.float64]:
-    """Dicionário ``(n_obs, 2·n_ordens)`` de cosseno/seno nas ordens da rotação.
+    """Dictionary ``(n_obs, 2·n_orders)`` of cosines/sines at the shaft orders.
 
-    Coluna ``2k`` é ``cos(2π·ordem_k·θ)`` e coluna ``2k+1`` é ``sin(2π·ordem_k·θ)``,
-    com ``θ`` a fase em revoluções. É a base de ordem da fonte: sob rotação variável
-    ela é esparsa onde a base de Fourier em hertz não é, porque a componente de falha
-    fica numa ordem fixa enquanto a frequência em hertz se move.
+    Column ``2k`` is ``cos(2π·order_k·θ)`` and column ``2k+1`` is ``sin(2π·order_k·θ)``,
+    with ``θ`` the phase in revolutions. It is the source's order basis: under variable speed
+    it is sparse where the Fourier basis in hertz is not, because the fault component
+    stays at a fixed order while the frequency in hertz moves.
 
-    **Não é normalizado.** É o operador de aquisição honesto, e é ele que vai para
-    ``snq_eval.attribute``. A normalização de colunas que o OMP precisa é feita
-    dentro do ``omp`` e desfeita nos coeficientes devolvidos.
+    **It is not normalized.** It is the honest acquisition operator, and it is the one that goes
+    to ``snq_eval.attribute``. The column normalization that OMP needs is done
+    inside ``omp`` and undone in the returned coefficients.
     """
     theta = np.asarray(phase_rev, dtype=float).ravel()
     ords = np.asarray(orders, dtype=float).ravel()
     if ords.size == 0:
-        raise ValueError("grade de ordens vazia")
+        raise ValueError("empty order grid")
 
     arg = 2.0 * np.pi * np.outer(theta, ords)
     a = np.empty((theta.size, 2 * ords.size), dtype=float)
@@ -205,7 +205,7 @@ def order_basis(phase_rev: ArrayLike, orders: ArrayLike) -> NDArray[np.float64]:
 
 
 def order_of_column(orders: ArrayLike) -> NDArray[np.float64]:
-    """Ordem associada a cada coluna de ``order_basis`` — cada ordem ocupa duas."""
+    """Order associated with each column of ``order_basis`` — each order takes up two."""
     return np.repeat(np.asarray(orders, dtype=float).ravel(), 2)
 
 
@@ -214,20 +214,20 @@ def order_of_column(orders: ArrayLike) -> NDArray[np.float64]:
 # ----------------------------------------------------------------------
 @dataclass(frozen=True)
 class SparseSolution:
-    """Solução esparsa, sempre carregando o resíduo — sem ele não há como auditar."""
+    """Sparse solution, always carrying the residual — without it there is no way to audit."""
 
     coefficients: NDArray[np.float64]
-    """Vetor de comprimento ``n_colunas``, zero fora do suporte, na escala do
-    dicionário **original** (não normalizado)."""
+    """Vector of length ``n_columns``, zero outside the support, on the scale of the
+    **original** (unnormalized) dictionary."""
 
     support: NDArray[np.int64]
-    """Índices de coluna escolhidos, na ordem em que o OMP os escolheu."""
+    """Chosen column indices, in the order in which OMP chose them."""
 
     residual_norm: float
-    """``||y - A·x||`` absoluto."""
+    """Absolute ``||y - A·x||``."""
 
     observation_norm: float
-    """``||y||``, para formar o resíduo relativo sem recomputar."""
+    """``||y||``, to form the relative residual without recomputing."""
 
     n_iterations: int
 
@@ -250,44 +250,44 @@ def omp(
 ) -> SparseSolution:
     """Orthogonal Matching Pursuit.
 
-    A cada passo escolhe a coluna mais correlacionada com o resíduo, resolve mínimos
-    quadrados **sobre todo o suporte acumulado** e recomeça. O "orthogonal" é esse
-    re-ajuste: sem ele o resíduo não fica ortogonal ao suporte e a mesma coluna é
-    escolhida de novo.
+    At each step it picks the column most correlated with the residual, solves least
+    squares **over the whole accumulated support**, and starts over. The "orthogonal" is that
+    refit: without it the residual does not become orthogonal to the support and the same
+    column is picked again.
 
-    ``n_nonzero`` é o número máximo de colunas. ``tol`` para antes se o resíduo
-    relativo cair abaixo dele; ``tol=0`` roda sempre as ``n_nonzero`` iterações.
+    ``n_nonzero`` is the maximum number of columns. ``tol`` stops earlier if the relative
+    residual drops below it; ``tol=0`` always runs all ``n_nonzero`` iterations.
 
-    ``normalize`` escala as colunas para norma unitária **só internamente**, para que
-    a correlação compare direções e não amplitudes. Os coeficientes devolvidos estão
-    na escala de ``a``, de modo que ``a @ solution.coefficients`` reproduz o ajuste.
+    ``normalize`` scales the columns to unit norm **only internally**, so that
+    the correlation compares directions and not amplitudes. The returned coefficients are
+    on the scale of ``a``, so that ``a @ solution.coefficients`` reproduces the fit.
 
-    **Custo, e ele importa para quem for citar tempo de execução.** O ajuste é
-    re-resolvido do zero a cada iteração, sem atualização incremental de QR ou de
-    Cholesky. É a formulação simples e correta, e cresce depressa com ``n_nonzero``:
-    medido em ``(7813, 2632)`` pelo `sensitivity_atoms.py` do E13, 40 átomos levaram
-    0,5 s, 120 levaram 2,9 s e 400 levaram 48 s — cerca de ``k^2``, não o cubo teórico,
-    porque o LAPACK por trás de ``lstsq`` não é o gargalo que a contagem ingênua de
-    flops sugere.
+    **Cost, and it matters for anyone who is going to quote run times.** The fit is
+    re-solved from scratch at every iteration, without incremental QR or Cholesky
+    updates. It is the simple and correct formulation, and it grows fast with ``n_nonzero``:
+    measured on ``(7813, 2632)`` by E13's `sensitivity_atoms.py`, 40 atoms took
+    0.5 s, 120 took 2.9 s and 400 took 48 s — about ``k^2``, not the theoretical cube,
+    because the LAPACK behind ``lstsq`` is not the bottleneck that a naive flop count
+    suggests.
 
-    Estas medidas são frágeis e a fragilidade está apurada: duas execuções consecutivas
-    da mesma varredura, na mesma máquina, deram 28,1 s e 47,9 s no ponto de 400 átomos,
-    com resíduo e estimativa idênticos ao último dígito. Uma medida mais antiga do mesmo
-    ponto registrou 743 s; ela **não foi reproduzida** e não deve ser citada. Tempo de
-    parede de máquina compartilhada é o número menos confiável deste repositório — as
-    contagens (átomos, colunas, conversões) não têm esse problema.
+    These measurements are fragile, and the fragility has been established: two consecutive
+    runs of the same sweep, on the same machine, gave 28.1 s and 47.9 s at the 400-atom point,
+    with residual and estimate identical to the last digit. An older measurement of the same
+    point recorded 743 s; it **was not reproduced** and must not be cited. Wall-clock time on
+    a shared machine is the least reliable number in this repository — the
+    counts (atoms, columns, conversions) do not have that problem.
 
-    Se o gargalo de algum experimento passar a ser este laço, a correção é atualização
-    incremental do QR — não é o caso do E13, que roda com 40 átomos.
+    If the bottleneck of some experiment ever becomes this loop, the fix is an incremental
+    QR update — that is not the case for E13, which runs with 40 atoms.
     """
     op = np.atleast_2d(np.asarray(a, dtype=float))
     obs = np.asarray(y, dtype=float).ravel()
     if op.shape[0] != obs.size:
-        raise ValueError(f"a tem {op.shape[0]} linhas mas y tem {obs.size} elementos")
+        raise ValueError(f"a has {op.shape[0]} rows but y has {obs.size} elements")
 
     k_max = int(n_nonzero)
     if not 1 <= k_max <= min(op.shape):
-        raise ValueError(f"n_nonzero precisa estar em [1, {min(op.shape)}], recebeu {k_max}")
+        raise ValueError(f"n_nonzero must be in [1, {min(op.shape)}], got {k_max}")
 
     norms = np.linalg.norm(op, axis=0)
     scale = np.where(norms > 0.0, norms, 1.0) if normalize else np.ones(op.shape[1])
@@ -304,7 +304,7 @@ def omp(
             corr[support] = 0.0
         col = int(np.argmax(np.abs(corr)))
         if corr[col] == 0.0:
-            break  # nada mais correlacionado: dicionario esgotado
+            break  # nothing correlated is left: dictionary exhausted
         support.append(col)
         sub = dic[:, support]
         coef_support = np.linalg.lstsq(sub, obs, rcond=None)[0]
@@ -325,27 +325,27 @@ def omp(
 
 
 # ----------------------------------------------------------------------
-# saida em forma comparavel com o braco classico
+# output in a form comparable with the classical arm
 # ----------------------------------------------------------------------
 def sparse_order_spectrum(coefficients: ArrayLike, orders: ArrayLike) -> EnvelopeSpectrum:
-    """Amplitude por ordem, empacotada como `EnvelopeSpectrum` **em ordens**.
+    """Amplitude per order, packaged as an `EnvelopeSpectrum` **in orders**.
 
-    ``magnitude[k] = hypot(c_cos, c_sin)`` da ordem ``k``. A reutilização do tipo é a
-    mesma que `envelope_order_spectrum` faz: `score_fault`, `estimate_from_candidates`
-    e `estimate_without_prior` são indiferentes à unidade do eixo, e assim o braço de
-    CS é julgado pelo **mesmo estimador** que o braço clássico. Sem isso a comparação
-    mediria diferença de estimador, não diferença de aquisição.
+    ``magnitude[k] = hypot(c_cos, c_sin)`` of order ``k``. The reuse of the type is the
+    same one that `envelope_order_spectrum` makes: `score_fault`, `estimate_from_candidates`
+    and `estimate_without_prior` are indifferent to the axis unit, and so the CS
+    arm is judged by the **same estimator** as the classical arm. Without this the comparison
+    would measure a difference in estimator, not a difference in acquisition.
 
-    ``fs_hz`` é preenchido com ``2·ordem_máxima``, o análogo de Nyquist no eixo de
-    ordens; o campo é informativo, e quem lê o teto do eixo lê ``freqs_hz[-1]``.
+    ``fs_hz`` is filled with ``2·max_order``, the Nyquist analogue on the order
+    axis; the field is informative, and anyone reading the axis ceiling reads ``freqs_hz[-1]``.
     """
     coef = np.asarray(coefficients, dtype=float).ravel()
     ords = np.asarray(orders, dtype=float).ravel()
     if coef.size != 2 * ords.size:
-        raise ValueError(f"{coef.size} coeficientes nao formam pares sobre {ords.size} ordens")
+        raise ValueError(f"{coef.size} coefficients do not form pairs over {ords.size} orders")
     mag = np.hypot(coef[0::2], coef[1::2])
-    # O dicionario so contem ordens ate order_max: nada acima "dobra" para dentro do eixo,
-    # entao score_fault nao deve procurar harmonico dobrado (auditoria de 2026-11-11).
+    # The dictionary only contains orders up to order_max: nothing above "folds" into the axis,
+    # so score_fault must not look for a folded harmonic (audit of 2026-11-11).
     return EnvelopeSpectrum(
         freqs_hz=ords,
         magnitude=mag,
@@ -358,17 +358,17 @@ def sparse_order_spectrum(coefficients: ArrayLike, orders: ArrayLike) -> Envelop
 def reconstruct_from_orders(
     phase_rev: ArrayLike, orders: ArrayLike, coefficients: ArrayLike
 ) -> NDArray[np.float64]:
-    """Sinal reconstruído numa fase arbitrária, a partir dos coeficientes esparsos.
+    """Reconstructed signal at an arbitrary phase, from the sparse coefficients.
 
-    Percorre apenas o suporte, um átomo por vez: reconstruir numa grade densa de
-    centenas de milhares de pontos com o dicionário inteiro em memória não cabe, e a
-    solução é esparsa justamente para não precisar disso.
+    Walks only the support, one atom at a time: reconstructing on a dense grid of
+    hundreds of thousands of points with the whole dictionary in memory does not fit, and the
+    solution is sparse precisely so as not to need that.
     """
     theta = np.asarray(phase_rev, dtype=float).ravel()
     ords = np.asarray(orders, dtype=float).ravel()
     coef = np.asarray(coefficients, dtype=float).ravel()
     if coef.size != 2 * ords.size:
-        raise ValueError(f"{coef.size} coeficientes nao formam pares sobre {ords.size} ordens")
+        raise ValueError(f"{coef.size} coefficients do not form pairs over {ords.size} orders")
 
     out = np.zeros(theta.size, dtype=float)
     col_order = order_of_column(ords)

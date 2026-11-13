@@ -1,22 +1,22 @@
-"""Cadeia de aquisição física — o simulador honesto.
+"""Physical acquisition chain — the honest simulator.
 
-Não modelar como ``sinal -> decima -> pronto``. O que decide a viabilidade do
-projeto são justamente os blocos que um modelo ingênuo omite::
+Do not model it as ``signal -> decimate -> done``. What decides the feasibility of
+the project is precisely the blocks that a naive model omits::
 
-    transdutor (banda + ressonância)
+    transducer (bandwidth + resonance)
         v
-    condicionamento + AAF  <- PASSA-FAIXA, nao passa-baixas
+    conditioning + AAF  <- BANDPASS, not lowpass
         v
-    track-and-hold (banda de entrada finita)   <- parede frequentemente esquecida
+    track-and-hold (finite input bandwidth)   <- wall that is often forgotten
         v
-    relogio de amostragem (jitter)             <- amplificado por f0/fs
+    sampling clock (jitter)                   <- amplified by f0/fs
         v
-    quantizador (12 bits, saturacao)
+    quantizer (12 bits, saturation)
         v
-    amostras
+    samples
 
-As três paredes físicas do projeto aparecem aqui explicitamente. Um experimento
-que assume amostrador ideal não diz nada sobre o hardware.
+The project's three physical walls appear explicitly here. An experiment that
+assumes an ideal sampler says nothing about the hardware.
 """
 
 from __future__ import annotations
@@ -30,7 +30,7 @@ from scipy import signal
 
 @dataclass(frozen=True)
 class Transducer:
-    """Resposta do transdutor. O que ele não transduz, nenhum algoritmo recupera."""
+    """Transducer response. What it does not transduce, no algorithm recovers."""
 
     f_lo_hz: float
     f_hi_hz: float
@@ -41,10 +41,10 @@ class Transducer:
 
 @dataclass(frozen=True)
 class AntiAliasFilter:
-    """Filtro anti-aliasing.
+    """Anti-aliasing filter.
 
-    ``kind='bandpass'`` é o modo que este projeto exige: um AAF passa-baixas
-    comercial destrói exatamente a informação super-Nyquist que se quer medir.
+    ``kind='bandpass'`` is the mode this project requires: a commercial lowpass AAF
+    destroys exactly the super-Nyquist information one wants to measure.
     """
 
     kind: str = "bandpass"
@@ -55,13 +55,13 @@ class AntiAliasFilter:
 
 @dataclass(frozen=True)
 class Sampler:
-    """Amostrador. ``th_bandwidth_hz`` é a parede a medir em bancada (Medida 0)."""
+    """Sampler. ``th_bandwidth_hz`` is the wall to be measured on the bench (Measurement 0)."""
 
     fs_hz: float
     th_bandwidth_hz: float = 200e3
     jitter_rms_s: float = 0.0
     offsets_s: NDArray[np.float64] | None = None
-    """Instantes não-uniformes (multi-coset). ``None`` = grade uniforme."""
+    """Non-uniform instants (multi-coset). ``None`` = uniform grid."""
 
 
 @dataclass(frozen=True)
@@ -73,7 +73,7 @@ class Quantizer:
 
 @dataclass
 class AcquisitionChain:
-    """Cadeia completa. Determinística dada uma seed."""
+    """Complete chain. Deterministic given a seed."""
 
     transducer: Transducer
     aaf: AntiAliasFilter
@@ -82,10 +82,10 @@ class AcquisitionChain:
     seed: int = 0
 
     def acquire(self, x_analog: NDArray[np.float64], fs_analog_hz: float) -> NDArray[np.float64]:
-        """Passa ``x_analog`` (amostrado finamente) por toda a cadeia.
+        """Passes ``x_analog`` (finely sampled) through the whole chain.
 
-        ``fs_analog_hz`` precisa ser ao menos 10x a maior frequência de interesse
-        para que a simulação da parte analógica seja fiel.
+        ``fs_analog_hz`` must be at least 10x the highest frequency of interest for
+        the simulation of the analog part to be faithful.
         """
         rng = np.random.default_rng(self.seed)
         x = np.asarray(x_analog, dtype=float)
@@ -122,11 +122,11 @@ class AcquisitionChain:
         elif self.aaf.kind == "none":
             return x
         else:
-            raise ValueError(f"AAF desconhecido: {self.aaf.kind!r}")
+            raise ValueError(f"unknown AAF: {self.aaf.kind!r}")
         return signal.sosfiltfilt(sos, x)
 
     def _apply_track_and_hold(self, x: NDArray[np.float64], fs: float) -> NDArray[np.float64]:
-        """Polo único na banda do T/H. É a parede que mata subamostragem ingênua."""
+        """Single pole at the T/H bandwidth. It is the wall that kills naive undersampling."""
         nyq = fs / 2.0
         wn = min(self.sampler.th_bandwidth_hz / nyq, 0.999)
         sos = signal.butter(1, wn, btype="low", output="sos")
@@ -169,15 +169,15 @@ def impulse_train(
     jitter_frac: float = 0.01,
     seed: int = 0,
 ) -> NDArray[np.float64]:
-    """Trem de impactos amortecidos — o modelo canônico de falha de rolamento.
+    """Train of damped impacts — the canonical bearing-fault model.
 
-    Impulsos periódicos a ``rate_hz`` (BPFO/BPFI) excitando uma ressonância
-    estrutural em ``resonance_hz``. O ``jitter_frac`` (escorregamento de ~1-2%)
-    é o que torna o sinal **ciclo-estacionário e não periódico**, e é a razão de
-    a análise de envelope funcionar melhor que a espectral direta.
+    Periodic impulses at ``rate_hz`` (BPFO/BPFI) exciting a structural resonance at
+    ``resonance_hz``. The ``jitter_frac`` (slip of ~1-2%) is what makes the signal
+    **cyclostationary and not periodic**, and it is the reason envelope analysis
+    works better than direct spectral analysis.
 
-    É também exatamente um sinal com taxa de inovação finita: dois parâmetros
-    por impacto, e não ``2B`` amostras por segundo.
+    It is also exactly a signal with a finite rate of innovation: two parameters per
+    impact, and not ``2B`` samples per second.
     """
     rng = np.random.default_rng(seed)
     n = int(duration_s * fs_hz)
@@ -187,10 +187,10 @@ def impulse_train(
     period = 1.0 / rate_hz
     n_impacts = int(duration_s / period)
 
-    # O escorregamento perturba cada INTERVALO, nao a posicao absoluta. Somar os
-    # intervalos da um passeio aleatorio (desvio ~ sqrt(i)); escalar a posicao por
-    # (1 + eps) daria erro crescendo com i e destruiria a periodicidade em poucos
-    # segundos. Bug encontrado em 2026-09-03 ao montar o baseline de envelope.
+    # Slip perturbs each INTERVAL, not the absolute position. Summing the intervals
+    # gives a random walk (deviation ~ sqrt(i)); scaling the position by (1 + eps)
+    # would give an error growing with i and would destroy the periodicity within a
+    # few seconds. Bug found on 2026-09-03 while building the envelope baseline.
     intervals = period * (1.0 + rng.normal(0.0, jitter_frac, size=n_impacts))
     starts = np.cumsum(intervals) - intervals[0]
 

@@ -1,34 +1,35 @@
-"""Pedaço paralelo do E15: as mesmas execuções do ``run.py``, em outro processo, no mesmo ``runs/``.
+"""Parallel shard of E15: the same runs as ``run.py``, in another process, in the same ``runs/``.
 
-**Para que serve.** No Paderborn o treino é limitado por um núcleo de CPU, e a GPU fica em cerca
-de 6 % de uso (medido por NVML em 2026-11-12). A rodada serial tem 48 células (4 dobras x 3
-sementes x 4 orçamentos) de cerca de meia hora.
+**What it is for.** On Paderborn, training is limited by one CPU core, and the GPU sits at about
+6 % utilization (measured with NVML on 2026-11-12). The serial run has 48 cells (4 folds x 3
+seeds x 4 budgets) of about half an hour each.
 
-Este script roda, em outro processo, as células que recebe em ``--cells`` e grava cada execução
-em ``runs/`` com o mesmo ``run_key`` do ``run.py``. A chave cobre o config, o ``run.py``, o
-código dos pacotes e a CLI que muda o resultado. O processo principal, ao chegar numa célula já
-gravada, a retoma (``execute``), e o manifest dele a marca como "retomado".
+This script runs, in another process, the cells it receives in ``--cells`` and writes each run
+to ``runs/`` with the same ``run_key`` as ``run.py``. The key covers the config, ``run.py``, the
+package code and the CLI options that change the result. When the main process reaches a cell
+that is already written, it resumes it (``execute``), and its manifest marks it as
+``"retomado"`` (resumed).
 
-**O que não muda:**
-- **Nenhum cálculo.** O script chama ``run.run_method`` com o mesmo contexto. A semente de dados
-  sai de ``derive_seed`` por célula, e o cudnn é determinístico.
-- **Nenhum resultado final.** O script sai antes de ``summarize``, então não escreve
-  ``metrics.csv``, ``summary.csv``, ``hypotheses.csv``, ``masks.json`` nem o manifest. Quem os
-  escreve é o processo principal, que passa por todas as células.
+**What does not change:**
+- **No computation.** The script calls ``run.run_method`` with the same context. The data seed
+  comes from ``derive_seed`` per cell, and cudnn is deterministic.
+- **No final result.** The script exits before ``summarize``, so it does not write
+  ``metrics.csv``, ``summary.csv``, ``hypotheses.csv``, ``masks.json`` or the manifest. Those are
+  written by the main process, which goes through all the cells.
 
-**O que acrescenta:**
-- **Cache do estágio clássico.** É a lista de ``classical_task`` por registro, num arquivo cujo
-  nome inclui o hash do config, do ``run.py`` e dos pacotes. ``--only-cache`` calcula, grava e sai;
-  os pedaços seguintes só leem.
-- **Gravação atômica de cada execução** (arquivo temporário + ``os.replace``). Assim o processo
-  principal nunca lê um JSON pela metade.
+**What it adds:**
+- **Cache of the classical stage.** It is the list of ``classical_task`` results per record, in
+  a file whose name includes the hash of the config, of ``run.py`` and of the packages.
+  ``--only-cache`` computes, writes and exits; the following shards only read it.
+- **Atomic write of each run** (temporary file + ``os.replace``). This way the main process
+  never reads a half-written JSON.
 
-Uso, com a CLI do ``run.py`` depois de ``--``:
+Usage, with the ``run.py`` CLI after ``--``:
 
     python shard.py --cache C.pkl --only-cache -- --config config/paderborn.yaml --workers 16
     python shard.py --cache C.pkl --cells 2.0.4 2.0.8 -- --config config/paderborn.yaml
 
-Uma célula é ``divisão.semente.orçamento``.
+A cell is ``split.seed.budget``.
 """
 
 from __future__ import annotations
@@ -46,11 +47,11 @@ from pathlib import Path
 EXP = Path(__file__).resolve().parent
 sys.path.insert(0, str(EXP))
 
-import run  # noqa: E402  (o run.py do experimento, sem alteração)
+import run  # noqa: E402  (the experiment's run.py, unmodified)
 
 
-class ShardDone(Exception):  # noqa: N818  (fim normal, não erro)
-    """Fim do pedaço: sai antes de qualquer escrita de resultado final."""
+class ShardDone(Exception):  # noqa: N818  (normal end, not an error)
+    """End of the shard: exits before any final result is written."""
 
 
 def cache_key(config: Path) -> str:
@@ -63,7 +64,7 @@ def cache_key(config: Path) -> str:
 
 def make_pool(cache: Path, only_cache: bool, key: str):
     class CachedPool:
-        """Substitui o ProcessPoolExecutor do estágio clássico (o único uso no run.py)."""
+        """Replaces the classical stage's ProcessPoolExecutor (its only use in run.py)."""
 
         def __init__(self, max_workers=None):
             self.max_workers = max_workers
@@ -79,10 +80,10 @@ def make_pool(cache: Path, only_cache: bool, key: str):
                 saved = pickle.loads(cache.read_bytes())
                 if saved.get("key") != key:
                     raise SystemExit(
-                        f"cache de outro config ou código: {saved.get('key')} != {key}"
+                        f"cache from another config or code: {saved.get('key')} != {key}"
                     )
                 out = saved["cls"]
-                print(f"[pedaço] estágio clássico lido de {cache.name} ({key})", flush=True)
+                print(f"[shard] classical stage read from {cache.name} ({key})", flush=True)
             else:
                 t0 = time.time()
                 with ProcessPoolExecutor(max_workers=self.max_workers) as pool:
@@ -91,7 +92,7 @@ def make_pool(cache: Path, only_cache: bool, key: str):
                 tmp.write_bytes(pickle.dumps({"key": key, "cls": out}))
                 os.replace(tmp, cache)
                 print(
-                    f"[pedaço] estágio clássico gravado em {cache.name}: {time.time() - t0:.0f} s",
+                    f"[shard] classical stage written to {cache.name}: {time.time() - t0:.0f} s",
                     flush=True,
                 )
             if only_cache:
@@ -106,7 +107,7 @@ def make_execute(cells: set[tuple[int, int, int]]):
         rc = ctx.rc
         cell = (int(rc.split["index"]), int(rc.seed), int(rc.budget))
         if cell not in cells:
-            return {"rows": [], "info": {}}  # célula de outro processo; nada é gravado
+            return {"rows": [], "info": {}}  # cell of another process; nothing is written
         rel = Path(rc.ds) / rc.variant / f"b{rc.budget}" / f"split{rc.split['index']}"
         rel = rel / f"seed{rc.seed}" / f"{method}.json"
         run_file = runs_dir / rel
@@ -114,7 +115,7 @@ def make_execute(cells: set[tuple[int, int, int]]):
             try:
                 saved = json.loads(run_file.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, OSError):
-                saved = None  # outro processo gravando sem atomicidade: recalcula
+                saved = None  # another process writing non-atomically: recompute
             if saved and saved.get("run_key") == run_key:
                 return saved
         t0 = time.time()
@@ -124,7 +125,7 @@ def make_execute(cells: set[tuple[int, int, int]]):
         tmp = run_file.with_name(f".{run_file.name}.{os.getpid()}.tmp")
         tmp.write_text(json.dumps(out, default=float), encoding="utf-8")
         os.replace(tmp, run_file)
-        print(f"  [pedaço] {rel.as_posix()}: {time.time() - t0:.0f} s", flush=True)
+        print(f"  [shard] {rel.as_posix()}: {time.time() - t0:.0f} s", flush=True)
         return out
 
     return shard_execute
@@ -136,7 +137,7 @@ def stop(*_a, **_k):
 
 def parse(argv: list[str]):
     if "--" not in argv:
-        raise SystemExit("faltou '--' antes da CLI do run.py")
+        raise SystemExit("missing '--' before the run.py CLI")
     i = argv.index("--")
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", type=Path, required=True)
@@ -149,19 +150,19 @@ def main() -> int:
     own, passthrough = parse(sys.argv[1:])
     cells = {tuple(int(v) for v in c.split(".")) for c in own.cells}
     if not own.only_cache and not cells:
-        raise SystemExit("sem --cells e sem --only-cache: nada a fazer")
+        raise SystemExit("no --cells and no --only-cache: nothing to do")
     if "--config" not in passthrough:
-        raise SystemExit("a CLI do run.py precisa de --config")
+        raise SystemExit("the run.py CLI needs --config")
     key = cache_key(Path(passthrough[passthrough.index("--config") + 1]))
     run.ProcessPoolExecutor = make_pool(own.cache, own.only_cache, key)
     run.execute = make_execute(cells)
-    run.select_across_budgets = lambda *_a, **_k: []  # resultado do pedaço é descartado
-    run.summarize = stop  # sai antes de escrever metrics, summary, hypotheses e manifest
+    run.select_across_budgets = lambda *_a, **_k: []  # the shard's result is discarded
+    run.summarize = stop  # exits before writing metrics, summary, hypotheses and manifest
     sys.argv = [str(EXP / "run.py"), *passthrough]
     try:
         run.main()
     except ShardDone:
-        print(f"[pedaço] terminou: {len(cells)} células; resultados finais são do principal")
+        print(f"[shard] done: {len(cells)} cells; the final results come from the main process")
     return 0
 
 

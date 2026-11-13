@@ -1,113 +1,116 @@
-# E21 - MAFAULDA: o seletor também é capturado, e um teste de calibração prevê onde?
+# E21 - MAFAULDA: is the selector also captured, and does a calibration test predict where?
 
-Aberto em 2026-11-11 pelo [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). É a
-generalização da Parte 1, e depende do mecanismo estabelecido no
+Opened on 2026-11-11 by [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). It is the
+generalization of Part 1, and it depends on the mechanism established in
 [E20](../E20-fold-zone-rejection/README.md).
 
-## Contexto
+## Context
 
-O E20 mostrou, no Ottawa (pista externa), que o vale de acerto de 3× a 6× vem de conteúdo
-impulsivo fora da banda que dobra sobre a faixa de busca do kurtograma e o captura. Duas
-mitigações resolvem: filtro anti-alias, ou teto da busca abaixo da faixa onde cai a dobra. Isso
-vale para um banco só, com um rolamento por falha e eixo acionado por inversor.
+E20 showed, on Ottawa (outer race), that the accuracy valley from 3× to 6× comes from out-of-band
+impulsive content that folds onto the kurtogram's search range and captures it. Two mitigations
+fix it: an anti-alias filter, or a search ceiling below the range where the fold lands. This holds
+for a single rig, with one bearing per fault and an inverter-driven shaft.
 
-Para a Parte 1 do artigo valer, o fenômeno precisa aparecer em outro conjunto. Também é preciso
-haver uma forma de **prever, sem conhecer a falha**, quais taxas são perigosas. É o resíduo
-defensável da Contribuição 2 do ADR 0005.
+For Part 1 of the paper to hold, the phenomenon has to appear in another dataset. There also has
+to be a way to **predict, without knowing the fault**, which rates are dangerous. This is the
+defensible remainder of Contribution 2 of ADR 0005.
 
-## Hipótese
+## Hypothesis
 
-**H1.** No MAFAULDA (pista externa, 372 sequências), sob decimação pura, o acerto de ordem não é
-monótono no fator: há pelo menos um fator com acerto **pelo menos 15 pontos abaixo** de um fator
-maior, e o filtro anti-alias ideal elimina esse vale.
+**H1.** On MAFAULDA (outer race, 372 sequences), under pure decimation, the order accuracy is not
+monotonic in the factor: there is at least one factor with accuracy **at least 15 points below**
+a larger factor, and the ideal anti-alias filter removes that valley.
 
-**H2.** O teste de admissibilidade da taxa (TAT) prevê esses erros. O TAT é calculado só na
-**primeira metade** de cada sequência, em taxa cheia. Ele marca um fator como inadmissível quando
-a banda escolhida pelo kurtograma após a decimação tem mais da metade da energia vinda de
-conteúdo dobrado.
+**H2.** The rate-admissibility test (TAT) predicts these errors. The TAT is computed only on the
+**first half** of each sequence, at full rate. It marks a factor as inadmissible when the band
+chosen by the kurtogram after decimation has more than half of its energy coming from folded
+content.
 
-## O que refutaria
+## What would refute it
 
-- **H1 é refutada** se o acerto for monótono, a menos de 5 pontos, em todos os tetos. O fenômeno
-  passa a ser do banco do Ottawa, e a Parte 1 fica restrita a ele (ADR 0006).
-- **H2 é refutada** se, nas células onde o TAT diz "inadmissível", o acerto na segunda metade
-  **não** for menor que nas admissíveis do mesmo fator (diferença ≤ 10 pontos, ou intervalo
-  bootstrap por sequência cruzando zero).
-- **H2 também é refutada** se a acurácia balanceada do TAT, prevendo erro contra acerto na
-  segunda metade, ficar abaixo de 0,65.
+- **H1 is refuted** if the accuracy is monotonic, to within 5 points, at every ceiling. The
+  phenomenon then belongs to the Ottawa rig, and Part 1 is restricted to it (ADR 0006).
+- **H2 is refuted** if, in the cells where the TAT says "inadmissible", the accuracy on the second
+  half is **not** lower than in the admissible cells of the same factor (difference ≤ 10 points,
+  or a per-sequence bootstrap interval crossing zero).
+- **H2 is also refuted** if the balanced accuracy of the TAT, predicting error versus hit on the
+  second half, falls below 0.65.
 
 ## Baseline
 
-O mesmo pipeline do E07 e do E20 (kurtograma restrito, envelope, espectro em ordens, estimativa
-sem prior), com o filtro anti-alias ideal como teto do que a dobra custa. Para a previsão, o
-baseline é o **acaso estratificado por fator**: prever erro com a taxa de erro marginal do fator.
+The same pipeline as E07 and E20 (restricted kurtogram, envelope, order spectrum, estimate without
+prior), with the ideal anti-alias filter as the ceiling that measures what the fold costs. For the
+prediction, the baseline is **chance stratified by factor**: predicting error with the factor's
+marginal error rate.
 
-## Verdade fundamental
+## Ground truth
 
-- **Ordem de falha:** BPFO = 2,998, da geometria documentada e conferida na ingestão. Ela é
-  calibrada por sequência em taxa cheia, na primeira metade, refinando ±12 % em torno do nominal.
-- **Verdade de cada sequência:** a mediana das **outras** sequências do mesmo mancal
-  (deixa-um-de-fora).
-- **Rotação:** vem do tacômetro, com 1 pulso por revolução, histerese e bloqueio
-  (`snq_data.mafaulda`).
-- **Acerto:** |estimativa − verdade| < 0,06 ordem.
+- **Fault order:** BPFO = 2.998, from the documented geometry, checked at ingestion. It is
+  calibrated per sequence at full rate, on the first half, refining ±12 % around the nominal value.
+- **Truth of each sequence:** the median of the **other** sequences of the same bearing
+  (leave-one-out).
+- **Rotation speed:** comes from the tachometer, with 1 pulse per revolution, hysteresis and
+  lockout (`snq_data.mafaulda`).
+- **Hit:** |estimate − truth| < 0.06 order.
 
-A taxa de 51,2 kHz é a inferida na ingestão. A análise de ordem é imune a ela.
+The 51.2 kHz rate is the one inferred at ingestion. The order analysis is immune to it.
 
-## Procedimento
+## Procedure
 
-1. Para cada sequência de pista externa, usar o acelerômetro **radial do mancal com falha**.
-   Dividir em calibração (1ª metade) e teste (2ª metade).
-2. **Calibração**, em taxa cheia: calcular a ordem calibrada e, para cada fator e teto, o TAT.
-   - Decimar a 1ª metade.
-   - Rodar o kurtograma e obter a banda B.
-   - Calcular a fração dobrada `1 − E_aaf(B)/E(B)`, onde `E_aaf` é a energia de B na versão
-     filtrada antes de decimar.
-   - O fator é inadmissível quando essa fração passa de 0,5.
-3. **Teste:** na 2ª metade, para cada intervenção (`none`, `aaf_ideal`), fator e teto, rodar o
-   pipeline e registrar acerto, banda e curtose.
-4. **Análise:**
-   - curva de acerto por fator e teto;
-   - acerto por TAT (admissível ou inadmissível) dentro do fator;
-   - acurácia balanceada do TAT, com bootstrap por sequência.
+1. For each outer-race sequence, use the **radial accelerometer of the faulty bearing**.
+   Split it into calibration (1st half) and test (2nd half).
+2. **Calibration**, at full rate: compute the calibrated order and, for each factor and ceiling,
+   the TAT.
+   - Decimate the 1st half.
+   - Run the kurtogram and obtain the band B.
+   - Compute the folded share `1 − E_aaf(B)/E(B)`, where `E_aaf` is the energy of B in the version
+     filtered before decimating.
+   - The factor is inadmissible when that share exceeds 0.5.
+3. **Test:** on the 2nd half, for each intervention (`none`, `aaf_ideal`), factor and ceiling, run
+   the pipeline and record hit, band and kurtosis.
+4. **Analysis:**
+   - accuracy curve by factor and ceiling;
+   - accuracy by TAT (admissible or inadmissible) within the factor;
+   - balanced accuracy of the TAT, with a per-sequence bootstrap.
 
-## Métricas
+## Metrics
 
-- acerto de ordem (`sem_prior`) por fator × teto × intervenção, com `n`;
-- TAT: fração dobrada, previsão, e acurácia balanceada contra o erro observado;
-- atribuição medição/prior: não se aplica (sem operador linear).
+- order accuracy, `sem_prior` (without prior), by factor × ceiling × intervention, with `n`;
+- TAT: folded share, prediction, and balanced accuracy against the observed error;
+- measurement/prior attribution: not applicable (no linear operator).
 
-## Resultado
+## Result
 
-Rodado em 2026-11-11 no servidor (372 sequências, 22.320 linhas, DSP corrigido). **Inconclusivo
-por construção: a métrica não é válida neste conjunto.**
+Run on 2026-11-11 on the server (372 sequences, 22,320 rows, corrected DSP). **Inconclusive by
+construction: the metric is not valid on this dataset.**
 
-**O que se mediu.**
-- **Acerto em taxa cheia, sem intervenção:** 35 % no mancal *underhang* e 3 % no *overhang*. O
-  filtro anti-alias ideal não muda o quadro, e nenhum fator mostra o vale de H1 (*underhang*: 30
-  a 53 % ao longo dos fatores; *overhang*: 1 a 10 %).
-- **TAT:** acurácia balanceada de 0,47 (IC 95 % de 0,46 a 0,49). As células inadmissíveis acertam
-  10,8 pontos **a mais** que as admissíveis (IC de −18,5 a −4,2).
+**What was measured.**
+- **Accuracy at full rate, without intervention:** 35 % on the *underhang* bearing and 3 % on the
+  *overhang* bearing. The ideal anti-alias filter does not change the picture, and no factor shows
+  the H1 valley (*underhang*: 30 to 53 % across the factors; *overhang*: 1 to 10 %).
+- **TAT:** balanced accuracy of 0.47 (95 % CI 0.46 to 0.49). The inadmissible cells score 10.8
+  points **more** than the admissible ones (CI −18.5 to −4.2).
 
-**Por que isso não testa H1 nem H2.** Neste rolamento, BPFO = 2,998 e BPFI = 5,002 são,
-na prática, **ordens inteiras**: coincidem com o 3º e o 5º harmônicos do eixo.
-- Em taxa cheia, 59 % das estimativas ficam a ±0,03 de uma ordem inteira. As mais frequentes
-  são 3, 32, 2, 5 e 4.
-- As ordens "calibradas" se espalham pela janela de ±12 % (2,64 a 3,35; só 11 % a ±0,01 de 3,000).
+**Why this tests neither H1 nor H2.** In this bearing, BPFO = 2.998 and BPFI = 5.002 are, in
+practice, **integer orders**: they coincide with the 3rd and 5th shaft harmonics.
+- At full rate, 59 % of the estimates fall within ±0.03 of an integer order. The most frequent
+  ones are 3, 32, 2, 5 and 4.
+- The "calibrated" orders spread over the ±12 % window (2.64 to 3.35; only 11 % within ±0.01 of
+  3.000).
 
-O "acerto" mede, portanto, se o pipeline achou o 3º harmônico do eixo, e não a falha. Como o
-espectro é dominado pelos harmônicos inteiros do eixo, o próprio baseline não diagnostica.
-Sem uma métrica válida, a pergunta sobre a subamostragem não se coloca aqui.
+The "hit" therefore measures whether the pipeline found the 3rd shaft harmonic, and not the fault.
+Since the spectrum is dominated by the integer shaft harmonics, the baseline itself does not
+diagnose. Without a valid metric, the question about undersampling does not arise here.
 
-**O que surpreendeu.** O conjunto mais usado para multi-falha com tacômetro tem a ordem de BPFO
-sobre um harmônico do eixo. Isso se soma à taxa real de 51,2 kHz, e não 50 kHz, achada na
-ingestão. Os dois fatos valem uma nota no artigo.
+**What was surprising.** The most widely used multi-fault dataset with a tachometer has the BPFO
+order on a shaft harmonic. This adds to the real rate of 51.2 kHz, and not 50 kHz, found at
+ingestion. Both facts are worth a note in the paper.
 
-**O que fica da ingestão:** a taxa de 51,2 kHz, a triagem do tacômetro e o loader. O MAFAULDA
-pode servir a outra tarefa (detecção contra o normal, ou falha de esfera com BSF = 1,871), mas
-**não** à estimação de ordem de BPFO.
+**What remains from the ingestion:** the 51.2 kHz rate, the tachometer screening and the loader.
+MAFAULDA may serve another task (detection against the normal condition, or ball fault with
+BSF = 1.871), but **not** BPFO order estimation.
 
-**Consequência (ADR 0006, atualização de 2026-11-11):** a generalização da Parte 1 passa ao
-**E23**, que injeta um interferente impulsivo controlado num conjunto com ordens de falha não
-inteiras (CWRU 48k, BPFO 3,585) e, se possível, usa um segundo conjunto real com essa
-propriedade (Paderborn).
+**Consequence (ADR 0006, update of 2026-11-11):** the generalization of Part 1 moves to **E23**,
+which injects a controlled impulsive interferer into a dataset with non-integer fault orders
+(CWRU 48k, BPFO 3.585) and, if possible, uses a second real dataset with that property
+(Paderborn).

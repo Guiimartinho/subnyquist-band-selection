@@ -1,7 +1,7 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
-"""Carrega metrics.csv/calib.csv do E26 e reproduz as regras do analyze_paderborn.py."""
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
+"""Loads metrics.csv/calib.csv of E26 and reproduces the rules of analyze_paderborn.py."""
 
 import csv, itertools, math
 from collections import defaultdict
@@ -11,7 +11,7 @@ from pathlib import Path
 
 RES = str(Path(__file__).resolve().parents[2] / "results-paderborn")
 TOL = 0.025
-BPFO, BPFI = 3.0543, 4.9457  # recalculado abaixo pela geometria
+BPFO, BPFI = 3.0543, 4.9457  # recomputed below from the geometry
 GR = 6.75 / 28.55
 BPFO = 4 * (1 - GR)
 BPFI = 4 * (1 + GR)
@@ -154,7 +154,7 @@ def signflip(a, b, two_sided=False, mc=200000, seed=1, exact_max=18):
 
 
 def ci_signflip(dd, mc=20000, seed=2, alpha=0.05):
-    """IC por inversão do teste de troca de sinal estratificado (dd: {(race,b): d})."""
+    """CI by inversion of the stratified sign-flip test (dd: {(race,b): d})."""
     races = sorted({k[0] for k in dd})
     rng = np.random.default_rng(seed)
     keys = sorted(dd)

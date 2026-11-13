@@ -1,4 +1,4 @@
-"""Critério de recuperação pré-registrado do E20 (recovery.py)."""
+"""Pre-registered E20 recovery criterion (recovery.py)."""
 
 import importlib.util
 from pathlib import Path
@@ -12,7 +12,7 @@ _spec.loader.exec_module(rec)
 
 def test_verdict_follows_the_preregistered_thresholds():
     assert rec.verdict(20, 0.009) == "recupera"
-    assert rec.verdict(20, 0.01) == "inconclusivo"  # p < 0,01, estrito
+    assert rec.verdict(20, 0.01) == "inconclusivo"  # p < 0.01, strict
     assert rec.verdict(25, 0.02) == "inconclusivo"
     assert rec.verdict(15, 1e-6) == "inconclusivo"
     assert rec.verdict(10, 1e-6) == "nao recupera"

@@ -1,28 +1,32 @@
-"""Análise pré-registrada do E26c (README, "E26c: decimação pura contra anti-alias e passa-faixa").
+"""Pre-registered E26c analysis (README, "E26c: pure decimation against anti-alias and band-pass").
 
-- **Regra,** a do E26 em todos os braços:
-  - o limiar é o percentil 95 dos escores máximos (BPFO e BPFI) dos sãos, por braço e fator;
-  - para avaliar um são, o limiar sai dos outros 5;
-  - a decisão é a falha de maior escore, se ele passar do limiar; senão, "nenhuma".
-- **Braços,** do ``metrics.csv``: ``aquisição|estratégia``. A esses somam-se dois passa-faixa com a
-  zona escolhida no comissionamento:
-  - ``zona_kurtograma|banda_larga_regra``: a zona que contém o centro da banda do kurtograma em
-    taxa cheia na medição 1 do próprio rolamento e ajuste;
-  - ``zona_frota|banda_larga_regra``: a zona de maior acurácia balanceada nos outros rolamentos.
-    Para um rolamento danificado, a zona sai dos demais danificados. Para um são, sai de todos os
-    danificados, com o limiar deixando o próprio são de fora.
-- **H5:** ``pura|guiado`` > ``antialias|guiado`` em 4×, 8×, 16× e 32×, com Holm sobre 4.
-- **H6:** ``pura|guiado`` > ``zona_frota|banda_larga_regra`` em 4× e 8×, com Holm sobre 2.
-- **Os testes:** troca de sinal por rolamento, estratificada por pista, unilateral. Um teste passa
-  se o p de Holm ficar abaixo de α e a diferença for positiva.
-- **Descritivos:**
-  - o kurtograma e a banda larga, ``pura`` contra ``antialias``;
-  - o perfil por zona;
-  - o vazamento: entre as detecções do ``pura|guiado``, a fração com o pico da 1ª harmônica a até
-    0,03 de uma ordem inteira, e o acerto com exclusão de ±0,03;
-  - as iscas: a fração de segmentos em que a maior isca passa do limiar, nos danificados e nos
-    sãos.
-- **Integridade.** Os escores do ``pura|guiado`` têm de ser idênticos aos do guiado bruto do E26.
+- **Rule,** that of E26 in all arms:
+  - the threshold is the 95th percentile of the maximum scores (BPFO and BPFI) of the healthy
+    bearings, per arm and factor;
+  - to evaluate a healthy bearing, the threshold comes from the other 5;
+  - the decision is the fault with the highest score, if that score exceeds the threshold;
+    otherwise, "none".
+- **Arms,** from ``metrics.csv``: ``acquisition|strategy``. To these are added two band-pass arms
+  with the zone chosen at commissioning:
+  - ``zona_kurtograma|banda_larga_regra``: the zone that contains the centre of the full-rate
+    kurtogram band on measurement 1 of the same bearing and setting;
+  - ``zona_frota|banda_larga_regra``: the zone with the highest balanced accuracy on the other
+    bearings. For a damaged bearing, the zone comes from the other damaged bearings. For a healthy
+    one, it comes from all the damaged bearings, with the threshold leaving the healthy bearing
+    itself out.
+- **H5:** ``pura|guiado`` > ``antialias|guiado`` at 4×, 8×, 16× and 32×, with Holm over 4.
+- **H6:** ``pura|guiado`` > ``zona_frota|banda_larga_regra`` at 4× and 8×, with Holm over 2.
+- **The tests:** per-bearing sign-flip test, stratified by race, one-sided. A test passes if the
+  Holm p is below α and the difference is positive.
+- **Descriptive analyses:**
+  - the kurtogram and the whole band, ``pura`` against ``antialias``;
+  - the profile by zone;
+  - the leakage: among the detections of ``pura|guiado``, the fraction with the peak of the 1st
+    harmonic within 0.03 of an integer order, and the hit rate with the ±0.03 exclusion;
+  - the decoys: the fraction of segments in which the largest decoy exceeds the threshold, on the
+    damaged and on the healthy bearings.
+- **Integrity.** The scores of ``pura|guiado`` have to be identical to those of the raw guided arm
+  of E26.
 
     uv run python experiments/E26-fault-order-guided-selector/analyze_paderborn_acq.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn_acq.yaml
@@ -61,7 +65,7 @@ def balanced(pb_: dict) -> dict:
 
 
 def evaluate(rows: list[dict], q: float, tag: str = "") -> tuple[dict, dict]:
-    """Acerto por (rolamento) e limiares, para um braço e um fator."""
+    """Hit rate per (bearing) and thresholds, for one arm and one factor."""
     hs = defaultdict(list)
     for r in rows:
         if r["race"] == "H":
@@ -100,7 +104,7 @@ def main() -> int:
     for r in rows:
         arms[(f"{r['acquisition']}|{r['strategy']}", int(r["factor"]))].append(r)
 
-    # passa-faixa com a zona do comissionamento (kurtograma em taxa cheia na medição 1)
+    # band-pass with the commissioning zone (full-rate kurtogram on measurement 1)
     for dec in (int(z) for z in cfg["zone_factors"] if int(z) in factors):
         width = FS / (2 * dec)
         for r in rows:
@@ -117,7 +121,7 @@ def main() -> int:
     for (arm, f), rs in arms.items():
         per[(arm, f)], _ = evaluate(rs, q)
 
-    # passa-faixa com a zona da frota, deixando o rolamento de fora
+    # band-pass with the fleet zone, leaving the bearing out
     for dec in (int(z) for z in cfg["zone_factors"] if int(z) in factors):
         zones = ["antialias", *[f"zona{k}" for k in range(1, dec)]]
         zacc = {z: per.get((f"{z}|banda_larga_regra", dec), {}) for z in zones}
@@ -168,7 +172,7 @@ def main() -> int:
             t["passes"] = int(pa < float(a["alpha"]) and t["diff_points"] > 0)
         tests += cell
 
-    # vazamento e iscas no pura|guiado
+    # leakage and decoys in pura|guiado
     leak = {}
     for f in factors:
         rs = arms[("pura|guiado", f)]
@@ -211,7 +215,7 @@ def main() -> int:
             else None,
         }
 
-    # integridade: pura|guiado contra o guiado bruto do E26
+    # integrity: pura|guiado against the raw guided arm of E26
     with (EXP / a["guided_results"] / "metrics.csv").open(encoding="utf-8") as fh:
         g = {
             (r["bearing"], r["setting"], r["measurement"], r["factor"]): r
@@ -240,14 +244,14 @@ def main() -> int:
         "verdict_factors_passed": verdict,
     }
     (res / "analysis.json").write_text(json.dumps(rep, indent=2, ensure_ascii=False), "utf-8")
-    print("integridade:", integrity)
+    print("integrity:", integrity)
     for k, v in summary.items():
         print(k, v)
     for t in tests:
         print(t)
     for k, v in leak.items():
-        print("vazamento", k, v)
-    print("veredito:", verdict)
+        print("leakage", k, v)
+    print("verdict:", verdict)
     return 0
 
 

@@ -1,18 +1,19 @@
-"""E15, análise exploratória (só diagnósticos de treino): estabilidade da máscara usada.
+"""E15, exploratory analysis (training diagnostics only): stability of the mask used.
 
-Não decide nada e não está no pré-registro. Existe para separar duas leituras da regra de
-convergência (B5) na máscara livre:
+It decides nothing and is not in the preregistration. It exists to separate two readings of the
+convergence rule (B5) on the free mask:
 
-- a máscara livre está mesmo presa no ruído de Gumbel; ou
-- o critério de margem é mais exigente para ela, porque compara o K-ésimo e o (K+1)-ésimo logit
-  de um vetor quatro vezes maior (4K entre 4P), onde o vão natural na fronteira é menor.
+- the free mask really is stuck in the Gumbel noise; or
+- the margin criterion is stricter for it, because it compares the K-th and the (K+1)-th logit
+  of a vector four times larger (4K out of 4P), where the natural gap at the boundary is smaller.
 
-A medida é a mesma para as duas máscaras: sorteia ``N`` ruídos de Gumbel, refaz a seleção dura que
-o treino faria (top-K de ``logits + g``, com a mesma projeção da máscara usada no teste) e conta a
-fração das K posições usadas que sobrevive. Na máscara livre, a projeção é `fold_project`.
+The measure is the same for both masks: it draws ``N`` Gumbel noises, redoes the hard selection
+that training would make (top-K of ``logits + g``, with the same projection as the mask used in
+the test) and counts the fraction of the K used positions that survives. On the free mask, the
+projection is `fold_project`.
 
-Entrada: o ``masks.json`` de uma rodada. Saída: ``--out`` (por padrão, ``mask_stability.csv`` ao
-lado do ``masks.json``), mais um resumo por orçamento na tela. A rodada decisiva usou:
+Input: the ``masks.json`` of a run. Output: ``--out`` (by default, ``mask_stability.csv`` next to
+``masks.json``), plus a per-budget summary on screen. The deciding run used:
 
     uv run python experiments/E15-learned-sampling-mask/explore_mask_stability.py \
         experiments/E15-learned-sampling-mask/results/masks.json --gap-ticks 2 --samples 500 \
@@ -43,11 +44,11 @@ def stability(scores_to_mask, logits: np.ndarray, used: np.ndarray, n: int, rng)
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("masks_json", type=Path)
-    ap.add_argument("--gap-ticks", type=int, default=2, help="min_gap_ticks do config")
+    ap.add_argument("--gap-ticks", type=int, default=2, help="min_gap_ticks from the config")
     ap.add_argument("--samples", type=int, default=500)
     ap.add_argument("--variant", default="bruto")
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--out", type=Path, default=None, help="CSV de saida")
+    ap.add_argument("--out", type=Path, default=None, help="output CSV")
     args = ap.parse_args()
     rng = np.random.default_rng(args.seed)
     masks = json.loads(args.masks_json.read_text(encoding="utf-8"))
@@ -109,7 +110,7 @@ def main() -> None:
     by = defaultdict(list)
     for r in rows:
         by[(r["budget"], r["mask"])].append(r)
-    print("orcamento mascara          candidatas  convergiu  estabilidade (mediana, min)")
+    print("budget    mask             candidates  converged  stability (median, min)")
     for (b, mk), rr in sorted(by.items()):
         s = [r["stability_used_mask"] for r in rr]
         c = sum(r["converged"] for r in rr)

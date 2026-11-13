@@ -1,6 +1,6 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
@@ -8,10 +8,10 @@ from common import *
 
 tau = thresholds(95)
 A = acc_table(lambda r, sel: pred_guided(r, tau) if sel == "guiado" else pred_blind(r))
-VIS = {"KA01", "KA06", "KA16", "KI01", "KI16", "KI17", "KI18"}  # raia visivel (E24)
+VIS = {"KA01", "KA06", "KA16", "KI01", "KI16", "KI17", "KI18"}  # visible line (E24)
 bearings = sorted({(r["race"], r["bearing"]) for r in ROWS if r["race"] in ("OR", "IR")})
-print("== Acerto por rolamento (%), cego=kurtograma bruto, mg=mediana_guiado, g=guiado ==")
-print("rolamento orig vis |" + "|".join(f"   {f:2d}x cego/mg/g  " for f in FACTORS))
+print("== Hit rate per bearing (%), blind=raw kurtogram, mg=mediana_guiado, g=guiado ==")
+print("bearing orig vis |" + "|".join(f"   {f:2d}x blind/mg/g " for f in FACTORS))
 for race, b in bearings:
     s = []
     for f in FACTORS:
@@ -20,7 +20,7 @@ for race, b in bearings:
             f" {100 * A[('kurtograma', f)][k]:5.1f}/{100 * A[('mediana_guiado', f)][k]:5.1f}/{100 * A[('guiado', f)][k]:5.1f}"
         )
     print(f"{b} {race} {'art' if b in ART else 'real'} {'V' if b in VIS else '-'}  |" + "|".join(s))
-print("\n== Especificidade por rolamento sao (limiar sem o proprio), mediana_guiado / guiado ==")
+print("\n== Specificity per healthy bearing (threshold without itself), mediana_guiado / guiado ==")
 for b in HEALTHY:
     print(
         b,
@@ -30,7 +30,7 @@ for b in HEALTHY:
         ),
     )
 print(
-    "\n== Estratos: artificial x real, raia visivel x nao (acuracia balanceada do mediana_guiado e do kurtograma) =="
+    "\n== Strata: artificial x real, visible line x not (balanced accuracy of mediana_guiado and kurtograma) =="
 )
 
 
@@ -41,8 +41,8 @@ def bal_subset(arm, f, pred):
 for name, pred in (
     ("artificial", lambda b: b in ART),
     ("real", lambda b: b not in ART),
-    ("com raia (E24)", lambda b: b in VIS),
-    ("sem raia (E24)", lambda b: b not in VIS),
+    ("with line (E24)", lambda b: b in VIS),
+    ("without line (E24)", lambda b: b not in VIS),
 ):
     print(
         f"  {name:15s} "
@@ -51,14 +51,14 @@ for name, pred in (
             for f in FACTORS
         )
     )
-print("\n== Rolamentos com acerto guiado < 10% e > 80%, por fator (mediana_guiado) ==")
+print("\n== Bearings with guided hit rate < 10% and > 80%, per factor (mediana_guiado) ==")
 for f in FACTORS:
     v = {k: A[("mediana_guiado", f)][k] for k in bearings}
     lo = sorted(k[1] for k, x in v.items() if x < 0.10)
     hi = sorted(k[1] for k, x in v.items() if x > 0.80)
     print(f"  {f:2d}x <10%: {len(lo):2d} {lo}\n       >80%: {len(hi):2d} {hi}")
 print(
-    "\n== Deixando um rolamento de fora: menor diferenca H1 e maior p (troca de sinal unilateral, exata/MC) =="
+    "\n== Leaving one bearing out: smallest H1 difference and largest p (one-sided sign-flip test, exact/MC) =="
 )
 for f in (4, 8, 16, 32):
     a, b_ = (
@@ -72,4 +72,4 @@ for f in (4, 8, 16, 32):
         o, p, n, u = signflip(aa, bb, mc=100000)
         if o < worst[0]:
             worst = (o, k[1], p)
-    print(f"  {f:2d}x: menor diferenca sem {worst[1]}: {worst[0]:+.1f} (p={worst[2]:.2g})")
+    print(f"  {f:2d}x: smallest difference without {worst[1]}: {worst[0]:+.1f} (p={worst[2]:.2g})")

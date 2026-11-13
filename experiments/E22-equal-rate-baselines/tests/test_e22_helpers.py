@@ -1,4 +1,4 @@
-"""Auxiliares do E22: zona de Nyquist com borda fechada e TAT."""
+"""E22 helpers: Nyquist zone with a closed edge, and the TAT."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def test_band_crossing_a_zone_edge_is_rejected():
 
 
 def test_band_inside_a_higher_zone_is_accepted():
-    # zona 3 de 50 kSPS: [75; 100] kHz
+    # zone 3 of 50 kSPS: [75; 100] kHz
     assert e22.in_one_zone(76_000.0, 84_000.0, 50_000.0)
 
 
@@ -41,7 +41,7 @@ CFG = {
 
 
 def test_classic_skips_when_ceiling_is_below_kurtogram_floor():
-    """O caso que derrubou a 1a rodada completa: teto 400 Hz < piso 500 Hz."""
+    """The case that brought down the 1st complete run: ceiling 400 Hz < floor 500 Hz."""
     import numpy as np
 
     x = np.random.default_rng(0).standard_normal(8192)

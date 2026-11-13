@@ -1,26 +1,28 @@
-"""Verificação executável dos três guardas do E07 e da extensão.
+"""Executable check of the three E07 guards and of the extension.
 
-A extensão (`config/extended.yaml`) relaxa dois guardas para que os fatores 96, 128 e
-160 passem a produzir medição. Quantas medições cada fator admite é a **premissa** da
-extensão, e era uma conta feita fora do repositório. Aqui ela vira execução:
+The extension (`config/extended.yaml`) relaxes two guards so that factors 96, 128 and
+160 start producing measurements. How many measurements each factor admits is the **premise** of
+the extension, and it used to be a calculation done outside the repository. Here it becomes
+execution:
 
-- `test_primeiro_guarda_por_fator` roda só aritmética, sem dado, e fixa a tabela do
-  README (qual guarda dispara primeiro em cada fator, sob cada config);
-- `test_extended_relaxa_exatamente_dois_guardas` impede que um terceiro confundidor
-  entre no config estendido sem ser notado;
-- `test_admissao_base_reproduz_o_csv_medido` compara o modelo dos guardas com a
-  rodada que está em `results/metrics.csv` — é o que autoriza usar o modelo para
-  falar de fatores ainda não rodados;
-- `test_admissao_extended_e_n_cheio` executa a afirmação "72 de 72 nos doze fatores".
+- `test_primeiro_guarda_por_fator` (first guard per factor) runs arithmetic only, without data,
+  and pins the README table (which guard fires first at each factor, under each config);
+- `test_extended_relaxa_exatamente_dois_guardas` (extended relaxes exactly two guards) prevents a
+  third confounder from entering the extended config unnoticed;
+- `test_admissao_base_reproduz_o_csv_medido` (base admission reproduces the measured CSV)
+  compares the guard model with the run that is in `results/metrics.csv` — this is what
+  authorizes using the model to talk about factors not yet run;
+- `test_admissao_extended_e_n_cheio` (extended admission is full n) executes the claim "72 of 72
+  at the twelve factors".
 
-Os dois últimos leem os `.mat` de Ottawa, que não são versionados; sem eles o teste é
-pulado, não falha.
+The last two read the Ottawa `.mat` files, which are not versioned; without them the test is
+skipped, it does not fail.
 
     uv run pytest experiments/E07-order-domain-ottawa/tests -q
 
-O caminho precisa ser explícito porque `testpaths` cobre `packages/`, e isso é
-deliberado: nada em `packages/` importa `experiments/`. Este teste vive dentro do
-próprio experimento e só importa o `run.py` dele.
+The path must be explicit because `testpaths` covers `packages/`, and that is
+deliberate: nothing in `packages/` imports `experiments/`. This test lives inside the
+experiment itself and only imports its `run.py`.
 """
 
 from __future__ import annotations
@@ -52,14 +54,14 @@ def load_cfg(name: str) -> dict:
 BASE = load_cfg("base")
 EXTENDED = load_cfg("extended")
 
-# Rotação de pior caso DENTRO de um segmento analisado: 1674,1 rpm = 27,9017 Hz, o
-# máximo de fs_eff/max(v) sobre as 72 janelas. É o valor que o guarda enxerga —
-# `run.py` aplica `np.max` ao perfil decimado do segmento, não ao registro inteiro.
+# Worst-case rotation speed WITHIN an analyzed segment: 1674.1 rpm = 27.9017 Hz, the
+# maximum of fs_eff/max(v) over the 72 windows. It is the value that the guard sees —
+# `run.py` applies `np.max` to the decimated profile of the segment, not to the whole record.
 WORST_SPEED_HZ = 1674.107142878 / 60.0
 
 
 def geometry(factor: int, cfg: dict) -> tuple[int, float, float]:
-    """`(n_amostras, fs_eff_hz, pontos_por_revolucao)` no pior segmento."""
+    """`(n_samples, fs_eff_hz, points_per_rev)` in the worst segment."""
     n = math.ceil(int(cfg["segment_samples"]) / factor)
     fs_eff = FS_HZ / factor
     return n, fs_eff, fs_eff / WORST_SPEED_HZ
@@ -69,17 +71,17 @@ def geometry(factor: int, cfg: dict) -> tuple[int, float, float]:
     ("factor", "sob_base", "sob_extended"),
     [
         (48, None, None),
-        # 64: `samples_per_rev` derruba parte das janelas no base (112,00 < 128) e
-        # nenhuma no estendido (112,00 >= 32).
+        # 64: `samples_per_rev` knocks out part of the windows in base (112.00 < 128) and
+        # none in extended (112.00 >= 32).
         (64, "samples_per_rev", None),
         (96, "samples_per_rev", None),
-        # 128: os dois guardas relaxados o zeram no base; `min_samples` dispara antes.
+        # 128: the two relaxed guards zero it in base; `min_samples` fires first.
         (128, "min_samples", None),
         (160, "min_samples", None),
-        # 192 passa no estendido; a razão de a varredura parar em 160 é a largura da
-        # janela de busca do kurtograma, não um guarda — ver o README.
+        # 192 passes in extended; the reason the sweep stops at 160 is the width of the
+        # kurtogram search window, not a guard — see the README.
         (192, "min_samples", None),
-        # 256 é o primeiro fator que o estendido também recusa: ceil(500000/256)=1954.
+        # 256 is the first factor that extended also rejects: ceil(500000/256)=1954.
         (256, "min_samples", "min_samples"),
     ],
 )
@@ -89,7 +91,7 @@ def test_primeiro_guarda_por_fator(factor: int, sob_base: str | None, sob_extend
 
 
 def test_f_min_hz_nao_e_o_guarda_que_zera_96_e_128():
-    """O piso de 500 Hz só passa a vincular a partir do fator 200."""
+    """The 500 Hz floor only starts to bind from factor 200 on."""
     for factor in (96, 128, 160, 192):
         _, fs_eff, _ = geometry(factor, BASE)
         assert fs_eff / 2.0 > float(BASE["kurtogram"]["f_min_hz"])
@@ -97,14 +99,14 @@ def test_f_min_hz_nao_e_o_guarda_que_zera_96_e_128():
 
 
 def test_extended_relaxa_exatamente_dois_guardas():
-    """Terceiro confundidor entrando no config estendido quebra este teste."""
+    """A third confounder entering the extended config breaks this test."""
     esperado = {"min_samples", "samples_per_rev", "sweep", "output"}
     difere = {k for k in BASE.keys() | EXTENDED.keys() if BASE.get(k) != EXTENDED.get(k)}
     assert difere == esperado
     assert EXTENDED["min_samples"] == 2048 and BASE["min_samples"] == 4096
     assert EXTENDED["samples_per_rev"] == 16 and BASE["samples_per_rev"] == 64
-    # A lista estendida contém a do base inteira: são os nove fatores de controle que
-    # medem o degrau de guarda sob taxa idêntica.
+    # The extended list contains the whole base list: these are the nine control factors that
+    # measure the guard step at an identical rate.
     assert set(BASE["sweep"]["undersampling_factor"]) - {96, 128} <= set(
         EXTENDED["sweep"]["undersampling_factor"]
     )
@@ -112,16 +114,16 @@ def test_extended_relaxa_exatamente_dois_guardas():
 
 
 # ----------------------------------------------------------------------------
-# Verificação com os dados reais: pulada quando os .mat não estão presentes.
+# Check with the real data: skipped when the .mat files are not present.
 # ----------------------------------------------------------------------------
 needs_data = pytest.mark.skipif(
-    not (RAW / "I-A-1.mat").exists(), reason=f"dados de Ottawa ausentes em {RAW}"
+    not (RAW / "I-A-1.mat").exists(), reason=f"Ottawa data missing in {RAW}"
 )
 
 
 @pytest.fixture(scope="module")
 def segment_geometry() -> dict[int, list[tuple[int, float, float]]]:
-    """Para cada fator, a geometria real das 72 janelas (24 registros × 3 segmentos)."""
+    """For each factor, the real geometry of the 72 windows (24 records × 3 segments)."""
     from snq_data import effective_rate_hz, undersample
     from snq_data.ottawa import load, record_names
 
@@ -159,23 +161,24 @@ def admitidas(geom: dict[int, list[tuple[int, float, float]]], cfg: dict) -> dic
 @needs_data
 def test_geometria_das_janelas(segment_geometry):
     assert all(len(v) == 72 for v in segment_geometry.values())
-    # A rotação de pior caso usada na aritmética acima é a medida, não uma escolha.
+    # The worst-case rotation speed used in the arithmetic above is the measured one, not a
+    # choice.
     pior = min(pts for _, _, pts in segment_geometry[64])
     assert pior == pytest.approx(112.0, abs=0.01)
 
 
 @needs_data
 def test_admissao_base_reproduz_o_csv_medido(segment_geometry):
-    """O modelo dos guardas tem de reproduzir a rodada que está no CSV."""
+    """The guard model must reproduce the run that is in the CSV."""
     csv_path = EXP / "results/metrics.csv"
     if not csv_path.exists():
-        pytest.skip("results/metrics.csv ausente")
+        pytest.skip("results/metrics.csv missing")
     medido = Counter()
     with csv_path.open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             medido[int(row["factor"])] += 1
     modelo = admitidas(segment_geometry, BASE)
-    # Três modos por medição admitida.
+    # Three modes per admitted measurement.
     assert {f: n * 3 for f, n in modelo.items() if n} == dict(medido)
     assert modelo == {
         1: 72,
@@ -194,11 +197,11 @@ def test_admissao_base_reproduz_o_csv_medido(segment_geometry):
 
 @needs_data
 def test_admissao_extended_e_n_cheio(segment_geometry):
-    """ "72 de 72 nos doze fatores" — executado, e só sobre a admissão de segmento.
+    """ "72 of 72 at the twelve factors" — executed, and only on segment admission.
 
-    Este teste não diz nada sobre acerto: ele diz que nenhum ponto da curva estendida
-    entra com `n` reduzido, e portanto que uma diferença entre fatores não pode ser
-    troca de denominador.
+    This test says nothing about the hit rate: it says that no point of the extended curve
+    enters with a reduced `n`, and therefore that a difference between factors cannot be
+    a change of denominator.
     """
     modelo = admitidas(segment_geometry, EXTENDED)
     assert modelo == dict.fromkeys(EXTENDED["sweep"]["undersampling_factor"], 72)

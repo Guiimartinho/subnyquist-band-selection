@@ -1,14 +1,15 @@
-"""E21 - captura do seletor no MAFAULDA e teste de admissibilidade da taxa (ADR 0006).
+"""E21 - selector capture on MAFAULDA and the rate-admissibility test (ADR 0006).
 
-Cada sequencia de pista externa e dividida em calibracao (1a metade) e teste (2a metade).
-Na calibracao, em taxa cheia, calcula-se a ordem calibrada e o TAT: para cada fator e
-teto, a fracao da energia da banda escolhida pelo kurtograma que vem de conteudo dobrado.
-No teste roda o pipeline do E07/E20 sob decimacao pura e sob filtro anti-alias ideal.
+Each outer-race sequence is split into calibration (1st half) and test (2nd half).
+In the calibration, at full rate, the calibrated order and the TAT are computed: for each
+factor and ceiling, the share of the energy of the band chosen by the kurtogram that comes
+from folded content. The test runs the E07/E20 pipeline under pure decimation and under an
+ideal anti-alias filter.
 
     uv run python experiments/E21-mafaulda-capture-prediction/run.py \
         --config experiments/E21-mafaulda-capture-prediction/config/base.yaml
 
-Os auxiliares de analise sao os do E07/E20, copiados porque nada importa experiments/.
+The analysis helpers are those of E07/E20, copied because nothing imports experiments/.
 """
 
 from __future__ import annotations
@@ -47,10 +48,10 @@ def at_repo(p: str) -> Path:
 
 
 # ----------------------------------------------------------------------
-# sinal
+# signal
 # ----------------------------------------------------------------------
 def aaf_ideal(x: np.ndarray, fs_hz: float, factor: int) -> np.ndarray:
-    """Mascara ideal de FFT: zera tudo acima de ``fs/(2*factor)`` (nenhuma dobra sobrevive)."""
+    """Ideal FFT mask: zeroes everything above ``fs/(2*factor)`` (no fold survives)."""
     if factor == 1:
         return x
     xf = np.fft.rfft(x)
@@ -69,7 +70,7 @@ def search_ceiling(ceiling_hz: float | None, fs_eff_hz: float) -> float:
 
 
 # ----------------------------------------------------------------------
-# analise (mesma logica do E07/E20)
+# analysis (same logic as E07/E20)
 # ----------------------------------------------------------------------
 def guard_verdict(n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: dict) -> str | None:
     if n_samples < int(cfg["min_samples"]):
@@ -82,8 +83,8 @@ def guard_verdict(n_samples: int, fs_eff_hz: float, points_per_rev: float, cfg: 
 
 
 def refine(spec, nominal: float, span: float, n_harmonics: int, tol: float) -> float:
-    # Centro do platô de escore, não o primeiro ponto: o max() antigo enviesava a verdade
-    # em meia largura do platô (0,0175 ordem com spr = 64; revisão de 2026-11-11).
+    # Centre of the score plateau, not its first point: the old max() biased the truth by
+    # half the plateau width (0.0175 order with spr = 64; review of 2026-11-11).
     return refine_order(spec, nominal, span=span, n_harmonics=n_harmonics, tol=tol)
 
 
@@ -103,7 +104,7 @@ def analyse(x, fs_hz: float, speed, cfg: dict, f_max_hz: float):
 
 
 def tat(x_full: np.ndarray, fs_hz: float, factor: int, f_max_hz: float, cfg: dict) -> dict:
-    """Teste de admissibilidade da taxa, so com a captura de calibracao em taxa cheia."""
+    """Rate-admissibility test, using only the full-rate calibration capture."""
     fs_eff = fs_hz / factor
     xd = undersample(x_full, factor)
     xa = undersample(aaf_ideal(x_full, fs_hz, factor), factor)
@@ -194,7 +195,7 @@ def run_sequence(task: dict) -> dict:
 
 
 # ----------------------------------------------------------------------
-# estatistica
+# statistics
 # ----------------------------------------------------------------------
 def balanced_accuracy(pred: np.ndarray, miss: np.ndarray) -> float:
     pos, neg = miss == 1, miss == 0
@@ -204,7 +205,7 @@ def balanced_accuracy(pred: np.ndarray, miss: np.ndarray) -> float:
 
 
 def tat_report(rows: list[dict], cfg: dict) -> dict:
-    """Desempenho do TAT em `none`, fatores > 1, com bootstrap por sequencia."""
+    """Performance of the TAT on `none`, factors > 1, with a per-sequence bootstrap."""
     rng = np.random.default_rng(int(cfg["seed"]))
     sel = [
         r
@@ -320,7 +321,7 @@ def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> 
         try:
             versions[pkg] = version(pkg)
         except PackageNotFoundError:
-            versions[pkg] = "nao instalado"
+            versions[pkg] = "not installed"
     src_sha, src_n = source_sha256()
     dirty = _git("status", "--porcelain")
     manifest = {
@@ -331,7 +332,7 @@ def write_manifest(config_path: Path, results: Path, cfg: dict, extra: dict) -> 
         "config_sha256": sha256_file(config_path),
         "entrypoint_sha256": sha256_file(Path(__file__)),
         "dataset": (
-            "MAFAULDA (UFRJ), licenca nao declarada; fs inferida 51,2 kHz (ver manifest do dataset)"
+            "MAFAULDA (UFRJ), license not declared; inferred fs 51.2 kHz (see the dataset manifest)"
         ),
         "fs_hz": maf.FS_HZ,
         "packages": versions,
@@ -352,7 +353,9 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=None)
-    ap.add_argument("--limit", type=int, default=None, help="so as primeiras N sequencias (fumaca)")
+    ap.add_argument(
+        "--limit", type=int, default=None, help="only the first N sequences (smoke test)"
+    )
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     results = args.config.parent.parent / cfg["output"]["results_dir"]
@@ -368,14 +371,14 @@ def main() -> int:
     if args.limit:
         recs = recs[: args.limit]
     workers = int(args.workers or cfg["compute"]["workers"])
-    print(f"{len(recs)} sequencias ({cfg['fault']}), {workers} processos", flush=True)
+    print(f"{len(recs)} sequences ({cfg['fault']}), {workers} processes", flush=True)
 
     out = []
     with ProcessPoolExecutor(max_workers=workers) as pool:
         for i, res in enumerate(pool.map(run_sequence, [{"cfg": cfg, "rel": r} for r in recs]), 1):
             out.append(res)
             if i % 30 == 0 or i == len(recs):
-                print(f"  {i}/{len(recs)} sequencias", flush=True)
+                print(f"  {i}/{len(recs)} sequences", flush=True)
 
     calib = {o["rel"]: o["calib"] for o in out}
     bearing_of = {o["rel"]: o["bearing"] for o in out}
@@ -414,7 +417,7 @@ def main() -> int:
             w = csv.DictWriter(f, fieldnames=list(data[0].keys()))
             w.writeheader()
             w.writerows(data)
-    print(f"\n{len(rows)} linhas -> {results / 'metrics.csv'}")
+    print(f"\n{len(rows)} rows -> {results / 'metrics.csv'}")
     print("TAT:", json.dumps(report))
     return 0
 

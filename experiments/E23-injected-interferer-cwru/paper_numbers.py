@@ -1,25 +1,26 @@
-"""Números do E23 que o artigo cita, recalculados do metrics.csv.
+"""E23 numbers that the paper cites, recomputed from metrics.csv.
 
-Três números da lista "O que o artigo pode afirmar" (README) vieram do recálculo do `reviewer-2` e
-não tinham script: os 97 % das perdas sobre a taxa das rajadas, os 8,5 pontos do anti-alias e o IC
-por aglomerado da razão do substituto. Este script os recalcula com as definições abaixo, escritas
-antes de rodá-lo. Se o valor diferir do README, vale o daqui, e o README é corrigido.
+Three numbers in the list "What the paper can claim" (README) came from the recomputation by
+`reviewer-2` and had no script: the 97 % of losses on the burst rate, the 8.5 points of the
+anti-alias and the per-cluster CI of the surrogate ratio. This script recomputes them with the
+definitions below, written before running it. If a value differs from the README, the one from
+here holds, and the README is corrected.
 
-1. **Perdas sobre a linha do interferente.** Vale para o braço uniforme, no teto de referência,
-   em fatores ≥ 2 e com o impulsivo na maior dose. Entre os casos (registro, portadora, fator) em
-   que o braço acerta sem injeção e erra com ela, é a fração cuja estimativa cai na taxa das rajadas
-   ou num harmônico até o 3º (`interferer_line`).
-2. **Custo do anti-alias ideal sem injeção.** É o acerto do `uniforme` no teto de referência menos
-   o do `aaf_ideal`, os dois sem injeção, em pontos: em 10× e 12× (o que o README atribui ao
-   revisor) e em todos os fatores ≥ 2 (o que a rodada base reporta).
-3. **Razão substituto/impulsivo em P\*.** É a estatística pré-registrada da H1', de `analyze.py`.
-   O IC sai do bootstrap dos 4 aglomerados de falha independentes (`CLUSTERS`), no lugar do
-   bootstrap por registro.
-4. **Fração dobrada contra o tamanho da queda.** É o Spearman, entre as células de captura
-   prevista avaliáveis, na maior dose, entre a fração dobrada média da célula e a queda do
-   impulsivo (`Data.drop`).
-5. **Dose-resposta dos picos.** É a queda máxima do uniforme em fatores ≥ 2, por taxa e amplitude,
-   de `results-spikes/metrics.csv`.
+1. **Losses on the interferer line.** It applies to the uniform arm, at the reference ceiling,
+   at factors ≥ 2 and with the impulsive at the highest dose. Among the cases (record, carrier,
+   factor) in which the arm hits without injection and misses with it, it is the fraction whose
+   estimate falls on the burst rate or on a harmonic up to the 3rd (`interferer_line`).
+2. **Cost of the ideal anti-alias without injection.** It is the hit rate of `uniforme` at the
+   reference ceiling minus that of `aaf_ideal`, both without injection, in points: at 10× and 12×
+   (what the README attributes to the reviewer) and at all factors ≥ 2 (what the base run reports).
+3. **Surrogate/impulsive ratio at P\*.** It is the pre-registered statistic of H1', from
+   `analyze.py`. The CI comes from the bootstrap of the 4 independent fault clusters (`CLUSTERS`),
+   instead of the bootstrap by record.
+4. **Folded share against the size of the drop.** It is the Spearman correlation, among the
+   evaluable predicted-capture cells, at the highest dose, between the mean folded share of the
+   cell and the drop of the impulsive (`Data.drop`).
+5. **Dose-response of the spikes.** It is the maximum drop of the uniform arm at factors ≥ 2, per
+   rate and amplitude, from `results-spikes/metrics.csv`.
 
     uv run python experiments/E23-injected-interferer-cwru/paper_numbers.py
 """
@@ -40,8 +41,9 @@ _spec = importlib.util.spec_from_file_location("e23_analyze", E / "analyze.py")
 an = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(an)
 
-# Os 12 registros BPFO são uma falha de 0,007" em 3 posições x 4 cargas; o 213 é o BPFI (README,
-# revisão adversarial, "Unidades independentes").
+# The 12 BPFO records are one 0.007" fault in 3 positions x 4 loads; 213 is the BPFI (README,
+# adversarial review, "Independent units"). The keys are data labels: centrada = centered,
+# ortogonal = orthogonal, oposta = opposite.
 CLUSTERS = {
     "centrada": range(135, 139),
     "ortogonal": range(148, 152),

@@ -1,40 +1,42 @@
-"""Amostragem por codificação temporal — a realização A2 do ADR 0004.
+"""Time-encoding sampling — the A2 realization of ADR 0004.
 
-A amostragem clássica mede **amplitude em instantes pré-definidos**. A codificação
-temporal faz o oposto: registra **o instante em que o sinal, ou uma função dele,
-atinge um valor pré-definido**. As amostras são irregularmente espaçadas.
+Classical sampling measures **amplitude at predefined instants**. Time encoding does
+the opposite: it records **the instant at which the signal, or a function of it,
+reaches a predefined value**. The samples are irregularly spaced.
 
-Por que isto está no projeto, citando `naaman2021fritem`:
+Why this is in the project, quoting `naaman2021fritem`:
 
     "At high sampling rates, clocks are power-consuming and prone to electromagnetic
     interference. An integrate-and-fire time encoding machine is an alternative
     power-efficient sampling mechanism which does not require a global clock."
 
-A rota A1 (TIMER + DPPI) otimiza o uso do relógio; esta **elimina o relógio global**.
+Route A1 (TIMER + DPPI) optimizes the use of the clock; this one **eliminates the
+global clock**.
 
-**Cuidado com o argumento de energia, medido neste simulador em 2026-09-03.** As duas
-variantes não são equivalentes nesse ponto:
+**Beware of the energy argument, measured in this simulator on 2026-09-03.** The two
+variants are not equivalent on this point:
 
-- O **IF-TEM** dispara a uma taxa fixada pela *média* do sinal, não pela amplitude:
-  para entrada de média zero a integral de ``x + bias`` num período vale ``bias·T``
-  qualquer que seja a amplitude. Amplitude de 0,01 a 1,9 dá exatamente a mesma taxa.
-  O ganho dele é dispensar o relógio de alta frequência, **não** disparar menos com a
-  máquina parada.
-- O **cruzamento de nível com histerese** é que tem taxa proporcional à atividade:
-  medido, 980 Hz para amplitude 0,01 contra 2980 Hz para amplitude 1,0.
+- The **IF-TEM** fires at a rate set by the *mean* of the signal, not by its
+  amplitude: for a zero-mean input the integral of ``x + bias`` over one period
+  equals ``bias·T`` whatever the amplitude. Amplitudes from 0.01 to 1.9 give exactly
+  the same rate. Its gain is doing without the high-frequency clock, **not** firing
+  less when the machine is stopped.
+- It is **level crossing with hysteresis** that has a rate proportional to activity:
+  measured, 980 Hz for amplitude 0.01 against 2980 Hz for amplitude 1.0.
 
-Quem quiser "energia proporcional ao que acontece" precisa da segunda variante.
+Whoever wants "energy proportional to what happens" needs the second variant.
 
-Duas propriedades estabelecidas na literatura e que justificam a rota:
+Two properties established in the literature that justify the route:
 
-- `liu2023tembandpass`: para sinal passa-faixa, a codificação temporal é **equivalente
-  a amostragem periódica não-uniforme**. Toda a teoria de multi-coset se transfere.
-- `adam2019multichanneltem`: M canais com integradores deslocados recuperam um sinal
-  com **M vezes a banda**, e **sem conhecer os deslocamentos entre canais** — o que o
-  multi-coset exige e precisa calibrar.
+- `liu2023tembandpass`: for a bandpass signal, time encoding is **equivalent to
+  periodic non-uniform sampling**. The whole multi-coset theory carries over.
+- `adam2019multichanneltem`: M channels with shifted integrators recover a signal
+  with **M times the bandwidth**, and **without knowing the shifts between
+  channels** — which multi-coset requires and has to calibrate.
 
-No nRF54L15 a peça é o comparador com captura de TIMER a 128 MHz. O modelo aqui
-inclui a quantização do instante de disparo, que é o limite real dessa captura.
+On the nRF54L15 the component is the comparator with TIMER capture at 128 MHz. The
+model here includes the quantization of the firing instant, which is the real limit
+of that capture.
 """
 
 from __future__ import annotations
@@ -47,18 +49,20 @@ from numpy.typing import ArrayLike, NDArray
 
 @dataclass(frozen=True)
 class IntegrateFireTEM:
-    """Máquina de codificação temporal do tipo integrate-and-fire.
+    """Integrate-and-fire time encoding machine.
 
-    Segue a definição de `adam2021asynchrony`: soma um viés ``bias`` ao sinal,
-    integra o resultado escalado por ``1/kappa`` até atingir o limiar ``delta``,
-    registra o instante, reinicia o integrador e recomeça.
+    Follows the definition in `adam2021asynchrony`: adds a bias ``bias`` to the
+    signal, integrates the result scaled by ``1/kappa`` until it reaches the threshold
+    ``delta``, records the instant, resets the integrator and starts over.
 
-    ``bias`` precisa exceder o valor absoluto máximo do sinal, senão o integrador
-    pode nunca disparar — é a condição que garante que a codificação termina.
+    ``bias`` must exceed the maximum absolute value of the signal, otherwise the
+    integrator may never fire — it is the condition that guarantees that the encoding
+    terminates.
 
-    ``timer_hz`` modela a captura de instante em hardware: no nRF54L15 o TIMER roda a
-    128 MHz, então o instante do disparo é conhecido com resolução de ~7,8 ns e não
-    exatamente. `gontier2011tem` mostra que o método é robusto a essa quantização.
+    ``timer_hz`` models the hardware capture of the instant: on the nRF54L15 the TIMER
+    runs at 128 MHz, so the firing instant is known with a resolution of ~7.8 ns, and
+    not exactly. `gontier2011tem` shows that the method is robust to this
+    quantization.
     """
 
     kappa: float = 1.0
@@ -67,29 +71,30 @@ class IntegrateFireTEM:
     timer_hz: float | None = 128e6
 
     def max_input_amplitude(self) -> float:
-        """Maior amplitude admissível: acima disso o disparo não é garantido."""
+        """Largest admissible amplitude: above it, firing is not guaranteed."""
         return self.bias
 
     def nominal_rate_hz(self) -> float:
-        """Taxa de disparo para entrada de média zero: ``bias / (2·delta·kappa)``.
+        """Firing rate for a zero-mean input: ``bias / (2·delta·kappa)``.
 
-        É o parâmetro de projeto que se compara contra ``fs`` da rota A1. Os padrões
-        dão ~100 kHz; escolher ``delta`` grande demais faz o integrador disparar uma
-        vez por segundo e a codificação não produz amostra alguma no registro.
+        It is the design parameter that is compared against the ``fs`` of route A1.
+        The defaults give ~100 kHz; choosing ``delta`` too large makes the integrator
+        fire once per second, and the encoding produces no sample at all in the record.
         """
         return self.bias / (2.0 * self.delta * self.kappa)
 
     @classmethod
     def for_rate(cls, rate_hz: float, bias: float = 2.0, **kw: float | None) -> IntegrateFireTEM:
-        """Constrói um TEM com a taxa nominal pedida."""
+        """Builds a TEM with the requested nominal rate."""
         return cls(delta=bias / (2.0 * rate_hz), bias=bias, **kw)  # type: ignore[arg-type]
 
     def encode(self, x: ArrayLike, fs_analog_hz: float) -> NDArray[np.float64]:
-        """Instantes de disparo para ``x``, amostrado finamente a ``fs_analog_hz``.
+        """Firing instants for ``x``, finely sampled at ``fs_analog_hz``.
 
-        A integral é acumulada por regra do trapézio e o cruzamento do limiar é
-        interpolado linearmente dentro do passo — sem isso a resolução dos instantes
-        ficaria limitada por ``fs_analog_hz`` em vez de pelo modelo.
+        The integral is accumulated with the trapezoidal rule and the threshold
+        crossing is linearly interpolated within the step — without this, the
+        resolution of the instants would be limited by ``fs_analog_hz`` instead of by
+        the model.
         """
         x = np.asarray(x, dtype=float).ravel()
         if x.size < 2:
@@ -97,13 +102,13 @@ class IntegrateFireTEM:
         peak = float(np.max(np.abs(x)))
         if peak >= self.bias:
             raise ValueError(
-                f"amplitude do sinal ({peak:.3g}) >= bias ({self.bias:.3g}); "
-                "o integrador pode nunca disparar. Aumente bias ou normalize a entrada."
+                f"signal amplitude ({peak:.3g}) >= bias ({self.bias:.3g}); "
+                "the integrator may never fire. Increase bias or normalize the input."
             )
 
         dt = 1.0 / fs_analog_hz
         y = (x + self.bias) / self.kappa
-        # Integral acumulada; o disparo ocorre a cada 2*delta de area acumulada.
+        # Cumulative integral; a firing occurs every 2*delta of accumulated area.
         area = np.concatenate([[0.0], np.cumsum(0.5 * (y[:-1] + y[1:]) * dt)])
         step = 2.0 * self.delta
 
@@ -112,7 +117,7 @@ class IntegrateFireTEM:
             return np.empty(0)
 
         targets = step * np.arange(1, n_fires + 1)
-        # np.interp inverte a integral: qual instante acumula cada alvo de area.
+        # np.interp inverts the integral: which instant accumulates each target area.
         times = np.interp(targets, area, np.arange(x.size) * dt)
 
         if self.timer_hz:
@@ -120,10 +125,10 @@ class IntegrateFireTEM:
         return times
 
     def firing_rate_hz(self, x: ArrayLike, fs_analog_hz: float) -> float:
-        """Taxa média de disparos — o análogo da taxa de amostragem.
+        """Mean firing rate — the analogue of the sampling rate.
 
-        É o número que se compara contra ``fs`` da rota A1 num orçamento de energia:
-        cada disparo é uma conversão, e o que não dispara não gasta.
+        It is the number that is compared against the ``fs`` of route A1 in an energy
+        budget: each firing is one conversion, and what does not fire does not spend.
         """
         t = self.encode(x, fs_analog_hz)
         duration = np.asarray(x).size / fs_analog_hz
@@ -136,19 +141,20 @@ def multichannel_tem(
     n_channels: int,
     tem: IntegrateFireTEM | None = None,
 ) -> list[NDArray[np.float64]]:
-    """M canais com integradores deslocados — o análogo temporal do multi-coset.
+    """M channels with shifted integrators — the time-domain analogue of multi-coset.
 
-    `adam2019multichanneltem` mostra que M canais recuperam um sinal com M vezes a
-    banda, **sem conhecer os deslocamentos relativos**. Aqui os canais diferem pelo
-    estado inicial do integrador, que é o que um circuito real faria.
+    `adam2019multichanneltem` shows that M channels recover a signal with M times the
+    bandwidth, **without knowing the relative shifts**. Here the channels differ by
+    the initial state of the integrator, which is what a real circuit would do.
 
-    Diferença prática em relação ao multi-coset: lá os offsets precisam ser conhecidos
-    e calibrados; aqui não. É a vantagem que motivou o ADR 0004.
+    Practical difference with respect to multi-coset: there the offsets need to be
+    known and calibrated; here they do not. It is the advantage that motivated
+    ADR 0004.
     """
     base = tem or IntegrateFireTEM()
     out: list[NDArray[np.float64]] = []
     for m in range(n_channels):
-        # Deslocar o estado inicial equivale a deslocar o limiar do primeiro disparo.
+        # Shifting the initial state is equivalent to shifting the first-firing threshold.
         shifted = IntegrateFireTEM(
             kappa=base.kappa,
             delta=base.delta,
@@ -168,20 +174,20 @@ def crossing_times(
     hysteresis: float = 0.0,
     timer_hz: float | None = 128e6,
 ) -> NDArray[np.float64]:
-    """Amostragem por cruzamento de nível: instantes em que ``x`` cruza cada limiar.
+    """Level-crossing sampling: instants at which ``x`` crosses each threshold.
 
-    É a variante mais simples da rota A2, e a mais direta de realizar com um
-    comparador.
+    It is the simplest variant of route A2, and the most direct one to implement with
+    a comparator.
 
-    **``hysteresis`` não é opcional na prática.** Sem ela, ruído em torno de um nível
-    faz o comparador oscilar sem parar: medido neste simulador, ruído de amplitude
-    0,001 em torno de zero gerou 5018 eventos em 50 ms, contra 149 de uma senoide de
-    amplitude 1. Isso destrói o argumento de energia da rota, que depende de sinal
-    parado custar pouco. Circuito real resolve com histerese, e é por isso que a
-    literatura de ADC por cruzamento de nível sempre a inclui.
+    **``hysteresis`` is not optional in practice.** Without it, noise around a level
+    makes the comparator toggle endlessly: measured in this simulator, noise of
+    amplitude 0.001 around zero produced 5018 events in 50 ms, against 149 for a sine
+    wave of amplitude 1. That destroys the energy argument of the route, which depends
+    on a still signal costing little. A real circuit solves this with hysteresis, and
+    that is why the level-crossing ADC literature always includes it.
 
-    Com histerese ``h``, depois de cruzar para cima o sinal precisa cair abaixo de
-    ``nivel - h`` antes de um novo cruzamento para cima ser contado.
+    With hysteresis ``h``, after crossing upward the signal must fall below
+    ``level - h`` before a new upward crossing is counted.
     """
     x = np.asarray(x, dtype=float).ravel()
     dt = 1.0 / fs_analog_hz

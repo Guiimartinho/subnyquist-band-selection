@@ -1,7 +1,7 @@
-"""snq-core — matemática de amostragem estruturada e priors físicos.
+"""snq-core — mathematics of structured sampling and physical priors.
 
-Não importa nada dos outros pacotes do projeto. As setas de dependência nunca
-invertem.
+Imports nothing from the project's other packages. The dependency arrows never
+reverse.
 """
 
 from snq_core.bearing import (

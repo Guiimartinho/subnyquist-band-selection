@@ -1,12 +1,12 @@
 name: mfpt
 full_name: Society for Machinery Failure Prevention Technology bearing dataset
 url: https://www.mfpt.org/fault-data-sets/
-license: conferir termos antes de redistribuir
+license: check the terms before redistributing
 fs_hz: [48828, 97656]
 notes: |
-  Taxa mais alta entre os datasets-ancora. E o unico que permite testar fatores
-  de subamostragem grandes (32x, 64x) sem sair da regiao onde ha verdade
-  fundamental confiavel.
+  Highest rate among the anchor datasets. It is the only one that allows testing large
+  undersampling factors (32x, 64x) without leaving the region where there is reliable
+  ground truth.
 undersampling:
   method: decimacao_pura
   factors: [2, 4, 8, 16, 32, 64, 128]

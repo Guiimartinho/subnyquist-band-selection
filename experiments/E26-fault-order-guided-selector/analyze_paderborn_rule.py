@@ -1,21 +1,23 @@
-"""Análise pré-registrada do E26b (README, "E26b: a regra fixa, a banda muda").
+"""Pre-registered analysis of E26b (README, "E26b: the rule stays fixed, the band changes").
 
-- **Braços com a regra guiada fixa.** A banda muda entre os braços:
-  - ``guiado``: o máximo do escore sobre as 23 bandas, lido de ``results-paderborn/metrics.csv``;
-  - ``kurtograma_regra``, ``infograma_ses_regra``, ``banda_larga_regra`` e ``sorteada_regra``: as
-    quatro estratégias de ``results-paderborn-regra/metrics.csv``.
-  - Cada braço existe nas duas limpezas, ``bruto`` e ``mediana3``.
-- **Regra de identificação,** igual em todos os braços: a falha de maior escore, se ele passar
-  do limiar; senão, "nenhuma".
-  - O limiar é o percentil 95 dos escores máximos dos sãos, por braço, fator e limpeza.
-  - Para avaliar um são, o limiar sai dos outros 5.
-- **Testes** (troca de sinal por rolamento, estratificada por pista, como no E26):
-  - **H3:** o guiado contra o ``kurtograma_regra``, nas duas limpezas e nos 4 fatores decisivos,
-    com Holm sobre os 8.
-  - **H4:** o guiado contra o ``banda_larga_regra``, do mesmo jeito.
-  - Um teste passa se o p de Holm ficar abaixo de α e a diferença for positiva.
-- **Checagem de integridade.** Onde a banda sorteada coincide com a banda que o guiado escolheu
-  para uma falha, o escore dessa falha tem de ser o mesmo nos dois arquivos.
+- **Arms with the guided rule fixed.** The band changes between the arms:
+  - ``guiado``: the maximum of the score over the 23 bands, read from
+    ``results-paderborn/metrics.csv``;
+  - ``kurtograma_regra``, ``infograma_ses_regra``, ``banda_larga_regra`` and ``sorteada_regra``:
+    the four strategies of ``results-paderborn-regra/metrics.csv``.
+  - Each arm exists for both cleanings, ``bruto`` (raw) and ``mediana3`` (median of 3).
+- **Identification rule,** the same in all arms: the fault with the highest score, if that score
+  exceeds the threshold; otherwise, "none".
+  - The threshold is the 95th percentile of the maximum healthy scores, per arm, factor and
+    cleaning.
+  - To evaluate a healthy bearing, the threshold comes from the other 5.
+- **Tests** (per-bearing sign-flip test, stratified by race, as in E26):
+  - **H3:** the guided arm against ``kurtograma_regra``, on both cleanings and at the 4 decisive
+    factors, with Holm over the 8.
+  - **H4:** the guided arm against ``banda_larga_regra``, in the same way.
+  - A test passes if the Holm p is below α and the difference is positive.
+- **Integrity check.** Where the random band coincides with the band that the guided arm chose for
+  a fault, the score of that fault has to be the same in the two files.
 
     uv run python experiments/E26-fault-order-guided-selector/analyze_paderborn_rule.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn_rule.yaml
@@ -58,7 +60,7 @@ def main() -> int:
     with (res / "metrics.csv").open(encoding="utf-8") as f:
         s_rows = list(csv.DictReader(f))
 
-    # um registro por (braço, limpeza): (rolamento, pista, ajuste, medição, fator, escores)
+    # one record per (arm, cleaning): (bearing, race, setting, measurement, factor, scores)
     recs: dict = defaultdict(list)
     for r in g_rows:
         recs[("guiado", r["clean"])].append(r)
@@ -69,7 +71,7 @@ def main() -> int:
         for arm, rows in recs.items()
     }
 
-    # integridade: banda sorteada igual à banda guiada da falha -> mesmo escore
+    # integrity: random band equal to the guided band of the fault -> same score
     diffs = []
     for clean in CLEANS:
         g = keyed[("guiado", clean)]
@@ -150,12 +152,12 @@ def main() -> int:
         "verdict_passed": verdict,
     }
     (res / "analysis.json").write_text(json.dumps(rep, indent=2, ensure_ascii=False), "utf-8")
-    print("integridade:", integrity)
+    print("integrity:", integrity)
     for k, v in summary.items():
         print(k, v)
     for t in tests:
         print(t)
-    print("veredito:", verdict)
+    print("verdict:", verdict)
     return 0
 
 

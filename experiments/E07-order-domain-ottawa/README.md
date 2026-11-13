@@ -1,228 +1,231 @@
-# E07 — degradação por subamostragem no domínio de ordem
+# E07 — undersampling degradation in the order domain
 
-## Hipótese
+## Hypothesis
 
-A ordem de falha sobrevive à subamostragem muito além do que a curva do E02 sugeria,
-porque o E02 mediu a fronteira aritmética do CWRU e não a do método. Sob rotação
-variável, com referência angular, a informação de diagnóstico está na **ordem** — que
-é constante da geometria — e não na frequência em hertz, que se move com o regime.
+The fault order survives undersampling far beyond what the E02 curve suggested,
+because E02 measured the arithmetic boundary of CWRU and not that of the method. Under
+variable rotation, with an angular reference, the diagnostic information is in the **order** — which
+is a constant of the geometry — and not in the frequency in hertz, which moves with the operating
+regime.
 
-## O que refutaria
+## What would refute it
 
-O acerto cair monotonicamente com o fator de subamostragem, como caía no CWRU 12k.
-**Não caiu.**
+The hit rate falling monotonically with the undersampling factor, as it fell on CWRU 12k.
+**It did not fall.**
 
-## Dados
+## Data
 
-University of Ottawa 2018 (Mendeley `v43hmbwxpm`, CC BY 4.0). 24 registros de falha
-— 12 de pista interna, 12 de pista externa — em 4 cenários de rotação variável,
-200 kSPS, acelerômetro no canal 1 e encoder no canal 2. Três janelas disjuntas de
-2,5 s por registro: **72 medições por fator por modo**, contra 15 no E02.
+University of Ottawa 2018 (Mendeley `v43hmbwxpm`, CC BY 4.0). 24 fault records
+— 12 inner race, 12 outer race — in 4 variable-rotation scenarios,
+200 kSPS, accelerometer on channel 1 and encoder on channel 2. Three disjoint windows of
+2.5 s per record: **72 measurements per factor per mode**, against 15 in E02.
 
-O encoder tem **1024 pulsos por revolução**, valor não documentado pelos autores e
-determinado empiricamente.
+The encoder has **1024 pulses per revolution**, a value not documented by the authors and
+determined empirically.
 
-## O encoder não passa pelo ADC
+## The encoder does not go through the ADC
 
-Contagem de pulsos numa entrada digital — TIMER/GPIOTE no nRF54L15 — não consome
-orçamento de amostragem. O que é decimado neste experimento é só a vibração; o perfil
-de rotação acompanha porque varia devagar, e o CSV registra em cada linha quantos
-pontos por revolução sobram. Segmentos com menos de dois pontos por incremento
-angular são descartados em vez de interpolados às cegas.
+Pulse counting on a digital input — TIMER/GPIOTE on the nRF54L15 — does not consume
+sampling budget. What is decimated in this experiment is only the vibration; the rotation
+profile follows along because it varies slowly, and the CSV records in each row how many
+points per revolution remain. Segments with fewer than two points per angular
+increment are discarded instead of being interpolated blindly.
 
-## Resultado (2026-09-04) — a curva não desce
+## Result (2026-09-04) — the curve does not go down
 
-Acerto da ordem de falha, tolerância 0,06 ordens, 72 medições por ponto:
+Fault-order hit rate, tolerance 0.06 orders, 72 measurements per point:
 
-| fator | taxa efetiva | sem prior | prior nominal | prior calibrado |
+| factor | effective rate | no prior | nominal prior | calibrated prior |
 |---|---|---|---|---|
 | 1× | 200 kSPS | 78% | 50% | **83%** |
 | 2× | 100 kSPS | 74% | 50% | 78% |
 | 4× | 50 kSPS | 51% | 49% | 56% |
 | 8× | 25 kSPS | 76% | 50% | 82% |
-| 16× | 12,5 kSPS | 68% | 50% | 82% |
-| 24× | 8,3 kSPS | 74% | 50% | 86% |
-| 32× | 6,25 kSPS | 78% | 50% | **88%** |
-| 48× | 4,17 kSPS | 74% | 50% | 81% |
-| 64× | 3,12 kSPS | 64% | 51% | 73% |
+| 16× | 12.5 kSPS | 68% | 50% | 82% |
+| 24× | 8.3 kSPS | 74% | 50% | 86% |
+| 32× | 6.25 kSPS | 78% | 50% | **88%** |
+| 48× | 4.17 kSPS | 74% | 50% | 81% |
+| 64× | 3.12 kSPS | 64% | 51% | 73% |
 
-**De 200 kSPS a 3,12 kSPS — fator 64 — o acerto não degrada.** Em 32× ele é maior do
-que na taxa cheia, e a diferença está dentro do intervalo de Wilson: o que se mede é
-ausência de degradação, não melhora.
+**From 200 kSPS to 3.12 kSPS — factor 64 — the hit rate does not degrade.** At 32× it is higher
+than at the full rate, and the difference is within the Wilson interval: what is measured is
+absence of degradation, not improvement.
 
-A figura `e07_spectra` mostra por quê: a paisagem espectral é irreconhecível entre
-200 kSPS e 3,1 kSPS, e a raia de ordem 5,38 com seu segundo harmônico em 10,76 fica
-exatamente onde estava. A falha vive na modulação do envelope, não na portadora, e a
-dobra move a portadora sem mover a modulação.
+The `e07_spectra` figure shows why: the spectral landscape is unrecognizable between
+200 kSPS and 3.1 kSPS, and the order-5.38 line with its second harmonic at 10.76 stays
+exactly where it was (the figure regenerated in 2026-11-13, from the rerun with the corrected
+ruler, labels the calibrated order of I-B-1 as 5.39). The fault lives in the envelope modulation, not in the carrier, and
+folding moves the carrier without moving the modulation.
 
-## Re-execução de 2026-11-11, com o DSP corrigido
+## Re-run of 2026-11-11, with the corrected DSP
 
-A auditoria de 2026-11-10 corrigiu o kurtograma (sem emenda circular), o envelope e a
-reamostragem angular (com anti-alias). Com o núcleo corrigido, `run.py --config
-config/base.yaml` foi re-executado no servidor. `results/metrics.csv` e
-`results/manifest.json` são dessa rodada, e a tabela de 2026-09-04 acima fica como registro.
+The 2026-11-10 audit corrected the kurtogram (no circular seam), the envelope and the
+angular resampling (with anti-aliasing). With the corrected core, `run.py --config
+config/base.yaml` was re-run on the server. `results/metrics.csv` and
+`results/manifest.json` are from this run, and the 2026-09-04 table above stays as a record.
 
-| fator | taxa efetiva | sem prior | prior nominal | prior calibrado | n |
+| factor | effective rate | no prior | nominal prior | calibrated prior | n |
 |---|---|---|---|---|---|
-| 1× | 200 kSPS | 79,2 % | 50,0 % | 84,7 % | 72 |
-| 2× | 100 kSPS | 73,6 % | 50,0 % | 77,8 % | 72 |
-| 4× | 50 kSPS | **52,8 %** | 48,6 % | 55,6 % | 72 |
-| 8× | 25 kSPS | 79,2 % | 50,0 % | 83,3 % | 72 |
-| 16× | 12,5 kSPS | 75,0 % | 50,0 % | 81,9 % | 72 |
-| 24× | 8,33 kSPS | 76,4 % | 50,0 % | 86,1 % | 72 |
-| 32× | 6,25 kSPS | 77,8 % | 50,0 % | 90,3 % | 72 |
-| 48× | 4,17 kSPS | 72,2 % | 50,0 % | 80,6 % | 72 |
-| 64× | 3,12 kSPS | 64,4 % | 51,1 % | 73,3 % | 45 |
+| 1× | 200 kSPS | 79.2 % | 50.0 % | 84.7 % | 72 |
+| 2× | 100 kSPS | 73.6 % | 50.0 % | 77.8 % | 72 |
+| 4× | 50 kSPS | **52.8 %** | 48.6 % | 55.6 % | 72 |
+| 8× | 25 kSPS | 79.2 % | 50.0 % | 83.3 % | 72 |
+| 16× | 12.5 kSPS | 75.0 % | 50.0 % | 81.9 % | 72 |
+| 24× | 8.33 kSPS | 76.4 % | 50.0 % | 86.1 % | 72 |
+| 32× | 6.25 kSPS | 77.8 % | 50.0 % | 90.3 % | 72 |
+| 48× | 4.17 kSPS | 72.2 % | 50.0 % | 80.6 % | 72 |
+| 64× | 3.12 kSPS | 64.4 % | 51.1 % | 73.3 % | 45 |
 
-- **Só `sem_prior` mede estimação** (T0.2). As duas colunas com prior escolhem dentro de um
-  conjunto que contém o gabarito.
-- **A coluna `sem_prior` muda no máximo 5,6 pontos contra 2026-09-04** (16×: 68,1 → 75,0 %). O
-  vale de 4× fica: a pista externa tem 25, 21, **6** e 24 acertos de 36 em 1×, 2×, 4× e 8×, e a
-  pista interna 32, 32, 32 e 33.
-- **"Em 32× o acerto é maior que na taxa cheia" deixa de valer.** Agora são 77,8 % contra
-  79,2 %, dentro do intervalo de Wilson. A leitura "ausência de degradação até 32×" se mantém.
-- **O captor do vale foi isolado (E20 e revisão adversarial).** É um trem de picos de uma amostra
-  no registro bruto, presente também nos registros saudáveis. O filtro anti-alias ideal ou a remoção
-  dos picos antes de decimar devolvem a pista externa em 4× a 25–26 de 36. Ver
-  `experiments/E20-fold-zone-rejection/README.md`.
+- **Only `sem_prior` (no prior) measures estimation** (T0.2). The two columns with a prior choose
+  within a set that contains the right answer.
+- **The `sem_prior` column changes by at most 5.6 points against 2026-09-04** (16×: 68.1 → 75.0 %).
+  The 4× dip stays: the outer race has 25, 21, **6** and 24 hits out of 36 at 1×, 2×, 4× and 8×,
+  and the inner race 32, 32, 32 and 33.
+- **"At 32× the hit rate is higher than at the full rate" no longer holds.** It is now 77.8 %
+  against 79.2 %, within the Wilson interval. The reading "absence of degradation up to 32×" holds.
+- **The captor behind the dip was isolated (E20 and adversarial review).** It is a train of
+  single-sample spikes in the raw record, also present in the healthy records. The ideal
+  anti-alias filter or the removal of the spikes before decimating bring the outer race at 4×
+  back to 25–26 of 36. See `experiments/E20-fold-zone-rejection/README.md`.
 
-## O prior de catálogo erra, e erra em silêncio
+## The catalog prior errs, and errs silently
 
-A geometria do ER16K (9 esferas, esfera 0,3125", primitivo 1,516") prevê
-BPFO = 3,573 e BPFI = 5,427. Medido em taxa cheia nos 24 registros:
+The ER16K geometry (9 balls, ball diameter 0.3125", pitch diameter 1.516") predicts
+BPFO = 3.573 and BPFI = 5.427. Measured at the full rate on the 24 records:
 
-| | nominal | calibrado | desvio |
+| | nominal | calibrated | deviation |
 |---|---|---|---|
-| BPFI (pista interna) | 5,427 | 5,401 | **−0,5%** |
-| BPFO (pista externa) | 3,573 | 3,414 | **−4,4%** |
+| BPFI (inner race) | 5.427 | 5.401 | **−0.5%** |
+| BPFO (outer race) | 3.573 | 3.414 | **−4.4%** |
 
-O desvio é consistente nos 12 registros de cada condição e depende do cenário: os
-cenários que começam acelerando (A, C) dão ordens sistematicamente mais altas do que
-os que começam desacelerando (B, D) — 5,42–5,43 contra 5,38 na pista interna. O
-mecanismo não foi determinado aqui. A soma medida BPFO + BPFI = 8,82 viola a
-identidade geométrica BPFO + BPFI = n em 2%, o que descarta escorregamento puro de
-gaiola como explicação única.
+The deviation is consistent across the 12 records of each condition and depends on the scenario:
+the scenarios that start by accelerating (A, C) give systematically higher orders than
+the ones that start by decelerating (B, D) — 5.42–5.43 against 5.38 on the inner race. The
+mechanism was not determined here. The measured sum BPFO + BPFI = 8.82 violates the
+geometric identity BPFO + BPFI = n by 2%, which rules out pure cage slip as the sole
+explanation.
 
-**O modo de falha importa mais do que o número.** Com o prior nominal, os registros
-de pista externa não produzem estimativa ruim da BPFO: eles produzem **1,985** em 215
-de 310 casos (69 %) — o quinto harmônico da FTF nominal, 5 × 0,397 = 1,985, perto da
-ordem 2 do eixo. (O denominador publicado antes, 263, era sobra de uma rodada anterior
-à truncagem em 64×; recontado em `results/metrics.csv` são 310.) A candidata nominal
-3,573 não tem energia, então o escore escolhe outra família e **reporta a falha
-errada com confiança**. Um prior desalinhado em 4,4% não degrada suavemente; ele
-troca o diagnóstico. É exatamente a alucinação com boa aparência que a regra de
-atribuição do `CLAUDE.md` existe para pegar.
+**The failure mode matters more than the number.** With the nominal prior, the outer-race
+records do not produce a poor BPFO estimate: they produce **1.985** in 215
+of 310 cases (69 %) — the fifth harmonic of the nominal FTF, 5 × 0.397 = 1.985, close to
+shaft order 2. (The denominator published earlier, 263, was a leftover from a run prior
+to the truncation at 64×; recounted in `results/metrics.csv` it is 310.) The nominal candidate
+3.573 has no energy, so the score picks another family and **reports the wrong
+fault with confidence**. A prior misaligned by 4.4% does not degrade gracefully; it
+swaps the diagnosis. It is exactly the good-looking hallucination that the
+attribution rule in `CLAUDE.md` exists to catch.
 
-Ressalva que não pode ficar implícita: o prior nominal "acerta" a pista interna
-apenas porque |5,427 − 5,401| = 0,026 cabe na tolerância de 0,06. É acerto por folga
-de tolerância, não por prior correto. Daí os 50% cravados em todos os fatores — 12
-registros internos que passam raspando, 12 externos que erram sempre.
+A caveat that cannot stay implicit: the nominal prior "gets" the inner race right
+only because |5.427 − 5.401| = 0.026 fits within the 0.06 tolerance. It is a hit due to tolerance
+slack, not due to a correct prior. Hence the 50% pinned at every factor — 12
+inner records that barely scrape through, 12 outer ones that always miss.
 
-## O mergulho em 4× é a escolha de banda, não a taxa
+## The dip at 4× is band choice, not the rate
 
-Em 4× o acerto cai para 56% e volta a 82% em 8×. A causa está medida:
+At 4× the hit rate drops to 56% and returns to 82% at 8×. The cause is measured:
 
-- Em 4× o kurtograma escolhe uma banda acima de 12 kHz em **91%** dos segmentos.
-  Em 8× e além, essa banda deixa de existir (Nyquist efetivo abaixo de 12,5 kHz) e o
-  acerto se recupera.
-- Dos 32 erros em 4×, **22 vêm da banda 12,8–25 kHz**. Os acertos têm curtose mediana
-  122; os erros, 26,7.
-- A 50 kSPS o conteúdo de 75–87 kHz dobra exatamente sobre 12,8–25 kHz. Medindo a
-  curtose dessa banda fixa no mesmo segmento, ela sobe **2,4× a 4,8×** de 1× para 4×
-  nos registros de pista externa — justamente os que têm 1,8% a 3,6% da energia acima
-  de 50 kHz e os que mais perdem acerto. Num registro de pista interna com 0,42% de
-  energia lá em cima, a curtose cai em vez de subir.
+- At 4× the kurtogram chooses a band above 12 kHz in **91%** of the segments.
+  At 8× and beyond, that band no longer exists (effective Nyquist below 12.5 kHz) and the
+  hit rate recovers.
+- Of the 32 errors at 4×, **22 come from the 12.8–25 kHz band**. The hits have a median kurtosis of
+  122; the errors, 26.7.
+- At 50 kSPS the content at 75–87 kHz folds exactly onto 12.8–25 kHz. Measuring the
+  kurtosis of this fixed band in the same segment, it rises **2.4× to 4.8×** from 1× to 4×
+  in the outer-race records — precisely the ones that have 1.8% to 3.6% of the energy above
+  50 kHz and the ones that lose the most hit rate. In an inner-race record with 0.42% of the
+  energy up there, the kurtosis falls instead of rising.
 
-Não é a taxa que falha: é a interação entre a taxa escolhida e o conteúdo fora da
-banda de busca. É a preocupação do ADR 0002 medida em dado real, e é o argumento
-empírico de que a taxa precisa ser **escolhida**, não apenas reduzida — que é
-exatamente o problema em aberto que o projeto reivindica.
+It is not the rate that fails: it is the interaction between the chosen rate and the content
+outside the search band. It is the concern of ADR 0002 measured on real data, and it is the
+empirical argument that the rate needs to be **chosen**, not merely reduced — which is
+exactly the open problem that the project claims.
 
-## O teto de 25 kHz no kurtograma inverteu uma conclusão
+## The 25 kHz ceiling on the kurtogram inverted a conclusion
 
-Sem teto, 12 de 12 registros de pista externa escolhiam a banda 50–100 kHz, com
-curtose ~55, e a falha não aparecia em ordem nenhuma. A leitura fácil seria "a pista
-externa deste dataset não é diagnosticável", e ela estaria errada: com o teto em
-25 kHz, a mesma falha aparece na ordem 3,4 nos 12 registros.
+Without a ceiling, 12 of 12 outer-race records chose the 50–100 kHz band, with
+kurtosis ~55, and the fault did not appear at any order. The easy reading would be "the outer
+race of this dataset is not diagnosable", and it would be wrong: with the ceiling at
+25 kHz, the same fault appears at order 3.4 in all 12 records.
 
-**Correção de 2026-09-07 à justificativa deste teto.** Esta seção afirmava que a faixa
-acima de 20 kHz carrega **0,1 %** da energia e que a curtose ali mede vazamento
-numérico. Esse 0,1 % foi medido em **um** registro do dry-run e generalizado para 24.
-Recomputado sobre os **n = 24** registros de falha (canal de vibração, FFT do registro
-inteiro): **mediana 5,02 %** acima de 20 kHz, mín 2,97 %, máx 6,83 % — cerca de 50× o
-valor publicado (`docs/lab-notebook/2026-09-07.md`). O **efeito** do teto continua
-medido e não muda; o que cai é a explicação. A faixa não é numericamente vazia, então
-o teto de 25 kHz não é consequência de energia nula: é um **prior de banda**, e é
-assim que deve ser declarado.
+**Correction of 2026-09-07 to the justification of this ceiling.** This section
+claimed that the band above 20 kHz carries **0.1 %** of the energy and that the kurtosis there
+measures numerical leakage. That 0.1 % was measured on **one** dry-run record and generalized to 24.
+Recomputed over the **n = 24** fault records (vibration channel, FFT of the whole
+record): **median 5.02 %** above 20 kHz, min 2.97 %, max 6.83 % — about 50× the
+published value (`docs/lab-notebook/2026-09-07.md`). The **effect** of the ceiling remains
+measured and does not change; what falls is the explanation. The band is not numerically empty,
+so the 25 kHz ceiling is not a consequence of zero energy: it is a **band prior**, and that is
+how it must be declared.
 
-O guarda `min_energy_frac` do kurtograma existe para essa degeneração e o limiar de
-1e-4 é frouxo demais para este dataset.
+The kurtogram's `min_energy_frac` guard exists for this degeneracy, and the threshold of
+1e-4 is too loose for this dataset.
 
-## Verdade fundamental, e por que não é circular
+## Ground truth, and why it is not circular
 
-A ordem de referência de um registro é a **mediana das ordens medidas em taxa cheia
-nos outros registros da mesma condição** — nunca a do próprio. Sem isso o fator 1
-seria acerto por construção no modo sem prior. É também o que um comissionamento real
-teria: calibração em unidades da mesma família, não no equipamento sob teste.
+The reference order of a record is the **median of the orders measured at full rate
+on the other records of the same condition** — never that of the record itself. Without this,
+factor 1 would be a hit by construction in the no-prior mode. It is also what a real
+commissioning would have: calibration on units of the same family, not on the equipment under test.
 
-A dispersão entre registros da mesma condição é ~0,035 em ordens, e a tolerância de
-0,06 a cobre. Essa dispersão é um piso de erro irredutível deste desenho.
+The spread between records of the same condition is ~0.035 in orders, and the 0.06
+tolerance covers it. This spread is an irreducible error floor of this design.
 
-## Controle negativo: o estimador inventa falha onde não há?
+## Negative control: does the estimator invent a fault where there is none?
 
-Acerto medido só sobre registros que **têm** falha não diz nada sobre falso positivo,
-e um estimador restrito a um conjunto de candidatas sempre devolve uma candidata — ele
-não tem como responder "nenhuma". Sem este controle, os 88% em 32× seriam compatíveis
-com um estimador que aponta sempre a mesma ordem.
+A hit rate measured only on records that **have** a fault says nothing about false positives,
+and an estimator restricted to a set of candidates always returns a candidate — it
+has no way of answering "none". Without this control, the 88% at 32× would be compatible
+with an estimator that always points to the same order.
 
-Os 12 registros saudáveis (`H-*`) entram como negativo, e a separação é medida por AUC
-— a probabilidade de um segmento com falha pontuar acima de um segmento saudável na
-ordem alvo. 0,5 é ausência de separação.
+The 12 healthy records (`H-*`) enter as negatives, and the separation is measured by AUC
+— the probability that a faulty segment scores above a healthy segment at the
+target order. 0.5 is absence of separation.
 
-| fator | taxa efetiva | AUC BPFI | AUC BPFO |
+| factor | effective rate | AUC BPFI | AUC BPFO |
 |---|---|---|---|
-| 1× | 200 kSPS | 0,999 | 0,965 |
-| 4× | 50 kSPS | 1,000 | 0,757 |
-| 8× | 25 kSPS | 1,000 | 0,915 |
-| 16× | 12,5 kSPS | 1,000 | 0,834 |
-| 32× | 6,25 kSPS | 0,974 | 0,924 |
-| 64× | 3,12 kSPS | 1,000 | 0,922 |
+| 1× | 200 kSPS | 0.999 | 0.965 |
+| 4× | 50 kSPS | 1.000 | 0.757 |
+| 8× | 25 kSPS | 1.000 | 0.915 |
+| 16× | 12.5 kSPS | 1.000 | 0.834 |
+| 32× | 6.25 kSPS | 0.974 | 0.924 |
+| 64× | 3.12 kSPS | 1.000 | 0.922 |
 
-Valores da re-execução de 2026-11-11, com o DSP corrigido. A maior mudança contra 2026-09-04 é
-BPFO em 64×, que caiu de 0,995 para 0,922.
+Values from the 2026-11-11 re-run, with the corrected DSP. The largest change against 2026-09-04
+is BPFO at 64×, which fell from 0.995 to 0.922.
 
-**A separação não degrada.** Na pista interna o AUC fica entre 0,97 e 1,00 em todos os
-fatores. Na pista externa ele oscila entre 0,76 e 0,97 sem tendência com a taxa, e o mínimo é
-o de 4×. O mergulho da pista externa em 4× é o mesmo sequestro de banda descrito acima.
+**The separation does not degrade.** On the inner race the AUC stays between 0.97 and 1.00 at all
+factors. On the outer race it oscillates between 0.76 and 0.97 with no trend with the rate, and the
+minimum is that of 4×. The dip of the outer race at 4× is the same band hijacking described above.
 
-### A primeira métrica dizia o contrário, e estava errada
+### The first metric said the opposite, and it was wrong
 
-A versão inicial normalizava a energia harmônica pela **mediana do espectro**. Com ela,
-a separação parecia colapsar a partir de 8× e chegava a **inverter** — AUC de 0,15,
-com os saudáveis pontuando acima dos defeituosos. Era artefato: sob subamostragem forte
-o espectro de um rolamento saudável fica pobre em raias e a mediana desaba, inflando o
-quociente sem que nada físico tenha mudado. O piso se movia junto com a métrica.
+The initial version normalized the harmonic energy by the **median of the spectrum**. With it,
+the separation seemed to collapse from 8× on and even **inverted** — AUC of 0.15,
+with the healthy records scoring above the defective ones. It was an artifact: under strong
+undersampling the spectrum of a healthy bearing becomes poor in spectral lines and the median
+collapses, inflating the quotient without anything physical having changed. The floor moved
+together with the metric.
 
-A estatística usada agora é a **posição relativa da raia na faixa de ordens** — a
-fração de raias abaixo do pico na ordem alvo. Livre de escala e de piso. A lição vale
-além deste experimento: uma métrica normalizada por estatística do próprio sinal
-precisa ser verificada contra a subamostragem, porque é o denominador que muda
-primeiro.
+The statistic used now is the **relative position of the line within the order range** — the
+fraction of lines below the peak at the target order. Free of scale and of floor. The lesson holds
+beyond this experiment: a metric normalized by a statistic of the signal itself
+needs to be checked against undersampling, because the denominator is what changes
+first.
 
-## O que este experimento não sustenta
+## What this experiment does not support
 
-- **Não é uma comparação de classificação.** Mede erro de estimação de ordem e
-  separação falha/saudável, não discriminação entre tipos de falha. O E16 é quem faz
-  classificação multiclasse com poder estatístico.
-- **Não mede consumo.** A taxa efetiva está em toda linha do CSV, mas µJ por
-  diagnóstico ainda não existe no código (E06).
-- **Não testa aquisição não-uniforme.** Decimação uniforme apenas. Multi-coset e
-  agendamento aprendido são o Paper 2.
-- **O piso de 500 Hz na busca do kurtograma consome fração crescente da banda
-  disponível** conforme o fator sobe: em 64× ele corta um terço do que resta. Os dois
-  últimos pontos da curva carregam essa restrição junto com a subamostragem.
+- **It is not a classification comparison.** It measures order-estimation error and
+  fault/healthy separation, not discrimination between fault types. E16 is the one that does
+  multiclass classification with statistical power.
+- **It does not measure consumption.** The effective rate is in every row of the CSV, but µJ per
+  diagnosis does not exist in the code yet (E06).
+- **It does not test non-uniform acquisition.** Uniform decimation only. Multi-coset and
+  learned scheduling are Paper 2.
+- **The 500 Hz floor in the kurtogram search consumes a growing share of the available
+  band** as the factor rises: at 64× it cuts a third of what remains. The last two
+  points of the curve carry this restriction together with the undersampling.
 
-## Reprodução
+## Reproduction
 
 ```bash
 uv run python experiments/E07-order-domain-ottawa/run.py \
@@ -233,438 +236,447 @@ uv run python experiments/E07-order-domain-ottawa/control_healthy.py     --confi
 uv run python papers/shared/figures/fig_e07_control.py
 ```
 
-O download é programático pela API pública do Mendeley, sem cadastro.
-`results/manifest.json`, como está gravado, tem as ordens calibradas por registro, o
-SHA do config e a versão de cada pacote — ele é anterior aos campos de procedência
-acrescentados em 2026-09-07 e não foi reescrito, porque regravar um manifest sem
-repetir a medição é inventar procedência. Quem rodar de novo terá os campos novos, que
-a seção "O que o manifest passou a gravar" lista.
+The download is programmatic through the public Mendeley API, without registration.
+`results/manifest.json`, as recorded, has the calibrated orders per record, the
+SHA of the config and the version of each package — it predates the provenance fields
+added on 2026-09-07 and was not rewritten, because rewriting a manifest without
+repeating the measurement is inventing provenance. Whoever runs it again will get the new fields,
+which the section "What the manifest now records" lists.
 
 ---
 
-# Extensão — `config/extended.yaml`
+# Extension — `config/extended.yaml`
 
-Seção acrescentada em 2026-09-07. Não substitui nada acima: a tabela de resultados
-daquela seção continua sendo a da rodada `base.yaml`, gravada em `results/metrics.csv`.
+Section added on 2026-09-07. It does not replace anything above: the results table
+of that section is still the one from the `base.yaml` run, recorded in `results/metrics.csv`.
 
-## Hipótese
+## Hypothesis
 
-Depois de subtraído, **fator a fator**, o degrau de guarda medido nos nove fatores que
-as duas rodadas têm em comum, o acerto com prior calibrado nos fatores **96, 128 e
-160** permanece **dentro de 13 pontos percentuais** do valor corrigido em 64×. Ou
-seja: a curva do E07 não desce entre 3,12 kSPS e 1,25 kSPS, e a parada em 64× era
-mesmo um artefato de guarda, não um joelho.
+After subtracting, **factor by factor**, the guard step measured at the nine factors that
+the two runs have in common, the hit rate with the calibrated prior at factors **96, 128 and
+160** stays **within 13 percentage points** of the corrected value at 64×. That
+is: the E07 curve does not go down between 3.12 kSPS and 1.25 kSPS, and the stop at 64× was
+indeed a guard artifact, not a knee.
 
-**De onde vêm os 13 pontos.** Com `n = 72` medições por ponto e acerto em torno de
-0,80, o intervalo de Wilson a 95 % de um único ponto tem meia-largura de ±9,1 pontos, e
-a diferença entre dois pontos independentes de `n = 72` tem meia-largura normal de
-1,96·√(2·0,8·0,2/72) = **13,1 pontos**. Treze pontos é, portanto, a menor queda que
-este desenho distingue de ruído de amostragem: abaixo disso não há afirmação a fazer, e
-acima disso há. O limiar é uma consequência do `n`, não uma preferência — dobrar
-`segments_per_record` o apertaria, ao custo de janelas menores e de um confundidor novo.
+**Where the 13 points come from.** With `n = 72` measurements per point and a hit rate around
+0.80, the 95 % Wilson interval of a single point has a half-width of ±9.1 points, and
+the difference between two independent points of `n = 72` has a normal half-width of
+1.96·√(2·0.8·0.2/72) = **13.1 points**. Thirteen points is therefore the smallest drop that
+this design distinguishes from sampling noise: below that there is no claim to make, and
+above it there is. The threshold is a consequence of `n`, not a preference — doubling
+`segments_per_record` would tighten it, at the cost of smaller windows and of a new confounder.
 
-## O que refutaria esta hipótese
+## What would refute this hypothesis
 
-Quatro rotas, cada uma com o número que a dispara. Nenhuma delas é "o resultado ficou
-feio":
+Four routes, each with the number that triggers it. None of them is "the result came out
+ugly":
 
-1. **Queda além de 13 pontos.** Se o acerto corrigido com prior calibrado em 96×, 128×
-   ou 160× cair mais de 13 pontos abaixo do corrigido em 64×, a hipótese está refutada:
-   o joelho existe e fica entre 64× e 160×, e o fator publicável do E07 continua sendo
-   64. Esta é a rota que decide se a extensão vale um ponto de curva ou uma nota de
-   rodapé.
-2. **Captura por uma ordem fixa.** Se, em qualquer um dos três fatores novos, a
-   estimativa do modo com prior calibrado se concentrar em **mais de metade** dos
-   segmentos numa única ordem que não é a verdade do registro — em especial a **1,985**,
-   o harmônico de FTF perto da ordem 2 (FTF nominal 0,397) que já capturou 215 de 310
-   casos de pista externa sob o prior nominal —, então o número não é medição de ordem
-   de falha: é ponto fixo do estimador. Nesse caso a curva estendida é nula
-   **independentemente do acerto**, inclusive se o acerto for alto. O CSV já tem a
-   coluna `estimate_order`; o teste é um histograma.
-3. **Degrau de guarda não aditivo.** A subtração do item 1 só é legítima se o degrau
-   medido nos nove fatores repetidos for um deslocamento, e não uma função do fator. Se
-   ele tiver tendência com o fator nesses nove pontos, a extrapolação para 96–160 não
-   se sustenta, o desenho **não separa** guarda de taxa, e a rodada deve ser declarada
-   inconclusiva em vez de publicada. A medição parcial já feita (tabela abaixo) mostra o
-   degrau variando entre −1,4 e −11,1 pontos em seis fatores: esta rota está longe de
-   ser hipotética.
-4. **`n` desigual entre fatores.** Se algum dos doze fatores entrar com menos de 72
-   medições, a comparação vira troca de denominador — o defeito já encontrado na tabela
-   do E02 48k. Esta rota está **executada e fechada**: `tests/test_guards.py` verifica,
-   sobre os 24 registros × 3 janelas reais, que os doze fatores admitem 72 de 72.
+1. **Drop beyond 13 points.** If the corrected hit rate with the calibrated prior at 96×, 128×
+   or 160× falls more than 13 points below the corrected one at 64×, the hypothesis is refuted:
+   the knee exists and lies between 64× and 160×, and the publishable factor of E07 remains
+   64. This is the route that decides whether the extension is worth a point on the curve or a
+   footnote.
+2. **Capture by a fixed order.** If, at any of the three new factors, the
+   estimate of the calibrated-prior mode concentrates, in **more than half** of the
+   segments, on a single order that is not the truth of the record — in particular on **1.985**,
+   the FTF harmonic near order 2 (nominal FTF 0.397) that already captured 215 of 310
+   outer-race cases under the nominal prior —, then the number is not a measurement of the fault
+   order: it is a fixed point of the estimator. In that case the extended curve is null
+   **regardless of the hit rate**, even if the hit rate is high. The CSV already has the
+   `estimate_order` column; the test is a histogram.
+3. **Non-additive guard step.** The subtraction of item 1 is only legitimate if the step
+   measured at the nine repeated factors is an offset, and not a function of the factor. If
+   it has a trend with the factor at those nine points, the extrapolation to 96–160 does not
+   hold up, the design **does not separate** guard from rate, and the run must be declared
+   inconclusive instead of published. The partial measurement already made (table below) shows the
+   step varying between −1.4 and −11.1 points over six factors: this route is far from
+   hypothetical.
+4. **Unequal `n` between factors.** If any of the twelve factors enters with fewer than 72
+   measurements, the comparison becomes a change of denominator — the defect already found in the
+   E02 48k table. This route is **executed and closed**: `tests/test_guards.py` checks,
+   on the 24 records × 3 real windows, that the twelve factors admit 72 of 72.
 
-Estas quatro rotas testam a **extensão**. A refutação registrada no topo deste
-README — "o acerto cair monotonicamente com o fator" — pertence ao E07 base, já foi
-respondida com a curva de `results/metrics.csv`, e não cobre nada do que esta seção
-afirma.
+These four routes test the **extension**. The refutation recorded at the top of this
+README — "the hit rate falling monotonically with the factor" — belongs to the base E07, has
+already been answered with the curve in `results/metrics.csv`, and does not cover anything that
+this section claims.
 
-## Por que existe
+## Why it exists
 
-A varredura de `base.yaml` parou por **critério de análise, não por queda de
-desempenho**. Contado em `results/metrics.csv`: 216 linhas por fator (72 medições × 3
-modos) até o fator 48, **135 no fator 64** — 45 das 72 — e **zero nos fatores 96 e
-128**, que estavam na lista e nunca produziram medição.
+The `base.yaml` sweep stopped on an **analysis criterion, not on a drop in
+performance**. Counted in `results/metrics.csv`: 216 rows per factor (72 measurements × 3
+modes) up to factor 48, **135 at factor 64** — 45 of the 72 — and **zero at factors 96 and
+128**, which were in the list and never produced a measurement.
 
-O último ponto publicável da curva é portanto 64×, e ele já entra com 62% da amostra
-dos demais. É o ataque mais previsível de um revisor, e é a intervenção que mais move
-o número defensável: decide se o fator continua em 6,4× ou vai substancialmente além.
+The last publishable point of the curve is therefore 64×, and it already enters with 62% of the
+sample of the others. It is the most predictable attack from a reviewer, and it is the
+intervention that moves the defensible number the most: it decides whether the factor stays at
+6.4× or goes substantially beyond.
 
-## Os três guardas, e qual deles realmente bloqueia
+## The three guards, and which one actually blocks
 
-`run.py` descarta um segmento em três testes, todos em `guard_verdict`, na ordem em
-que são aplicados (o primeiro a disparar é o que conta):
+`run.py` discards a segment on three tests, all in `guard_verdict`, in the order in
+which they are applied (the first one to fire is the one that counts):
 
-| ordem | guarda | parâmetro |
+| order | guard | parameter |
 |---|---|---|
 | 1 | `n_samples < cfg["min_samples"]` | `min_samples` |
 | 2 | `fs_eff/2 <= cfg["kurtogram"]["f_min_hz"]` | `f_min_hz` |
 | 3 | `fs_eff/max(v) < 2·cfg["samples_per_rev"]` | `samples_per_rev` |
 
-Com `FS_HZ = 200000` e `segment_samples = 500000`, e usando as duas rotações de pior
-caso — 1953,1 rpm, o máximo do registro I-A-3 lido na coluna `rpm_hi` de
-`results/metrics.csv`, e 1674,1 rpm, o máximo medido dentro de um segmento
-efetivamente analisado (o pico de I-A-3 cai nas últimas 500000 amostras, que
-`segments_per_record: 3` nunca alcança):
+With `FS_HZ = 200000` and `segment_samples = 500000`, and using the two worst-case
+rotation speeds — 1953.1 rpm, the maximum of record I-A-3 read from the `rpm_hi` column of
+`results/metrics.csv`, and 1674.1 rpm, the maximum measured within a segment that is
+actually analyzed (the peak of I-A-3 falls in the last 500000 samples, which
+`segments_per_record: 3` never reaches):
 
-| fator | `fs_eff` | `n = ceil(500000/f)` | `fs_eff/2` | pts/rev @1953,1 | @1674,1 |
+| factor | `fs_eff` | `n = ceil(500000/f)` | `fs_eff/2` | pts/rev @1953.1 | @1674.1 |
 |---|---|---|---|---|---|
-| 64 | 3125,00 Hz | 7813 | 1562,50 Hz | 96,00 | 112,00 |
-| 96 | 2083,33 Hz | 5209 | 1041,67 Hz | 64,00 | 74,67 |
-| 128 | 1562,50 Hz | 3907 | 781,25 Hz | 48,00 | 56,00 |
-| 160 | 1250,00 Hz | 3125 | 625,00 Hz | 38,40 | 44,80 |
-| 192 | 1041,67 Hz | 2605 | 520,83 Hz | 32,00 | 37,33 |
-| 256 | 781,25 Hz | 1954 | 390,62 Hz | 24,00 | 28,00 |
+| 64 | 3125.00 Hz | 7813 | 1562.50 Hz | 96.00 | 112.00 |
+| 96 | 2083.33 Hz | 5209 | 1041.67 Hz | 64.00 | 74.67 |
+| 128 | 1562.50 Hz | 3907 | 781.25 Hz | 48.00 | 56.00 |
+| 160 | 1250.00 Hz | 3125 | 625.00 Hz | 38.40 | 44.80 |
+| 192 | 1041.67 Hz | 2605 | 520.83 Hz | 32.00 | 37.33 |
+| 256 | 781.25 Hz | 1954 | 390.62 Hz | 24.00 | 28.00 |
 
-Lendo guarda a guarda:
+Reading guard by guard:
 
-- **`samples_per_rev: 64`** exige pts/rev ≥ 128. É ele que descarta 27 das 72
-  medições do fator 64 (pior segmento: 112,00) e que zera o 96 (74,67) e o 128
-  (56,00). É o guarda dominante.
-- **`min_samples: 4096`** zera o 128 por conta própria: `ceil(500000/128) = 3907`.
-  Não toca o 96 nem o 64.
-- **`f_min_hz: 500` não bloqueia nem o 96 nem o 128.** O guarda pede
-  `fs_eff/2 > 500`, e no fator 128 isso é `781,25 > 500`. Ele só passa a vincular a
-  partir do fator 200 (`fs_eff/2 = 500,0`). A leitura de que o piso de 500 Hz zerava
-  os dois fatores — registrada em `docs/plano-de-experimentos.md`, T1.1 — **não se
-  sustenta no código**.
+- **`samples_per_rev: 64`** requires pts/rev ≥ 128. It is the one that discards 27 of the 72
+  measurements of factor 64 (worst segment: 112.00) and that zeroes 96 (74.67) and 128
+  (56.00). It is the dominant guard.
+- **`min_samples: 4096`** zeroes 128 on its own: `ceil(500000/128) = 3907`.
+  It does not touch 96 or 64.
+- **`f_min_hz: 500` blocks neither 96 nor 128.** The guard asks for
+  `fs_eff/2 > 500`, and at factor 128 that is `781.25 > 500`. It only starts to bind
+  from factor 200 on (`fs_eff/2 = 500.0`). The reading that the 500 Hz floor zeroed
+  both factors — recorded in `docs/plano-de-experimentos.md`, T1.1 — **does not
+  hold up in the code**.
 
-O `extended.yaml` relaxa portanto só dois guardas: `min_samples: 4096 → 2048` e
-`samples_per_rev: 64 → 16`. **`f_min_hz` fica em 500 Hz**, deliberadamente.
+`extended.yaml` therefore relaxes only two guards: `min_samples: 4096 → 2048` and
+`samples_per_rev: 64 → 16`. **`f_min_hz` stays at 500 Hz**, deliberately.
 
-Isto está **executado**, não previsto, e o que foi executado é a **admissão de
-segmento** — quantas das 72 janelas cada fator aceita — não o acerto.
-`tests/test_guards.py` aplica `run.guard_verdict` (a mesma função que `run.py` usa no
-laço) aos 24 registros × 3 janelas reais e verifica duas coisas:
+This is **executed**, not predicted, and what was executed is **segment
+admission** — how many of the 72 windows each factor accepts — not the hit rate.
+`tests/test_guards.py` applies `run.guard_verdict` (the same function that `run.py` uses in the
+loop) to the 24 records × 3 real windows and checks two things:
 
-- sob `base.yaml`, o resultado é 72 medições por fator até 48, **45** no 64, **zero**
-  em 96 e 128 — que é linha a linha o que `results/metrics.csv` contém (216 linhas por
-  fator até 48, 135 no 64), e é isso que autoriza usar a mesma função para falar de
-  fatores ainda não rodados;
-- sob `extended.yaml`, **72 de 72 nos doze fatores**, inclusive 96, 128 e 160.
+- under `base.yaml`, the result is 72 measurements per factor up to 48, **45** at 64, **zero**
+  at 96 and 128 — which is, row by row, what `results/metrics.csv` contains (216 rows per
+  factor up to 48, 135 at 64), and that is what authorizes using the same function to talk about
+  factors not yet run;
+- under `extended.yaml`, **72 of 72 at the twelve factors**, including 96, 128 and 160.
 
-Nenhum ponto da curva estendida entra com `n` reduzido — o que fecha a rota 4 de
-refutação e evita a troca de denominador que já contaminou a tabela do E02 48k. O
-acerto nesses fatores continua **não medido**: é o que a rodada existe para descobrir.
+No point of the extended curve enters with a reduced `n` — which closes refutation route 4 and
+avoids the change of denominator that already contaminated the E02 48k table. The
+hit rate at these factors remains **not measured**: it is what the run exists to find out.
 
-## A advertência que não pode ficar implícita
+## The caveat that cannot stay implicit
 
-**A rodada estendida mede subamostragem MAIS relaxamento de guarda.** Os dois efeitos
-se confundem, e o mecanismo é concreto:
+**The extended run measures undersampling PLUS guard relaxation.** The two effects
+are confounded, and the mechanism is concrete:
 
-1. **Baixar `samples_per_rev` degrada a resolução angular.** Com `spr = 16` o Nyquist
-   do espectro de **ordem** cai de 32 para 8. Isso muda a estimativa por dois
-   caminhos independentes: `score_fault` passa a **dobrar** harmônicos que antes
-   cabiam abaixo do Nyquist (`diagnosis.py:114-119`), mudando a composição do escore;
-   e `estimate_from_candidates` **descarta** candidatas acima do Nyquist do espectro
-   (`diagnosis.py:185`), encolhendo o conjunto de candidatas. Medido: das 24
-   candidatas do prior nominal sobrevivem **23 sob `spr = 64`** e apenas **12 sob
+1. **Lowering `samples_per_rev` degrades the angular resolution.** With `spr = 16` the Nyquist
+   of the **order** spectrum falls from 32 to 8. This changes the estimate through two
+   independent paths: `score_fault` starts **folding** harmonics that previously
+   fit below the Nyquist (`diagnosis.py:114-119`), changing the composition of the score;
+   and `estimate_from_candidates` **discards** candidates above the Nyquist of the spectrum
+   (`diagnosis.py:185`), shrinking the candidate set. Measured: of the 24
+   candidates of the nominal prior, **23 survive under `spr = 64`** and only **12 under
    `spr = 16`**.
-   O que *não* muda é o passo em ordens: `order_spectrum` devolve
-   `rfftfreq(n, 1/spr)` com `n = revoluções·spr`, logo o passo é `1/revoluções`,
-   independente de `spr` — conferido em 0,0261 nos fatores 64 a 160.
-2. **Baixar `samples_per_rev` move a PRÓPRIA VERDADE.** A ordem de referência não é
-   externa: sai da mesma reamostragem angular, no passe 1 de `run.py`, que usa o `spr`
-   do config. A rodada estendida, portanto, não compara estimativas contra a mesma
-   régua da rodada base — ela recalibra a régua. Medido, repetindo o passe 1 nos 24
-   registros sob os dois `spr` (taxa cheia, mesma banda de kurtograma):
+   What does *not* change is the step in orders: `order_spectrum` returns
+   `rfftfreq(n, 1/spr)` with `n = revolutions·spr`, so the step is `1/revolutions`,
+   independent of `spr` — checked at 0.0261 at factors 64 to 160.
+2. **Lowering `samples_per_rev` moves THE TRUTH ITSELF.** The reference order is not
+   external: it comes from the same angular resampling, in pass 1 of `run.py`, which uses the
+   `spr` of the config. The extended run, therefore, does not compare estimates against the same
+   ruler as the base run — it recalibrates the ruler. Measured by repeating pass 1 on the 24
+   records under both `spr` (full rate, same kurtogram band):
 
    | | `spr = 64` | `spr = 16` |
    |---|---|---|
-   | mediana da calibração, pista interna | 5,4008 | 5,4008 |
-   | mediana da calibração, pista externa | 3,4142 | 3,4167 |
+   | median of the calibration, inner race | 5.4008 | 5.4008 |
+   | median of the calibration, outer race | 3.4142 | 3.4167 |
 
-   Por registro o deslocamento tem mediana **0,005 ordens** e máximo **0,095**
-   (O-A-2), e **1 dos 24** se move além da tolerância de 0,06. A verdade que entra na
-   comparação é a mediana deixa-um-de-fora de 11 registros, e por isso ela se move
-   pouco — no máximo 0,0025 ordens, contra tolerância 0,06 e dispersão entre registros
-   de 0,035. O confundidor existe, é de segunda ordem **nesta magnitude**, e precisa
-   ser recontado se `spr` cair mais.
-3. **Baixar `f_min_hz` deixaria o kurtograma buscar perto de DC**, onde está o
-   conteúdo estrutural. Este config **não** baixa, e a advertência fica registrada
-   para quem for tentado a baixar: recomputado sobre os **n = 24** registros de
-   falha, canal de vibração, FFT do registro inteiro, a energia abaixo de 500 Hz tem
-   **mediana 14,86 %** (mín 1,14 %, máx 22,06 %) —
-   `docs/lab-notebook/2026-09-07.md`. **Não são os 97 %** que o comentário de
-   `config/base.yaml` (97 % abaixo de 500 Hz) e o docstring de
-   `packages/snq-data/src/snq_data/ottawa.py` (97 % abaixo de 50 Hz) afirmam; esse
-   número saiu de um registro e foi generalizado para 24. Como a faixa abaixo de 50 Hz
-   está contida na de 500 Hz, a mediana de 14,86 % limita as duas afirmações de cima.
+   Per record, the shift has a median of **0.005 orders** and a maximum of **0.095**
+   (O-A-2), and **1 of the 24** moves beyond the 0.06 tolerance. The truth that enters the
+   comparison is the leave-one-out median of 11 records, and that is why it moves
+   little — at most 0.0025 orders, against a tolerance of 0.06 and a between-record spread
+   of 0.035. The confounder exists, it is second-order **at this magnitude**, and it needs to
+   be recounted if `spr` drops further.
+3. **Lowering `f_min_hz` would let the kurtogram search near DC**, where the
+   structural content is. This config does **not** lower it, and the caveat stays recorded
+   for whoever is tempted to lower it: recomputed over the **n = 24** fault
+   records, vibration channel, FFT of the whole record, the energy below 500 Hz has a
+   **median of 14.86 %** (min 1.14 %, max 22.06 %) —
+   `docs/lab-notebook/2026-09-07.md`. **It is not the 97 %** that the comment in
+   `config/base.yaml` (97 % below 500 Hz) and the docstring of
+   `packages/snq-data/src/snq_data/ottawa.py` (97 % below 50 Hz) claim; that
+   number came from one record and was generalized to 24. Since the band below 50 Hz
+   is contained in the one below 500 Hz, the 14.86 % median bounds both claims above.
 
-**O sinal do viés é medido, e é o contrário do que esta seção afirmava.** A versão
-anterior dizia que o conjunto menor de candidatas "aponta na direção de melhorar o
-acerto" e que o efeito é um deslocamento constante. As duas coisas foram medidas
-diretamente — reprocessando os mesmos segmentos sob os dois `spr`, com a calibração da
-rodada base — e as duas estão erradas. Acerto do modo com prior calibrado, comparação
-**pareada** (só os segmentos que passam nos dois guardas):
+**The sign of the bias is measured, and it is the opposite of what this section claimed.** The
+previous version said that the smaller candidate set "points in the direction of improving the
+hit rate" and that the effect is a constant offset. Both things were measured
+directly — reprocessing the same segments under both `spr`, with the calibration of the
+base run — and both are wrong. Hit rate of the calibrated-prior mode, **paired**
+comparison (only the segments that pass both guards):
 
-| fator | `spr = 64` | `spr = 16` | degrau | n |
+| factor | `spr = 64` | `spr = 16` | step | n |
 |---|---|---|---|---|
-| 1× | 83,3 % | 76,4 % | **−6,9** | 72 |
-| 8× | 81,9 % | 77,8 % | **−4,2** | 72 |
-| 16× | 81,9 % | 73,6 % | **−8,3** | 72 |
-| 32× | 87,5 % | 76,4 % | **−11,1** | 72 |
-| 48× | 80,6 % | 79,2 % | **−1,4** | 72 |
-| 64× | 73,3 % | 71,1 % | **−2,2** | 45 |
+| 1× | 83.3 % | 76.4 % | **−6.9** | 72 |
+| 8× | 81.9 % | 77.8 % | **−4.2** | 72 |
+| 16× | 81.9 % | 73.6 % | **−8.3** | 72 |
+| 32× | 87.5 % | 76.4 % | **−11.1** | 72 |
+| 48× | 80.6 % | 79.2 % | **−1.4** | 72 |
+| 64× | 73.3 % | 71.1 % | **−2.2** | 45 |
 
-(A coluna `spr = 64` reproduz a tabela publicada da rodada base — 83, 82, 82, 88, 81,
-73 % — o que confere o procedimento.) O relaxamento **piora** o acerto em todos os seis
-fatores medidos, mediana −5,5 pontos, e o modo sem prior piora mais, de −4,4 a −22,2
-pontos. O degrau também **não é constante**: varia de −1,4 a −11,1 entre fatores, o que
-é a rota 3 de refutação acima e a razão de a subtração ter de ser feita fator a fator,
-nunca com um valor único.
+(The `spr = 64` column reproduces the published table of the base run — 83, 82, 82, 88, 81,
+73 % — which checks the procedure.) The relaxation **worsens** the hit rate at all six
+measured factors, median −5.5 points, and the no-prior mode worsens more, from −4.4 to −22.2
+points. The step is also **not constant**: it varies from −1.4 to −11.1 between factors, which
+is refutation route 3 above and the reason why the subtraction has to be done factor by factor,
+never with a single value.
 
-**Como separar os dois efeitos — é parte do experimento, não uma sugestão.**
-`extended.yaml` re-roda a lista **inteira** de fatores, não só os novos, e os nove
-fatores já medidos (1 a 64) são o braço de controle desta rodada. Eles aparecem duas
-vezes:
+**How to separate the two effects — it is part of the experiment, not a suggestion.**
+`extended.yaml` re-runs the **whole** list of factors, not only the new ones, and the nine
+factors already measured (1 to 64) are the control arm of this run. They appear twice:
 
-- em `results/metrics.csv`, sob `spr = 64` e `min_samples = 4096`;
-- em `results/extended/metrics.csv`, sob `spr = 16` e `min_samples = 2048`.
+- in `results/metrics.csv`, under `spr = 64` and `min_samples = 4096`;
+- in `results/extended/metrics.csv`, under `spr = 16` and `min_samples = 2048`.
 
-A diferença linha a linha nesses nove fatores é **efeito de guarda puro** — a taxa é
-idêntica, os segmentos são os mesmos. Só depois de subtraí-la, fator a fator, é que a
-queda entre 64×, 96×, 128× e 160× pode ser lida como efeito de taxa. Uma curva
-estendida publicada sem esse controle não distingue as duas causas e não deve ser
-usada; se o braço de controle não for rodado junto, não há experimento, só uma segunda
-curva incomparável com a primeira.
+The row-by-row difference at these nine factors is **pure guard effect** — the rate is
+identical, the segments are the same. Only after subtracting it, factor by factor, can the
+drop between 64×, 96×, 128× and 160× be read as a rate effect. An extended curve
+published without this control does not distinguish the two causes and must not be
+used; if the control arm is not run alongside, there is no experiment, only a second
+curve that cannot be compared with the first.
 
-Confundidores deliberadamente evitados: `segment_samples`, `segments_per_record`,
+Confounders deliberately avoided: `segment_samples`, `segments_per_record`,
 `tolerance_order`, `n_harmonics`, `score_harmonics`, `calibration_span`, `order_min`,
-`f_min_hz`, `f_max_hz`, `max_level` e a geometria nominal ficam **idênticos** ao base,
-e `seed` também (`run.py` não usa RNG; manter o valor mantém a comparação exata).
+`f_min_hz`, `f_max_hz`, `max_level` and the nominal geometry stay **identical** to the base,
+and so does `seed` (`run.py` does not use an RNG; keeping the value keeps the comparison exact).
 
-## Por que a lista para em 160×
+## Why the list stops at 160×
 
-Não é o guarda de pontos por revolução — com `spr = 16` o fator 192 ainda passaria
-(37,33 contra o limiar de 32). É a **janela de busca do kurtograma**, `[f_min_hz,
-fs_eff/2]`, que colapsa contra o piso de 500 Hz:
+It is not the points-per-revolution guard — with `spr = 16` factor 192 would still pass
+(37.33 against the threshold of 32). It is the **kurtogram search window**, `[f_min_hz,
+fs_eff/2]`, which collapses against the 500 Hz floor:
 
-| fator | janela | largura | sub-banda (nível 4) | bins de FFT por sub-banda |
+| factor | window | width | sub-band (level 4) | FFT bins per sub-band |
 |---|---|---|---|---|
-| 64 | 500–1562,50 Hz | 1062,50 Hz | 66,406 Hz | 166,0 |
-| 96 | 500–1041,67 Hz | 541,67 Hz | 33,854 Hz | 84,7 |
-| 128 | 500–781,25 Hz | 281,25 Hz | 17,578 Hz | 44,0 |
-| 160 | 500–625,00 Hz | 125,00 Hz | 7,812 Hz | 19,5 |
-| 192 | 500–520,83 Hz | 20,83 Hz | 1,302 Hz | 3,3 |
+| 64 | 500–1562.50 Hz | 1062.50 Hz | 66.406 Hz | 166.0 |
+| 96 | 500–1041.67 Hz | 541.67 Hz | 33.854 Hz | 84.7 |
+| 128 | 500–781.25 Hz | 281.25 Hz | 17.578 Hz | 44.0 |
+| 160 | 500–625.00 Hz | 125.00 Hz | 7.812 Hz | 19.5 |
+| 192 | 500–520.83 Hz | 20.83 Hz | 1.302 Hz | 3.3 |
 
-No 192 cada sub-banda do nível mais fino tem 3 bins: a seleção de banda deixa de ser
-medição. A descida já é visível antes disso — a curtose da banda escolhida em
-I-A-3 segmento 0 vai de 3,6 (64×) a 1,9 (96×), 2,1 (128×) e **0,5** (160×). E no 256
-dois guardas zeram o fator: `min_samples` dispara primeiro (`ceil(500000/256) = 1954`,
-abaixo dos 2048 do `extended.yaml`) e, se não disparasse, `fs_eff/2 = 390,62 ≤ 500`
-zeraria igual. É o que `tests/test_guards.py` fixa para o fator 256.
+At 192 each sub-band of the finest level has 3 bins: band selection stops being a
+measurement. The decline is already visible before that — the kurtosis of the chosen band in
+I-A-3 segment 0 goes from 3.6 (64×) to 1.9 (96×), 2.1 (128×) and **0.5** (160×). And at 256
+two guards zero the factor: `min_samples` fires first (`ceil(500000/256) = 1954`,
+below the 2048 of `extended.yaml`) and, if it did not fire, `fs_eff/2 = 390.62 ≤ 500`
+would zero it all the same. This is what `tests/test_guards.py` pins for factor 256.
 
-Isto reformula a ressalva da seção "O que este experimento não sustenta": o piso de
-500 Hz não é só uma restrição que acompanha os últimos pontos — **é o guarda que
-define onde esta cadeia de análise termina**.
+This reformulates the caveat in the section "What this experiment does not support": the
+500 Hz floor is not just a restriction that accompanies the last points — **it is the guard that
+defines where this analysis chain ends**.
 
-## Correção correlata, feita em `extended.yaml`
+## Related correction, made in `extended.yaml`
 
-`config/base.yaml` afirma, sob o rótulo "Teto medido, nao arbitrado", que acima de
-20 kHz há **0,1 %** da energia. Recomputado sobre os **n = 24** registros de falha:
-**mediana 5,02 %** (mín 2,97 %, máx 6,83 %) — cerca de 50× o valor citado
-(`docs/lab-notebook/2026-09-07.md`). A mesma afirmação estava repetida acima neste
-README, na seção "O teto de 25 kHz no kurtograma inverteu uma conclusão", e **foi
-corrigida lá também** — corrigir só o comentário do config deixaria o número errado
-vivo no documento que as pessoas leem.
+`config/base.yaml` claims, under the label "Measured ceiling, not arbitrated", that above
+20 kHz there is **0.1 %** of the energy. Recomputed over the **n = 24** fault records:
+**median 5.02 %** (min 2.97 %, max 6.83 %) — about 50× the quoted value
+(`docs/lab-notebook/2026-09-07.md`). The same claim was repeated above in this
+README, in the section "The 25 kHz ceiling on the kurtogram inverted a conclusion", and **it was
+corrected there too** — correcting only the config comment would leave the wrong number
+alive in the document that people read.
 
-Os dois números errados desta família, e onde cada um ainda está:
+The two wrong numbers of this family, and where each one still is:
 
-| afirmação | onde | medido sobre n = 24 |
+| claim | where | measured over n = 24 |
 |---|---|---|
-| 0,1 % da energia acima de 20 kHz | `config/base.yaml`, e antes neste README | mediana **5,02 %** (2,97–6,83) |
-| 97 % da energia abaixo de 500 Hz | `config/base.yaml` | mediana **14,86 %** abaixo de 500 Hz (1,14–22,06) |
-| 97 % da energia abaixo de 50 Hz | docstring de `snq_data/ottawa.py` | contido na linha acima, logo ≤ 14,86 % |
+| 0.1 % of the energy above 20 kHz | `config/base.yaml`, and earlier in this README | median **5.02 %** (2.97–6.83) |
+| 97 % of the energy below 500 Hz | `config/base.yaml` | median **14.86 %** below 500 Hz (1.14–22.06) |
+| 97 % of the energy below 50 Hz | docstring of `snq_data/ottawa.py` | contained in the row above, so ≤ 14.86 % |
 
-A terceira linha está fora do escopo desta correção — `packages/` não é editado a
-partir de um experimento — e fica registrada como pendência.
+The third row is outside the scope of this correction — `packages/` is not edited from
+an experiment — and stays recorded as pending.
 
-**O teto de 25 kHz continua em 25 kHz e o efeito relatado continua medido**: sem ele,
-12 de 12 registros de pista externa escolhiam 50–100 kHz e a falha não aparecia. O
-que cai é a justificativa. A faixa acima de 20 kHz não é numericamente vazia, então
-"ali a curtose mede vazamento numérico" fica sem base, e o teto passa a ser o que
-sempre foi na prática: um **prior de banda**, declarado como prior e não como
-consequência de energia nula. `extended.yaml` carrega o comentário corrigido.
+**The 25 kHz ceiling stays at 25 kHz and the reported effect remains measured**: without it,
+12 of 12 outer-race records chose 50–100 kHz and the fault did not appear. What
+falls is the justification. The band above 20 kHz is not numerically empty, so
+"there the kurtosis measures numerical leakage" is left without basis, and the ceiling becomes what
+it always was in practice: a **band prior**, declared as a prior and not as a
+consequence of zero energy. `extended.yaml` carries the corrected comment.
 
-`config/base.yaml` **não** foi editado de propósito: seu SHA-256 está gravado em
-`results/manifest.json` como procedência da rodada base, e alterá-lo invalidaria esse
-registro sem alterar nada do que foi medido.
+`config/base.yaml` was **not** edited, on purpose: its SHA-256 is recorded in
+`results/manifest.json` as the provenance of the base run, and changing it would invalidate that
+record without changing anything that was measured.
 
-## Reprodução da extensão
+> **Update 2026-11-13 (public release).** The comments of `config/base.yaml` were translated into
+> English, so the file no longer has the SHA-256 recorded in `results/manifest.json`. The parsed
+> configuration is unchanged, and the exact bytes that the manifest refers to are those of commit
+> `54cd5c6`, its last change before the translation, which the repository history keeps. Its
+> comments still carry the two wrong energy figures corrected above.
+
+## Reproduction of the extension
 
 ```bash
-# antes da varredura: os guardas, sobre os dados reais (pula sem os .mat)
+# before the sweep: the guards, on the real data (skipped without the .mat files)
 uv run pytest experiments/E07-order-domain-ottawa/tests -q
 
 uv run python experiments/E07-order-domain-ottawa/run.py \
     --config experiments/E07-order-domain-ottawa/config/extended.yaml
 ```
 
-Todo parâmetro que a extensão toca já vivia no config. A saída vai para
-`results/extended/`, no padrão de `E02-bandpass-envelope-cwru/config/cwru48k.yaml`, que
-grava em `results/48k/`; `results/metrics.csv` fica intacto.
+Every parameter that the extension touches already lived in the config. The output goes to
+`results/extended/`, following the pattern of `E02-bandpass-envelope-cwru/config/cwru48k.yaml`,
+which writes to `results/48k/`; `results/metrics.csv` stays intact.
 
-O caminho do teste precisa ser explícito porque `testpaths` cobre `packages/`, e isso é
-deliberado: nada em `packages/` importa `experiments/`. O teste vive dentro do
-experimento e só importa o `run.py` dele.
+The test path needs to be explicit because `testpaths` covers `packages/`, and that is
+deliberate: nothing in `packages/` imports `experiments/`. The test lives inside the
+experiment and only imports its `run.py`.
 
-### O que o manifest passou a gravar
+### What the manifest now records
 
-`write_manifest` gravava `git_sha`, `config_sha256`, versões de pacote e
-`platform.python_version()`. Isso **não identifica o código que rodou**: o commit não
-descreve uma árvore suja, e a versão de pacote (`0.1.0`) não muda quando o fonte muda.
-Acrescentados:
+`write_manifest` recorded `git_sha`, `config_sha256`, package versions and
+`platform.python_version()`. That **does not identify the code that ran**: the commit does not
+describe a dirty tree, and the package version (`0.1.0`) does not change when the source changes.
+Added:
 
-| campo | o que resolve |
+| field | what it solves |
 |---|---|
-| `platform` | `platform.platform()` completo, exigido por `experiments/_template/run.py:45-55` |
-| `input_sha256` | SHA-256 de cada `.mat` efetivamente carregado, por nome |
-| `git_dirty` / `git_dirty_paths` | se verdadeiro, o `git_sha` **não** descreve o que rodou, e os caminhos sujos ficam nominados |
-| `source_sha256` (+ `_files`, `_scheme`) | hash do conteúdo dos fontes importados: SHA-256 sobre `"<caminho>\n<sha256 do arquivo>\n"` de cada `packages/*/src/**/*.py`, em ordem de caminho POSIX. Muda quando o fonte muda, com ou sem commit |
-| `runner_sha256` | SHA-256 do próprio `run.py`, que também não é descrito pelo commit quando a árvore está suja |
-| `samples_per_rev` / `min_samples` | os dois guardas relaxados, para que uma comparação entre `results/` e `results/extended/` não dependa de reabrir os YAML |
+| `platform` | full `platform.platform()`, required by `experiments/_template/run.py:45-55` |
+| `input_sha256` | SHA-256 of each `.mat` actually loaded, by name |
+| `git_dirty` / `git_dirty_paths` | if true, `git_sha` does **not** describe what ran, and the dirty paths are named |
+| `source_sha256` (+ `_files`, `_scheme`) | hash of the content of the imported sources: SHA-256 over `"<path>\n<sha256 of the file>\n"` for each `packages/*/src/**/*.py`, in POSIX path order. It changes when the source changes, with or without a commit |
+| `runner_sha256` | SHA-256 of `run.py` itself, which the commit does not describe either when the tree is dirty |
+| `samples_per_rev` / `min_samples` | the two relaxed guards, so that a comparison between `results/` and `results/extended/` does not depend on reopening the YAML files |
 
-`results/manifest.json` da rodada base é anterior a esses campos e **não** foi
-reescrito: ele é a procedência do que foi medido, e regravá-lo sem repetir a medição
-inventaria procedência. O mesmo vale para `config/base.yaml`, cujo SHA-256 está
-gravado ali.
+The base run's `results/manifest.json` predates these fields and was **not**
+rewritten: it is the provenance of what was measured, and rewriting it without repeating the
+measurement would invent provenance. The same holds for `config/base.yaml`, whose SHA-256 is
+recorded there.
 
-## Resultado da extensão (2026-11-11)
+## Result of the extension (2026-11-11)
 
-Rodada com o DSP corrigido, `results/extended/`. As 72 medições entram em todos os doze fatores,
-o que mantém a rota 4 fechada.
+Run with the corrected DSP, `results/extended/`. The 72 measurements enter at all twelve factors,
+which keeps route 4 closed.
 
-### A análise pré-registrada: rota 1 disparada, mas a régua se moveu
+### The pre-registered analysis: route 1 triggered, but the ruler moved
 
-Cada rodada foi avaliada contra a sua própria verdade, como registrado.
-- **Degrau de guarda pareado, `prior_calibrado`:** −30,2 pontos em média (de −36,1 a −20,8), com
-  inclinação de −0,8 ± 1,6 pontos por oitava (IC 95 %). Pela rota 3 é aditivo.
-- **Valores corrigidos:** 73,3 % em 64×, 57,9 % em 96×, 38,5 % em 128× e 30,2 % em 160×. A queda
-  em 96× é de 15,4 pontos, acima do limiar de 13, e **a rota 1 dispara**.
-- **Rota 2 (captura por ordem fixa):** não dispara, por pouco. A ordem mais frequente do
-  `prior_calibrado` é ≈0,39 (FTF) em 24 %, 38 % e 49 % dos segmentos em 96×, 128× e 160×.
+Each run was evaluated against its own truth, as recorded.
+- **Paired guard step, `prior_calibrado` (calibrated prior):** −30.2 points on average (from −36.1
+  to −20.8), with a slope of −0.8 ± 1.6 points per octave (95 % CI). By route 3 it is additive.
+- **Corrected values:** 73.3 % at 64×, 57.9 % at 96×, 38.5 % at 128× and 30.2 % at 160×. The drop
+  at 96× is 15.4 points, above the threshold of 13, and **route 1 triggers**.
+- **Route 2 (capture by a fixed order):** does not trigger, narrowly. The most frequent order of
+  `prior_calibrado` is ≈0.39 (FTF) in 24 %, 38 % and 49 % of the segments at 96×, 128× and 160×.
 
-**O degrau de −30 pontos não é do estimador. É a verdade que se move.** Sob `spr = 16` a
-calibração desloca a ordem de referência em mediana −0,0425 ordens (de −0,065 a −0,015), e 18 dos
-24 registros se movem mais de 0,03. A tolerância é 0,06.
-- Nos 23 segmentos que a base acerta e o estendido erra em 1× (`sem_prior`), a estimativa e a
-  banda são praticamente iguais nas duas rodadas, por exemplo 5,429 contra 5,429. O que muda é a
-  verdade: 5,3808 → 5,3458 na pista interna e 3,4392 → 3,3742 em O-B.
-- **A causa é o desempate do `refine` (revisão de 2026-11-11, conferida).**
-  - O escore é constante por partes: `score_fault` toma a maior raia a ±tol de cada harmônico.
-  - O `max()` do `refine` devolve o **primeiro** ponto do platô de máximo.
-  - Com `spr = 64`, o platô tem 0,035 ordem em 22 de 24 registros. Com `spr = 16`, só cabem os
-    harmônicos abaixo da ordem 8, e o platô alarga para 0,115 (interna) e 0,055 (externa).
-  - **Pelo centro do platô, o deslocamento entre as duas réguas é +0,0000 na mediana**, e só O-A-1
-    e O-A-2 passam de 0,03. Pelo primeiro ponto, é −0,0325.
-  - Medido por `e07_refine.py`, que reproduz exatamente as calibrações dos dois manifests.
-- **A régua da rodada base também está enviesada.** Ela fica 0,0175 ordem abaixo do centro do platô
-  em 22 de 24 registros, quase um terço da tolerância. As estimativas em 1× (cerca de 5,43 na
-  interna) batem com o centro (5,443), não com o primeiro ponto (5,426). É a mesma régua do E20 e
-  do E22, e a correção pede re-execução dos três.
+**The −30-point step is not the estimator's. It is the truth that moves.** Under `spr = 16` the
+calibration shifts the reference order by a median of −0.0425 orders (from −0.065 to −0.015), and
+18 of the 24 records move more than 0.03. The tolerance is 0.06.
+- In the 23 segments that the base gets right and the extended gets wrong at 1× (`sem_prior`), the
+  estimate and the band are practically the same in both runs, for example 5.429 against 5.429.
+  What changes is the truth: 5.3808 → 5.3458 on the inner race and 3.4392 → 3.3742 in O-B.
+- **The cause is the tie-break of `refine` (review of 2026-11-11, checked).**
+  - The score is piecewise constant: `score_fault` takes the largest line within ±tol of each
+    harmonic.
+  - The `max()` of `refine` returns the **first** point of the maximum plateau.
+  - With `spr = 64`, the plateau is 0.035 order wide in 22 of 24 records. With `spr = 16`, only
+    the harmonics below order 8 fit, and the plateau widens to 0.115 (inner) and 0.055 (outer).
+  - **By the center of the plateau, the shift between the two rulers is +0.0000 at the median**,
+    and only O-A-1 and O-A-2 exceed 0.03. By the first point, it is −0.0325.
+  - Measured by `e07_refine.py`, which exactly reproduces the calibrations of the two manifests.
+- **The ruler of the base run is also biased.** It sits 0.0175 order below the center of the
+  plateau in 22 of 24 records, almost a third of the tolerance. The estimates at 1× (about 5.43 on
+  the inner race) match the center (5.443), not the first point (5.426). It is the same ruler as
+  in E20 and E22, and the correction calls for re-running all three.
 
-### Análise com a régua fixa (decidida depois de ver o deslocamento)
+### Analysis with the fixed ruler (decided after seeing the shift)
 
-O estendido foi reavaliado contra a verdade da rodada base (`spr = 64`). Ela é por registro e
-não depende do fator, então vale também para 96–160×.
+The extended run was re-evaluated against the truth of the base run (`spr = 64`). That truth is per
+record and does not depend on the factor, so it also holds for 96–160×.
 
 | | 1× | 4× | 8× | 32× | 64× | 96× | 128× | 160× |
 |---|---|---|---|---|---|---|---|---|
-| `sem_prior`, estendido, régua fixa | 77,8 | 51,4 | 76,4 | 70,8 | 61,1 | 52,8 | **19,4** | **0,0** |
+| `sem_prior`, extended, fixed ruler | 77.8 | 51.4 | 76.4 | 70.8 | 61.1 | 52.8 | **19.4** | **0.0** |
 
-- **Degrau de guarda pareado, `sem_prior`:** −3,5 pontos em média (de −8,9 a 0,0). É pequeno, mas
-  cresce com o fator: −1,0 ± 0,8 pontos por oitava, com IC que exclui 0. **Pela rota 3, a
-  subtração de um degrau único não se sustenta.**
-- **Ainda assim, há joelho entre 96× e 128×.** De 96× para 128× o acerto bruto cai 33 pontos (52,8
-  → 19,4 %). Um degrau de guarda que é −8,9 em 64× e cresce cerca de 1 ponto por oitava não
-  explica isso. Em 96× (2,08 kSPS) a queda corrigida contra 64× é de 8,2 pontos, abaixo do
-  limiar; em 128× (1,56 kSPS) é de 41,5.
-- **Mecanismo (corrigido pela revisão de 2026-11-11, conferido):**
-  - O piso `f_min_hz` = 500 Hz encolhe a faixa de busca para [500; fs_eff/2]: [500; 781] Hz em
-    128× e [500; 625] Hz em 160×.
-  - A partição do kurtograma passa a gerar bandas **mais estreitas que a frequência de falha em
-    Hz**. A largura mediana é 271 Hz em 96×, 141 Hz em 128× e 10,4 Hz em 160×. Em 128×, 12 % das
-    bandas são mais estreitas que a frequência de falha, todas com erro. Em 160×, 100 %.
-  - O envelope de uma banda de largura W só tem conteúdo até W. A raia de falha some, e a
-    estimativa cai junto de `order_min` = 2,0: 47 % das estimativas em [2,0; 2,2) em 128× e 83 % em
-    160×.
-  - É a captura por ordem fixa da rota 2, que valia também para `sem_prior`.
-  - A frase anterior ("a faixa de busca deixa de conter a ressonância") estava errada: sob
-    decimação pura a ressonância dobra para a banda base.
-  - É uma parede do pipeline (o piso e a partição do seletor), não da taxa.
-- **`prior_calibrado` com régua fixa** piora (degrau médio de −38,2). É o esperado para uma escolha
-  entre candidatas em torno de uma calibração que se moveu, e confirma a invalidação da T0.2.
+- **Paired guard step, `sem_prior`:** −3.5 points on average (from −8.9 to 0.0). It is small, but
+  it grows with the factor: −1.0 ± 0.8 points per octave, with a CI that excludes 0. **By route 3,
+  the subtraction of a single step does not hold up.**
+- **Even so, there is a knee between 96× and 128×.** From 96× to 128× the raw hit rate falls 33
+  points (52.8 → 19.4 %). A guard step that is −8.9 at 64× and grows by about 1 point per octave
+  does not explain this. At 96× (2.08 kSPS) the corrected drop against 64× is 8.2 points, below
+  the threshold; at 128× (1.56 kSPS) it is 41.5.
+- **Mechanism (corrected by the review of 2026-11-11, checked):**
+  - The `f_min_hz` = 500 Hz floor shrinks the search range to [500; fs_eff/2]: [500; 781] Hz at
+    128× and [500; 625] Hz at 160×.
+  - The kurtogram partition then generates bands **narrower than the fault frequency in
+    Hz**. The median width is 271 Hz at 96×, 141 Hz at 128× and 10.4 Hz at 160×. At 128×, 12 % of
+    the bands are narrower than the fault frequency, all of them wrong. At 160×, 100 %.
+  - The envelope of a band of width W only has content up to W. The fault line disappears, and the
+    estimate lands next to `order_min` = 2.0: 47 % of the estimates in [2.0; 2.2) at 128× and 83 %
+    at 160×.
+  - It is the capture by a fixed order of route 2, which also held for `sem_prior`.
+  - The previous sentence ("the search range no longer contains the resonance") was wrong: under
+    pure decimation the resonance folds into the baseband.
+  - It is a wall of the pipeline (the floor and the selector's partition), not of the rate.
+- **`prior_calibrado` with the fixed ruler** worsens (mean step of −38.2). This is what is expected
+  of a choice among candidates around a calibration that moved, and it confirms the invalidation
+  of T0.2.
 
-**Conclusão para T1.1.** O fator publicável do E07 continua sendo 64× (3,12 kSPS) em `sem_prior`.
-A curva estendida mostra um joelho entre 2,08 e 1,56 kSPS. Ele é do pipeline: a faixa de busca
-estreita e as bandas mais estreitas que os harmônicos de falha que o escore usa (corrigido em 2026-11-12, de `results/extended/metrics.csv`: a frequência de falha mediana é 81 Hz; em 128× a banda mediana, de 141 Hz, ainda é mais larga que ela, mas mais estreita que os três harmônicos do escore, que somam 243 Hz; só em 160×, com 10,4 Hz, fica mais estreita que a própria frequência de falha).
-Um ganho de método nesses fatores
-seria contra um espantalho.
+**Conclusion for T1.1.** The publishable factor of E07 remains 64× (3.12 kSPS) in `sem_prior`.
+The extended curve shows a knee between 2.08 and 1.56 kSPS. It belongs to the pipeline: the narrow search range and the bands narrower than the fault harmonics that the score uses (corrected on 2026-11-12, from `results/extended/metrics.csv`: the median fault frequency is 81 Hz; at 128× the median band, of 141 Hz, is still wider than it, but narrower than the three harmonics of the score, which add up to 243 Hz; only at 160×, with 10.4 Hz, does it become narrower than the fault frequency itself).
+A method gain at these factors
+would be against a straw man.
 
-A rodada "com `spr = 64` e só o piso variando", proposta antes, é **inviável** em 128×: o guarda
-exige 128 pontos por revolução, e o fator 128 dá 56. O controle que falta é outro: régua pelo
-centro do platô, e piso ou largura mínima de banda do kurtograma variando, com `spr = 16`.
+The run "with `spr = 64` and only the floor varying", proposed earlier, is **infeasible** at 128×:
+the guard requires 128 points per revolution, and factor 128 gives 56. The missing control is a
+different one: the ruler by the center of the plateau, and the kurtogram floor or minimum band width
+varying, with `spr = 16`.
 
-## Re-execução com a régua corrigida (2026-11-11, tarde)
+## Re-run with the corrected ruler (2026-11-11, afternoon)
 
-Rodada às 12:43 UTC no servidor, com duas mudanças:
-- verdade pelo **centro do platô** (`snq_recon.refine_order`), e não mais pelo primeiro ponto
-  (viés de −0,0175 ordem);
-- **régua local** gravada ao lado: `truth_local_order` e `hit_local`, a raia em taxa cheia do
-  próprio segmento, só para pontuar.
+Run at 12:43 UTC on the server, with two changes:
+- truth by the **center of the plateau** (`snq_recon.refine_order`), and no longer by the first
+  point (bias of −0.0175 order);
+- **local ruler** recorded alongside: `truth_local_order` and `hit_local`, the full-rate line of
+  the segment itself, for scoring only.
 
-A régua local vem da revisão do protocolo do E15, conferida: a ordem de BPFO da pista externa cai
-cerca de 0,3 a cada 10 Hz de rotação dentro do registro (O-A-1: 3,519 a 16,7 Hz → 3,322 a 25,8 Hz),
-e uma verdade constante por registro erra a raia nos segmentos de rotação diferente.
+The local ruler comes from the review of the E15 protocol, checked: the BPFO order of the outer
+race falls by about 0.3 per 10 Hz of rotation within the record (O-A-1: 3.519 at 16.7 Hz → 3.322
+at 25.8 Hz), and a truth that is constant per record misses the line in the segments with a
+different rotation speed.
 
-`sem_prior`, acerto (%):
+`sem_prior`, hit rate (%):
 
-| fator | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
+| factor | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
 |---|---|---|---|---|---|---|---|---|---|
-| régua pelo centro do platô, deixa-um-de-fora (n = 72) | 86,1 | 76,4 | **56,9** | 84,7 | 76,4 | 84,7 | 86,1 | 83,3 | 80,0 |
-| régua local (n = 71) | 93,0 | 80,3 | **57,7** | 90,1 | 83,1 | 87,3 | 90,1 | 85,9 | 81,8 |
+| ruler by the center of the plateau, leave-one-out (n = 72) | 86.1 | 76.4 | **56.9** | 84.7 | 76.4 | 84.7 | 86.1 | 83.3 | 80.0 |
+| local ruler (n = 71) | 93.0 | 80.3 | **57.7** | 90.1 | 83.1 | 87.3 | 90.1 | 85.9 | 81.8 |
 
-- **Por pista, régua local:** a externa tem 31, 22, **6** e 28 de 35 em 1×, 2×, 4× e 8×; a interna
-  35, 35, 35 e 36 de 36. O vale de 4× fica nas duas réguas.
-- **A coluna `prior_calibrado`** fica igual ou abaixo da `sem_prior` (1×: 84,7 %).
-- **Controle negativo (AUC BPFI / BPFO):**
+- **Per race, local ruler:** the outer race has 31, 22, **6** and 28 of 35 at 1×, 2×, 4× and 8×;
+  the inner race 35, 35, 35 and 36 of 36. The 4× dip stays under both rulers.
+- **The `prior_calibrado` column** stays equal to or below the `sem_prior` one (1×: 84.7 %).
+- **Negative control (AUC BPFI / BPFO):**
 
-  | fator | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
+  | factor | 1× | 2× | 4× | 8× | 16× | 24× | 32× | 48× | 64× |
   |---|---|---|---|---|---|---|---|---|---|
-  | BPFI | 0,999 | 0,865 | 1,000 | 1,000 | 1,000 | 1,000 | 0,974 | 0,985 | 1,000 |
-  | BPFO | 0,943 | 0,804 | 0,765 | 0,899 | 0,784 | 0,931 | 0,912 | 0,940 | 0,927 |
+  | BPFI | 0.999 | 0.865 | 1.000 | 1.000 | 1.000 | 1.000 | 0.974 | 0.985 | 1.000 |
+  | BPFO | 0.943 | 0.804 | 0.765 | 0.899 | 0.784 | 0.931 | 0.912 | 0.940 | 0.927 |
 
-**Extensão (`spr = 16`), com a régua corrigida.**
-- **O degrau de guarda pareado cai a −2,9 pontos em média pela régua do centro, e a −0,2 pela régua
-  local** (de +1,4 a −4,8; inclinação de −0,73 ± 0,43 por oitava). Os −30 pontos de antes vinham do
-  desempate do `refine`, como a revisão previu.
-- **Acerto pela régua local:**
+**Extension (`spr = 16`), with the corrected ruler.**
+- **The paired guard step falls to −2.9 points on average by the center ruler, and to −0.2 by the
+  local ruler** (from +1.4 to −4.8; slope of −0.73 ± 0.43 per octave). The −30 points from before
+  came from the tie-break of `refine`, as the review predicted.
+- **Hit rate by the local ruler:**
 
-  | fator | 64× | 96× | 128× | 160× |
+  | factor | 64× | 96× | 128× | 160× |
   |---|---|---|---|---|
-  | acerto | 78,6 % | 64,3 % | **22,9 %** | 0,0 % |
+  | hit rate | 78.6 % | 64.3 % | **22.9 %** | 0.0 % |
 
-- **Joelho.** A queda corrigida de 64× para 96× fica perto do limiar pré-registrado de 13 pontos:
-  cerca de 17 pelo degrau médio, cerca de 12 extrapolando a inclinação. 128× é um colapso.
-- **Mecanismo** (seção anterior): bandas mais estreitas que os três harmônicos de falha do escore,
-  por causa do piso de 500 Hz (corrigido em 2026-11-12, de `results/extended/metrics.csv`: a frequência de falha mediana é 81 Hz; em 128× a banda mediana, de 141 Hz, ainda é mais larga que ela, mas mais estreita que os três harmônicos do escore, que somam 243 Hz; só em 160×, com 10,4 Hz, fica mais estreita que a própria frequência de falha).
+- **Knee.** The corrected drop from 64× to 96× is close to the pre-registered threshold of 13
+  points: about 17 by the mean step, about 12 extrapolating the slope. 128× is a collapse.
+- **Mechanism** (previous section): bands narrower than the three fault harmonics of the score,
+  because of the 500 Hz floor (corrected on 2026-11-12, from `results/extended/metrics.csv`: the median fault frequency is 81 Hz; at 128× the median band, of 141 Hz, is still wider than it, but narrower than the three harmonics of the score, which add up to 243 Hz; only at 160×, with 10.4 Hz, does it become narrower than the fault frequency itself).

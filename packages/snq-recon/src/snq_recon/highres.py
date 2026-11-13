@@ -1,17 +1,17 @@
-"""Estimação espectral de alta resolução, e análise de ordem.
+"""High-resolution spectral estimation, and order analysis.
 
-Duas peças que a leitura acrescentou ao escopo do baseline.
+Two pieces that the literature reading added to the scope of the baseline.
 
-**ESPRIT** existe aqui como controle honesto. Antes de afirmar que um estimador
-aprendido melhora o E01 na região de −10 a −20 dB, é preciso saber se um método
-clássico de alta resolução já fecha a lacuna. Se fechar, o ganho marginal do
-aprendizado é pequeno — e isso é uma descoberta, não um atraso.
+**ESPRIT** is here as an honest control. Before claiming that a learned estimator
+improves on E01 in the −10 to −20 dB region, one has to know whether a classical
+high-resolution method already closes the gap. If it does, the marginal gain of
+learning is small — and that is a finding, not a setback.
 
-**Análise de ordem** vem de `sensors2025csvibration` (Kato & Otaka, Sensors 2025,
-doi:10.3390/s25103167). Sob rotação variável, Fourier deixa de representar a vibração
-de forma esparsa e a compressão despenca; reamostrar em incrementos angulares
-constantes devolve a esparsidade, porque as frequências de falha viram **ordens
-fixas** da rotação. É pré-requisito para XJTU-SY e FEMTO, que têm variação de rotação.
+**Order analysis** comes from `sensors2025csvibration` (Kato & Otaka, Sensors 2025,
+doi:10.3390/s25103167). Under variable shaft speed, Fourier no longer represents the vibration
+sparsely and compression collapses; resampling at constant angular increments
+restores sparsity, because the fault frequencies become **fixed orders** of the shaft
+rotation. It is a prerequisite for XJTU-SY and FEMTO, which have shaft speed variation.
 """
 
 from __future__ import annotations
@@ -23,15 +23,15 @@ from snq_recon.envelope import EnvelopeSpectrum, envelope
 
 
 def esprit(x: ArrayLike, n_sources: int, fs_hz: float, subspace: int | None = None) -> NDArray:
-    """Frequências por ESPRIT — resolução acima do limite da FFT.
+    """Frequencies by ESPRIT — resolution beyond the FFT limit.
 
-    Explora a invariância rotacional do subespaço de sinal: duas submatrizes
-    deslocadas de uma amostra se relacionam por uma rotação cujos autovalores são
-    ``exp(j·2π·f/fs)``. Diferente do pico de FFT, não é limitado por ``fs/N``.
+    Exploits the rotational invariance of the signal subspace: two submatrices
+    shifted by one sample are related by a rotation whose eigenvalues are
+    ``exp(j·2π·f/fs)``. Unlike the FFT peak, it is not limited by ``fs/N``.
 
-    ``n_sources`` é o número de senoides a estimar. Superestimar produz frequências
-    espúrias; subestimar mistura componentes. É a fraqueza do método em relação a um
-    estimador que detecta a ordem do modelo sozinho.
+    ``n_sources`` is the number of sinusoids to estimate. Overestimating it produces spurious
+    frequencies; underestimating it mixes components. That is the weakness of the method
+    compared with an estimator that detects the model order by itself.
 
     >>> fs = 1000.0
     >>> t = np.arange(512) / fs
@@ -43,16 +43,16 @@ def esprit(x: ArrayLike, n_sources: int, fs_hz: float, subspace: int | None = No
     n = x.size
     m = subspace or max(2 * n_sources + 1, n // 3)
     if m >= n:
-        raise ValueError(f"subespaço ({m}) precisa ser menor que o sinal ({n})")
+        raise ValueError(f"subspace ({m}) must be smaller than the signal ({n})")
 
-    # Matriz de Hankel: cada coluna e uma janela deslizante do sinal.
+    # Hankel matrix: each column is a sliding window of the signal.
     rows = n - m + 1
     h = np.lib.stride_tricks.sliding_window_view(x, m)[:rows].T
 
     u, _, _ = np.linalg.svd(h, full_matrices=False)
-    signal_space = u[:, : 2 * n_sources]  # sinal real: 2 exponenciais por senoide
+    signal_space = u[:, : 2 * n_sources]  # real signal: 2 exponentials per sinusoid
 
-    # Invariancia rotacional entre as submatrizes deslocadas de uma linha.
+    # Rotational invariance between the submatrices shifted by one row.
     phi = np.linalg.pinv(signal_space[:-1]) @ signal_space[1:]
     eig = np.linalg.eigvals(phi)
 
@@ -62,25 +62,25 @@ def esprit(x: ArrayLike, n_sources: int, fs_hz: float, subspace: int | None = No
 
 
 def estimate_tone_esprit(x: ArrayLike, fs_hz: float) -> float:
-    """Frequência do tom dominante por ESPRIT. Assinatura igual à do estimador de FFT."""
+    """Frequency of the dominant tone by ESPRIT. Same signature as the FFT estimator."""
     f = esprit(x, n_sources=1, fs_hz=fs_hz)
     return float(f[0]) if f.size else float("nan")
 
 
 # ----------------------------------------------------------------------
-# análise de ordem
+# order analysis
 # ----------------------------------------------------------------------
 def phase_revolutions(
     shaft_hz: ArrayLike | float, fs_hz: float, n_samples: int
 ) -> NDArray[np.float64]:
-    """Fase acumulada em **revoluções**, amostra a amostra, pela integral da rotação.
+    """Accumulated phase in **revolutions**, sample by sample, by integrating the shaft speed.
 
-    ``shaft_hz`` é escalar (rotação constante) ou um perfil com ``n_samples`` pontos.
-    A integração é trapezoidal, e o primeiro ponto é zero por construção.
+    ``shaft_hz`` is a scalar (constant speed) or a profile with ``n_samples`` points.
+    The integration is trapezoidal, and the first point is zero by construction.
 
-    Existe como função própria porque duas coisas precisam da mesma fase e não podem
-    divergir: a reamostragem angular do braço clássico e a base de ordem do braço de
-    reconstrução esparsa (`snq_recon.sparse`).
+    It exists as a function of its own because two things need the same phase and must not
+    diverge: the angular resampling of the classical arm and the order basis of the
+    sparse reconstruction arm (`snq_recon.sparse`).
 
     >>> phase_revolutions(10.0, 1000.0, 5).round(3).tolist()
     [0.0, 0.01, 0.02, 0.03, 0.04]
@@ -92,15 +92,15 @@ def phase_revolutions(
         else np.asarray(shaft_hz, dtype=float).ravel()
     )
     if speed.size != n:
-        raise ValueError(f"perfil de rotação tem {speed.size} pontos, sinal tem {n}")
+        raise ValueError(f"shaft speed profile has {speed.size} points, signal has {n}")
     if np.any(speed <= 0):
-        raise ValueError("rotação precisa ser positiva em todo o registro")
+        raise ValueError("shaft speed must be positive over the whole record")
     dt = 1.0 / float(fs_hz)
     return np.concatenate([[0.0], np.cumsum(0.5 * (speed[:-1] + speed[1:]) * dt)])
 
 
 _MAX_ANGULAR_OVERSAMPLING = 64
-"""Teto da grade angular fina, em múltiplos do comprimento do registro (ver abaixo)."""
+"""Ceiling of the fine angular grid, in multiples of the record length (see below)."""
 
 
 def angular_resample(
@@ -111,43 +111,44 @@ def angular_resample(
     *,
     anti_alias: bool = True,
 ) -> tuple[NDArray[np.float64], float]:
-    """Reamostra o sinal em incrementos angulares constantes.
+    """Resamples the signal at constant angular increments.
 
-    ``shaft_hz`` pode ser um escalar (rotação constante) ou um perfil amostrado na
-    mesma taxa de ``x`` (rotação variável, vindo de tacômetro).
+    ``shaft_hz`` may be a scalar (constant speed) or a profile sampled at the
+    same rate as ``x`` (variable speed, from a tachometer).
 
-    Devolve ``(sinal_em_angulo, samples_per_rev)``. Depois disso, uma frequência de
-    falha que variava com a rotação vira uma **ordem fixa**: BPFO a 3,58× a rotação
-    aparece sempre no mesmo lugar do espectro de ordem, independentemente do regime.
+    Returns ``(signal_in_angle, samples_per_rev)``. After that, a fault frequency
+    that varied with the shaft speed becomes a **fixed order**: BPFO at 3.58× the shaft speed
+    always appears at the same place in the order spectrum, regardless of the operating regime.
 
-    **Reamostrar em ângulo é decimar em ângulo.** Quando o registro tem mais de
-    ``samples_per_rev`` amostras por revolução, ordens acima de ``samples_per_rev/2``
-    dobram: a ordem ``o`` reaparece em ``|o - spr·round(o/spr)|``. Com ``anti_alias=True``
-    (padrão desde 2026-11-11) o sinal é interpolado numa grade angular fina, com pelo menos
-    tantas amostras por revolução quanto o registro na rotação mínima, passa por um
-    passa-baixas ideal na ordem ``spr/2`` sobre a extensão par e só então é decimado. A grade
-    de saída é a mesma nos dois modos. ``anti_alias=False`` reproduz o comportamento antigo,
-    de interpolação linear direta, que dobra; existe para reprodução e para estudar a dobra.
+    **Resampling in angle is decimating in angle.** When the record has more than
+    ``samples_per_rev`` samples per revolution, orders above ``samples_per_rev/2``
+    fold: order ``o`` reappears at ``|o - spr·round(o/spr)|``. With ``anti_alias=True``
+    (the default since 2026-11-11) the signal is interpolated onto a fine angular grid, with at
+    least as many samples per revolution as the record has at the minimum speed, goes through an
+    ideal low-pass at order ``spr/2`` over the even extension, and only then is decimated. The
+    output grid is the same in both modes. ``anti_alias=False`` reproduces the old behavior,
+    direct linear interpolation, which folds; it exists for reproduction and for studying the
+    folding.
 
-    A grade fina tem cerca de ``n·(rotação média / rotação mínima)`` pontos; acima de
-    ``64·n`` (rotação variando mais de ~64:1 no registro) a função recusa, em vez de
-    estourar memória em silêncio.
+    The fine grid has about ``n·(mean speed / minimum speed)`` points; above
+    ``64·n`` (speed varying by more than ~64:1 within the record) the function refuses, instead
+    of silently blowing up memory.
 
-    É o mecanismo que `sensors2025csvibration` usa para devolver esparsidade sob
-    rotação variável — e sem ele o E02 não se aplica a XJTU-SY nem a FEMTO.
+    It is the mechanism that `sensors2025csvibration` uses to restore sparsity under
+    variable speed — and without it E02 does not apply to XJTU-SY or to FEMTO.
     """
     x = np.asarray(x, dtype=float).ravel()
     n = x.size
 
-    # Angulo acumulado em revolucoes: integral da rotacao.
+    # Accumulated angle in revolutions: integral of the shaft speed.
     revs = phase_revolutions(shaft_hz, fs_hz, n)
     total = float(revs[-1])
     if total < 1.0:
-        raise ValueError(f"registro cobre só {total:.2f} revolução; insuficiente")
+        raise ValueError(f"record covers only {total:.2f} revolutions; insufficient")
 
     grid = np.arange(0.0, total, 1.0 / samples_per_rev)
-    # Amostras de origem por revolucao no pior caso (rotacao minima). Ate spr, a
-    # interpolacao so sobe a taxa e nao ha o que dobrar.
+    # Source samples per revolution in the worst case (minimum speed). Up to spr,
+    # interpolation only raises the rate and there is nothing to fold.
     source_per_rev = 1.0 / float(np.min(np.diff(revs))) if n > 1 else 0.0
     ratio = int(np.ceil(source_per_rev / samples_per_rev))
     if not anti_alias or ratio <= 1:
@@ -156,13 +157,13 @@ def angular_resample(
     m = grid.size
     if m * ratio > _MAX_ANGULAR_OVERSAMPLING * n:
         raise ValueError(
-            f"grade angular fina de {m * ratio} pontos para um registro de {n}: a rotação "
-            "varia demais no registro; segmente-o ou use anti_alias=False"
+            f"fine angular grid of {m * ratio} points for a record of {n}: the shaft speed "
+            "varies too much within the record; segment it or use anti_alias=False"
         )
     fine_rate = float(samples_per_rev) * ratio
     fine = np.interp(np.arange(m * ratio) / fine_rate, revs, x)
-    # Passa-baixas ideal na ordem spr/2. A extensao par evita o salto na emenda, que
-    # num filtro circular viraria oscilacao de Gibbs nas bordas.
+    # Ideal low-pass at order spr/2. The even extension avoids the jump at the seam, which
+    # in a circular filter would turn into Gibbs oscillation at the edges.
     ext = np.concatenate([fine, fine[::-1]])
     spec = np.fft.rfft(ext)
     spec[np.fft.rfftfreq(ext.size, d=1.0 / fine_rate) > samples_per_rev / 2.0] = 0.0
@@ -172,10 +173,11 @@ def angular_resample(
 def order_spectrum(
     x_angular: ArrayLike, samples_per_rev: float
 ) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
-    """Espectro em **ordens** da rotação, a partir do sinal já reamostrado em ângulo.
+    """Spectrum in **orders** of the shaft rotation, from the signal already resampled in angle.
 
-    Devolve ``(ordens, magnitude)``. A ordem 1 é a rotação do eixo; BPFO fica numa
-    ordem fixa dada pela geometria, e não mais numa frequência que muda com o regime.
+    Returns ``(orders, magnitude)``. Order 1 is the shaft rotation; BPFO sits at a
+    fixed order given by the geometry, and no longer at a frequency that changes with the
+    operating regime.
     """
     x = np.asarray(x_angular, dtype=float).ravel()
     n = x.size
@@ -185,10 +187,10 @@ def order_spectrum(
 
 
 def fault_orders(geom_ratio: float, n_elements: int) -> dict[str, float]:
-    """Frequências de falha expressas em **ordens da rotação**, não em hertz.
+    """Fault frequencies expressed in **orders of the shaft rotation**, not in hertz.
 
-    São constantes da geometria: não dependem do regime. É a forma correta de
-    declarar o prior quando a rotação varia.
+    They are constants of the geometry: they do not depend on the operating regime. It is the
+    correct way to state the prior when the shaft speed varies.
     """
     return {
         "BPFO": (n_elements / 2.0) * (1.0 - geom_ratio),
@@ -207,23 +209,24 @@ def envelope_order_spectrum(
     *,
     anti_alias: bool = True,
 ) -> EnvelopeSpectrum:
-    """Envelope reamostrado em ângulo, devolvido como espectro **em ordens**.
+    """Envelope resampled in angle, returned as a spectrum **in orders**.
 
-    Ordem das operações, e ela não é permutável: filtrar na banda de ressonância e
-    tomar o envelope **em tempo**, e só então reamostrar em ângulo. A ressonância da
-    estrutura é fixa em hertz — não acompanha a rotação — então reamostrar antes
-    borraria a própria banda que carrega a modulação.
+    Order of operations, and it cannot be permuted: filter in the resonance band and
+    take the envelope **in time**, and only then resample in angle. The structural
+    resonance is fixed in hertz — it does not follow the shaft speed — so resampling first
+    would smear the very band that carries the modulation.
 
-    O objeto devolvido é um `EnvelopeSpectrum` cujos campos estão em **ordens da
-    rotação**, não em hertz: ``freqs_hz`` são ordens e ``fs_hz`` é ``samples_per_rev``.
-    A reutilização é deliberada — `score_fault` e `estimate_from_candidates` são
-    indiferentes à unidade, e sob rotação variável o prior geométrico é um conjunto
-    de ordens, não de frequências.
+    The returned object is an `EnvelopeSpectrum` whose fields are in **orders of the shaft
+    rotation**, not in hertz: ``freqs_hz`` are orders and ``fs_hz`` is ``samples_per_rev``.
+    The reuse is deliberate — `score_fault` and `estimate_from_candidates` are
+    indifferent to the unit, and under variable speed the geometric prior is a set
+    of orders, not of frequencies.
 
-    O envelope tem conteúdo até a largura da banda, muito acima da ordem ``spr/2`` em
-    tempo; sem anti-alias angular ele dobrava sobre ``[0, spr/2]`` (ver `angular_resample`),
-    e uma modulação na ordem 70 aparecia na 6. Com ``anti_alias=True`` o espectro devolvido
-    declara ``folds_above_nyquist=False``, e `score_fault` não procura harmônico dobrado.
+    The envelope has content up to the bandwidth, far above order ``spr/2`` in
+    time; without angular anti-aliasing it folded onto ``[0, spr/2]`` (see `angular_resample`),
+    and a modulation at order 70 showed up at order 6. With ``anti_alias=True`` the returned
+    spectrum declares ``folds_above_nyquist=False``, and `score_fault` does not look for a
+    folded harmonic.
     """
     env = envelope(x, fs_hz, band_hz)
     env = env - float(np.mean(env))

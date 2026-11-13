@@ -1,16 +1,16 @@
-"""Figura da réplica da Parte (a) no Paderborn (E24): acurácia balanceada contra o fator.
+"""Figure of the Part (a) replication on Paderborn (E24): balanced accuracy against the factor.
 
-Regra do projeto: a figura nasce de metrics.csv, nunca de número transcrito.
+Project rule: the figure comes from metrics.csv, never from a transcribed number.
 
-- **Fontes:** o E24 (`results/`) e, se existir, a rodada da H3 (`results-post-despike/`), que
-  repete `kurtograma` e `kurtograma_sem_picos`. Braço repetido é lido de `results/`.
-- **Métrica:** a do E24, ou seja, a média, sobre as pistas, do acerto médio por rolamento.
-- **Incerteza:** banda de 95 % por bootstrap dos rolamentos dentro de cada pista, como no
-  `cluster_test` do E24.
-- **Painéis:** (a) a régua aninhada, que é a decisiva, e (b) a régua local, que só existe nos
-  segmentos com raia visível em taxa cheia.
+- **Sources:** E24 (`results/`) and, if present, the H3 run (`results-post-despike/`), which
+  repeats `kurtograma` and `kurtograma_sem_picos`. A repeated arm is read from `results/`.
+- **Metric:** that of E24, that is, the mean over the races of the mean hit rate per bearing.
+- **Uncertainty:** 95 % band by bootstrap over the bearings within each race, as in the
+  `cluster_test` of E24.
+- **Panels:** (a) the nested ruler, which is the decisive one, and (b) the local ruler, which only
+  exists on the segments with a line visible at full rate.
 
-    uv run python papers/shared/figures/fig_partA_paderborn.py [--results DIR] [--out ARQ]
+    uv run python papers/shared/figures/fig_partA_paderborn.py [--results DIR] [--out FILE]
 """
 
 from __future__ import annotations
@@ -23,12 +23,12 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 reprova no PDF eXpress (T0.8)
+matplotlib.rcParams["pdf.fonttype"] = 42  # Type 3 fonts fail PDF eXpress (T0.8)
 matplotlib.rcParams["ps.fonttype"] = 42
 matplotlib.rcParams["font.size"] = 8
 matplotlib.rcParams["axes.labelsize"] = 8
 matplotlib.rcParams["legend.fontsize"] = 7
-# a fonte do corpo do elsarticle (preprint, 12pt) e a Computer Modern
+# the body font of elsarticle (preprint, 12pt) is Computer Modern
 matplotlib.rcParams["font.family"] = "serif"
 matplotlib.rcParams["font.serif"] = ["CMU Serif", "Computer Modern Roman", "cmr10"]
 matplotlib.rcParams["mathtext.fontset"] = "cm"
@@ -42,7 +42,7 @@ E24 = ROOT / "experiments/E24-paderborn-spike-capture"
 OUT = ROOT / "papers/mssp-2026/figures/fig_paderborn.pdf"
 PNG = E24 / "results/figures"
 FS_FULL_KSPS = 64.0
-# braço -> (rótulo, cor, marcador, traço, ordem de desenho)
+# arm -> (label, colour, marker, line style, drawing order)
 ARMS = {
     "kurtograma": ("kurtogram, raw (baseline)", "0.55", "o", "--", 1),
     "kurtograma_sem_picos": ("kurtogram, spikes removed before decimation", "black", "s", "-", 4),
@@ -61,7 +61,7 @@ RULERS = {"nested": "(a) nested ruler", "local": "(b) local ruler"}
 
 
 def load(results: Path) -> dict[tuple, dict[tuple, list[int]]]:
-    """hits[(braço, régua, fator)] -> {(pista, rolamento): [acertos]}."""
+    """hits[(arm, ruler, factor)] -> {(race, bearing): [hits]}."""
     hits: dict[tuple, dict[tuple, list[int]]] = defaultdict(lambda: defaultdict(list))
     seen: set[str] = set()
     for path in (results / "metrics.csv", results.parent / "results-post-despike/metrics.csv"):
@@ -70,7 +70,7 @@ def load(results: Path) -> dict[tuple, dict[tuple, list[int]]]:
         new: set[str] = set()
         with path.open(encoding="utf-8") as f:
             for r in csv.DictReader(f):
-                if r["arm"] in seen:  # repetido na rodada da H3
+                if r["arm"] in seen:  # repeated in the H3 run
                     continue
                 new.add(r["arm"])
                 for ru in RULERS:
@@ -103,7 +103,7 @@ def main() -> None:
     hits = load(args.results)
     present = sorted({k[0] for k in hits}, key=lambda a: ARMS[a][4])
     factors = sorted({k[2] for k in hits})
-    # largura do texto do elsarticle; legenda embaixo, fora dos paineis
+    # elsarticle text width; legend below, outside the panels
     fig, axes = plt.subplots(1, 2, figsize=(5.4, 3.5), sharey=False)
     for ax, (ru, label) in zip(axes, RULERS.items(), strict=True):
         for arm in present:
@@ -140,10 +140,10 @@ def main() -> None:
     fig.tight_layout(rect=(0, 0.16, 1, 1))
     args.out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.out)
-    # copia PNG para o relatorio em Markdown (docs/resultados-subnyquist.md)
+    # PNG copy for the Markdown report (docs/resultados-subnyquist.md)
     PNG.mkdir(parents=True, exist_ok=True)
     fig.savefig(PNG / "e24_paderborn.png", dpi=200)
-    print(f"braços: {present}; fatores {factors} -> {args.out}")
+    print(f"arms: {present}; factors {factors} -> {args.out}")
 
 
 if __name__ == "__main__":

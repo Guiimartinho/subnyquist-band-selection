@@ -1,8 +1,8 @@
 name: mafaulda
 full_name: MAFAULDA machinery fault database (UFRJ)
 url: https://www02.smt.ufrj.br/~offshore/mfs/page_01.html
-license: NAO DECLARADA na pagina oficial (conferido em 2026-11-11) - pedir termos ao contato antes de redistribuir
-fs_hz: [51200]  # inferida; a pagina declara 50000 (ver notes)
+license: NOT DECLARED on the official page (checked on 2026-11-11) - ask the contact for terms before redistributing
+fs_hz: [51200]  # inferred; the page declares 50000 (see notes)
 channels:
   - tachometer
   - underhang_axial
@@ -13,38 +13,39 @@ channels:
   - overhang_tangential
   - microphone
 bearing:
-  underhang: modelo nao declarado
-  overhang: modelo nao declarado
+  underhang: model not declared
+  overhang: model not declared
 notes: |
-  INGERIDO EM 2026-11-11 no servidor remoto (snq_data.mafaulda), para o E21 (ADR 0006).
-  TAXA REAL = 51,2 kHz, NAO os 50 kHz declarados: inferida nas 1120 sequencias por duas
-  evidencias independentes - tacometro x nome do arquivo (razao mediana 1,0004 a 51,2 kHz
-  contra 0,9769 a 50 kHz) e linha de rede de 120 Hz no microfone (863/1120 a +-0,15 Hz de
-  117,19 Hz no eixo de 50 kHz, contra 3/1120 perto de 120 Hz). Cada sequencia dura 4,883 s.
-  Fatos da pagina oficial, conferidos nesta data:
-  - CSV, 8 colunas, 50 kHz, 5 s, 250.000 amostras por sequencia. Os modulos NI 9234
-    amostram a 51,2 kHz, mas a pagina declara 50 kHz; o loader confere pela rotacao do
-    tacometro contra a do nome do arquivo (a 51,2 kHz o desvio seria de 2,4 %).
-  - Sensores: tacometro Monarch MT-190; acelerometros IMI 601A01 (tres) e IMI 604B31
-    (triaxial), sem mapeamento explicito para as colunas; microfone Shure SM81. A banda
-    dos acelerometros NAO esta na pagina: conferir o datasheet antes de argumentar sobre
-    conteudo acima de ~10 kHz.
-  - Rotacao: 737 a 3686 rpm nas sequencias normais; cada sequencia tem rotacao ~constante
-    e o nome do arquivo e a rotacao nominal em Hz.
-  - Falhas de rolamento: outer_race, ball_fault, cage_fault, nos mancais underhang e
-    overhang, com massa adicional de 0, 6, 20 ou 35 g. NAO ha falha de pista interna.
-  Estrutura: normal/<rot>.csv; <mancal>/<falha>/<massa>g/<rot>.csv.
+  INGESTED ON 2026-11-11 on the remote server (snq_data.mafaulda), for E21 (ADR 0006).
+  REAL RATE = 51.2 kHz, NOT the declared 50 kHz: inferred on the 1120 sequences from two
+  independent pieces of evidence - tachometer x file name (median ratio 1.0004 at 51.2 kHz
+  against 0.9769 at 50 kHz) and the 120 Hz power-line component in the microphone (863/1120
+  within +-0.15 Hz of 117.19 Hz on the 50 kHz axis, against 3/1120 near 120 Hz). Each sequence
+  lasts 4.883 s.
+  Facts from the official page, checked on this date:
+  - CSV, 8 columns, 50 kHz, 5 s, 250,000 samples per sequence. The NI 9234 modules
+    sample at 51.2 kHz, but the page declares 50 kHz; the loader checks the tachometer
+    speed against the one in the file name (at 51.2 kHz the deviation would be 2.4 %).
+  - Sensors: Monarch MT-190 tachometer; IMI 601A01 accelerometers (three) and IMI 604B31
+    (triaxial), with no explicit mapping to the columns; Shure SM81 microphone. The band
+    of the accelerometers is NOT on the page: check the datasheet before arguing about
+    content above ~10 kHz.
+  - Rotation speed: 737 to 3686 rpm in the normal sequences; each sequence has a ~constant
+    speed, and the file name is the nominal speed in Hz.
+  - Bearing faults: outer_race, ball_fault, cage_fault, on the underhang and overhang
+    bearings, with an added mass of 0, 6, 20 or 35 g. There is NO inner-race fault.
+  Structure: normal/<rot>.csv; <bearing>/<fault>/<mass>g/<rot>.csv.
 geometry:
   n_elements: 8
   ball_diameter_cm: 0.7145
   pitch_diameter_cm: 2.8519
-  contact_angle_deg: nao declarado (assumido 0)
+  contact_angle_deg: not declared (assumed 0)
   documented_orders: {FTF: 0.3750, BPFO: 2.9980, BPFI: 5.0020, BSF: 1.8710}
-  # Conferido em packages/snq-data/tests/test_mafaulda.py: angulo zero reproduz as quatro
-  # (FTF 0,3747; BPFO 2,9978; BPFI 5,0022; BSF 1,8705).
+  # Checked in packages/snq-data/tests/test_mafaulda.py: a zero angle reproduces all four
+  # (FTF 0.3747; BPFO 2.9978; BPFI 5.0022; BSF 1.8705).
 archives:
   base_url: https://www02.smt.ufrj.br/~offshore/mfs/database/mafaulda
-  # A pagina nao publica checksum; estes sao os sha256 dos arquivos baixados em 2026-11-11.
+  # The page does not publish checksums; these are the sha256 of the files downloaded on 2026-11-11.
   normal.tgz: {bytes: 325273545, sha256: 58482537c3d31ddb5508adee7001d2ada1ecf6adfa7995d708c5954c7578e43d}
   underhang.tgz: {bytes: 3679220896, sha256: 4399ddf9a895cf2ef4d26ae56e8702ea50c4833d623c7f60c77ae8582ccc7338}
   overhang.tgz: {bytes: 3374774113, sha256: e694372d0a6a08c7b8afa919295f27842ba25efdb159a6e8be1f195c67f6f8b2}

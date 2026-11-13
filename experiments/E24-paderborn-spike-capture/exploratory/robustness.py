@@ -1,17 +1,17 @@
-"""Exploratório (revisão adversarial de 2026-11-12, fora do pré-registro): os testes resistem?
+"""Exploratory (adversarial review of 2026-11-12, outside the pre-registration): do the tests hold?
 
-O pré-registro usa bootstrap por rolamento com B = 4000. Com 11 a 12 aglomerados por pista, esse
-bootstrap pode ser anticonservador (Cameron, Gelbach e Miller, 2008). E a H1 passou por uma única
-reamostra. Este script refaz H1, H2 e H3, pela régua aninhada, com dois testes:
+The pre-registration uses a bootstrap by bearing with B = 4000. With 11 to 12 clusters per race,
+that bootstrap can be anticonservative (Cameron, Gelbach and Miller, 2008). And H1 passed by a
+single resample. This script redoes H1, H2 and H3, under the nested ruler, with two tests:
 
-- **Troca de sinal exata, estratificada por pista.** Sob H0, a diferença por rolamento é simétrica
-  em torno de zero. A estatística é a da análise (média, sobre as pistas, da diferença média por
-  rolamento), e o p unilateral é a fração das 2^n trocas com estatística ≥ a observada. Rolamentos
-  com diferença zero não mudam a estatística.
-- **O bootstrap pré-registrado com B grande** (``cluster_test`` do ``run.py``), para tirar o erro de
-  Monte Carlo do B = 4000.
+- **Exact sign-flip test, stratified by race.** Under H0, the per-bearing difference is symmetric
+  around zero. The statistic is that of the analysis (mean, over the races, of the mean per-bearing
+  difference), and the one-sided p is the fraction of the 2^n sign flips with statistic ≥ the
+  observed one. Bearings with zero difference do not change the statistic.
+- **The pre-registered bootstrap with a large B** (``cluster_test`` in ``run.py``), to remove
+  the Monte Carlo error of B = 4000.
 
-Holm sobre os 4 orçamentos, como no pré-registro.
+Holm over the 4 budgets, as in the pre-registration.
 
     uv run python experiments/E24-paderborn-spike-capture/exploratory/robustness.py [--boot N]
 """
@@ -49,7 +49,7 @@ def load(name: str) -> list[dict]:
 
 
 def sign_flip_p(a: dict, b: dict) -> tuple[float, int, int]:
-    """p unilateral exato; devolve também quantos rolamentos diferem e quantos a favor."""
+    """Exact one-sided p; also returns how many bearings differ and how many are in favour."""
     keys = sorted(set(a) & set(b))
     races = sorted({k[0] for k in keys})
     d = {r: np.array([a[k] - b[k] for k in keys if k[0] == r]) for r in races}
@@ -100,8 +100,8 @@ def main() -> int:
     for r in out:
         print(
             f"{r['hypothesis']} {r['factor']:>2}x: {r['diff_points']:+6.2f} pts | "
-            f"rolamentos que diferem {r['bearings_differing']} ({r['bearings_up']} a favor) | "
-            f"troca de sinal p={r['p_signflip']:.4f} Holm {r['p_signflip_holm']:.4f} | "
+            f"bearings differing {r['bearings_differing']} ({r['bearings_up']} in favour) | "
+            f"sign flip p={r['p_signflip']:.4f} Holm {r['p_signflip_holm']:.4f} | "
             f"bootstrap B={args.boot} p={r['p_boot']:.5f} Holm {r['p_boot_holm']:.4f}"
         )
     dst = EXP / "results" / "exploratory" / "robustness.json"

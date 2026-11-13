@@ -1,8 +1,8 @@
-"""O arcabouço que separa resultado de sorteio.
+"""The framework that tells a result apart from the luck of the draw.
 
-O caso que motiva o módulo está no fim do arquivo: 11 registros de uma classe
-contra 4 de outra, teste de 5 registros — a configuração exata do E04, onde o
-controle de classe majoritária varia com o sorteio e engole o efeito medido.
+The case that motivates the module is at the end of the file: 11 records of one class
+against 4 of another, a test set of 5 records — the exact configuration of E04, where
+the majority-class control varies with the draw and swallows the measured effect.
 """
 
 import numpy as np
@@ -19,7 +19,7 @@ from snq_eval import (
 
 
 def segmentos(por_registro: dict[str, tuple[int, int]]) -> tuple[list[str], np.ndarray]:
-    """``{nome: (rotulo, n_segmentos)}`` -> vetores de registro e rótulo por segmento."""
+    """``{nome: (rotulo, n_segmentos)}`` -> per-segment record and label vectors."""
     nomes: list[str] = []
     rotulos: list[int] = []
     for nome, (rot, n) in por_registro.items():
@@ -29,10 +29,10 @@ def segmentos(por_registro: dict[str, tuple[int, int]]) -> tuple[list[str], np.n
 
 
 # ----------------------------------------------------------------------------
-# divisão por registro
+# per-record split
 # ----------------------------------------------------------------------------
 def test_segmentos_do_mesmo_registro_nunca_caem_dos_dois_lados():
-    """O vazamento que inflava a acurácia da primeira versão do E04."""
+    """The leakage that inflated the accuracy of the first version of E04."""
     recs, y = segmentos({f"R{i}": (i % 2, 7) for i in range(10)})
     arr = np.asarray(recs, dtype=object)
     for sp in record_splits(recs, y, n_splits=20, test_fraction=1 / 3, master_seed=1):
@@ -57,7 +57,7 @@ def test_a_mesma_semente_reproduz_a_mesma_divisao():
 
 
 def test_a_ordem_dos_segmentos_na_entrada_nao_muda_a_divisao():
-    """A divisão é dos registros; embaralhar segmentos não pode mexer nela."""
+    """The split is over the records; shuffling segments must not change it."""
     recs, y = segmentos({f"R{i}": (i % 2, 5) for i in range(8)})
     rng = np.random.default_rng(0)
     perm = rng.permutation(len(recs))
@@ -83,7 +83,7 @@ def test_estratificacao_mantem_as_duas_classes_no_teste():
 
 
 def test_classe_com_um_unico_registro_fica_sempre_no_treino():
-    """Comportamento declarado: a alternativa some com a classe do treino."""
+    """Declared behavior: the alternative makes the class disappear from training."""
     recs, y = segmentos({"A1": (0, 4), "A2": (0, 4), "A3": (0, 4), "B1": (1, 4)})
     sps = record_splits(recs, y, n_splits=10, test_fraction=0.5, master_seed=5)
     for sp in sps:
@@ -99,15 +99,15 @@ def test_registro_com_rotulos_conflitantes_e_erro():
 
 def test_record_splits_recusa_conjunto_com_um_registro_so():
     recs, y = segmentos({"R1": (0, 9)})
-    with pytest.raises(ValueError, match="ao menos 2 registros"):
+    with pytest.raises(ValueError, match="at least 2 records"):
         record_splits(recs, y, n_splits=3, test_fraction=0.3, master_seed=0)
 
 
 # ----------------------------------------------------------------------------
-# métricas
+# metrics
 # ----------------------------------------------------------------------------
 def test_acuracia_bruta_premia_a_maioria_e_a_balanceada_nao():
-    """O número que tornou o controle do E04 imbatível, e o que o desmascara."""
+    """The number that made the E04 control unbeatable, and the one that unmasks it."""
     y = np.asarray([0] * 90 + [1] * 10, dtype=np.int64)
     sempre_maioria = np.zeros(100, dtype=np.int64)
     s = classification_scores(y, sempre_maioria, n_classes=2)
@@ -117,9 +117,9 @@ def test_acuracia_bruta_premia_a_maioria_e_a_balanceada_nao():
 
 
 def test_classe_de_prevalencia_zero_fica_fora_das_medias_macro():
-    """Caso do E04/E05: a saída FTF existe, a classe não ocorre nos dados."""
+    """The E04/E05 case: the FTF output exists, the class does not occur in the data."""
     y = np.asarray([1, 1, 2, 2], dtype=np.int64)
-    pred = np.asarray([1, 0, 2, 2], dtype=np.int64)  # um erro cai na candidata ausente
+    pred = np.asarray([1, 0, 2, 2], dtype=np.int64)  # one error falls on the absent candidate
     s = classification_scores(y, pred, n_classes=3)
     assert s.scored_classes == (1, 2)
     assert s.support[0] == 0
@@ -142,7 +142,7 @@ def test_majority_label_usa_o_treino_da_propria_divisao():
 
 
 def test_wilson_reproduz_a_convencao_das_figuras():
-    """Fórmula copiada de papers/shared/figures/fig_e01_frontier.py."""
+    """Formula copied from papers/shared/figures/fig_e01_frontier.py."""
     z, p, n = 1.96, 0.8, 25
     d = 1.0 + z * z / n
     esperado = (z / d) * np.sqrt(p * (1 - p) / n + z * z / (4 * n * n))
@@ -172,14 +172,15 @@ def test_percentile_interval_ordena_os_extremos():
 
 
 # ----------------------------------------------------------------------------
-# o caso degenerado do E04
+# the degenerate E04 case
 # ----------------------------------------------------------------------------
 def test_caso_e04_o_controle_de_maioria_varia_com_o_sorteio():
-    """11 registros BPFO contra 4 BPFI, teste de 5 registros.
+    """11 BPFO records against 4 BPFI, a test set of 5 records.
 
-    Sem estratificação — o regime do E04 — o teste pode cair inteiro na classe
-    majoritária e o controle acerta 100%, contra ~73% noutro sorteio. A diferença
-    entre divisões é maior que a diferença que o E04 usou para concluir.
+    Without stratification — the E04 regime — the test set can fall entirely in the
+    majority class and the control scores 100%, against ~73% in another draw. The
+    difference between splits is larger than the difference E04 used to reach its
+    conclusion.
     """
     por_registro: dict[str, tuple[int, int]] = {}
     for i in range(11):
@@ -205,8 +206,8 @@ def test_caso_e04_o_controle_de_maioria_varia_com_o_sorteio():
         ).accuracy
         for s in sps
     ]
-    assert len(set(acc)) > 1, "o controle de maioria tem que variar entre divisões"
-    assert max(acc) == pytest.approx(1.0), "algum sorteio leva um teste de uma classe só"
+    assert len(set(acc)) > 1, "the majority control has to vary across splits"
+    assert max(acc) == pytest.approx(1.0), "some draw yields a single-class test set"
     assert min(acc) < 0.85
     assert max(acc) - min(acc) > 0.15
 
@@ -228,15 +229,15 @@ def test_caso_e04_estratificar_limita_a_variacao_mas_nao_a_elimina():
         ).accuracy
         for s in sps
     ]
-    assert max(acc) < 1.0, "com estratificação o teste nunca cai todo numa classe"
+    assert max(acc) < 1.0, "with stratification the test set never falls entirely in one class"
     assert all(s.majority_label == 1 for s in sps)
 
 
 def test_caso_e04_a_acuracia_balanceada_do_controle_e_constante_em_meio():
-    """Por construção: a maioria acerta uma classe inteira e erra a outra inteira.
+    """By construction: the majority gets one class entirely right and the other entirely wrong.
 
-    É o que torna a acurácia balanceada o eixo em que o controle de maioria deixa
-    de ser um alvo móvel — 0,5 em toda divisão, com duas classes presentes.
+    This is what makes balanced accuracy the axis on which the majority control stops
+    being a moving target — 0.5 in every split, with two classes present.
     """
     por_registro: dict[str, tuple[int, int]] = {}
     for i in range(11):
@@ -258,14 +259,14 @@ def test_caso_e04_a_acuracia_balanceada_do_controle_e_constante_em_meio():
 
 
 def test_min_test_per_class_sem_estratificacao_e_erro():
-    """O guarda não pode ser aceito e ignorado: sem estratificação ele não existe.
+    """The guard cannot be accepted and ignored: without stratification it does not exist.
 
-    O config do E05 declarava ``min_test_per_class: 1`` no braço não-estratificado, e
-    o parâmetro era lido e descartado. O resultado eram divisões cujo teste caía
-    inteiro numa classe.
+    The E05 config declared ``min_test_per_class: 1`` in the non-stratified arm, and
+    the parameter was read and discarded. The result was splits whose test set fell
+    entirely in one class.
     """
     recs, y = segmentos({f"R{i}": (i % 2, 5) for i in range(8)})
-    with pytest.raises(ValueError, match="só se aplica sob estratificação"):
+    with pytest.raises(ValueError, match="only applies under stratification"):
         record_splits(
             recs,
             y,
@@ -278,11 +279,11 @@ def test_min_test_per_class_sem_estratificacao_e_erro():
 
 
 def test_teste_de_classe_unica_da_acuracia_balanceada_um_a_qualquer_constante():
-    """O mecanismo que produz o efeito atribuído à repetição no braço sem estratificação.
+    """The mechanism that produces the effect attributed to repetition in the unstratified arm.
 
-    Numa divisão cujo teste é de uma classe só, a única classe com suporte é
-    acertada inteira por um preditor constante daquela classe, e a média das
-    revocações sobre as classes com suporte vale 1,0.
+    In a split whose test set has a single class, the only class with support is
+    predicted entirely correctly by a constant predictor of that class, and the mean
+    of the recalls over the classes with support equals 1.0.
     """
     por_registro: dict[str, tuple[int, int]] = {}
     for i in range(11):
@@ -301,7 +302,7 @@ def test_teste_de_classe_unica_da_acuracia_balanceada_um_a_qualquer_constante():
         stratify=False,
     )
     classe_unica = [s for s in sps if len(set(y[s.test_index].tolist())) == 1]
-    assert classe_unica, "o sorteio sem estratificação tem que produzir teste de classe única"
+    assert classe_unica, "the draw without stratification has to produce a single-class test set"
     for s in classe_unica:
         (unica,) = set(y[s.test_index].tolist())
         bal = classification_scores(

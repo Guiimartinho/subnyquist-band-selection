@@ -1,17 +1,17 @@
-"""Kurtograma contra a fonte: Antoni, MSSP 21 (2007) 108-124.
+"""Kurtogram against the source: Antoni, MSSP 21 (2007) 108-124.
 
-Conferido no PDF (`literature/pdf/antoni2007kurtogram.pdf`):
+Checked against the PDF (`literature/pdf/antoni2007kurtogram.pdf`):
 
-- Eq. (5)-(6): no nível ``k`` a banda ``i`` tem centro ``(i + 1/2)·2^(-k-1)`` e largura
-  ``2^(-k-1)``, em frequência normalizada por ``fs``. A Fig. 5 acrescenta os níveis
-  1/3-binários com larguras 1/6, 1/12, 1/24.
-- Eq. (7): ``K = <|c|^4> / <|c|^2>^2 - 2`` sobre o envelope complexo.
-- Seção 1.1, propriedade (ii): a SK de um processo gaussiano estacionário é nula.
-- Nota 3: os primeiros coeficientes, afetados pelo transitório dos filtros, não entram
-  na curtose.
+- Eq. (5)-(6): at level ``k`` band ``i`` has center ``(i + 1/2)·2^(-k-1)`` and width
+  ``2^(-k-1)``, in frequency normalized by ``fs``. Fig. 5 adds the
+  1/3-binary levels with widths 1/6, 1/12, 1/24.
+- Eq. (7): ``K = <|c|^4> / <|c|^2>^2 - 2`` over the complex envelope.
+- Section 1.1, property (ii): the SK of a stationary Gaussian process is zero.
+- Note 3: the first coefficients, affected by the filters' transient, are left out of
+  the kurtosis.
 
-O que este módulo trava como **desvio documentado** (não é Antoni): com ``f_min_hz`` ou
-``f_max_hz`` a partição é a da faixa de busca, e não a de ``[0, fs/2]``.
+What this module locks in as a **documented deviation** (not Antoni): with ``f_min_hz`` or
+``f_max_hz`` the partition is that of the search range, and not that of ``[0, fs/2]``.
 """
 
 from __future__ import annotations
@@ -25,11 +25,11 @@ from snq_sim import impulse_train
 
 
 def _structural_background(n: int, fs_hz: float, seed: int) -> np.ndarray:
-    """Ruído gaussiano estacionário com quase toda a energia abaixo de ~200 Hz.
+    """Stationary Gaussian noise with almost all of its energy below ~200 Hz.
 
-    É recortado do meio de uma realização três vezes maior, para que o registro **não**
-    seja periódico: a extensão periódica tem um salto na emenda, como num registro real.
-    Sintetizar por ``irfft`` daria um sinal exatamente periódico e esconderia o defeito.
+    It is cut from the middle of a realization three times longer, so that the record is
+    **not** periodic: the periodic extension has a jump at the seam, as in a real record.
+    Synthesizing with ``irfft`` would give an exactly periodic signal and hide the defect.
     """
     rng = np.random.default_rng(seed)
     b, a = signal.butter(4, 200.0, fs=fs_hz)
@@ -38,12 +38,12 @@ def _structural_background(n: int, fs_hz: float, seed: int) -> np.ndarray:
 
 
 # ----------------------------------------------------------------------
-# geometria: Eq. (5)-(6) e Fig. 5
+# geometry: Eq. (5)-(6) and Fig. 5
 # ----------------------------------------------------------------------
 def test_pavimentacao_sem_faixa_de_busca_e_a_de_antoni():
-    """Sem ``f_min_hz``/``f_max_hz``, nível ``L`` tem ``2^L`` bandas de largura ``2^(-L-1)``.
+    """Without ``f_min_hz``/``f_max_hz``, level ``L`` has ``2^L`` bands of width ``2^(-L-1)``.
 
-    O nível 0 (a banda inteira) não é avaliado: desvio documentado, não erro.
+    Level 0 (the whole band) is not evaluated: a documented deviation, not an error.
     """
     rng = np.random.default_rng(0)
     k = fast_kurtogram(rng.normal(size=4096), 1.0, max_level=4)
@@ -63,11 +63,12 @@ def test_pavimentacao_sem_faixa_de_busca_e_a_de_antoni():
 
 
 def test_faixa_de_busca_reancora_a_particao_e_a_torna_independente_de_fs():
-    """Desvio de Antoni, travado aqui porque o E20 depende dele.
+    """Deviation from Antoni, locked in here because E20 depends on it.
 
-    A partição é a de ``[f_min, min(f_max, fs/2)]``. Com o teto de 25 kHz do E07, os fatores
-    1, 2 e 4 sobre 200 kSPS veem **as mesmas** bandas candidatas; só a 8x (Nyquist de
-    12,5 kHz) a partição muda. Em Antoni, ancorada em ``[0, fs/2]``, ela mudaria a cada fator.
+    The partition is that of ``[f_min, min(f_max, fs/2)]``. With E07's 25 kHz ceiling, factors
+    1, 2 and 4 over 200 kSPS see **the same** candidate bands; only at 8x (Nyquist of
+    12.5 kHz) does the partition change. In Antoni, anchored at ``[0, fs/2]``, it would change
+    at every factor.
     """
     rng = np.random.default_rng(0)
     x = rng.normal(size=8192)
@@ -84,22 +85,22 @@ def test_faixa_de_busca_reancora_a_particao_e_a_torna_independente_de_fs():
 
 
 # ----------------------------------------------------------------------
-# estimador: Eq. (7) e propriedade (ii)
+# estimator: Eq. (7) and property (ii)
 # ----------------------------------------------------------------------
 def test_curtose_espectral_de_tom_puro_e_menos_um():
-    """Envelope constante: ``<|c|^4>/<|c|^2>^2 = 1``, logo ``K = -1`` pela Eq. (7)."""
+    """Constant envelope: ``<|c|^4>/<|c|^2>^2 = 1``, hence ``K = -1`` by Eq. (7)."""
     z = np.exp(2j * np.pi * 0.1 * np.arange(4096))
     assert spectral_kurtosis(z) == pytest.approx(-1.0, abs=1e-12)
 
 
 @pytest.mark.parametrize("seed", [0, 1, 2])
 def test_sk_de_gaussiano_estacionario_colorido_e_nula_em_toda_celula(seed):
-    """Propriedade (ii) de Antoni (2007): processo gaussiano estacionário dá SK nula.
+    """Property (ii) of Antoni (2007): a stationary Gaussian process gives zero SK.
 
-    O fundo tem o espectro de uma máquina real, quase toda a energia em baixa frequência.
-    Regressão: com filtragem circular sem tratamento de borda, o salto na emenda da
-    extensão periódica virava um "transiente" único, e a SK passava de 100 em bandas
-    sem transiente algum. Medido antes da correção: até ~4000 sem a guarda de energia.
+    The background has the spectrum of a real machine, almost all of its energy at low
+    frequency. Regression: with circular filtering and no edge handling, the jump at the seam
+    of the periodic extension became a single "transient", and the SK exceeded 100 in bands
+    with no transient at all. Measured before the fix: up to ~4000 without the energy guard.
     """
     fs = 48_000.0
     x = _structural_background(int(fs), fs, seed) + 0.03 * np.random.default_rng(seed + 10).normal(
@@ -107,15 +108,15 @@ def test_sk_de_gaussiano_estacionario_colorido_e_nula_em_toda_celula(seed):
     )
     k = fast_kurtogram(x, fs, max_level=4, min_energy_frac=0.0)
     worst = max(abs(cell[3]) for cell in k.grid)
-    assert worst < 0.5, f"SK de ruido gaussiano chegou a {worst:.2f}"
+    assert worst < 0.5, f"SK of Gaussian noise reached {worst:.2f}"
 
 
 @pytest.mark.parametrize("seed", [1, 2, 3])
 def test_kurtograma_acha_a_ressonancia_sob_fundo_estrutural(seed):
-    """Rajada impulsiva numa ressonância conhecida (6 kHz), sob fundo realista.
+    """Impulsive burst at a known resonance (6 kHz), under a realistic background.
 
-    Antes da correção, nestas sementes a banda vencedora era [500, 4417] ou [500, 3438] Hz,
-    com K entre 130 e 430: era a emenda do registro, não a falha.
+    Before the fix, on these seeds the winning band was [500, 4417] or [500, 3438] Hz,
+    with K between 130 and 430: it was the record seam, not the fault.
     """
     fs = 48_000.0
     n = int(fs)
@@ -129,13 +130,13 @@ def test_kurtograma_acha_a_ressonancia_sob_fundo_estrutural(seed):
 
 
 def test_transiente_colado_na_borda_nao_entra_na_curtose():
-    """Custo da correção, documentado como teste negativo.
+    """Cost of the fix, documented as a negative test.
 
-    Como na nota 3 de Antoni, as amostras a menos de ``4·fs/Δf`` das bordas ficam fora da
-    curtose. Um transiente curto inteiro ali é invisível; o mesmo transiente no meio, não.
-    A menor guarda desta busca é ``4·48000/2000 = 96`` amostras (banda de 2 kHz); o
-    transiente decai em 5 amostras. Um transiente com cauda mais longa que a guarda
-    continuaria parcialmente visível.
+    As in note 3 of Antoni, the samples closer than ``4·fs/Δf`` to the edges are left out of
+    the kurtosis. A short transient lying entirely there is invisible; the same transient in
+    the middle is not. The smallest guard of this search is ``4·48000/2000 = 96`` samples
+    (2 kHz band); the transient decays in 5 samples. A transient with a tail longer than the
+    guard would remain partially visible.
     """
     fs = 48_000.0
     n = 48_000
@@ -152,19 +153,19 @@ def test_transiente_colado_na_borda_nao_entra_na_curtose():
 
 
 # ----------------------------------------------------------------------
-# o mecanismo do ADR 0006, em sinal sintético controlado
+# the ADR 0006 mechanism, on a controlled synthetic signal
 # ----------------------------------------------------------------------
 FS_ORIG = 200_000.0
 SEARCH = {"max_level": 4, "f_min_hz": 500.0, "f_max_hz": 25e3}
 
 
 def _fault_and_interferer(kind: str, seed: int = 11) -> np.ndarray:
-    """Falha em 5 kHz (dentro da busca) e, opcionalmente, interferente em 76-84 kHz.
+    """Fault at 5 kHz (inside the search) and, optionally, an interferer at 76-84 kHz.
 
-    O interferente é limitado em banda por um passa-faixa de fase zero, para que em taxa
-    cheia **nada** dele caia na faixa de busca: só a dobra pode trazê-lo para dentro.
-    ``kind``: ``"none"``, ``"impulsive"`` (rajadas a 9 Hz) ou ``"gaussian"`` (mesma potência,
-    estacionário).
+    The interferer is band-limited by a zero-phase bandpass, so that at full
+    rate **none** of it falls in the search range: only folding can bring it inside.
+    ``kind``: ``"none"``, ``"impulsive"`` (bursts at 9 Hz) or ``"gaussian"`` (same power,
+    stationary).
     """
     duration = 0.5
     n = int(FS_ORIG * duration)
@@ -186,17 +187,17 @@ def _fault_and_interferer(kind: str, seed: int = 11) -> np.ndarray:
 
 
 def _band(x: np.ndarray, factor: int) -> tuple[float, float]:
-    return fast_kurtogram(x[::factor], FS_ORIG / factor, **SEARCH).band_hz  # decimacao pura
+    return fast_kurtogram(x[::factor], FS_ORIG / factor, **SEARCH).band_hz  # plain decimation
 
 
 def test_rajada_fora_da_busca_captura_o_kurtograma_onde_o_mapa_de_alias_preve():
-    """O mecanismo do ADR 0006, isolado: dobra de conteúdo **impulsivo** fora da busca.
+    """The ADR 0006 mechanism, isolated: folding of **impulsive** content outside the search.
 
-    A 1x o interferente não muda a escolha. A 4x (``x[::4]``, 50 kSPS) ele cai em
-    ``|80 - 2·50| = 20`` kHz, na zona 3, invertida, e a banda escolhida passa a ser a que
-    contém a dobra, [12,75; 25] kHz, a mesma do vale do E07.
-    Isso prova que o código reproduz o mecanismo. Não prova que é ele que atua no Ottawa:
-    isso é o E20.
+    At 1x the interferer does not change the choice. At 4x (``x[::4]``, 50 kSPS) it lands at
+    ``|80 - 2·50| = 20`` kHz, in zone 3, inverted, and the chosen band becomes the one that
+    contains the fold, [12.75, 25] kHz, the same as E07's valley.
+    This proves that the code reproduces the mechanism. It does not prove that this is the
+    mechanism at work on Ottawa: that is E20.
     """
     clean, hit = _fault_and_interferer("none"), _fault_and_interferer("impulsive")
     assert _band(hit, 1) == _band(clean, 1)
@@ -204,7 +205,7 @@ def test_rajada_fora_da_busca_captura_o_kurtograma_onde_o_mapa_de_alias_preve():
     fs_eff = FS_ORIG / 4
     alias = float(alias_frequency_hz(80e3, fs_eff))
     assert alias == pytest.approx(20e3)
-    assert fold_band(76e3, 84e3, fs_eff).inverted  # zona impar: o espectro chega invertido
+    assert fold_band(76e3, 84e3, fs_eff).inverted  # odd zone: the spectrum arrives inverted
 
     lo, hi = _band(hit, 4)
     assert lo <= alias <= hi
@@ -213,10 +214,10 @@ def test_rajada_fora_da_busca_captura_o_kurtograma_onde_o_mapa_de_alias_preve():
 
 
 def test_interferente_potente_mas_gaussiano_dobra_sem_capturar():
-    """Contraprova: a mesma dobra, com a mesma potência, de ruído estacionário, não captura.
+    """Counter-test: the same fold, with the same power, of stationary noise does not capture.
 
-    É a distinção que o ADR 0006 reivindica: o que derruba o seletor é conteúdo dobrado
-    **impulsivo**, não potente.
+    It is the distinction that ADR 0006 claims: what brings the selector down is folded
+    content that is **impulsive**, not powerful.
     """
     gauss, clean = _fault_and_interferer("gaussian"), _fault_and_interferer("none")
     assert _band(gauss, 4) == _band(clean, 4)

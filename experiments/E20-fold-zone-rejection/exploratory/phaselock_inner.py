@@ -1,19 +1,20 @@
-"""Exploratório (revisão adversarial de 2026-11-12, fora do pré-registro): o que a limpeza troca.
+"""Exploratory (adversarial review of 2026-11-12, outside the pre-registration): what the
+cleaning replaces.
 
-Pergunta: as amostras que o critério do ``despike`` troca no fluxo **já decimado**, e que não são
-picos da taxa cheia, são impactos da falha?
+Question: are the samples that the ``despike`` criterion replaces in the **already-decimated**
+stream, and that are not full-rate spikes, impacts of the fault?
 
-- **Detecção:** o mesmo critério do ``despike`` do E20 (10 MAD da segunda diferença, vizinhos em
-  sentido oposto e menores que 0,8 vez).
-- **Travamento em fase:** R = |média de exp(2πi · ordem · revoluções)| nas amostras trocadas, na
-  ordem verdadeira do segmento. É a régua local quando existe; senão, a aninhada.
-- **Nulo:** o 95º percentil de R em 400 ordens sorteadas em [2; 15].
-- **Controle:** os picos da taxa cheia não devem travar na ordem da falha.
+- **Detection:** the same criterion as the E20 ``despike`` (10 MAD of the second difference,
+  neighbours in the opposite direction and smaller than 0.8 times).
+- **Phase locking:** R = |mean of exp(2πi · order · revolutions)| over the replaced samples, at
+  the segment's true order. It is the local ruler when there is one; otherwise, the nested one.
+- **Null:** the 95th percentile of R over 400 orders drawn in [2, 15].
+- **Control:** the full-rate spikes should not lock to the fault order.
 
-Escrito pelo ``reviewer-2`` e trazido para o repositório para que o número citado regenere.
+Written by ``reviewer-2`` and brought into the repository so that the quoted number regenerates.
 
     uv run python experiments/E20-fold-zone-rejection/exploratory/phaselock_inner.py inner_race
-    (ou outer_race)
+    (or outer_race)
 """
 
 from __future__ import annotations
@@ -120,11 +121,11 @@ def main() -> int:
         lock = [r for r in rr if r["n_not_fullrate_spike"] >= 20]
         sig = sum(1 for r in lock if r["r_fault"] > r["null95"])
         print(
-            f"{cond} {m}x: trocadas/segmento med {np.median([r['n_replaced'] for r in rr]):.0f}, "
-            f"nao-pico med {np.median([r['n_not_fullrate_spike'] for r in rr]):.0f} | "
-            f"R na falha med {np.nanmedian([r['r_fault'] for r in lock]):.3f} contra nulo95 med "
-            f"{np.nanmedian([float(r['null95']) for r in lock]):.3f} | acima do nulo95: "
-            f"{sig}/{len(lock)} | R dos picos da taxa cheia med "
+            f"{cond} {m}x: replaced/segment med {np.median([r['n_replaced'] for r in rr]):.0f}, "
+            f"non-spike med {np.median([r['n_not_fullrate_spike'] for r in rr]):.0f} | "
+            f"R at fault med {np.nanmedian([r['r_fault'] for r in lock]):.3f} vs null95 med "
+            f"{np.nanmedian([float(r['null95']) for r in lock]):.3f} | above null95: "
+            f"{sig}/{len(lock)} | R of full-rate spikes med "
             f"{np.nanmedian([r['r_fullrate_spikes'] for r in rr]):.3f}"
         )
     print(f"-> {path}")

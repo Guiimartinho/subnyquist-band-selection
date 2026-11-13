@@ -1,22 +1,22 @@
-"""Dataset de Ottawa 2018 — vibração de rolamento sob velocidade variável.
+"""Ottawa 2018 dataset — bearing vibration under variable speed.
 
-200 kSPS, acelerômetro no canal 1 e **encoder no canal 2**. É o único dos candidatos
-com referência angular, que Smith & Randall dizem ser *"essential"* para velocidade
-variável — e sem a qual a análise de ordem não opera.
+200 kSPS, accelerometer on channel 1 and **encoder on channel 2**. It is the only one of the
+candidates with an angular reference, which Smith & Randall call *"essential"* for variable
+speed — and without which order analysis does not work.
 
-Três fatos que **não estão na página do dataset** e foram determinados por dry-run
-em 2026-09-03:
+Three facts that **are not on the dataset page** and were determined by a dry run
+on 2026-09-03:
 
-- **O encoder tem 1024 pulsos por revolução.** Nenhum valor está documentado; 1024 é
-  o único candidato que faz a ordem 1 (eixo) aparecer no espectro de ordem junto com
-  a frequência de falha.
-- **A banda informativa está em 6,8–10 kHz**, com curtose de 34. Os 97% de energia
-  abaixo de 50 Hz são conteúdo estrutural, não falha.
-- **A folga nominal de 200 kSPS é enganosa.** Só 0,1% da energia está acima de
-  20 kHz, então a subamostragem só começa a testar alguma coisa a partir do Nyquist
-  efetivo da banda informativa, em torno de 20 kSPS.
+- **The encoder has 1024 pulses per revolution.** No value is documented; 1024 is
+  the only candidate that makes order 1 (shaft) appear in the order spectrum together with
+  the fault frequency.
+- **The informative band is at 6.8–10 kHz**, with a kurtosis of 34. The 97% of the energy
+  below 50 Hz is structural content, not fault.
+- **The nominal headroom of 200 kSPS is misleading.** Only 0.1% of the energy is above
+  20 kHz, so undersampling only starts to test anything from the effective Nyquist rate
+  of the informative band onwards, around 20 kSPS.
 
-Licença CC BY 4.0. Acesso programático pela API pública do Mendeley, sem cadastro.
+License CC BY 4.0. Programmatic access through the public Mendeley API, without registration.
 """
 
 from __future__ import annotations
@@ -35,18 +35,18 @@ from numpy.typing import NDArray
 
 FS_HZ = 200_000.0
 PULSES_PER_REV = 1024
-"""Determinado empiricamente; ver o docstring do módulo."""
+"""Determined empirically; see the module docstring."""
 
 API = "https://data.mendeley.com/public-api/datasets/v43hmbwxpm/files?folder_id=root&version=1"
 USER_AGENT = "subnyquist-thesis/0.1 (academic use)"
 
 CONDITIONS = {"H": "healthy", "I": "inner_race", "O": "outer_race"}
 SCENARIOS = ("A", "B", "C", "D")
-"""A: acelerando · B: desacelerando · C: acelera então desacelera · D: o inverso."""
+"""A: accelerating · B: decelerating · C: accelerates then decelerates · D: the reverse."""
 
-# Ordens de falha desta bancada, derivadas do dry-run: a BPFI medida em 5,43 implica
-# 9 elementos e razao ~0,2067, e dai sai a BPFO. Conferir contra a documentacao do
-# dataset antes de publicar.
+# Fault orders of this test rig, derived from the dry run: the BPFI measured at 5.43 implies
+# 9 elements and a ratio of ~0.2067, and the BPFO follows from that. Check against the
+# dataset documentation before publishing.
 N_ELEMENTS = 9
 GEOM_RATIO = 0.2067
 FAULT_ORDERS = {
@@ -58,7 +58,7 @@ FAULT_ORDERS = {
 
 @dataclass(frozen=True)
 class OttawaRecord:
-    """Um registro, sempre carregando a própria procedência."""
+    """A record, always carrying its own provenance."""
 
     name: str
     condition: str
@@ -77,19 +77,19 @@ class OttawaRecord:
         return FAULT_ORDERS.get(self.condition)
 
     def cite(self) -> str:
-        return f"Ottawa {self.name} ({self.condition}, cenário {self.scenario})"
+        return f"Ottawa {self.name} ({self.condition}, scenario {self.scenario})"
 
     def speed_profile_hz(self, ppr: int = PULSES_PER_REV) -> NDArray[np.float64]:
-        """Rotação instantânea em Hz, amostrada na mesma grade da vibração.
+        """Instantaneous rotation in Hz, sampled on the same grid as the vibration.
 
-        Extraída dos flancos de subida do encoder e interpolada. É o que alimenta
+        Extracted from the rising edges of the encoder and interpolated. It is what feeds
         `snq_recon.angular_resample`.
         """
         enc = self.encoder
         thr = 0.5 * (float(enc.max()) + float(enc.min()))
         edges = np.flatnonzero((enc[:-1] < thr) & (enc[1:] >= thr)) / self.fs_hz
         if edges.size < 3:
-            raise ValueError(f"{self.name}: encoder sem pulsos suficientes")
+            raise ValueError(f"{self.name}: encoder without enough pulses")
         rot = 1.0 / (np.diff(edges) * ppr)
         t = np.arange(self.vibration.size) / self.fs_hz
         return np.interp(t, edges[:-1], rot)
@@ -100,7 +100,7 @@ class OttawaRecord:
 
 
 def _file_index() -> dict[str, str]:
-    """Nome do arquivo → URL de download, pela API pública do Mendeley."""
+    """File name → download URL, through the public Mendeley API."""
     req = urllib.request.Request(API, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=90) as r:  # noqa: S310
         data = json.loads(r.read())
@@ -108,7 +108,7 @@ def _file_index() -> dict[str, str]:
 
 
 def download(name: str, dest_dir: str | Path, *, tries: int = 4) -> Path:
-    """Baixa um registro pelo nome, por exemplo ``"I-A-1.mat"``."""
+    """Downloads a record by name, for example ``"I-A-1.mat"``."""
     dest = Path(dest_dir) / name
     if dest.exists() and dest.stat().st_size > 0:
         return dest
@@ -123,21 +123,21 @@ def download(name: str, dest_dir: str | Path, *, tries: int = 4) -> Path:
                 expected = r.headers.get("Content-Length")
                 blob = r.read()
             if expected and len(blob) != int(expected):
-                raise OSError(f"truncado: {len(blob)} de {expected}")
+                raise OSError(f"truncated: {len(blob)} of {expected}")
             if not blob.startswith(b"MATLAB"):
-                raise OSError("resposta não é um arquivo MAT")
+                raise OSError("response is not a MAT file")
             dest.write_bytes(blob)
             return dest
-        # IncompleteRead herda de HTTPException, nao de OSError (ver snq_data.cwru).
+        # IncompleteRead inherits from HTTPException, not from OSError (see snq_data.cwru).
         except (urllib.error.URLError, http.client.HTTPException, OSError, TimeoutError) as exc:
             last = exc
             if attempt < tries - 1:
                 time.sleep(3.0 * (attempt + 1))
-    raise OSError(f"{name}: falhou em {tries} tentativas ({last})")
+    raise OSError(f"{name}: failed after {tries} attempts ({last})")
 
 
 def load(name: str, data_dir: str | Path) -> OttawaRecord:
-    """Carrega um registro já baixado."""
+    """Loads an already downloaded record."""
     from scipy.io import loadmat
 
     path = Path(data_dir) / name
@@ -159,5 +159,5 @@ def record_names(
     scenarios: tuple[str, ...] = SCENARIOS,
     trials: tuple[int, ...] = (1, 2, 3),
 ) -> list[str]:
-    """Nomes de registro para o subconjunto pedido, em ordem determinística."""
+    """Record names for the requested subset, in deterministic order."""
     return [f"{c}-{s}-{t}.mat" for c in conditions for s in scenarios for t in trials]

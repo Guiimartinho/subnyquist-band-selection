@@ -1,4 +1,4 @@
-# E22 - FUMACA: subconjunto do base.yaml (orcamentos 16 e 32, grade ate 34, resultados em results-smoke).
+# E22 - SMOKE TEST: subset of base.yaml (budgets 16 and 32, grid up to 34, results in results-smoke).
 seed: 20261112
 
 datasets:
@@ -9,10 +9,10 @@ datasets:
     trials: [1, 2, 3]
     pulses_per_rev: 1024
     segment_samples: 500000
-    # segmento 0 = calibracao; 1 e 2 = teste
+    # segment 0 = calibration; 1 and 2 = test
     calibration_segment: 0
     test_segments: [1, 2]
-    ceiling0_hz: 25000.0          # teto do E07
+    ceiling0_hz: 25000.0          # E07 ceiling
     nominal: {n_elements: 9, geom_ratio: 0.206}
     budgets: [16, 32]
     factor_grid_max: 34
@@ -24,8 +24,8 @@ datasets:
     fault: outer_race
     fault_family: BPFO
     axis: radial
-    # 1a metade = calibracao; 2a metade = teste
-    ceiling0_hz: null             # sem teto alem do Nyquist efetivo
+    # 1st half = calibration; 2nd half = test
+    ceiling0_hz: null             # no ceiling beyond the effective Nyquist
     budgets: [4, 8, 16]
     factor_grid_max: 16
 
@@ -42,10 +42,10 @@ order_min: 2.0
 
 tat:
   folded_share_threshold: 0.5
-  # uniforme_teto: tetos candidatos como fracao de ceiling0 (o maior admissivel vence)
+  # uniforme_teto: candidate ceilings as a fraction of ceiling0 (the highest admissible wins)
   ceiling_fractions: [1.0, 0.5, 0.25]
 
-cs:   # braco aleatorio_cs: identico ao E13 (sensors2025csvibration), envelope apos reconstruir
+cs:   # aleatorio_cs arm: identical to E13 (sensors2025csvibration), envelope after reconstruction
   order_min: 0.5
   order_max: 24.0
   order_step_per_rev: 1.0

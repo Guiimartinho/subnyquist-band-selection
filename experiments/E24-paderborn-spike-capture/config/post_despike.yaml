@@ -1,4 +1,5 @@
-# E24, remocao de picos no fluxo ja decimado (pre-registro no README, H3, 2026-11-12).
+# E24, spike removal on the already-decimated stream (pre-registration in the README, H3,
+# 2026-11-12).
 seed: 20261112
 data_dir: datasets/raw/paderborn
 settings:

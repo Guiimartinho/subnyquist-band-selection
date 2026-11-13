@@ -1,4 +1,4 @@
-"""Paderborn: geometria, esquema de nomes e leitura de um .mat sintético com a mesma estrutura."""
+"""Paderborn: geometry, naming scheme and reading a synthetic .mat with the same structure."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ def test_computed_orders_and_distance_to_shaft_harmonics():
     o = P.computed_orders()
     assert o["BPFO"] == pytest.approx(3.0543, abs=1e-4)
     assert o["BPFI"] == pytest.approx(4.9457, abs=1e-4)
-    # o motivo da tolerância apertada: as duas ficam a ~0,054 ordem de uma harmônica do eixo
+    # the reason for the tight tolerance: both lie ~0.054 order away from a shaft harmonic
     assert abs(o["BPFO"] - 3) == pytest.approx(0.0543, abs=1e-4)
     assert abs(o["BPFI"] - 5) == pytest.approx(0.0543, abs=1e-4)
 
@@ -56,7 +56,7 @@ def test_load_measurement_reads_the_struct(tmp_path):
 
 
 def test_load_measurement_trims_longer_records_to_4s(tmp_path):
-    """Taxa de 64 kHz fixos: registro mais longo é só mais longo, e é cortado em 4 s."""
+    """Fixed 64 kHz rate: a longer record is just longer, and it is cut to 4 s."""
     stem = "N15_M07_F10_KA01_3"
     (tmp_path / "KA01").mkdir()
     _fake_mat(tmp_path / "KA01" / f"{stem}.mat", stem, n_vib=262062)

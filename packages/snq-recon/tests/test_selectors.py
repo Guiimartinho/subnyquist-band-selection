@@ -1,4 +1,4 @@
-"""Seletores robustos: valores de referência do artigo e o exemplo de ruído impulsivo do Antoni."""
+"""Robust selectors: reference values from the paper and Antoni's impulsive-noise example."""
 
 from __future__ import annotations
 
@@ -16,18 +16,18 @@ def _band(x, fs, lo, up):
 
 
 def test_negentropies_of_stationary_gaussian_noise_match_antoni_2016():
-    """Seção 4.3: 1,1525 (SE) e 0,4228 (SES) sob ruído gaussiano estacionário."""
+    """Section 4.3: 1.1525 (SE) and 0.4228 (SES) under stationary Gaussian noise."""
     rng = np.random.default_rng(0)
     fs, n = 16_000.0, 1 << 20
     x = rng.normal(size=n)
-    z = _band(x, fs, 3000.0, 4000.0)  # L = n * 1000 / 16000 = 65536 amostras críticas
+    z = _band(x, fs, 3000.0, 4000.0)  # L = n * 1000 / 16000 = 65536 critical samples
     assert band_statistic(z, fs, 1000.0, "se_negentropy") == pytest.approx(1.1525, abs=0.08)
     assert band_statistic(z, fs, 1000.0, "ses_negentropy") == pytest.approx(0.4228, abs=0.02)
 
 
 def test_gini_limits():
     fs = 1000.0
-    tone = np.exp(2j * np.pi * 100.0 * np.arange(4096) / fs)  # envelope constante
+    tone = np.exp(2j * np.pi * 100.0 * np.arange(4096) / fs)  # constant envelope
     assert band_statistic(tone, fs, fs, "gini") == pytest.approx(0.0, abs=1e-9)
     spike = np.zeros(4096, dtype=complex)
     spike[100] = 1.0
@@ -44,7 +44,8 @@ def _ringing(n, fs, f0_hz, times_s, amps, decay_s):
 
 
 def test_ses_infogram_ignores_isolated_impulses_that_capture_the_kurtogram():
-    """Seção 5.1.1: o kurtograma vai aos impulsos isolados; o infograma SES, aos repetitivos."""
+    """Section 5.1.1: the kurtogram goes to the isolated impulses; the SES infogram, to the
+    repetitive ones."""
     rng = np.random.default_rng(1)
     fs, n = 20_000.0, 40_000
     rep = _ringing(n, fs, 2000.0, np.arange(0.01, 2.0, 1 / 37.0), np.ones(74), 0.002)

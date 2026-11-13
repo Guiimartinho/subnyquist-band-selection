@@ -1,8 +1,8 @@
-"""Números do E26 no artigo (regra das ordens de falha e aquisição), lidos dos ``analysis.json``.
+"""E26 numbers in the paper (fault-order rule and acquisition), read from ``analysis.json``.
 
-A diferença em diferenças e a contagem por rolamento vêm dos scripts da revisão adversarial,
-versionados em ``experiments/E26-fault-order-guided-selector/exploratory/review_2026-11-13/``
-(``a2_did.py`` e ``a10_bearinglevel.py``).
+The difference in differences and the per-bearing count come from the scripts of the adversarial
+review, versioned in ``experiments/E26-fault-order-guided-selector/exploratory/review_2026-11-13/``
+(``a2_did.py`` and ``a10_bearinglevel.py``).
 
     uv run python papers/shared/figures/num_partA_rule.py
 """

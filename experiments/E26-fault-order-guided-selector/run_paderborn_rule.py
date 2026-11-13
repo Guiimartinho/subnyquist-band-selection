@@ -1,16 +1,18 @@
-"""E26b no Paderborn: a regra de identificação guiada com outras escolhas de banda.
+"""E26b on Paderborn: the guided identification rule with other band choices.
 
-A confirmação do E26 mudou duas coisas ao mesmo tempo, a banda e a regra de identificação. Aqui
-a regra fica fixa: o escore de cada falha é a proeminência média nas janelas das harmônicas da
-ordem da geometria, e a decisão usa o limiar dos sãos. Muda só a banda:
+The E26 confirmation changed two things at the same time, the band and the identification rule.
+Here the rule stays fixed: the score of each fault is the mean prominence in the windows of the
+harmonics of the geometric order, and the decision uses the healthy threshold. Only the band
+changes:
 
-- ``kurtograma``: a banda do kurtograma rápido, até o Nyquist efetivo (o E24);
-- ``infograma_ses``: a banda do infograma SES, na mesma partição;
-- ``banda_larga``: [f_min, fs/2], sem seleção (o envelope clássico sem kurtograma);
-- ``sorteada``: uma banda sorteada da partição do seletor guiado, com semente por segmento.
+- ``kurtograma``: the band of the fast kurtogram, up to the effective Nyquist (as in E24);
+- ``infograma_ses``: the band of the SES infogram, on the same partition;
+- ``banda_larga``: [f_min, fs/2], without selection (the classical envelope without a kurtogram);
+- ``sorteada``: a band drawn at random from the partition of the guided selector, with a seed per
+  segment.
 
-O seletor guiado do E26 é o máximo do mesmo escore sobre as 23 bandas da partição. Ele vem do
-``results-paderborn/metrics.csv`` e não é recalculado aqui.
+The guided selector of E26 is the maximum of the same score over the 23 bands of the partition. It
+comes from ``results-paderborn/metrics.csv`` and is not recomputed here.
 
     uv run python experiments/E26-fault-order-guided-selector/run_paderborn_rule.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn_rule.yaml
@@ -57,7 +59,7 @@ CLEAN = base.CLEAN
 
 
 def band_scores(x, v, fs: float, band, cfg: dict) -> dict[str, float]:
-    """Escore guiado de cada falha numa banda só: proeminência média nas janelas das harmônicas."""
+    """Guided score of each fault in a single band: mean prominence in the harmonic windows."""
     g = cfg["guided"]
     try:
         spec = envelope_order_spectrum(x, fs, v, band, samples_per_rev=int(cfg["samples_per_rev"]))
@@ -84,7 +86,7 @@ def bands_for(x, fs: float, cfg: dict, seed: int) -> dict[str, tuple[float, floa
     f_min = float(cfg["kurtogram"]["f_min_hz"])
     out = {}
     for name, sel in (("kurtograma", "sk"), ("infograma_ses", "ses_negentropy")):
-        with contextlib.suppress(ValueError):  # busca vazia: a estratégia fica sem linha
+        with contextlib.suppress(ValueError):  # empty search: the strategy gets no row
             out[name] = tuple(float(b) for b in e24.select_band(x, fs, sel, cfg).band_hz)
     out["banda_larga"] = (f_min, fs / 2.0)
     part = guided.bands(fs, f_min, int(cfg["guided"]["max_level"]))
@@ -100,7 +102,7 @@ def task(job) -> dict:
     for n in (int(t) for t in cfg["test_measurements"]):
         path = pb.measurement_path(root, code, setting, n)
         if not path.exists():
-            out["unreadable"][n] = "ausente"
+            out["unreadable"][n] = "missing"
             continue
         out["sha256"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         try:
@@ -141,11 +143,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=None)
-    ap.add_argument("--bearings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--settings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--factors", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--results", type=str, default=None, help="só para fumaça")
+    ap.add_argument("--bearings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--settings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--factors", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--results", type=str, default=None, help="smoke test only")
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     if args.measurements:
@@ -158,7 +160,7 @@ def main() -> int:
     t0 = time.time()
     with ProcessPoolExecutor(max_workers=args.workers or int(cfg["compute"]["workers"])) as pool:
         res = list(pool.map(task, jobs))
-    print(f"{len(res)} registros em {time.time() - t0:.0f} s", flush=True)
+    print(f"{len(res)} records in {time.time() - t0:.0f} s", flush=True)
     out = EXP / (args.results or cfg["output"]["results_dir"])
     out.mkdir(parents=True, exist_ok=True)
     rows = [r for o in res for r in o["rows"]]
@@ -168,7 +170,7 @@ def main() -> int:
         src.update(p.relative_to(ROOT).as_posix().encode())
         src.update(p.read_bytes())
     manifest = {
-        "experiment": "E26b-fault-order-guided-selector (Paderborn, regra fixa)",
+        "experiment": "E26b-fault-order-guided-selector (Paderborn, fixed rule)",
         "timestamp_utc": datetime.now(UTC).isoformat(),
         "config_path": args.config.as_posix(),
         "config_sha256": base.sha256_file(args.config),

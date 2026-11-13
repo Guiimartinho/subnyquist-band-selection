@@ -1,130 +1,134 @@
-# E25 - Co-arranjo coprimo: estatística cíclica da falha sem dobra do eixo da portadora
+# E25 - Co-prime co-array: cyclic statistics of the fault without folding on the carrier axis
 
-Aberto em 2026-11-12, depois do E20, do E23 e do E24.
+Opened on 2026-11-12, after E20, E23 and E24.
 
-## Por que este experimento
+## Why this experiment
 
-A Parte (a) do artigo mostra o mecanismo: sob decimação uniforme pura, conteúdo de fora da banda
-dobra sobre a faixa de busca e captura o seletor de banda. A proposta aqui é amostrar de modo que
-a dobra não aconteça no domínio que o diagnóstico usa.
+Part (a) of the paper shows the mechanism: under pure uniform decimation, out-of-band content
+folds onto the search range and captures the band selector. The proposal here is to sample in such
+a way that the fold does not happen in the domain that the diagnosis uses.
 
-- **O diagnóstico não precisa da forma de onda.** Basta a correlação cíclica R(τ, α) nas
-  frequências cíclicas da falha, e a geometria do rolamento dá quais são.
-- **Dois amostradores coprimos.**
-  - Com passos M e N (mdc = 1) rodando sem parar, todo atraso inteiro aparece (Bézout), com cerca
-    de T/(MN) pares por atraso.
-  - Por isso o eixo da portadora fica sem dobra até f_s/2, com taxa média de 1/M + 1/N − 1/(MN)
-    da taxa cheia.
-  - Com M = 8 e N = 9, a taxa média é 0,222, abaixo de 1/4.
-- **O espectro do envelope ao quadrado de qualquer banda** sai de R(τ, α)
-  (`snq_recon.coarray.band_ses`). O pipeline continua o clássico; só a estimação de segunda ordem
-  muda.
-- **Hardware:** no nRF54L15 são dois temporizadores disparando o SAADC pelo DPPI, sem a CPU.
+- **The diagnosis does not need the waveform.** The cyclic correlation R(τ, α) at the cyclic
+  frequencies of the fault is enough, and the bearing geometry gives which ones they are.
+- **Two co-prime samplers.**
+  - With steps M and N (gcd = 1) running continuously, every integer lag appears (Bézout), with
+    about T/(MN) pairs per lag.
+  - That is why the carrier axis has no folding up to f_s/2, with a mean rate of
+    1/M + 1/N − 1/(MN) of the full rate.
+  - With M = 8 and N = 9, the mean rate is 0.222, below 1/4.
+- **The squared envelope spectrum of any band** comes out of R(τ, α)
+  (`snq_recon.coarray.band_ses`). The pipeline remains the classical one; only the second-order
+  estimation changes.
+- **Hardware:** on the nRF54L15 these are two timers triggering the SAADC through the DPPI, without
+  the CPU.
 
-## Novidade (checagem de 2026-11-12, `lit-scout`)
+## Novelty (check of 2026-11-12, `lit-scout`)
 
-**Termos buscados** (citações para frente no Semantic Scholar e palavras-chave no Crossref e no
-OpenAlex): amostragem coprima, régua esparsa ou multicoset, combinados com espectro cíclico,
-coerência espectral ou cicloestacionaridade, e com rolamento, vibração ou diagnóstico.
+**Terms searched** (forward citations on Semantic Scholar and keywords on Crossref and
+OpenAlex): co-prime sampling, sparse ruler or multicoset, combined with cyclic spectrum, spectral
+coherence or cyclostationarity, and with bearing, vibration or diagnosis.
 
-Não foi encontrado trabalho que reúna as quatro peças:
-- amostragem coprima ou régua esparsa;
-- estimação da correlação cíclica pelo co-arranjo;
-- frequências cíclicas da falha dadas pela geometria;
-- diagnóstico de rolamento.
+No work was found that brings together the four pieces:
+- co-prime sampling or a sparse ruler;
+- estimation of the cyclic correlation through the co-array;
+- cyclic frequencies of the fault given by the geometry;
+- bearing diagnosis.
 
-**Os mais próximos são parciais:**
-- `xu2026covpreserving`: régua esparsa em máquina, sem estatística cíclica; preprint não revisado.
-- `cao2024dcs`: co-arranjo coprimo para senoides estacionárias.
-- `tian2012cyclic`, `cohen2017subnyquistcyc` e `zhang2026fccse`: espectro cíclico sub-Nyquist em
-  comunicações.
-- `gkoktsi2019psbs`: multicoset de baixa potência para espectro de potência estrutural.
+**The closest ones are partial:**
+- `xu2026covpreserving`: sparse ruler on machinery, without cyclic statistics; preprint, not peer
+  reviewed.
+- `cao2024dcs`: co-prime co-array for stationary sinusoids.
+- `tian2012cyclic`, `cohen2017subnyquistcyc` and `zhang2026fccse`: sub-Nyquist cyclic spectrum in
+  communications.
+- `gkoktsi2019psbs`: low-power multicoset for structural power spectra.
 
-**Citações para frente de 2022 para cá**, filtradas pelo título, sem nenhum título de rolamento:
-- 661 de `vaidyanathan2011coprime`;
-- 26 de `tian2012cyclic`;
-- 50 de `romero2016ccs`.
+**Forward citations from 2022 onwards**, filtered by title, with no bearing title among them:
+- 661 of `vaidyanathan2011coprime`;
+- 26 of `tian2012cyclic`;
+- 50 of `romero2016ccs`.
 
-**Teoria que não se aplica diretamente.** O limite de 4/5 da taxa de Nyquist de
-`cohen2017subnyquistcyc` (Seção IV-B, Teorema 1, Eq. 52) é uma condição suficiente para recuperar o
-espectro cíclico **inteiro**, todas as frequências cíclicas, sem conhecimento prévio. Aqui só
-importam poucas frequências cíclicas baixas e conhecidas.
+**Theory that does not apply directly.** The bound of 4/5 of the Nyquist rate of
+`cohen2017subnyquistcyc` (Section IV-B, Theorem 1, Eq. 52) is a sufficient condition to recover
+the **whole** cyclic spectrum, all cyclic frequencies, without prior knowledge. Here only a few
+low, known cyclic frequencies matter.
 
-A condição para o nosso caso precisa ser derivada. Ela tem duas partes:
-- **Cobertura de atrasos:** todos os inteiros, pelo teorema de Bézout.
-- **Taxa cíclica:** α_max < f_s/(2MN), porque o produto de cada atraso só existe uma vez a cada MN
-  amostras.
+The condition for our case has to be derived. It has two parts:
+- **Lag coverage:** all integers, by Bézout's theorem.
+- **Cyclic rate:** α_max < f_s/(2MN), because the product for each lag exists only once every MN
+  samples.
 
-**Riscos apontados pela literatura:**
-- a variância por atraso cresce com MN/T;
-- o comprimento de registro necessário;
-- a rotação variável (`abboud2017orderfreq`);
-- a hipótese de estacionaridade no sentido amplo.
+**Risks pointed out by the literature:**
+- the variance per lag grows with MN/T;
+- the required record length;
+- variable rotation speed (`abboud2017orderfreq`);
+- the wide-sense stationarity assumption.
 
-## Piloto exploratório (2026-11-12, NÃO pré-registrado)
+## Exploratory pilot (2026-11-12, NOT pre-registered)
 
-O piloto decide se vale um pré-registro. Os números dele não vão ao artigo como confirmatórios.
+The pilot decides whether a pre-registration is worthwhile. Its numbers do not go into the paper
+as confirmatory.
 
-**Pergunta.** Na mesma taxa média, ou abaixo dela, o co-arranjo coprimo preserva a assinatura
-cíclica da falha melhor que a decimação uniforme quando um interferente impulsivo acima do Nyquist
-efetivo dobra sobre a banda da falha?
+**Question.** At the same mean rate, or below it, does the co-prime co-array preserve the cyclic
+signature of the fault better than uniform decimation when an impulsive interferer above the
+effective Nyquist folds onto the fault band?
 
-**Protocolo** (`pilot.py`), o de um nó com comissionamento:
-- **Dados:** os 13 registros de falha do CWRU 48k do E23, com rotação constante.
-- **Calibração:** a banda da falha é calibrada uma vez em taxa cheia, na primeira metade do
-  registro e sem injeção, pelo kurtograma do E23 com teto de 10 kHz.
-- **Teste:** na segunda metade.
-  - Sem injeção, ou com as rajadas impulsivas do E23 (97,7 Hz, portadoras de 13, 16, 19 e
-    22 kHz) na dose máxima. É a mesma semente do E23, com rótulo de +20 dB e +17 dB reais.
-- **Padrões, todos com o mesmo estimador:** espectro do envelope ao quadrado da banda calibrada,
-  pela correlação cíclica, até o atraso 192.
-  - taxa cheia;
-  - uniforme por 4 (0,25);
-  - coprimo (8, 9) (0,222).
-- **Estimativa:** o argmax entre 20 e 330 Hz, sem prior. O teto de 330 Hz fica abaixo de
+**Protocol** (`pilot.py`), that of a node with commissioning:
+- **Data:** the 13 fault records of CWRU 48k from E23, with constant rotation speed.
+- **Calibration:** the fault band is calibrated once at full rate, on the first half of the
+  record and without injection, by the E23 kurtogram with a 10 kHz ceiling.
+- **Test:** on the second half.
+  - Without injection, or with the impulsive bursts of E23 (97.7 Hz, carriers at 13, 16, 19 and
+    22 kHz) at the maximum dose. It is the same seed as E23, labelled +20 dB and actually +17 dB.
+- **Patterns, all with the same estimator:** squared envelope spectrum of the calibrated band,
+  through the cyclic correlation, up to lag 192.
+  - full rate;
+  - uniform by 4 (0.25);
+  - co-prime (8, 9) (0.222).
+- **Estimate:** the argmax between 20 and 330 Hz, without prior. The 330 Hz ceiling lies below
   f_s/(2·72) = 333 Hz.
-- **Acerto:** |estimativa − frequência da geometria| ≤ 2 Hz, como no E02 e no E23.
-- **Também registrado:** a proeminência da raia de falha, isto é, o pico a ±2 Hz da verdade
-  dividido pela mediana em ±20 %.
-- **Referência:** o resultado do kurtograma cego do E23 em 4×, nas mesmas condições.
+- **Hit:** |estimate − geometry frequency| ≤ 2 Hz, as in E02 and E23.
+- **Also recorded:** the prominence of the fault line, that is, the peak within ±2 Hz of the truth
+  divided by the median within ±20 %.
+- **Reference:** the result of the E23 blind kurtogram at 4×, under the same conditions.
 
-## Resultado do piloto (2026-11-12): negativo para o co-arranjo coprimo
+## Pilot result (2026-11-12): negative for the co-prime co-array
 
-Os dados estão em `results-pilot/metrics.csv` e `summary.json`: 13 registros, 5 condições e 3
-padrões.
+The data are in `results-pilot/metrics.csv` and `summary.json`: 13 records, 5 conditions and 3
+patterns.
 
-| condição | taxa cheia | uniforme por 4 (0,25) | coprimo (8, 9) (0,222) | kurtograma cego do E23 em 4× |
+| condition | full rate | uniform by 4 (0.25) | co-prime (8, 9) (0.222) | E23 blind kurtogram at 4× |
 |---|---|---|---|---|
-| sem injeção | 23 % (proeminência 47) | **92 %** (64) | 0 % (2,9) | 92 % |
-| rajadas em 13, 16, 19 e 22 kHz | 0–23 % (28–43) | **92 %** (59–63) | 0 % (2,8–3,0) | 23–38 % |
+| no injection | 23 % (prominence 47) | **92 %** (64) | 0 % (2.9) | 92 % |
+| bursts at 13, 16, 19 and 22 kHz | 0–23 % (28–43) | **92 %** (59–63) | 0 % (2.8–3.0) | 23–38 % |
 
-**Leitura:**
-- **O coprimo não é viável com estes registros** (5 s a 48 kS/s).
-  - A raia de falha fica com proeminência de cerca de 2,9 vezes a mediana local, contra cerca de
-    60 da uniforme. Com cerca de 1550 bins na busca, o máximo do ruído passa de 10 vezes a mediana,
-    então a raia some no ruído.
-  - **A causa é estrutural.** Cada atraso recebe só cerca de T/72 pares, e cada produto
-    x[n]x[n−τ] carrega a potência do sinal inteiro, e não só a da banda.
-  - A banda calibrada (de 5,3–10 kHz a 8,4–10 kHz) tem uma fração pequena da energia, e a
-    variância do co-arranjo engole a assinatura. É o risco de variância que a literatura aponta.
-  - No teste sintético (`test_coarray.py`), a banda modulada concentrava quase toda a potência,
-    por isso funcionou.
-  - Na mesma contagem de amostras por diagnóstico, o coprimo perde: o eixo da portadora sem dobra
-    não compensa a variância.
-- **A taxa cheia "erra" por escolher a segunda harmônica.** As estimativas erradas ficam em
-  207–216 Hz, que é 2 × BPFO. O estimador do piloto é um argmax simples, sem conferência de
-  harmônicas, e o do pipeline clássico (`estimate_without_prior`) trata isso. A proeminência na
-  frequência certa é alta.
-- **A uniforme por 4 com a banda fixada no comissionamento acerta 92 %, com ou sem o interferente**,
-  contra 23–38 % do kurtograma cego do E23 no mesmo sinal.
-  - Isso indica que a captura é um problema de escolha da banda, e que uma banda fixa a evita.
-  - **Ressalva séria:** aqui a banda foi calibrada com a falha já presente (primeira metade do mesmo
-    registro de falha). Num comissionamento real a máquina está sã, e o kurtograma não acha a banda
-    da falha sem impactos.
+**Reading:**
+- **The co-prime pattern is not viable with these records** (5 s at 48 kS/s).
+  - The fault line has a prominence of about 2.9 times the local median, against about 60 for the
+    uniform pattern. With about 1550 bins in the search, the noise maximum exceeds 10 times the
+    median, so the line disappears into the noise.
+  - **The cause is structural.** Each lag receives only about T/72 pairs, and each product
+    x[n]x[n−τ] carries the power of the whole signal, and not only that of the band.
+  - The calibrated band (from 5.3–10 kHz to 8.4–10 kHz) holds a small fraction of the energy, and
+    the variance of the co-array swallows the signature. This is the variance risk that the
+    literature points out.
+  - In the synthetic test (`test_coarray.py`), the modulated band held almost all the power, which
+    is why it worked.
+  - At the same count of samples per diagnosis, the co-prime pattern loses: the fold-free carrier
+    axis does not make up for the variance.
+- **The full rate "misses" by choosing the second harmonic.** The wrong estimates lie at
+  207–216 Hz, which is 2 × BPFO. The pilot's estimator is a simple argmax, without a harmonic check,
+  while that of the classical pipeline (`estimate_without_prior`) handles this. The prominence at
+  the right frequency is high.
+- **Uniform by 4 with the band fixed at commissioning hits 92 %, with or without the
+  interferer**, against 23–38 % for the E23 blind kurtogram on the same signal.
+  - This indicates that capture is a band-choice problem, and that a fixed band avoids it.
+  - **Serious caveat:** here the band was calibrated with the fault already present (first half of
+    the same fault record). In a real commissioning the machine is healthy, and the kurtogram does
+    not find the fault band without impacts.
 
-**Decisão:** o co-arranjo coprimo, como desenhado, não vai a pré-registro. Ficam em aberto:
-- estimadores de menor variância, como ponderar os atrasos pelo número de pares ou usar só os
-  atrasos bem estimados;
-- registros muito mais longos;
-- um pré-filtro analógico passa-faixa, que reduziria a variância. Esse pressupõe conhecer a banda,
-  e aí a amostragem passa-faixa clássica (`vaughan1991`) já resolve.
+**Decision:** the co-prime co-array, as designed, does not go to pre-registration. Left open:
+- lower-variance estimators, such as weighting the lags by the number of pairs or using only the
+  well-estimated lags;
+- much longer records;
+- an analog band-pass pre-filter, which would reduce the variance. That presupposes knowing the
+  band, and then classical band-pass sampling (`vaughan1991`) already solves the problem.

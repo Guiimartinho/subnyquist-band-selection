@@ -1,13 +1,13 @@
-"""E15: porta de poder (README, seção "Porta de poder (pré-registro, 2026-11-12)").
+"""E15: power gate (README, section "Power gate (preregistration, 2026-11-12)").
 
-Roda só em CPU, sobre o ``metrics.csv`` da rodada decisiva. Pergunta se o Ottawa consegue detectar,
-pela regra da H1, um braço que seja de fato melhor que o baseline.
+Runs on CPU only, on the ``metrics.csv`` of the deciding run. It asks whether Ottawa can detect,
+by the H1 rule, an arm that is in fact better than the baseline.
 
-- **Braços plantados.** Partem de ``uniforme_treino``. Cada segmento em que ele erra vira acerto
-  com probabilidade q, com o mesmo sorteio nas duas réguas; onde ele acerta, o plantado também
-  acerta.
-- **Bootstrap.** É o ``cluster_bootstrap`` do ``run.py``, vetorizado. O sinal de cada reamostra é
-  calculado em inteiros, para que ``Δ* = 0`` conte contra a H1 exatamente como foi pré-registrado.
+- **Planted arms.** They start from ``uniforme_treino``. Each segment it misses becomes a hit with
+  probability q, with the same draw on both rulers; where it hits, the planted arm also hits.
+- **Bootstrap.** It is the ``cluster_bootstrap`` of ``run.py``, vectorized. The sign of each
+  resample is computed in integers, so that ``Δ* = 0`` counts against H1 exactly as it was
+  preregistered.
 
     uv run python experiments/E15-learned-sampling-mask/power_gate.py \
         experiments/E15-learned-sampling-mask/results/metrics.csv \
@@ -35,13 +35,13 @@ DS, VAR = "ottawa", "bruto"
 RULERS = ("local", "nested")
 BASELINES = ("uniforme_treino", "dec_uniforme_treino", "dec_aleatoria")
 BUDGETS = (4, 8, 16, 32)
-SCALE = 360360  # mmc(1..15): médias de até 15 acertos (3 segmentos x 5 sementes) viram inteiros
+SCALE = 360360  # lcm(1..15): means of up to 15 hits (3 segments x 5 seeds) become integers
 ALPHA, MIN_BUDGETS = 0.05, 2
 
 
 @dataclass
 class Pairs:
-    """Pares (divisão, registro) de um teste, com os índices do bootstrap por aglomerado."""
+    """(split, record) pairs of a test, with the indices for the cluster bootstrap."""
 
     keys: list
     s_idx: np.ndarray
@@ -67,7 +67,7 @@ def make_pairs(keys, group_of: dict, cluster_of: dict) -> Pairs:
 
 
 def boot_p(d: np.ndarray, pr: Pairs, n_boot: int, rng, min_clusters=3, min_splits=2):
-    """(diferença em pontos, p unilateral para a > b), como o ``cluster_bootstrap`` do run.py."""
+    """(difference in points, one-sided p for a > b), as in ``cluster_bootstrap`` of run.py."""
     ng = len(pr.n_clusters)
     point = float(np.mean([d[pr.g_idx == g].mean() for g in range(ng)]))
     if min(pr.n_clusters) < min_clusters or pr.n_splits < min_splits:
@@ -83,7 +83,7 @@ def boot_p(d: np.ndarray, pr: Pairs, n_boot: int, rng, min_clusters=3, min_split
         nums.append(w @ di[sel])
         dens.append(w.sum(axis=1))
     valid = np.all([den > 0 for den in dens], axis=0)
-    # sinal exato de sum_g num_g/den_g: multiplica pelo produto (positivo) dos denominadores
+    # exact sign of sum_g num_g/den_g: multiply by the (positive) product of the denominators
     total = np.zeros(n_boot, dtype=np.int64)
     for g in range(ng):
         others = np.ones(n_boot, dtype=np.int64)
@@ -96,7 +96,7 @@ def boot_p(d: np.ndarray, pr: Pairs, n_boot: int, rng, min_clusters=3, min_split
 
 
 def decide(tests: list[tuple[int, float, float]]) -> tuple[bool, set[int]]:
-    """Regra da H1 numa régua: Holm sobre os testes; orçamento vence se todos os dele passam."""
+    """H1 rule on one ruler: Holm over the tests; a budget wins if all of its tests pass."""
     adj = e15.holm([p for _, _, p in tests])
     passed = defaultdict(list)
     for (b, diff, _), pa in zip(tests, adj, strict=True):
@@ -105,17 +105,17 @@ def decide(tests: list[tuple[int, float, float]]) -> tuple[bool, set[int]]:
     return len(wins) >= MIN_BUDGETS, wins
 
 
-# ----------------------------------------------------------------------------- dados reais
+# ----------------------------------------------------------------------------- real data
 @dataclass
 class Cell:
-    """Um (orçamento, régua) do desenho real: segmentos do baseline e os pares de cada teste."""
+    """One (budget, ruler) of the real design: baseline segments and the pairs of each test."""
 
-    seg_key: np.ndarray  # índice do par (no baseline) de cada segmento válido
-    seg_hit: np.ndarray  # acerto do baseline em cada segmento válido
-    seg_row: np.ndarray  # índice da linha de segmento (para sortear igual nas duas réguas)
-    keys: list  # pares do baseline
-    bal: float  # acurácia balanceada do baseline (pontos)
-    tests: dict  # baseline -> (Pairs, índices do plantado nos pares, valores do baseline)
+    seg_key: np.ndarray  # index of the pair (in the baseline) of each valid segment
+    seg_hit: np.ndarray  # baseline hit on each valid segment
+    seg_row: np.ndarray  # index of the segment row (to draw the same on both rulers)
+    keys: list  # baseline pairs
+    bal: float  # baseline balanced accuracy (points)
+    tests: dict  # baseline -> (Pairs, indices of the planted arm in the pairs, baseline values)
 
 
 def load(metrics: Path):
@@ -170,7 +170,7 @@ def build_cells(rows, group_of, cluster_of_unit) -> dict:
 
 
 def planted_means(cell: Cell, u: np.ndarray, q: float) -> np.ndarray:
-    """Média por par do braço plantado; ``u`` tem forma (sementes, linhas de segmento)."""
+    """Per-pair mean of the planted arm; ``u`` has shape (seeds, segment rows)."""
     uu = u[:, cell.seg_row]
     hit = np.where(cell.seg_hit[None, :] == 1, 1.0, (uu < q).astype(float))
     num = np.bincount(cell.seg_key, weights=hit.sum(axis=0), minlength=len(cell.keys))
@@ -179,7 +179,7 @@ def planted_means(cell: Cell, u: np.ndarray, q: float) -> np.ndarray:
 
 
 def run_real(cells, n_rows: dict, effect, n_seeds: int, n_sim: int, n_boot: int, rng):
-    """Desenhos D0 a D3. Devolve contagens de aprovação pelas duas regras."""
+    """Designs D0 to D3. Returns the pass counts under both rules."""
     out = {
         rule: {"h1": 0, "ruler": {ru: 0 for ru in RULERS}, "wins": defaultdict(int)}
         for rule in ("pre", "otim")
@@ -217,9 +217,9 @@ def run_real(cells, n_rows: dict, effect, n_seeds: int, n_sim: int, n_boot: int,
     return out, qs
 
 
-# ----------------------------------------------------------------------------- DK sintético
+# ----------------------------------------------------------------------------- synthetic DK
 def dk_params(cells, group_of):
-    """Por (orçamento, régua) e pista: taxa de erro do baseline e segmentos válidos por registro."""
+    """Per (budget, ruler) and race: baseline error rate and valid segments per record."""
     par = {}
     for (b, ru), c in cells.items():
         groups = sorted({group_of[k[1]] for k in c.keys})
@@ -239,7 +239,7 @@ def dk_params(cells, group_of):
 
 
 def run_dk(par, effect, n_seeds: int, n_sim: int, n_boot: int, rng):
-    """Cada registro testado uma vez: 12 por pista (4 aglomerados x 3), 4 dobras estratificadas."""
+    """Each record tested once: 12 per race (4 clusters x 3), 4 stratified folds."""
     out = {"h1": 0, "ruler": {ru: 0 for ru in RULERS}, "wins": defaultdict(int)}
     groups = sorted({g for v in par.values() for g in v})
     recs = [(g, c, j) for g in groups for c in range(4) for j in range(3)]
@@ -289,9 +289,9 @@ def run_dk(par, effect, n_seeds: int, n_sim: int, n_boot: int, rng):
     return out, qs
 
 
-# ----------------------------------------------------------------------------- validação
+# ----------------------------------------------------------------------------- validation
 def validate(rows, group_of, cluster_of, hyp_csv: Path, n_boot: int, seed: int) -> list[dict]:
-    """O bootstrap vetorizado contra o hypotheses.csv real (p e diferença)."""
+    """The vectorized bootstrap against the real hypotheses.csv (p and difference)."""
     ref = {
         (h["ruler"], int(h["budget"]), h["baseline"]): h
         for h in csv.DictReader(hyp_csv.open(encoding="utf-8"))
@@ -342,7 +342,7 @@ def main() -> None:
     (args.out / "validation.json").write_text(json.dumps(val, indent=1), encoding="utf-8")
     worst_p = max(abs(v["p_vec"] - v["p_ref"]) for v in val)
     worst_d = max(abs(v["diff_vec"] - v["diff_ref"]) for v in val)
-    print(f"validacao: maior |dp| = {worst_p:.4f}, maior |ddiff| = {worst_d:.3f} ponto")
+    print(f"validation: largest |dp| = {worst_p:.4f}, largest |ddiff| = {worst_d:.3f} point")
     if args.validate_only:
         return
 
@@ -378,9 +378,9 @@ def main() -> None:
         out_dk, qs_dk = run_dk(par, effect, 5, args.n_sim, args.n_boot, rng)
         results.append(row_of("DK", effect, "otim", args.n_sim, out_dk, qs_dk, None))
         print(
-            f"DK {effect!s:>9}: otimista H1 {out_dk['h1'] / args.n_sim:.2f} "
+            f"DK {effect!s:>9}: optimistic H1 {out_dk['h1'] / args.n_sim:.2f} "
             f"(local {out_dk['ruler']['local'] / args.n_sim:.2f}, "
-            f"aninhada {out_dk['ruler']['nested'] / args.n_sim:.2f})"
+            f"nested {out_dk['ruler']['nested'] / args.n_sim:.2f})"
         )
     with (args.out / "power.csv").open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(results[0]))
@@ -426,9 +426,9 @@ def row_of(name, effect, rule, n_sim, out, qs, cells) -> dict:
 def summary_line(name, effect, n_sim, out, qs) -> str:
     return (
         f"{name:28s} {effect!s:>9}: pre H1 {out['pre']['h1'] / n_sim:.2f} | "
-        f"otimista H1 {out['otim']['h1'] / n_sim:.2f} "
+        f"optimistic H1 {out['otim']['h1'] / n_sim:.2f} "
         f"(local {out['otim']['ruler']['local'] / n_sim:.2f}, "
-        f"aninhada {out['otim']['ruler']['nested'] / n_sim:.2f})"
+        f"nested {out['otim']['ruler']['nested'] / n_sim:.2f})"
     )
 
 

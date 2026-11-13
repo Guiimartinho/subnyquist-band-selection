@@ -1,13 +1,13 @@
-"""E15: porta de poder no Paderborn (README, "Porta de poder no Paderborn (pré-registro)").
+"""E15: power gate on Paderborn (README, "Power gate on Paderborn (preregistration)").
 
-Roda só em CPU e sem treinar nada. Faz três coisas em sequência.
+Runs on CPU only and trains nothing. It does three things in sequence.
 
-1. **Estágio clássico do E15 no Paderborn:** réguas em taxa cheia e a grade uniforme de
-   decimação pura, com ``classic``, ``calibrate`` e ``choose_factor`` do ``run.py``.
-2. **Baseline:** ``uniforme_treino``, com o fator escolhido nos rolamentos fora do teste, em
-   K-fold por rolamento.
-3. **Porta de poder:** a do Ottawa (``power_gate.py``), com aglomerado = rolamento e só a regra
-   otimista, porque não há braço aprendido.
+1. **Classical stage of E15 on Paderborn:** full-rate rulers and the uniform grid of pure
+   decimation, with ``classic``, ``calibrate`` and ``choose_factor`` from ``run.py``.
+2. **Baseline:** ``uniforme_treino``, with the factor chosen on the bearings outside the test
+   set, in K-fold by bearing.
+3. **Power gate:** the Ottawa one (``power_gate.py``), with cluster = bearing and only the
+   optimistic rule, because there is no learned arm.
 
     OMP_NUM_THREADS=1 python experiments/E15-learned-sampling-mask/paderborn_gate.py \
         --config experiments/E15-learned-sampling-mask/config/paderborn_gate.yaml --workers 16
@@ -47,7 +47,7 @@ def nominal_of(code: str) -> float:
 
 
 def line_calibration(x: np.ndarray, v: np.ndarray, nominal: float, cfg: dict) -> dict:
-    """Raia em taxa cheia: kurtograma, envelope em ordens, refino em ±span e proeminência."""
+    """Full-rate line: kurtogram, envelope in orders, refinement within ±span and prominence."""
     try:
         k = e15.kurtogram(x, FS, e15.ceiling_at(cfg["ceiling0_hz"], FS), cfg)
         spec = envelope_order_spectrum(x, FS, v, k.band_hz, samples_per_rev=cfg["samples_per_rev"])
@@ -77,7 +77,7 @@ def line_calibration(x: np.ndarray, v: np.ndarray, nominal: float, cfg: dict) ->
 
 
 def classical_task(task: tuple[dict, str, str]) -> dict:
-    """Um registro (rolamento x ajuste): calibração da medição 1, réguas e grade dos testes."""
+    """One record (bearing x setting): calibration from measurement 1, rulers and test grid."""
     cfg, root, rid = task
     code, setting = rid.split("_", 1)
     nominal = nominal_of(code)
@@ -97,7 +97,7 @@ def classical_task(task: tuple[dict, str, str]) -> dict:
         out["sha256"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         try:
             m = pb.load_measurement(root, code, setting, n)
-        except ValueError as exc:  # medição ilegível: fica fora (ver snq_data.paderborn)
+        except ValueError as exc:  # unreadable measurement: left out (see snq_data.paderborn)
             out["unreadable"][n] = str(exc)[:120]
             if n == int(cfg["calibration_measurement"]):
                 out["calib"] = {
@@ -211,7 +211,7 @@ def build_rows(cfg, ids, cls, splits) -> list[dict]:
 
 
 def gate(cfg, rows, seed) -> list[dict]:
-    """Porta de poder com a regra otimista: só o teste contra ``uniforme_treino``."""
+    """Power gate with the optimistic rule: only the test against ``uniforme_treino``."""
     pgc = cfg["power_gate"]
     group_of = {r["record"]: r["group"] for r in rows}
     cluster_of = {r["record"]: r["record"].split("_", 1)[0] for r in rows}
@@ -289,7 +289,7 @@ def gate(cfg, rows, seed) -> list[dict]:
             out.append(row)
             print(
                 f"{name} {effect!s:>9}: H1 {row['power_h1']:.2f} (local {row['power_local']:.2f},"
-                f" aninhada {row['power_nested']:.2f})",
+                f" nested {row['power_nested']:.2f})",
                 flush=True,
             )
     return out
@@ -317,7 +317,7 @@ def main() -> None:
     t0 = time.time()
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
         cls = list(pool.map(classical_task, [(cfg, str(root), r) for r in ids]))
-    print(f"estagio classico: {len(cls)} registros em {time.time() - t0:.0f} s", flush=True)
+    print(f"classical stage: {len(cls)} records in {time.time() - t0:.0f} s", flush=True)
     splits = kfold_by_bearing(cfg, ids, seed)
     rows = build_rows(cfg, ids, cls, splits)
     write_csv(args.out / "metrics.csv", rows)
@@ -348,7 +348,7 @@ def main() -> None:
     }
     (args.out / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
     print(
-        f"VEREDITO {manifest['verdict']} (melhor poder em +{crit['effect']}: {best:.2f}) -> "
+        f"VERDICT {manifest['verdict']} (best power at +{crit['effect']}: {best:.2f}) -> "
         f"{args.out}",
         flush=True,
     )

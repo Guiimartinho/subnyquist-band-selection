@@ -1,13 +1,13 @@
 # ruff: noqa
-# Escrito pela revisão adversarial (reviewer-2) de 2026-11-13; ver o README do E26.
-# Uso: uv run --no-project --quiet --with numpy python <script> <este diretório>
+# Written by the adversarial review (reviewer-2) of 2026-11-13; see the E26 README.
+# Usage: uv run --no-project --quiet --with numpy python <script> <this directory>
 import sys
 
 sys.path.insert(0, sys.argv[1])
 from common import *
 
 tau = thresholds(95)
-print("== Por ajuste: acuracia balanceada mediana_guiado / kurtograma (limiar p95 comum) ==")
+print("== Per setting: balanced accuracy mediana_guiado / kurtograma (common p95 threshold) ==")
 for st in ("N15_M07_F10", "N15_M01_F10", "N15_M07_F04"):
     s = []
     for f in FACTORS:
@@ -23,18 +23,17 @@ for st in ("N15_M07_F10", "N15_M01_F10", "N15_M07_F04"):
         k = balanced({k: np.mean(v) for k, v in acc["k"].items()})
         s.append(f"{f}x {mg:4.1f}/{k:4.1f}")
     print(f"  {st}: " + " | ".join(s))
-print("\n== Nos saos: qual janela da o maximo (BPFO x BPFI) e mediana de cada escore ==")
+print(
+    "\n== On the healthy: which window gives the maximum (BPFO x BPFI) and median of each score =="
+)
 for cl in ("bruto", "mediana3"):
     for f in FACTORS:
         hh = [r for r in ROWS if r["race"] == "H" and int(r["factor"]) == f and r["clean"] == cl]
         wO = np.mean([sc(r, "BPFO") > sc(r, "BPFI") for r in hh])
         print(
-            f"  {cl:8s} {f:2d}x: max na BPFO em {100 * wO:4.1f}% | mediana BPFO={np.median([sc(r, 'BPFO') for r in hh]):5.2f} BPFI={np.median([sc(r, 'BPFI') for r in hh]):5.2f} | p95 BPFO={np.percentile([sc(r, 'BPFO') for r in hh], 95):5.2f} BPFI={np.percentile([sc(r, 'BPFI') for r in hh], 95):5.2f}"
+            f"  {cl:8s} {f:2d}x: max at BPFO in {100 * wO:4.1f}% | median BPFO={np.median([sc(r, 'BPFO') for r in hh]):5.2f} BPFI={np.median([sc(r, 'BPFI') for r in hh]):5.2f} | p95 BPFO={np.percentile([sc(r, 'BPFO') for r in hh], 95):5.2f} BPFI={np.percentile([sc(r, 'BPFI') for r in hh], 95):5.2f}"
         )
-print("\n== Numero de bins por janela (grade de 0,01 ordem, ~100 rev em 4 s) ==")
-sys.path.insert(
-    0, r"<repository root>/experiments/E26-fault-order-guided-selector"
-)
+print("\n== Number of bins per window (grid of 0.01 order, ~100 rev in 4 s) ==")
 import math
 
 
@@ -63,11 +62,11 @@ for c, o in ORD.items():
         nb = sum(((grid >= s) & (grid <= e)).sum() for s, e in segs)
         edge = [round(x, 3) for s, e in segs for x in (s, e)]
         print(
-            f"  {c} k={k}: segmentos={[(round(s, 3), round(e, 3)) for s, e in segs]}  bins={nb}  distancia da linha verdadeira ao inteiro mais proximo = {abs(k * ALLMED['OR' if c == 'BPFO' else 'IR'] - round(k * ALLMED['OR' if c == 'BPFO' else 'IR'])):.3f}"
+            f"  {c} k={k}: segments={[(round(s, 3), round(e, 3)) for s, e in segs]}  bins={nb}  distance from the true line to the nearest integer = {abs(k * ALLMED['OR' if c == 'BPFO' else 'IR'] - round(k * ALLMED['OR' if c == 'BPFO' else 'IR'])):.3f}"
         )
 
 
-# Resposta da janela de Hann a uma raia inteira fora do centro do bin
+# Response of the Hann window to an integer line off the bin centre
 def hann_resp(delta):
     if abs(delta) < 1e-9:
         return 1.0
@@ -77,9 +76,9 @@ def hann_resp(delta):
 
 
 print(
-    "\n== Vazamento de Hann de uma raia inteira na 1a/2a bin fora da exclusao (amplitude relativa) =="
+    "\n== Hann leakage of an integer line into the 1st/2nd bin outside the exclusion (relative amplitude) =="
 )
 for off in (0.0, 0.25, 0.5):
     print(
-        f"  raia a {off:.2f} bin do centro: bin +1,5={hann_resp(1.5 - off):.3f}  +2={hann_resp(2 - off):.3f}  +2,5={hann_resp(2.5 - off):.3f}  +3={hann_resp(3 - off):.4f}"
+        f"  line at {off:.2f} bin from the centre: bin +1.5={hann_resp(1.5 - off):.3f}  +2={hann_resp(2 - off):.3f}  +2.5={hann_resp(2.5 - off):.3f}  +3={hann_resp(3 - off):.4f}"
     )

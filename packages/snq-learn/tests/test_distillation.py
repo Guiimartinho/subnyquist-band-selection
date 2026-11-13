@@ -1,4 +1,4 @@
-"""Destilação Nyquist -> sub-Nyquist."""
+"""Nyquist -> sub-Nyquist distillation."""
 
 import numpy as np
 import pytest
@@ -12,7 +12,7 @@ def test_distribuicao_do_professor_soma_um_e_ordena_certo():
 
 
 def test_temperatura_alta_achata_a_distribuicao():
-    """Temperatura maior transfere mais informação sobre as classes perdedoras."""
+    """A higher temperature transfers more information about the losing classes."""
     s = np.array([1.0, 9.0, 3.0])
     fria = teacher_distribution(s, temperature=0.3)
     quente = teacher_distribution(s, temperature=5.0)
@@ -21,22 +21,22 @@ def test_temperatura_alta_achata_a_distribuicao():
 
 
 def test_professor_sem_candidatas_e_erro():
-    with pytest.raises(ValueError, match="candidatas"):
+    with pytest.raises(ValueError, match="candidates"):
         teacher_distribution(np.array([]))
 
 
 def test_aluno_cabe_no_orcamento_do_no():
-    """Caber em 256 kB é requisito do alvo, não detalhe de implementação."""
+    """Fitting in 256 kB is a requirement of the target, not an implementation detail."""
     s = SubNyquistStudent(n_input=512, n_candidates=24)
     assert s.budget_bytes(bits=8) < 256 * 1024, f"{s.budget_bytes()} bytes"
     assert s.n_parameters() < 100_000
 
 
 def test_aluno_aprende_a_separar_classes_sinteticas():
-    """Ponta a ponta: o aluno tem de sair do acaso.
+    """End to end: the student has to rise above chance.
 
-    Dados sintéticos onde cada classe tem uma raia própria no envelope. Se o treino
-    não sobe acima do acaso aqui, não há o que testar em dado real.
+    Synthetic data where each class has its own line in the envelope. If training
+    does not rise above chance here, there is nothing to test on real data.
     """
     rng = np.random.default_rng(0)
     n_cls, n_per, n_in = 4, 40, 256
@@ -50,7 +50,7 @@ def test_aluno_aprende_a_separar_classes_sinteticas():
     x = np.asarray(x)
     y = np.asarray(y)
 
-    # professor "perfeito": concentra a massa na classe certa
+    # "perfect" teacher: concentrates the mass on the right class
     teacher = np.full((len(y), n_cls), 0.05)
     teacher[np.arange(len(y)), y] = 0.85
     teacher /= teacher.sum(1, keepdims=True)
@@ -58,10 +58,10 @@ def test_aluno_aprende_a_separar_classes_sinteticas():
     student = SubNyquistStudent(n_input=n_in, n_candidates=n_cls, width=8)
     hist = distill(student, x, teacher, y, DistillConfig(epochs=40, seed=0))
 
-    assert hist["acc"][-1] > 0.7, f"acurácia final {hist['acc'][-1]:.2f}"
-    # A tarefa sintética é fácil e o aluno satura já na primeira época, então
-    # comparar acurácia inicial com final não mede progresso. A perda mede.
-    assert hist["loss"][-1] < hist["loss"][0], "a perda não caiu"
+    assert hist["acc"][-1] > 0.7, f"final accuracy {hist['acc'][-1]:.2f}"
+    # The synthetic task is easy and the student already saturates in the first epoch, so
+    # comparing initial and final accuracy does not measure progress. The loss does.
+    assert hist["loss"][-1] < hist["loss"][0], "the loss did not drop"
     assert evaluate(student, x, y) == pytest.approx(hist["acc"][-1], abs=0.01)
 
 

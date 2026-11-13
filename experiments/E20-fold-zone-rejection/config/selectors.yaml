@@ -1,7 +1,7 @@
-# E20, seletores robustos (pre-registro no README, 'Seletores robustos', 2026-11-12).
-# Derivado de config/base.yaml: mesmos fatores, tetos, regua e controle do E07; so mudam os
-# bracos. infograma_ses = negentropia do SES (Antoni 2016); gini = Gini do envelope
-# (Hebda-Sobkowicz et al. 2020); ambos em snq_recon.selectors.
+# E20, robust selectors (pre-registration in the README, 'Robust selectors', 2026-11-12).
+# Derived from config/base.yaml: same factors, ceilings, ruler and E07 control; only the arms
+# change. infograma_ses (SES infogram) = SES negentropy (Antoni 2016); gini = Gini of the
+# envelope (Hebda-Sobkowicz et al. 2020); both in snq_recon.selectors.
 seed: 20261110
 data_dir: datasets/raw/ottawa
 conditions:

@@ -1,14 +1,14 @@
-"""Estimação de tom e resolução da ordem do alias por múltiplas taxas.
+"""Tone estimation and resolution of the alias order with multiple rates.
 
-A ideia central do projeto, em forma operacional: a frequência aliasada sozinha
-não determina ``f0``, mas o **padrão de dobra sob taxas distintas** determina.
-Duas taxas ``fs1`` e ``fs2`` resolvem sem ambiguidade até
-``lcm(fs1, fs2) / 2`` — que é o análogo, para sinal real, do Teorema Chinês do
-Resto usado em radar com PRF escalonada.
+The project's central idea, in operational form: the aliased frequency alone
+does not determine ``f0``, but the **folding pattern under distinct rates** does.
+Two rates ``fs1`` and ``fs2`` resolve without ambiguity up to
+``lcm(fs1, fs2) / 2`` — which is the real-signal analogue of the Chinese Remainder
+Theorem used in radar with staggered PRF.
 
-A formulação aqui é de **teste de hipóteses sobre um conjunto discreto**, e não
-de inversão. Isso é deliberado: é o que permite injetar o prior geométrico
-(as raias que a máquina pode produzir) sem mudar o algoritmo.
+The formulation here is a **hypothesis test over a discrete set**, and not
+an inversion. This is deliberate: it is what allows injecting the geometric prior
+(the lines that the machine can produce) without changing the algorithm.
 """
 
 from __future__ import annotations
@@ -22,16 +22,16 @@ from snq_core import alias_frequency_hz
 
 
 def estimate_tone_hz(x: ArrayLike, fs_hz: float) -> float:
-    """Frequência do tom dominante, por FFT com janela de Hann e interpolação parabólica.
+    """Frequency of the dominant tone, by Hann-windowed FFT and parabolic interpolation.
 
-    A interpolação de três pontos sobre a magnitude tira o estimador da grade da
-    FFT; sem ela o erro fica travado em ``fs/(2N)`` e domina tudo o mais que este
-    experimento quer medir.
+    The three-point interpolation on the magnitude takes the estimator off the FFT
+    grid; without it the error is stuck at ``fs/(2N)`` and dominates everything else that this
+    experiment wants to measure.
     """
     x = np.asarray(x, dtype=float).ravel()
     n = x.size
     sp = np.abs(np.fft.rfft(x * np.hanning(n)))
-    sp[0] = 0.0  # ignora DC
+    sp[0] = 0.0  # ignore DC
     k = int(np.argmax(sp))
     if k <= 0 or k >= sp.size - 1:
         return float(k * fs_hz / n)
@@ -42,11 +42,11 @@ def estimate_tone_hz(x: ArrayLike, fs_hz: float) -> float:
 
 
 def unambiguous_range_hz(fs_hz: Sequence[float], quantum_hz: float = 1.0) -> float:
-    """Maior ``f0`` resolvível sem ambiguidade por um conjunto de taxas.
+    """Largest ``f0`` resolvable without ambiguity by a set of rates.
 
-    Vale ``lcm(fs) / 2``. As taxas são reduzidas a inteiros na unidade
-    ``quantum_hz`` antes do lcm — escolha ``quantum_hz`` como o maior divisor
-    comum pretendido do projeto de taxas.
+    Equals ``lcm(fs) / 2``. The rates are reduced to integers in units of
+    ``quantum_hz`` before the lcm — choose ``quantum_hz`` as the intended greatest
+    common divisor of the rate design.
 
     >>> unambiguous_range_hz([40e3, 42e3], quantum_hz=2e3)
     420000.0
@@ -59,10 +59,10 @@ def unambiguous_range_hz(fs_hz: Sequence[float], quantum_hz: float = 1.0) -> flo
 
 
 def alias_candidates_hz(f_alias_hz: float, fs_hz: float, f_max_hz: float) -> NDArray[np.float64]:
-    """Todas as ``f0`` em ``[0, f_max]`` que se dobrariam para ``f_alias_hz`` a ``fs_hz``.
+    """All ``f0`` in ``[0, f_max]`` that would fold onto ``f_alias_hz`` at ``fs_hz``.
 
-    São ``f0 = k·fs ± f_alias``. O conjunto é pequeno — cerca de
-    ``2·f_max/fs`` elementos — e é ele que a segunda taxa desambigua.
+    They are ``f0 = k·fs ± f_alias``. The set is small — about
+    ``2·f_max/fs`` elements — and it is this set that the second rate disambiguates.
 
     >>> len(alias_candidates_hz(10e3, 40e3, 100e3))
     5
@@ -78,21 +78,21 @@ def resolve_multirate_hz(
     fs_hz: Sequence[float],
     candidates_hz: ArrayLike,
 ) -> tuple[float, float]:
-    """Escolhe a candidata cujo padrão de dobra melhor explica os aliases medidos.
+    """Picks the candidate whose folding pattern best explains the measured aliases.
 
-    Para cada candidata ``c`` prevê-se ``alias(c, fs_i)`` e compara-se com o
-    medido; o custo é o **pior** desvio entre as taxas (norma infinito), que é
-    mais seletivo que a média quando uma das taxas está corrompida.
+    For each candidate ``c``, ``alias(c, fs_i)`` is predicted and compared with the
+    measurement; the cost is the **worst** deviation across the rates (infinity norm), which
+    is more selective than the mean when one of the rates is corrupted.
 
-    Retorna ``(f0_estimado, residuo_hz)``. O resíduo é a métrica de confiança:
-    resíduo grande significa que nenhuma candidata explica as observações, e
-    nesse caso a resposta deve ser rejeitada em vez de aceita.
+    Returns ``(f0_estimate, residual_hz)``. The residual is the confidence metric:
+    a large residual means that no candidate explains the observations, and
+    in that case the answer should be rejected rather than accepted.
     """
     cand = np.asarray(candidates_hz, dtype=float).ravel()
     if cand.size == 0:
-        raise ValueError("conjunto de candidatas vazio")
+        raise ValueError("empty candidate set")
 
-    # (n_candidatas, n_taxas)
+    # (n_candidates, n_rates)
     pred = np.stack([alias_frequency_hz(cand, fs) for fs in fs_hz], axis=1)
     meas = np.asarray(alias_measured_hz, dtype=float)[None, :]
     cost = np.max(np.abs(pred - meas), axis=1)
@@ -101,12 +101,12 @@ def resolve_multirate_hz(
 
 
 def prior_grid_hz(f_lo_hz: float, f_hi_hz: float, spacing_hz: float) -> NDArray[np.float64]:
-    """Conjunto discreto de frequências admissíveis — o prior físico, em 1D.
+    """Discrete set of admissible frequencies — the physical prior, in 1D.
 
-    No caso real este conjunto vem da geometria (ressonâncias conhecidas,
-    harmônicos da rotação); ver ``snq_core.bearing.candidate_lines_hz``. Aqui ele
-    é uma grade regular, para que o ganho do prior seja medido em função apenas
-    da sua **cardinalidade**, sem confundir com a estrutura particular do
-    conjunto.
+    In the real case this set comes from the geometry (known resonances,
+    harmonics of the shaft speed); see ``snq_core.bearing.candidate_lines_hz``. Here it
+    is a regular grid, so that the gain from the prior is measured as a function of its
+    **cardinality** only, without confounding it with the particular structure of the
+    set.
     """
     return np.arange(f_lo_hz, f_hi_hz + spacing_hz, spacing_hz, dtype=float)

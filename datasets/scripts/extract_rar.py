@@ -1,4 +1,4 @@
-"""Extrai os .rar do KAt-DataCenter com unrar-cffi, recusando caminhos fora do destino."""
+"""Extracts the KAt-DataCenter .rar files with unrar-cffi, refusing paths outside the target."""
 
 import sys
 from pathlib import Path
@@ -17,15 +17,15 @@ for a in sorted(arch.glob("*.rar")):
             continue
         target = (out / name).resolve()
         if out not in target.parents:
-            raise SystemExit(f"caminho fora do destino em {a.name}: {name}")
+            raise SystemExit(f"path outside the target directory in {a.name}: {name}")
         if target.exists() and target.stat().st_size == info.file_size:
             n += 1
             continue
         target.parent.mkdir(parents=True, exist_ok=True)
         data = rf.read(info)
         if len(data) != info.file_size:
-            raise SystemExit(f"tamanho errado em {a.name}: {name}")
+            raise SystemExit(f"wrong size in {a.name}: {name}")
         target.write_bytes(data)
         n += 1
     print(f"ok {a.stem} {n}", flush=True)
-print("EXTRACAO_FIM", flush=True)
+print("EXTRACTION_DONE", flush=True)

@@ -1,5 +1,6 @@
-"""E26 confirmatório no Paderborn: kurtograma cego e seletor guiado, com e sem mediana no fluxo
-decimado. Pré-registro no README ("Confirmação no Paderborn"); a análise é ``analyze_paderborn.py``.
+"""Confirmatory E26 on Paderborn: blind kurtogram and guided selector, with and without the median
+on the decimated stream. Pre-registration in the README ("Confirmation on Paderborn"); the analysis
+is ``analyze_paderborn.py``.
 
     uv run python experiments/E26-fault-order-guided-selector/run_paderborn.py \
         --config experiments/E26-fault-order-guided-selector/config/paderborn.yaml [--workers N]
@@ -62,7 +63,7 @@ def guard_ok(xd: np.ndarray, vd: np.ndarray, fs: float, cfg: dict) -> bool:
 
 
 def blind(x: np.ndarray, v: np.ndarray, fs: float, cfg: dict):
-    """O pipeline clássico do E24: kurtograma até o Nyquist efetivo e argmax sem prior."""
+    """The classical E24 pipeline: kurtogram up to the effective Nyquist, argmax with no prior."""
     kg = cfg["kurtogram"]
     k = fast_kurtogram(
         x, fs, max_level=int(kg["max_level"]), f_min_hz=float(kg["f_min_hz"]), f_max_hz=fs / 2.0
@@ -89,7 +90,7 @@ def task(job) -> dict:
     for n in [cal, *[int(t) for t in cfg["test_measurements"]]]:
         path = pb.measurement_path(root, code, setting, n)
         if not path.exists():
-            out["unreadable"][n] = "ausente"
+            out["unreadable"][n] = "missing"
             continue
         out["sha256"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
         try:
@@ -113,6 +114,7 @@ def task(job) -> dict:
                 "factor": f,
             }
             if not guard_ok(xd, vd, fs, cfg):
+                # "guarda" (guard) is the data label of a row skipped by guard_ok
                 for clean in CLEAN:
                     out["rows"].append({**base, "clean": clean, "skipped": "guarda"})
                 continue
@@ -176,11 +178,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", type=Path, required=True)
     ap.add_argument("--workers", type=int, default=None)
-    ap.add_argument("--bearings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--settings", nargs="*", default=None, help="só para fumaça")
-    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--factors", nargs="*", type=int, default=None, help="só para fumaça")
-    ap.add_argument("--results", type=str, default=None, help="só para fumaça")
+    ap.add_argument("--bearings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--settings", nargs="*", default=None, help="smoke test only")
+    ap.add_argument("--measurements", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--factors", nargs="*", type=int, default=None, help="smoke test only")
+    ap.add_argument("--results", type=str, default=None, help="smoke test only")
     args = ap.parse_args()
     cfg = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     if args.measurements:
@@ -194,7 +196,7 @@ def main() -> int:
     t0 = time.time()
     with ProcessPoolExecutor(max_workers=args.workers or int(cfg["compute"]["workers"])) as pool:
         res = list(pool.map(task, jobs))
-    print(f"{len(res)} registros em {time.time() - t0:.0f} s", flush=True)
+    print(f"{len(res)} records in {time.time() - t0:.0f} s", flush=True)
     out = EXP / (args.results or cfg["output"]["results_dir"])
     out.mkdir(parents=True, exist_ok=True)
     rows = [r for o in res for r in o["rows"]]
@@ -217,7 +219,7 @@ def main() -> int:
         try:
             versions[p] = version(p)
         except PackageNotFoundError:
-            versions[p] = "nao instalado"
+            versions[p] = "not installed"
     src = hashlib.sha256()
     for p in sorted((ROOT / "packages").glob("*/src/**/*.py")):
         src.update(p.relative_to(ROOT).as_posix().encode())

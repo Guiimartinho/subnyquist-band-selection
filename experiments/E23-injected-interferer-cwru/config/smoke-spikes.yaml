@@ -1,4 +1,4 @@
-# Fumaca do braco de picos: 1 condicao, 2 fatores.
+# Smoke run of the spike arm: 1 condition, 2 factors.
 seed: 20261113
 catalog: datasets/catalogs/cwru-smith2015-categories.yaml
 subset: drive_end_48k

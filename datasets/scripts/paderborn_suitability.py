@@ -1,9 +1,10 @@
-"""Paderborn: a raia de falha se separa da harmonica do eixo? (taxa cheia, so diagnostico do dado)
+"""Paderborn: does the fault line separate from the shaft harmonic? (full rate, data check only)
 
-Para cada medicao: kurtograma rapido (nivel 4, piso 500 Hz, como o E15), espectro de envelope em
-ordens (64 amostras por volta, anti-alias angular), e o pico na janela de +-7 % da ordem nominal.
-Reporta a ordem do pico, a distancia a harmonica inteira mais proxima e as amplitudes na nominal e
-na harmonica (maximo em +-0,015 ordem), relativas a mediana da janela.
+For each measurement: fast kurtogram (level 4, 500 Hz floor, as in E15), order envelope spectrum
+(64 samples per revolution, angular anti-alias), and the peak in the +-7 % window around the
+nominal order. Reports the order of the peak, the distance to the nearest integer harmonic, and
+the amplitudes at the nominal order and at the harmonic (maximum within +-0.015 order), relative
+to the median of the window.
 """
 
 import glob
@@ -16,7 +17,7 @@ from snq_recon.kurtogram import fast_kurtogram
 
 ROOT = sys.argv[1]
 FS = 64000.0
-RATIO = 6.75 / 28.55  # d/D, FAG 6203 (Lessmeier et al., PHME16, tabela 1)
+RATIO = 6.75 / 28.55  # d/D, FAG 6203 (Lessmeier et al., PHME16, table 1)
 NOMINAL = {"OR": 4 * (1 - RATIO), "IR": 4 * (1 + RATIO)}
 CASES = [
     ("K001", "OR"),
@@ -59,8 +60,8 @@ def amp_near(orders, mag, o, tol=0.015):
 
 print(f"BPFO nominal {NOMINAL['OR']:.4f}, BPFI nominal {NOMINAL['IR']:.4f}")
 print(
-    "rolamento tipo medicao  banda_kHz      eixo_Hz  pico   dist_inteiro"
-    "  A(nominal)/med  A(inteiro)/med"
+    "bearing   type meas     band_kHz       shaft_Hz peak   dist_integer"
+    "  A(nominal)/med  A(integer)/med"
 )
 for code, kind in CASES:
     nom = NOMINAL[kind]

@@ -1,10 +1,11 @@
-# MAFAULDA: sequencias com tacometro inconsistente (gerado em 2026-11-11 no servidor).
+# MAFAULDA: sequences with an inconsistent tachometer (generated on 2026-11-11 on the server).
 #
-# Criterio: |rotacao pelo tacometro / rotacao do nome - 1| > 1 %, com fs = 51,2 kHz e o
-# detector com histerese e bloqueio de snq_data.mafaulda. Todas desviam PARA CIMA (pulsos
-# espurios). Para analise de ordem pelo tacometro, estas sequencias ficam de fora.
-# Conferido por packages/snq-data/tests/test_mafaulda.py (SNQ_FULL_DATA_CHECK=1).
-# 65 de 1120.
+# Criterion: |speed from the tachometer / speed from the file name - 1| > 1 %, with
+# fs = 51.2 kHz and the detector with hysteresis and lockout of snq_data.mafaulda. All of them
+# deviate UPWARDS (spurious pulses). For order analysis using the tachometer, these sequences
+# are left out.
+# Checked by packages/snq-data/tests/test_mafaulda.py (SNQ_FULL_DATA_CHECK=1).
+# 65 of 1120.
 excluded:
   overhang/ball_fault/0g/44.032.csv: 1.0433
   overhang/ball_fault/0g/45.2608.csv: 1.1577

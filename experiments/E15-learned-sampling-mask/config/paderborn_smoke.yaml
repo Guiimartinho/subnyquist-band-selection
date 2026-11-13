@@ -1,4 +1,4 @@
-# FUMACA do E15 no Paderborn: so confere o caminho do codigo; nao e resultado.
+# SMOKE test of E15 on Paderborn: only checks the code path; it is not a result.
 seed: 20261113
 datasets:
   ottawa:

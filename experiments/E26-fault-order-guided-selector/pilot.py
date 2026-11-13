@@ -1,5 +1,5 @@
-"""Piloto exploratório do E26 (2026-11-12, NÃO pré-registrado): seleção de banda guiada pelas ordens
-de falha, no fluxo já decimado, no Ottawa. Ver o README.
+"""Exploratory pilot of E26 (2026-11-12, NOT pre-registered): band selection guided by the fault
+orders, in the already-decimated stream, on Ottawa. See the README.
 
     uv run python experiments/E26-fault-order-guided-selector/pilot.py [--workers N]
 """
@@ -18,18 +18,18 @@ import numpy as np
 from snq_data import undersample
 from snq_data.ottawa import FS_HZ, load, record_names
 from snq_recon.highres import envelope_order_spectrum
-from snq_recon.selectors import _levels  # a partição do kurtograma
+from snq_recon.selectors import _levels  # the kurtogram partition
 
 EXP = Path(__file__).resolve().parent
 ROOT = EXP.parents[1]
 RAW = ROOT / "datasets/raw/ottawa"
 E20_METRICS = ROOT / "experiments/E20-fold-zone-rejection/results/metrics.csv"
-SEG, N_SEG, PPR = 500_000, 3, 1024  # os segmentos do E20
+SEG, N_SEG, PPR = 500_000, 3, 1024  # the E20 segments
 FACTORS = [1, 2, 3, 4, 5, 6, 8]
 CEILING_HZ, F_MIN_HZ, MAX_LEVEL = 25000.0, 500.0, 3
-NOMINAL = {"BPFO": 4.5 * (1 - 0.206), "BPFI": 4.5 * (1 + 0.206)}  # 9 esferas, d/D cos = 0,206
-HARMONICS = (1, 2)  # revisão de 2026-11-12: com ±12 %, 3·BPFO sobreporia 2·BPFI
-W_SEARCH = W_LOCAL = 0.12  # o span de calibração do Ottawa no E07 e no E20
+NOMINAL = {"BPFO": 4.5 * (1 - 0.206), "BPFI": 4.5 * (1 + 0.206)}  # 9 balls, d/D cos = 0.206
+HARMONICS = (1, 2)  # revision of 2026-11-12: with ±12 %, 3·BPFO would overlap 2·BPFI
+W_SEARCH = W_LOCAL = 0.12  # the Ottawa calibration span in E07 and E20
 FALSE_ALARM = 0.05
 TRUE_FAULT = {"I": "BPFI", "O": "BPFO", "H": "none"}
 
@@ -67,7 +67,7 @@ def scores(x: np.ndarray, v: np.ndarray, fs_hz: float) -> dict[str, tuple[float,
 
 
 def median3(x: np.ndarray) -> np.ndarray:
-    """Mediana de 3 amostras (a do E20), aplicada ao fluxo já decimado."""
+    """Median of 3 samples (the one from E20), applied to the already-decimated stream."""
     y = x.copy()
     y[1:-1] = np.median(np.vstack([x[:-2], x[1:-1], x[2:]]), axis=0)
     return y
@@ -124,7 +124,7 @@ def analyse(rows: list[dict]) -> dict:
 
 
 def e20_blind() -> dict:
-    """Acerto do kurtograma cego do E20 (braço none, teto 25 kHz, régua aninhada)."""
+    """Hit rate of the E20 blind kurtogram (arm none, 25 kHz ceiling, nested ruler)."""
     hits: dict[tuple, list[int]] = defaultdict(list)
     with E20_METRICS.open(encoding="utf-8") as f:
         for r in csv.DictReader(f):
@@ -158,7 +158,7 @@ def main() -> int:
     rep = {"guided": analyse(rows), "e20_blind_kurtogram": e20_blind()}
     (out / "summary.json").write_text(json.dumps(rep, indent=2), encoding="utf-8")
     for m in FACTORS:
-        print(f"{m}x guiado {rep['guided'][f'{m}x']} | cego {rep['e20_blind_kurtogram'][f'{m}x']}")
+        print(f"{m}x guided {rep['guided'][f'{m}x']} | blind {rep['e20_blind_kurtogram'][f'{m}x']}")
     return 0
 
 

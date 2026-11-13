@@ -1,19 +1,19 @@
-"""E22 - teste das hipoteses H1 e H2 a partir de results/metrics.csv.
+"""E22 - test of hypotheses H1 and H2 from results/metrics.csv.
 
     uv run python experiments/E22-equal-rate-baselines/analyze.py
 
-H1: aleatorio_cs nao supera uniforme_teto em nenhum orcamento (refutada se a diferenca tiver IC
-bootstrap por registro acima de zero). H2: taxa_tat fica a no maximo 5 pontos do oraculo
-uniforme em todos os orcamentos. Os dois sao pre-registrados no README.
+H1: aleatorio_cs does not beat uniforme_teto at any budget (refuted if the difference has a
+per-record bootstrap CI above zero). H2: taxa_tat stays within at most 5 points of the uniform
+oracle at every budget. Both are pre-registered in the README.
 
-O oraculo escolhe, entre os fatores da grade >= orcamento, o de maior acerto NO PROPRIO TESTE,
-por grupo (pista interna / externa). E um limite superior otimista; no bootstrap ele e
-re-escolhido em cada reamostra.
+The oracle chooses, among the grid factors >= budget, the one with the highest accuracy ON THE
+TEST ITSELF, per group (inner / outer race). It is an optimistic upper bound; in the bootstrap it
+is re-chosen in each resample.
 
-Acrescentado depois de ver que o oraculo da pista externa cai num pico isolado (fator 46 entre
-45 fatores ruidosos): ``uniforme_varredura_cv``, a melhor uniforme escolhida FORA do teste
-(escolhe no segmento 1 e avalia no 2, e vice-versa; empate vai para a maior taxa). E post hoc e
-esta rotulado assim no README.
+Added after seeing that the outer-race oracle lands on an isolated peak (factor 46 among
+45 noisy factors): ``uniforme_varredura_cv``, the best uniform rate chosen OUTSIDE the test
+(it chooses on segment 1 and evaluates on 2, and vice versa; a tie goes to the higher rate). It is
+post hoc and is labelled as such in the README.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ N_BOOT = 4000
 SEED = 20261111
 GAP_POINTS = 5.0
 ARMS = ("uniforme", "despike", "uniforme_teto", "taxa_tat", "aleatorio_cs", "passa_faixa_lu")
-TOL_ORDER = 0.06  # tolerancia de acerto do E22 (config: tolerance_order)
+TOL_ORDER = 0.06  # hit tolerance of E22 (config: tolerance_order)
 PAIRS = (
     ("taxa_tat", "uniforme"),
     ("uniforme_teto", "uniforme"),
@@ -42,7 +42,7 @@ PAIRS = (
 
 
 def mcnemar_exact(b: int, c: int) -> float:
-    """p bilateral exato para os pares discordantes (b: so o 1o acerta; c: so o 2o)."""
+    """Exact two-sided p for the discordant pairs (b: only the 1st hits; c: only the 2nd)."""
     n = b + c
     if n == 0:
         return 1.0
@@ -56,7 +56,7 @@ def ci95(d: list[float]) -> list[float]:
 
 @dataclass
 class Cells:
-    """Acertos de um conjunto de dados, por (registro, segmento, braco, orcamento) e por fator."""
+    """Hits of one dataset, by (record, segment, arm, budget) and by factor."""
 
     hit: dict
     grid: dict
@@ -64,12 +64,12 @@ class Cells:
     segs: list
     groups: list
     factors: list
-    est: dict  # (registro, segmento, fator) -> estimativa de ordem (braco uniforme_grid)
-    calib: dict  # registro -> ordem calibrada no segmento 0 (manifest)
-    local: bool = False  # regua local: os acertos da grade ja sao sem vazamento
+    est: dict  # (record, segment, factor) -> order estimate (uniforme_grid arm)
+    calib: dict  # record -> calibrated order on segment 0 (manifest)
+    local: bool = False  # local ruler: the grid hits are already free of leakage
 
     def nested_truth(self, rec: str, pool: list[str]) -> float:
-        """Mediana das calibracoes dos OUTROS registros do grupo, restrita a ``pool``."""
+        """Median of the calibrations of the OTHER records of the group, restricted to ``pool``."""
         peers = [self.calib[q] for q in pool if q != rec and self.group_of[q] == self.group_of[rec]]
         return float(np.median(peers)) if peers else float("nan")
 
@@ -86,12 +86,11 @@ class Cells:
         return h, n
 
     def cv_by_record_nested(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
-        """Melhor uniforme escolhida em outros registros, com verdade ANINHADA.
+        """Best uniform rate chosen on other records, with NESTED truth.
 
-        3 dobras por ensaio. A verdade dos registros de treino usa so registros de treino, e a
-        dos registros de teste tambem: nenhum rotulo do teste entra na escolha. Corrige o
-        vazamento da versao com verdade global (revisao de 2026-11-11). Empate vai para a maior
-        taxa.
+        3 folds by trial. The truth of the training records uses only training records, and so
+        does the truth of the test records: no test label enters the choice. Fixes the leakage of
+        the version with global truth (review of 2026-11-11). A tie goes to the higher rate.
         """
         h_tot = n_tot = 0
         chosen: dict = {}
@@ -125,7 +124,7 @@ class Cells:
         return sum(vals), len(vals)
 
     def oracle(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
-        """Acerto (pontos) somando os grupos, cada um com o fator de maior acerto no teste."""
+        """Accuracy (points) over the groups, each with its highest-accuracy factor on the test."""
         h_tot = n_tot = 0
         chosen = {}
         for g in self.groups:
@@ -142,14 +141,14 @@ class Cells:
         return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
 
     def cv_uniform(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
-        """Melhor uniforme escolhida num segmento de teste e avaliada no outro (2 dobras)."""
+        """Best uniform rate chosen on one test segment and evaluated on the other (2 folds)."""
         h_tot = n_tot = 0
         chosen: dict = {}
         for g in self.groups:
             sub = [rec for rec in sample if self.group_of[rec] == g]
             for pick, ev in ((self.segs[0], self.segs[1]), (self.segs[1], self.segs[0])):
                 best = (-1.0, None)
-                for f in self.factors:  # crescente: empate fica com a maior taxa
+                for f in self.factors:  # ascending: a tie stays with the higher rate
                     if f < b:
                         continue
                     h, n = self.grid_acc(f, sub, [pick])
@@ -161,10 +160,10 @@ class Cells:
         return 100.0 * h_tot / max(n_tot, 1), n_tot, chosen
 
     def cv_by_record(self, b: int, sample: list[str]) -> tuple[float, int, dict]:
-        """Melhor uniforme escolhida em outros registros: 3 dobras por ensaio (sufixo -1/-2/-3).
+        """Best uniform rate chosen on other records: 3 folds by trial (suffix -1/-2/-3).
 
-        E a forma de escolha que o E15 tera de enfrentar, porque o E15 separa por registro.
-        Empate vai para a maior taxa. Registros repetidos pelo bootstrap contam com o peso deles.
+        This is the kind of choice that E15 will have to face, because E15 splits by record.
+        A tie goes to the higher rate. Records repeated by the bootstrap count with their weight.
         """
         h_tot = n_tot = 0
         chosen: dict = {}
@@ -190,9 +189,9 @@ class Cells:
 
 
 def load(path: Path, hit_col: str = "hit") -> dict[str, Cells]:
-    """``hit_col``: ``hit`` (verdade deixa-um-de-fora) ou ``hit_local`` (a raia em taxa cheia do
-    proprio segmento; revisao de 2026-11-11). Com a regua local, a escolha fora do teste nao tem
-    vazamento por construcao, porque o rotulo de um segmento so depende dele mesmo."""
+    """``hit_col``: ``hit`` (leave-one-out truth) or ``hit_local`` (the full-rate line of the
+    segment itself; review of 2026-11-11). With the local ruler, the choice outside the test has no
+    leakage by construction, because the label of a segment depends only on the segment itself."""
     raw: dict[str, dict] = {}
     manifest = json.loads((path.parent / "manifest.json").read_text(encoding="utf-8"))
     calib_all = manifest.get("calibrated_order", {})
@@ -243,12 +242,12 @@ def analyze(c: Cells, rng: np.random.Generator) -> dict:
         v_acc, v_n, v_f = c.cv_uniform(b, recs)
         cell["uniforme_varredura_cv"] = {"acc": round(v_acc, 1), "n": v_n, "factor": v_f}
         if c.local:
-            # regua local: o rotulo de um segmento so depende dele, entao escolher nos acertos da
-            # grade dos registros de treino nao vaza nada do teste
+            # local ruler: the label of a segment depends only on itself, so choosing on the grid
+            # hits of the training records leaks nothing from the test
             r_acc, r_n, r_f = c.cv_by_record(b, recs)
         else:
             r_acc, r_n, r_f = c.cv_by_record(b, recs)
-            # verdade global: tem vazamento; fica so como referencia (revisao de 2026-11-11)
+            # global truth: it leaks; kept only as a reference (review of 2026-11-11)
             cell["uniforme_varredura_registro_vazamento"] = {
                 "acc": round(r_acc, 1),
                 "n": r_n,
@@ -327,7 +326,7 @@ def main() -> int:
     report = {
         "n_boot": N_BOOT,
         "seed": SEED,
-        # procedencia da analise (revisao de 2026-11-11): o que leu e com que codigo
+        # provenance of the analysis (review of 2026-11-11): what it read and with which code
         "analyze_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "metrics_sha256": hashlib.sha256((E / "results" / "metrics.csv").read_bytes()).hexdigest(),
         "ruler": args.ruler,
@@ -339,11 +338,11 @@ def main() -> int:
     dst.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     for ds, out in report["datasets"].items():
         v = out["verdict"]
-        print(f"== {ds} ({out['records']} registros) -> H1 {v['H1']}, H2 {v['H2']}")
+        print(f"== {ds} ({out['records']} records) -> H1 {v['H1']}, H2 {v['H2']}")
         for b, x in out["budgets"].items():
             arms = "  ".join(
                 f"{a} {x[a]['acc'] if x[a]['n'] else '—'}" for a in ARMS
-            )  # '—': braco ausente desta rodada
+            )  # '—': arm absent from this run
             print(f"  1/{b}: {arms}")
             print(
                 f"        oraculo {x['oraculo_uniforme']['acc']} {x['oraculo_uniforme']['factor']}"

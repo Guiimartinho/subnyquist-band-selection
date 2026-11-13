@@ -1,4 +1,4 @@
-# E20 - rejeicao por zona antes de decimar (ADR 0006). Todo parametro vive aqui.
+# E20 - zone rejection before decimating (ADR 0006). Every parameter lives here.
 seed: 20261110
 
 data_dir: datasets/raw/ottawa
@@ -6,7 +6,7 @@ conditions: [I, O]
 scenarios: [A, B, C, D]
 trials: [1, 2, 3]
 
-# Identicos ao E07, para que o controle (none, teto 25 kHz) o reproduza.
+# Identical to E07, so that the control (none, 25 kHz ceiling) reproduces it.
 segment_samples: 500000
 segments_per_record: 3
 min_samples: 4096
@@ -24,18 +24,18 @@ tolerance_order: 0.06
 samples_per_rev: 64
 order_min: 2.0
 
-# Passe 1 (calibracao da verdade) usa o teto do E07.
+# Pass 1 (truth calibration) uses the E07 ceiling.
 calibration_ceiling_hz: 25000.0
 
 sweep:
   undersampling_factor: [1, 2, 3, 4, 5, 6, 8]
-  # 25 kHz e o teto do E07; 12,5 kHz e o Nyquist efetivo de 8x, onde o vale some.
+  # 25 kHz is the E07 ceiling; 12.5 kHz is the effective Nyquist at 8x, where the valley vanishes.
   search_ceiling_hz: [25000.0, 12500.0]
 
-# Zonas de frequencia ORIGINAL que dobram sobre [12,75; 25] kHz em 4x (fs_eff = 50 kHz):
-#   Z1 = [25,00; 37,25] kHz (zona 1, invertida:  50 kHz - f)
-#   Z2 = [62,75; 75,00] kHz (zona 2, direta:     f - 50 kHz)
-#   Z3 = [75,00; 87,25] kHz (zona 3, invertida: 100 kHz - f)
+# ORIGINAL-frequency zones that fold onto [12.75, 25] kHz at 4x (fs_eff = 50 kHz):
+#   Z1 = [25.00, 37.25] kHz (zone 1, inverted:  50 kHz - f)
+#   Z2 = [62.75, 75.00] kHz (zone 2, direct:    f - 50 kHz)
+#   Z3 = [75.00, 87.25] kHz (zone 3, inverted: 100 kHz - f)
 interventions:
   none: {kind: none}
   stop_z1: {kind: stop, bands_hz: [[25000.0, 37250.0]]}
@@ -43,24 +43,24 @@ interventions:
   stop_z3: {kind: stop, bands_hz: [[75000.0, 87250.0]]}
   stop_z123: {kind: stop, bands_hz: [[25000.0, 37250.0], [62750.0, 75000.0], [75000.0, 87250.0]]}
   aaf_ideal: {kind: aaf_ideal}
-  # pre-registrados em 2026-11-11, depois da revisao que achou o captor (picos de uma amostra)
+  # pre-registered on 2026-11-11, after the review that found the captor (single-sample spikes)
   despike: {kind: despike, k_mad: 10.0}
   median3: {kind: median3}
 
 analysis:
-  # Recuperacao: pelo menos este numero de acertos de 36 na pista externa em 4x (8x faz 23)
-  # e McNemar exato pareado contra `none` com p < alpha. Ver o README.
+  # Recovery: at least this many hits out of 36 on the outer race at 4x (8x scores 23)
+  # and exact paired McNemar against `none` with p < alpha. See the README.
   recovery_hits: 20
   no_recovery_hits: 10
   alpha: 0.01
-  # Controle de reproducao: acertos de `sem_prior` no E07 (de 72), teto 25 kHz.
-  # Com o DSP corrigido pela auditoria de 2026-11-11 (antes: 56, 53, 37, 55) e com a regua pelo
-  # centro do plato (snq_recon.refine_order; antes, pelo 1o ponto: 57, 53, 38, 57). Conferido
-  # pela re-execucao oficial do E07 de 2026-11-11 (12:47 UTC): 62, 55, 41, 61.
+  # Reproduction control: hits of `sem_prior` (without prior) in E07 (of 72), 25 kHz ceiling.
+  # With the DSP corrected by the 2026-11-11 audit (before: 56, 53, 37, 55) and with the ruler at
+  # the plateau centre (snq_recon.refine_order; before, at the 1st point: 57, 53, 38, 57). Checked
+  # against the official E07 re-run of 2026-11-11 (12:47 UTC): 62, 55, 41, 61.
   e07_control_hits: {1: 62, 2: 55, 4: 41, 8: 61}
 
 compute:
-  # Processos em paralelo, um por (registro, segmento). O servidor tem 32 threads.
+  # Parallel processes, one per (record, segment). The server has 32 threads.
   workers: 30
 
 output:

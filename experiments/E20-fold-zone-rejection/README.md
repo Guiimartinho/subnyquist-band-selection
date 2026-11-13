@@ -1,245 +1,246 @@
-# E20 - Rejeição por zona antes de decimar: o que captura o kurtograma em 4×
+# E20 - Zone rejection before decimating: what captures the kurtogram at 4×
 
-Aberto em 2026-11-10 pelo [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). É a
-Parte 1 (mecanismo) do artigo único.
+Opened on 2026-11-10 by [ADR 0006](../../docs/adr/0006-artigo-unico-computacional.md). It is
+Part 1 (mechanism) of the single paper.
 
-## Contexto
+## Context
 
-No E07 (Ottawa 2018, coluna `sem_prior`), a pista externa cai de 23/36 acertos em 8× para 6/36
-em 4×, enquanto a pista interna fica em 31–32/36. Em 4× o kurtograma escolhe a banda
-[12,75; 25] kHz em 26/36 segmentos da pista externa e erra todos eles.
+In E07 (Ottawa 2018, the `sem_prior` (without prior) column), the outer race drops from 23/36 hits
+at 8× to 6/36 at 4×, while the inner race stays at 31–32/36. At 4× the kurtogram picks the band
+[12.75, 25] kHz in 26/36 outer-race segments and misses all of them.
 
-A hipótese do relatório era que conteúdo de 75–87,2 kHz dobra sobre essa banda. Mas essa causa
-não está isolada:
-- a mesma faixa também dobra em 2×, onde não há vale;
-- em 4× passam a dobrar também 25–37,25 kHz e 62,75–75 kHz;
-- em 8× a banda [12,75; 25] kHz fica acima do Nyquist efetivo e sai da busca.
+The report's hypothesis was that content at 75–87.2 kHz folds onto that band. But that cause
+is not isolated:
+- the same range also folds at 2×, where there is no valley;
+- at 4×, 25–37.25 kHz and 62.75–75 kHz also start to fold;
+- at 8× the band [12.75, 25] kHz lies above the effective Nyquist and leaves the search.
 
-Há portanto três explicações rivais:
-1. **dobra de uma zona específica**;
-2. **dobra do conjunto das zonas**;
-3. **geometria da busca**: o teto da busca em relação ao Nyquist efetivo, ou a partição diádica
-   do kurtograma, que muda com `fs_eff`, e não a dobra.
+There are therefore three rival explanations:
+1. **folding of one specific zone**;
+2. **folding of the set of zones**;
+3. **search geometry**: the search ceiling relative to the effective Nyquist, or the kurtogram's
+   dyadic partition, which changes with `fs_eff`, and not the folding.
 
-## Hipótese
+## Hypothesis
 
-O vale de 4× na pista externa é causado por **conteúdo dobrado**. Remover antes da decimação as
-zonas de frequência original que dobram sobre [12,75; 25] kHz em 4× (Z1 = 25–37,25 kHz,
-Z2 = 62,75–75 kHz, Z3 = 75–87,25 kHz) faz a pista externa em 4× voltar a **pelo menos 20/36**.
-O filtro anti-alias ideal tem o mesmo efeito.
+The 4× valley on the outer race is caused by **folded content**. Removing, before decimation, the
+zones of original frequency that fold onto [12.75, 25] kHz at 4× (Z1 = 25–37.25 kHz,
+Z2 = 62.75–75 kHz, Z3 = 75–87.25 kHz) brings the outer race at 4× back to **at least 20/36**.
+The ideal anti-alias filter has the same effect.
 
-Hipóteses secundárias, reportadas qualquer que seja o resultado:
-- **H2 (atribuição):** uma única zona responde pela maior parte da recuperação.
-- **H3 (teto):** baixar o teto da busca para 12,5 kHz também recupera a pista externa em 4× e
-  piora a pista interna em 1× e 2×, cuja banda informativa está em 16,8–25 kHz.
+Secondary hypotheses, reported whatever the result:
+- **H2 (attribution):** a single zone accounts for most of the recovery.
+- **H3 (ceiling):** lowering the search ceiling to 12.5 kHz also recovers the outer race at 4× and
+  worsens the inner race at 1× and 2×, whose informative band is at 16.8–25 kHz.
 
-## O que refutaria esta hipótese
+## What would refute this hypothesis
 
-- **Refuta a dobra:** em 4× na pista externa, `aaf_ideal` **e** `stop_z123` ficam em
-  **no máximo 10/36**. Nesse caso o vale não é dobra: é geometria da busca ou da partição
-  (explicação 3), e a Parte 1 do artigo muda de tese.
-- **Refuta H2:** nenhuma zona isolada recupera mais da metade do que `stop_z123` recupera.
-- **Refuta H3:** com teto de 12,5 kHz, a pista externa em 4× continua em no máximo 10/36.
+- **Refutes folding:** at 4× on the outer race, `aaf_ideal` **and** `stop_z123` reach
+  **at most 10/36**. In that case the valley is not folding: it is search or partition geometry
+  (explanation 3), and Part 1 of the paper changes thesis.
+- **Refutes H2:** no single zone recovers more than half of what `stop_z123` recovers.
+- **Refutes H3:** with a 12.5 kHz ceiling, the outer race at 4× still reaches at most 10/36.
 
-**Critério de recuperação:** pelo menos 20/36 (o nível de 8× é 23/36) **e** McNemar exato
-pareado contra `none`, no mesmo fator e no mesmo teto, com p < 0,01.
+**Recovery criterion:** at least 20/36 (the 8× level is 23/36) **and** exact paired McNemar
+against `none`, at the same factor and the same ceiling, with p < 0.01.
 
 ## Baseline
 
-O pipeline do E07 sem intervenção (`none`, teto de 25 kHz): kurtograma restrito, envelope,
-espectro em ordens e estimativa sem prior. É o "passa-faixa + envelope" do projeto.
+The E07 pipeline without intervention (`none`, 25 kHz ceiling): restricted kurtogram, envelope,
+order spectrum and estimate without prior. It is the project's "band-pass + envelope".
 
-**Controle de reprodução:** `none` com teto de 25 kHz precisa reproduzir exatamente o E07 em 1×,
-2×, 4× e 8× (56, 53, 37 e 55 acertos de 72). Se não reproduzir, nada abaixo vale.
+**Reproduction control:** `none` with a 25 kHz ceiling must reproduce E07 exactly at 1×,
+2×, 4× and 8× (56, 53, 37 and 55 hits out of 72). If it does not, nothing below holds.
 
-## Verdade fundamental
+## Ground truth
 
-A mesma do E07:
-- **Calibração:** ordem de falha calibrada por registro em taxa cheia, refinada em torno da
-  ordem nominal (BPFO ou BPFI do ER16K).
-- **Verdade:** a mediana dos **outros** registros da mesma condição (deixa-um-de-fora).
-- **Acerto:** |estimativa − verdade| < 0,06 ordem.
+The same as in E07:
+- **Calibration:** fault order calibrated per record at full rate, refined around the
+  nominal order (BPFO or BPFI of the ER16K).
+- **Truth:** the median of the **other** records of the same condition (leave-one-out).
+- **Hit:** |estimate − truth| < 0.06 order.
 
-O rótulo de falha vem do conjunto de dados. A rotação vem do encoder (1024 ppr), que é
-independente do canal de vibração. Dados: Ottawa 2018, Mendeley `v43hmbwxpm`, CC BY 4.0.
+The fault label comes from the dataset. The rotation comes from the encoder (1024 ppr), which is
+independent of the vibration channel. Data: Ottawa 2018, Mendeley `v43hmbwxpm`, CC BY 4.0.
 
-## Procedimento
+## Procedure
 
-1. **Passe 1**, idêntico ao E07: calibrar a ordem de cada registro de falha (I e O, 24
-   registros) em taxa cheia.
-2. **Passe 2.** Para cada registro, segmento (3 × 2,5 s), intervenção, fator
-   (1, 2, 3, 4, 5, 6, 8) e teto (25 kHz, 12,5 kHz):
-   - aplicar a intervenção ao segmento **em taxa cheia**, como máscara ideal de FFT de fase zero;
-   - decimar sem filtro;
-   - rodar o kurtograma com teto `min(teto, fs_eff/2)`;
-   - calcular o espectro de envelope em ordens e a estimativa sem prior.
+1. **Pass 1**, identical to E07: calibrate the order of each fault record (I and O, 24
+   records) at full rate.
+2. **Pass 2.** For each record, segment (3 × 2.5 s), intervention, factor
+   (1, 2, 3, 4, 5, 6, 8) and ceiling (25 kHz, 12.5 kHz):
+   - apply the intervention to the segment **at full rate**, as an ideal zero-phase FFT mask;
+   - decimate without a filter;
+   - run the kurtogram with ceiling `min(ceiling, fs_eff/2)`;
+   - compute the envelope order spectrum and the estimate without prior.
 
-   Os fatores 3, 5 e 6 mostram por onde cada zona dobra fora das potências de 2.
-3. **Execução** em paralelo por (registro, segmento), no servidor.
-4. **Análise:** acertos por condição × fator × intervenção × teto, McNemar exato pareado
-   contra `none`, e a banda escolhida.
+   Factors 3, 5 and 6 show where each zone folds outside the powers of 2.
+3. **Execution** in parallel per (record, segment), on the server.
+4. **Analysis:** hits per condition × factor × intervention × ceiling, exact paired McNemar
+   against `none`, and the chosen band.
 
-| intervenção | o que remove antes de decimar |
+| intervention | what it removes before decimating |
 |---|---|
-| `none` | nada (controle) |
-| `stop_z1` | 25–37,25 kHz |
-| `stop_z2` | 62,75–75 kHz |
-| `stop_z3` | 75–87,25 kHz |
-| `stop_z123` | as três zonas |
-| `aaf_ideal` | tudo acima de `fs/(2·fator)`, ou seja, nenhuma dobra |
+| `none` | nothing (control) |
+| `stop_z1` | 25–37.25 kHz |
+| `stop_z2` | 62.75–75 kHz |
+| `stop_z3` | 75–87.25 kHz |
+| `stop_z123` | the three zones |
+| `aaf_ideal` | everything above `fs/(2·factor)`, i.e. no folding |
 
-## Métricas
+## Metrics
 
-- acerto de ordem (`sem_prior`) por condição, fator, intervenção e teto, com `n`;
-- McNemar exato pareado contra `none`;
-- banda escolhida pelo kurtograma e curtose;
-- atribuição medição/prior: **não se aplica**, porque não há reconstrução nem operador linear
-  (ver `bhadra2021hallucinations` e o ADR 0006).
+- order hit (`sem_prior`) per condition, factor, intervention and ceiling, with `n`;
+- exact paired McNemar against `none`;
+- band chosen by the kurtogram, and kurtosis;
+- measurement/prior attribution: **does not apply**, because there is no reconstruction and no
+  linear operator (see `bhadra2021hallucinations` and ADR 0006).
 
-## Resultado
+## Result
 
-Rodado em 2026-11-11 no servidor remoto (CPython 3.14.10), com 6048 linhas em
-`results/metrics.csv`, tabela em `results/summary.csv` e manifest com `source_sha256` e
+Run on 2026-11-11 on the remote server (CPython 3.14.10), with 6048 rows in
+`results/metrics.csv`, a table in `results/summary.csv` and a manifest with `source_sha256` and
 `entrypoint_sha256`.
 
-**Re-executado com o núcleo de DSP corrigido** pela auditoria independente de 2026-11-11
-(kurtograma sem emenda circular, reamostragem angular com anti-alias; ver o caderno do dia).
-Em relação à rodada provisória, nenhuma célula mudou mais de 2 acertos, e todas as conclusões
-abaixo se mantêm.
+**Re-run with the DSP core corrected** by the independent audit of 2026-11-11
+(kurtogram without the circular wrap-around, angular resampling with anti-alias; see that day's
+lab notebook). Relative to the provisional run, no cell changed by more than 2 hits, and all the
+conclusions below still hold.
 
-**Controle:** `none` com teto de 25 kHz reproduz exatamente o E07 re-executado com o DSP
-corrigido: 57, 53, 38 e 57 de 72 em 1×, 2×, 4× e 8×.
+**Control:** `none` with a 25 kHz ceiling exactly reproduces E07 re-run with the corrected DSP:
+57, 53, 38 and 57 of 72 at 1×, 2×, 4× and 8×.
 
-**Pista externa, teto de 25 kHz**, acertos de 36:
+**Outer race, 25 kHz ceiling**, hits out of 36:
 
-| intervenção | 1× | 2× | 3× | 4× | 5× | 6× | 8× |
+| intervention | 1× | 2× | 3× | 4× | 5× | 6× | 8× |
 |---|---|---|---|---|---|---|---|
 | `none` | 25 | 21 | 4 | 6 | 2 | 11 | 24 |
-| `stop_z1` (25–37,25 kHz) | 25 | 21 | 4 | 7 | 3 | 12 | 24 |
-| `stop_z2` (62,75–75 kHz) | 25 | 21 | 4 | **22** | 12 | 12 | 25 |
-| `stop_z3` (75–87,25 kHz) | 25 | 26 | **20** | **22** | 2 | **24** | 25 |
+| `stop_z1` (25–37.25 kHz) | 25 | 21 | 4 | 7 | 3 | 12 | 24 |
+| `stop_z2` (62.75–75 kHz) | 25 | 21 | 4 | **22** | 12 | 12 | 25 |
+| `stop_z3` (75–87.25 kHz) | 25 | 26 | **20** | **22** | 2 | **24** | 25 |
 | `stop_z123` | 25 | 26 | 22 | **25** | 15 | 23 | 27 |
 | `aaf_ideal` | 25 | 25 | 25 | **25** | **26** | 24 | 26 |
 
-Em 4×, contra `none`: `stop_z2` e `stop_z3` dão p = 3,1·10⁻⁵, e `stop_z123` e `aaf_ideal` dão
-p = 4·10⁻⁶ (McNemar exato pareado).
+At 4×, against `none`: `stop_z2` and `stop_z3` give p = 3.1·10⁻⁵, and `stop_z123` and `aaf_ideal`
+give p = 4·10⁻⁶ (exact paired McNemar).
 
-**Teto de 12,5 kHz:** a pista externa fica em 26–27/36 em todos os fatores de 1× a 6×, e em
-24–27 em 8×, com qualquer intervenção. Pareado contra o teto de 25 kHz (`none`): 26 contra 4 em
-3×, 27 contra 6 em 4×, 27 contra 2 em 5× e 27 contra 11 em 6×, sempre **sem nenhuma perda**
-(p de 6,0·10⁻⁸ a 3,1·10⁻⁵).
+**12.5 kHz ceiling:** the outer race stays at 26–27/36 at every factor from 1× to 6×, and at
+24–27 at 8×, with any intervention. Paired against the 25 kHz ceiling (`none`): 26 against 4 at
+3×, 27 against 6 at 4×, 27 against 2 at 5× and 27 against 11 at 6×, always **with no loss at all**
+(p from 6.0·10⁻⁸ to 3.1·10⁻⁵).
 
-**Pista interna:** fica entre 31 e 33 de 36 em todas as células, com os dois tetos.
+**Inner race:** stays between 31 and 33 of 36 in every cell, with both ceilings.
 
-**A banda escolhida em 4× na pista externa confirma o mecanismo:**
+**The band chosen at 4× on the outer race confirms the mechanism:**
 
-| condição | banda escolhida |
+| condition | chosen band |
 |---|---|
-| `none`, teto 25 kHz | [12,75; 25] kHz em 26/36 |
-| `stop_z123` | 2,0–4,6 kHz em 32/36 |
-| `aaf_ideal` | 2,0–4,6 kHz em 32/36 |
-| teto 12,5 kHz | 2,0–4,5 kHz em 32/36 |
+| `none`, 25 kHz ceiling | [12.75, 25] kHz in 26/36 |
+| `stop_z123` | 2.0–4.6 kHz in 32/36 |
+| `aaf_ideal` | 2.0–4.6 kHz in 32/36 |
+| 12.5 kHz ceiling | 2.0–4.5 kHz in 32/36 |
 
-**Leitura original (2026-11-11, manhã), corrigida abaixo.**
-1. **Hipótese principal.** O vale vem de conteúdo acima do Nyquist efetivo que sobrevive à
-   decimação pura. O filtro anti-alias ideal o elimina em todos os fatores. **Isso se sustenta.**
-2. **H2 (atribuição).** "Em 4× a captura exige Z2 e Z3 juntas", e "em 3× e 6× é a Z3". **Retirado**;
-   ver a revisão abaixo.
-3. **H3 (teto).** Baixar o teto para 12,5 kHz elimina o vale, e a previsão de que isso pioraria a
-   pista interna foi refutada. Isso se sustenta, mas o teto não distingue dobra de geometria da
-   busca.
+**Original reading (2026-11-11, morning), corrected below.**
+1. **Main hypothesis.** The valley comes from content above the effective Nyquist that survives
+   pure decimation. The ideal anti-alias filter eliminates it at every factor. **This holds.**
+2. **H2 (attribution).** "At 4× the capture requires Z2 and Z3 together", and "at 3× and 6× it is
+   Z3". **Withdrawn**; see the review below.
+3. **H3 (ceiling).** Lowering the ceiling to 12.5 kHz eliminates the valley, and the prediction that
+   this would worsen the inner race was refuted. This holds, but the ceiling does not distinguish
+   folding from search geometry.
 
-### Revisão adversarial (`reviewer-2`, 2026-11-11), conferida
+### Adversarial review (`reviewer-2`, 2026-11-11), checked
 
-**O captor é um trem de picos isolados de uma amostra no registro bruto, não conteúdo de banda de
-62,75–87,25 kHz.**
+**The captor is a train of isolated single-sample spikes in the raw record, not band content at
+62.75–87.25 kHz.**
 
-- **Remoção de picos (*despike*) em taxa cheia, sem zerar nenhuma faixa.** Toda amostra que
-  desvia mais de 10 MAD da média dos vizinhos, com os vizinhos desviando em sentido oposto, é
-  trocada por essa média. Isso afeta cerca de 0,65 % das amostras. A pista externa fica em
-  **26/26/26/26/25/23/27** de 36 de 1× a 8×, contra 25/21/4/6/2/11/24 em `none`. Empata com o
-  `aaf_ideal` e supera o `stop_z123` em 5× (25 contra 15). A mediana de 3 amostras dá o mesmo.
-  Na pista interna nada piora.
-- **Conferência independente:** re-executei a tabela e quatro segmentos em 4×. Em O-B-2 e O-D-1,
-  `none` escolhe 12,75–25 kHz e erra, e o *despike* volta a 2,54–4,58 kHz e acerta.
-- **Os picos estão em todos os registros, inclusive nos saudáveis.** H-A-1 tem cerca de 2.460
-  picos/s e O-A-1 cerca de 1.330/s, com desvio negativo em 96 % dos casos, a 16–18 MAD. Pelo
-  revisor:
-  - de 40 a 100 kHz o espectro é plano em ±1 dB;
-  - o RMS em 62,75–87,25 kHz é o mesmo nas três condições.
+- **Spike removal (*despike*) at full rate, without zeroing any band.** Every sample that
+  deviates by more than 10 MAD from the neighbours' mean, with the neighbours deviating in the
+  opposite direction, is replaced by that mean. This affects about 0.65 % of the samples. The outer
+  race reaches **26/26/26/26/25/23/27** of 36 from 1× to 8×, against 25/21/4/6/2/11/24 for `none`.
+  It ties with `aaf_ideal` and beats `stop_z123` at 5× (25 against 15). The 3-sample median gives
+  the same. On the inner race nothing gets worse.
+- **Independent check:** I re-ran the table and four segments at 4×. On O-B-2 and O-D-1,
+  `none` picks 12.75–25 kHz and misses, and *despike* goes back to 2.54–4.58 kHz and hits.
+- **The spikes are in every record, including the healthy ones.** H-A-1 has about 2460
+  spikes/s and O-A-1 about 1330/s, with negative deviation in 96 % of cases, at 16–18 MAD.
+  According to the reviewer:
+  - from 40 to 100 kHz the spectrum is flat within ±1 dB;
+  - the RMS in 62.75–87.25 kHz is the same in the three conditions.
 
-  Um evento de uma amostra (5 µs) não é resposta de acelerômetro. Vem da cadeia de aquisição:
-  interferência amostrada sem anti-alias ou artefato do sistema de aquisição.
-- **"Z2 e Z3 juntas" não identifica duas fontes.** Em 4×, `stop_z2` e `stop_z3` dão o mesmo
-  resultado em 36/36 segmentos. Mas isso é o esperado se as duas remoções apenas desfazem a captura
-  e o seletor volta para 2–4,6 kHz, banda sobre a qual nenhuma das duas zonas dobra. Em 3×, 5× e
-  6× elas não coincidem (11, 20 e 13 de 36).
-- **Ponto em aberto.** Remover a Z1 (25–37,25 kHz), que em 4× também dobra sobre 12,75–25 kHz, não
-  ajuda (7/36). Isso é compatível com a Z1 ter conteúdo vibratório genuíno forte (há uma
-  ressonância perto de 34 kHz em taxa cheia) além dos picos. Não está isolado.
+  A single-sample event (5 µs) is not an accelerometer response. It comes from the acquisition
+  chain: interference sampled without anti-alias, or an artefact of the acquisition system.
+- **"Z2 and Z3 together" does not identify two sources.** At 4×, `stop_z2` and `stop_z3` give the
+  same result in 36/36 segments. But that is what is expected if the two removals merely undo the
+  capture and the selector goes back to 2–4.6 kHz, a band onto which neither of the two zones folds.
+  At 3×, 5× and 6× they do not coincide (11, 20 and 13 of 36).
+- **Open point.** Removing Z1 (25–37.25 kHz), which at 4× also folds onto 12.75–25 kHz, does not
+  help (7/36). This is compatible with Z1 having strong genuine vibration content (there is a
+  resonance near 34 kHz at full rate) besides the spikes. It is not isolated.
 
-**Estatística.**
-- **Nível de segmento.** O McNemar trata os 36 segmentos como independentes, mas são 3 por registro.
-- **Nível de registro.** O efeito do anti-alias sobrevive: 11 registros melhoram, 1 empata e 0
-  pioram, teste do sinal p = 9,8·10⁻⁴. É de 30 a 250 vezes maior que o p por segmento.
-- **Nível de cenário.** Com 4 cenários de rotação, nenhum teste chega a p < 0,01.
-- **Nível de rolamento.** Há um rolamento por tipo de falha.
+**Statistics.**
+- **Segment level.** McNemar treats the 36 segments as independent, but there are 3 per record.
+- **Record level.** The anti-alias effect survives: 11 records improve, 1 ties and 0
+  get worse, sign test p = 9.8·10⁻⁴. That is 30 to 250 times larger than the per-segment p.
+- **Scenario level.** With 4 rotation scenarios, no test reaches p < 0.01.
+- **Bearing level.** There is one bearing per fault type.
 
-**Parede física.** Decimar um arquivo de 200 kSPS não é adquirir a 50 kSPS.
-- Se os picos são artefato digital do sistema de aquisição original, um ADC real abaixo do Nyquist
-  não os reproduz.
-- Se são interferência na cadeia analógica, um conversor abaixo do Nyquist sem passa-baixas, o
-  caso da amostragem passa-faixa, os dobraria do mesmo jeito.
+**Physical wall.** Decimating a 200 kSPS file is not acquiring at 50 kSPS.
+- If the spikes are a digital artefact of the original acquisition system, a real ADC sampling
+  below Nyquist does not reproduce them.
+- If they are interference in the analogue chain, a converter sampling below Nyquist without a
+  low-pass filter, the case of band-pass sampling, would fold them in the same way.
 
-O conjunto não permite distinguir os dois casos.
+The dataset does not allow distinguishing the two cases.
 
-**O que a Parte 1 pode afirmar.** Num conjunto público, picos esparsos de uma amostra no registro
-bruto tornam a decimação pura não monótona no acerto. De 3× a 6×, o seletor de banda por curtose é
-capturado por uma banda onde a energia dobrada dos picos domina. Anti-alias ou remoção de picos
-antes de decimar desfazem o efeito.
+**What Part 1 can claim.** In a public dataset, sparse single-sample spikes in the raw
+record make pure decimation non-monotonic in hits. From 3× to 6×, the kurtosis-based band selector
+is captured by a band where the folded energy of the spikes dominates. Anti-alias or spike removal
+before decimating undoes the effect.
 
-A captura da curtose espectral por interferência elétrica impulsiva em taxa cheia é o objeto de
-`smith2016emi` e `vaerenberg2025cyclicemi`. O que resta de próprio é estreito: a volta, por dobra,
-do conteúdo que o teto da busca excluía em taxa cheia, e a dependência disso em relação ao fator.
+The capture of spectral kurtosis by impulsive electrical interference at full rate is the subject of
+`smith2016emi` and `vaerenberg2025cyclicemi`. What remains as our own is narrow: the return, by
+folding, of the content that the search ceiling excluded at full rate, and how this depends on the
+factor.
 
-**O que fica pendente.**
-- *Despike* e mediana de 3 como braços pré-registrados aqui e no E22.
-- Caracterização temporal do conteúdo acima de 40 kHz.
-- Testes no nível de registro e de cenário.
-- No E23, um braço de trem de picos de uma amostra contra rajada de banda limitada de mesma energia.
+**What remains pending.**
+- *Despike* and the median of 3 as pre-registered arms here and in E22.
+- Temporal characterization of the content above 40 kHz.
+- Tests at the record and scenario levels.
+- In E23, a single-sample spike-train arm against a band-limited burst of the same energy.
 
-**O que surpreendeu.**
-- O vale vai de **3× a 6×**. A grade do E07 (1, 2, 4, 8, ...) só mostrava o 4×.
-- O teto de 25 kHz do E07 foi posto para tirar da busca o conteúdo de 50–100 kHz, que em taxa
-  cheia capturava o seletor. **Sob decimação pura, esse mesmo conteúdo volta por dobra para
-  dentro da faixa protegida.** Uma restrição de busca que protege o seletor em taxa cheia é
-  desfeita pela subamostragem.
-- O eixo do banco é acionado por inversor. A revisão mostrou que o captor é um trem de picos de
-  uma amostra presente também nos registros saudáveis (ver acima). Se a origem é interferência
-  eletromagnética ou artefato do sistema de aquisição, o conjunto não diz.
+**What was surprising.**
+- The valley runs from **3× to 6×**. The E07 grid (1, 2, 4, 8, ...) only showed 4×.
+- The E07 25 kHz ceiling was set to remove from the search the 50–100 kHz content, which at full
+  rate captured the selector. **Under pure decimation, that same content comes back by folding
+  into the protected band.** A search restriction that protects the selector at full rate is
+  undone by undersampling.
+- The rig's shaft is driven by an inverter. The review showed that the captor is a train of
+  single-sample spikes also present in the healthy records (see above). Whether the origin is
+  electromagnetic interference or an artefact of the acquisition system, the dataset does not say.
 
-**O que isso muda para o artigo** (texto da manhã; o mecanismo foi corrigido pela revisão acima).
-O efeito do anti-alias está estabelecido por intervenção no Ottawa, e o agente causal são os
-picos de uma amostra. As duas mitigações simples (filtro anti-alias, teto da busca abaixo da faixa onde cai o
-conteúdo dobrado) passam a ser **baselines obrigatórios** do E22: o método proposto tem de
-empatar ou ganhar delas. O E21 testa se o fenômeno, e um preditor calculado a partir de uma
-captura em taxa cheia, generalizam para o MAFAULDA.
+**What this changes for the paper** (morning text; the mechanism was corrected by the review above).
+The anti-alias effect is established by intervention on Ottawa, and the causal agent is the
+single-sample spikes. The two simple mitigations (anti-alias filter, search ceiling below the band
+where the folded content lands) become **mandatory baselines** of E22: the proposed method has to
+tie with or beat them. E21 tests whether the phenomenon, and a predictor computed from a
+full-rate capture, generalize to MAFAULDA.
 
-## Re-execução com a régua corrigida (2026-11-11, tarde)
+## Re-run with the corrected ruler (2026-11-11, afternoon)
 
-Rodada às 12:56 UTC no servidor, com três mudanças:
-- verdade pelo **centro do platô** (`snq_recon.refine_order`);
-- **régua local** gravada ao lado (`truth_local_order`, `hit_local`: a raia em taxa cheia do próprio
-  segmento, porque a ordem de BPFO da pista externa deriva com a rotação);
-- as intervenções pré-registradas `despike` e `median3`.
+Run at 12:56 UTC on the server, with three changes:
+- truth at the **plateau centre** (`snq_recon.refine_order`);
+- **local ruler** written alongside (`truth_local_order`, `hit_local`: the full-rate line of the
+  segment itself, because the outer-race BPFO order drifts with the rotation);
+- the pre-registered interventions `despike` and `median3`.
 
-O controle bate exatamente com o E07 re-executado com a mesma régua: 62, 55, 41 e 61 de 72 em 1×,
-2×, 4× e 8×. A saída com código 2 da rodada foi a trava de controle comparando com os valores da
-régua antiga, e o config foi atualizado.
+The control matches exactly E07 re-run with the same ruler: 62, 55, 41 and 61 of 72 at 1×,
+2×, 4× and 8×. The run's exit with code 2 was the control gate comparing against the old ruler's
+values, and the config was updated.
 
-Pista externa, teto de 25 kHz, acertos de 1× a 8× (1, 2, 3, 4, 5, 6, 8):
+Outer race, 25 kHz ceiling, hits from 1× to 8× (1, 2, 3, 4, 5, 6, 8):
 
-| intervenção | régua antiga (de 36) | régua local (de 35) |
+| intervention | old ruler (of 36) | local ruler (of 35) |
 |---|---|---|
 | `none` | 27 · 20 · **4 · 6 · 2 · 11** · 25 | 31 · 22 · **4 · 6 · 2 · 11** · 28 |
 | `stop_z2` | 27 · 20 · 4 · 21 · 12 · 12 · 26 | 31 · 22 · 4 · 24 · 13 · 12 · 29 |
@@ -249,240 +250,259 @@ Pista externa, teto de 25 kHz, acertos de 1× a 8× (1, 2, 3, 4, 5, 6, 8):
 | **`despike`** | **28 · 28 · 28 · 28 · 27 · 24 · 29** | **32 · 32 · 32 · 32 · 30 · 27 · 32** |
 | `median3` | 28 · 28 · 28 · 28 · 25 · 25 · 28 | 32 · 32 · 32 · 32 · 28 · 28 · 31 |
 
-A pista interna fica em 35–36/36 em todas as células, nas duas réguas. Antes da correção da régua
-eram 31–33.
+The inner race stays at 35–36/36 in every cell, under both rulers. Before the ruler correction
+it was at 31–33.
 
-**Leitura.**
-- O vale de 3× a 6× é o mesmo nas duas réguas.
-- A remoção de picos de uma amostra (cerca de 0,65 % das amostras, sem zerar faixa nenhuma) o
-  desfaz por inteiro e empata com o anti-alias ideal ou o supera.
-- Isso confirma, em rodada oficial e pré-registrada, o achado da revisão adversarial: o captor são
-  os picos.
-- A régua local sobe o patamar da pista externa em taxa cheia (27/36 → 31/35), o que mostra que
-  parte dos erros de antes era da régua, não do método.
+**Reading.**
+- The 3× to 6× valley is the same under both rulers.
+- Removing the single-sample spikes (about 0.65 % of the samples, without zeroing any band) undoes
+  it entirely and ties with or beats the ideal anti-alias.
+- This confirms, in an official and pre-registered run, the finding of the adversarial review: the
+  captor is the spikes.
+- The local ruler raises the outer-race level at full rate (27/36 → 31/35), which shows that
+  part of the earlier errors came from the ruler, not from the method.
 
-## Seletores robustos (pré-registro, 2026-11-12)
+## Robust selectors (pre-registration, 2026-11-12)
 
-Escrito antes de rodar. A pergunta é a primeira que um revisor faz: um seletor de banda robusto a
-impulsos evita o vale de 4× **sem** remover os picos?
+Written before running. The question is the first one a reviewer asks: does a band selector robust
+to impulses avoid the 4× valley **without** removing the spikes?
 
-- **Seletores:** de `snq_recon.selectors`, testados contra os valores do próprio artigo.
-  - `infograma_ses`: a negentropia do espectro do envelope ao quadrado (Antoni 2016, eq. 12). Pela
-    seção 5.1.1 do artigo, ele é insensível a ruído impulsivo.
-  - `gini`: o índice de Gini do envelope da banda (Hebda-Sobkowicz et al. 2020, eq. 3).
-  - Os dois rodam na mesma partição do kurtograma.
-- **Braços** (`config/selectors.yaml`): `none` e `despike` repetem os do E20; os novos são
-  `infograma_ses`, `infograma_ses_despike` e `gini`. Fatores, tetos, régua e controle do E07 ficam
-  iguais.
-- **Critério:** o mesmo da recuperação do E20, na pista externa, em 4× e com teto de 25 kHz.
-  - Recupera: pelo menos 20 de 36 acertos e McNemar exato pareado contra `none` com p < 0,01.
-  - Não recupera: até 10 de 36.
-  - Vale para as duas réguas (a do E07 e a local).
-- **Leitura:**
-  - Se `infograma_ses` recuperar, um seletor robusto basta, e a correção não exige a taxa cheia.
-  - Se não recuperar, a remoção dos picos antes de decimar continua necessária, e os seletores
-    robustos da literatura não resolvem a captura sob decimação pura.
+- **Selectors:** from `snq_recon.selectors`, tested against the values of the source papers
+  themselves.
+  - `infograma_ses` (SES infogram): the negentropy of the squared envelope spectrum (Antoni 2016,
+    eq. 12). According to section 5.1.1 of that paper, it is insensitive to impulsive noise.
+  - `gini`: the Gini index of the band envelope (Hebda-Sobkowicz et al. 2020, eq. 3).
+  - Both run on the same kurtogram partition.
+- **Arms** (`config/selectors.yaml`): `none` and `despike` repeat those of E20; the new ones are
+  `infograma_ses`, `infograma_ses_despike` and `gini`. Factors, ceilings, ruler and the E07 control
+  stay the same.
+- **Criterion:** the same as the E20 recovery, on the outer race, at 4× and with a 25 kHz ceiling.
+  - Recovers: at least 20 of 36 hits and exact paired McNemar against `none` with p < 0.01.
+  - Does not recover: at most 10 of 36.
+  - It holds for both rulers (the E07 one and the local one).
+- **Reading:**
+  - If `infograma_ses` recovers, a robust selector is enough, and the correction does not require
+    the full rate.
+  - If it does not recover, removing the spikes before decimating remains necessary, and the robust
+    selectors from the literature do not solve the capture under pure decimation.
 
-## Remoção depois de decimar (pré-registro, 2026-11-12)
+## Removal after decimating (pre-registration, 2026-11-12)
 
-Escrito antes de rodar. O braço `despike` remove os picos em taxa cheia, o que o nó não pode
-fazer. A pergunta aqui é se a mesma remoção, aplicada ao fluxo **já decimado**, desfaz o vale.
+Written before running. The `despike` arm removes the spikes at full rate, which the node cannot
+do. The question here is whether the same removal, applied to the **already-decimated** stream,
+undoes the valley.
 
-- **O que muda:** só o momento da remoção.
-  - Um pico de uma amostra em taxa cheia só sobrevive à decimação se cair numa amostra mantida.
-  - Se cair, continua isolado no fluxo decimado.
-  - O critério é o mesmo do E20 (10 MAD, vizinhos opostos e menores que 0,8 vez), calculado na
-    taxa efetiva.
-- **Braços** (`config/post_despike.yaml`): `none` e `despike` repetem os do E20, e o novo é
-  `despike_decimado`.
-- **Critério:** o da recuperação do E20, na pista externa, em 4× e com teto de 25 kHz.
-  - Recupera: pelo menos 20 de 36 acertos e McNemar exato pareado contra `none` com p < 0,01.
-  - Não recupera: até 10 de 36.
-  - Vale para as duas réguas.
-- **Leitura:** se recuperar, a correção é realizável no nó, porque não precisa da taxa cheia.
+- **What changes:** only the moment of the removal.
+  - A single-sample spike at full rate only survives decimation if it falls on a kept sample.
+  - If it does, it stays isolated in the decimated stream.
+  - The criterion is the same as in E20 (10 MAD, opposite neighbours smaller than 0.8 times),
+    computed at the effective rate.
+- **Arms** (`config/post_despike.yaml`): `none` and `despike` repeat those of E20, and the new one
+  is `despike_decimado` (despike after decimation).
+- **Criterion:** that of the E20 recovery, on the outer race, at 4× and with a 25 kHz ceiling.
+  - Recovers: at least 20 of 36 hits and exact paired McNemar against `none` with p < 0.01.
+  - Does not recover: at most 10 of 36.
+  - It holds for both rulers.
+- **Reading:** if it recovers, the correction is realizable on the node, because it does not need
+  the full rate.
 
-**Análise dos dois pré-registros acima** (escrita em 2026-11-12, antes de qualquer número das duas
-rodadas):
-- O script é `recovery.py <diretório>/metrics.csv`, que grava `recovery.csv` ao lado.
-- Ele aplica o critério nas duas réguas: a aninhada, que é a coluna `hit`, e a local, `hit_local`.
-- Também reporta o teste do sinal exato sobre os 12 registros da pista externa. Esse teste é
-  sensibilidade, fora do pré-registro, e responde ao limite de "Nível de segmento" acima.
-- Aplicado ao `results/` atual, o script reproduz a tabela da re-execução. `despike` em 4× fica em:
-  - 28/36 contra 6/36, com 22 a 0 nos pares discordantes, na régua aninhada (p = 4,8·10⁻⁷);
-  - 32/35 contra 6/35 na régua local (p = 3·10⁻⁸);
-  - 11 registros a 0 no teste do sinal (p = 0,001).
+**Analysis of the two pre-registrations above** (written on 2026-11-12, before any number from the
+two runs):
+- The script is `recovery.py <directory>/metrics.csv`, which writes `recovery.csv` alongside.
+- It applies the criterion under both rulers: the nested one, which is the `hit` column, and the
+  local one, `hit_local`.
+- It also reports the exact sign test over the 12 outer-race records. That test is a sensitivity
+  analysis, outside the pre-registration, and answers the "Segment level" limitation above.
+- Applied to the current `results/`, the script reproduces the re-run table. `despike` at 4×
+  reaches:
+  - 28/36 against 6/36, with 22 to 0 in the discordant pairs, under the nested ruler
+    (p = 4.8·10⁻⁷);
+  - 32/35 against 6/35 under the local ruler (p = 3·10⁻⁸);
+  - 11 records to 0 in the sign test (p = 0.001).
 
-## Resultado dos seletores robustos e da remoção depois de decimar (2026-11-12)
+## Result of the robust selectors and of the removal after decimating (2026-11-12)
 
-As duas rodadas terminaram às 18:27 e 18:28 UTC no servidor.
-- **Proveniência.**
-  - Seletores: `config/selectors.yaml` e `run.py` do commit `4a67eae`.
-  - Remoção depois de decimar: `config/post_despike.yaml` e `run.py` do commit `6a95a72`. Rodou
-    num checkout separado, para não mudar o `run.py` sob a rodada dos seletores.
-  - O `input_sha256` é o mesmo da rodada base, com os 24 registros.
-  - O controle do E07 bate exatamente nas duas: 62, 55, 41 e 61 de 72.
-- **Critério pré-registrado** (`recovery.py`, `recovery.csv`): pista externa, 4×, teto de 25 kHz.
+The two runs finished at 18:27 and 18:28 UTC on the server.
+- **Provenance.**
+  - Selectors: `config/selectors.yaml` and `run.py` from commit `4a67eae`.
+  - Removal after decimating: `config/post_despike.yaml` and `run.py` from commit `6a95a72`. It ran
+    in a separate checkout, so as not to change `run.py` under the selectors run.
+  - The `input_sha256` is the same as in the base run, with the 24 records.
+  - The E07 control matches exactly in both: 62, 55, 41 and 61 of 72.
+- **Pre-registered criterion** (`recovery.py`, `recovery.csv`): outer race, 4×, 25 kHz ceiling.
 
-| braço | régua aninhada (de 36) | régua local (de 35) | veredicto |
+| arm | nested ruler (of 36) | local ruler (of 35) | verdict |
 |---|---|---|---|
-| `despike_decimado` (realizável no nó) | **29** contra 6, +23/−0, p = 2,4·10⁻⁷ | **32** contra 6, +26/−0, p = 3·10⁻⁸ | **recupera** nas duas |
-| `infograma_ses` | 11, +10/−5, p = 0,3 | 11, +10/−5, p = 0,3 | inconclusivo |
-| `infograma_ses_despike` | 7, +6/−5, p = 1 | 7, +6/−5, p = 1 | não recupera |
-| `gini` | 0, +0/−6, p = 0,031 | 0, +0/−6, p = 0,031 | não recupera (pior que `none`) |
+| `despike_decimado` (realizable on the node) | **29** against 6, +23/−0, p = 2.4·10⁻⁷ | **32** against 6, +26/−0, p = 3·10⁻⁸ | **recovers** under both |
+| `infograma_ses` | 11, +10/−5, p = 0.3 | 11, +10/−5, p = 0.3 | inconclusive |
+| `infograma_ses_despike` | 7, +6/−5, p = 1 | 7, +6/−5, p = 1 | does not recover |
+| `gini` | 0, +0/−6, p = 0.031 | 0, +0/−6, p = 0.031 | does not recover (worse than `none`) |
 
-- **Sensibilidade por registro** (teste do sinal, fora do pré-registro). Para `despike_decimado`,
-  12 registros melhoram e nenhum piora pela régua aninhada (p = 0,0005), e 11 a 0 pela local.
-- **Nos outros fatores** (régua aninhada, teto de 25 kHz):
-  - `despike_decimado` faz 28, 29, 29, 29, 23, 25 e 26 de 1× a 8×, contra 27, 20, 4, 6, 2, 11 e 25
-    do `none`. O vale some.
-  - `infograma_ses` faz 7, 7, 11, 11, 17, 7 e 13.
-  - `gini` faz 15 em 1×, 0 de 2× a 6× e 22 em 8×.
-- **Pista interna:** nenhum braço a prejudica, que fica em 34–36/36 em todas as células.
-- **Teto de 12,5 kHz:**
-  - `despike_decimado` faz 26–29;
-  - `gini` faz 20–23, porque a banda que os picos capturam fica acima do teto;
-  - `infograma_ses` faz de 0 a 13.
-- **Bandas escolhidas** (pista externa, teto de 25 kHz):
-  - `despike_decimado` volta em 4× à banda de taxa cheia, 2,5–4,6 kHz, em 25/36.
-  - `gini` vai a 18,9–20,9 kHz em 4× (23/36). É a captura.
-  - `infograma_ses`, já em taxa cheia, escolhe 4,6–6,6 kHz (18/36) ou 0,5–12,75 kHz (13/36), e não
-    a banda do kurtograma (2,5–4,6 kHz).
+- **Per-record sensitivity** (sign test, outside the pre-registration). For `despike_decimado`,
+  12 records improve and none gets worse under the nested ruler (p = 0.0005), and 11 to 0 under
+  the local one.
+- **At the other factors** (nested ruler, 25 kHz ceiling):
+  - `despike_decimado` scores 28, 29, 29, 29, 23, 25 and 26 from 1× to 8×, against 27, 20, 4, 6, 2,
+    11 and 25 for `none`. The valley disappears.
+  - `infograma_ses` scores 7, 7, 11, 11, 17, 7 and 13.
+  - `gini` scores 15 at 1×, 0 from 2× to 6× and 22 at 8×.
+- **Inner race:** no arm harms it; it stays at 34–36/36 in every cell.
+- **12.5 kHz ceiling:**
+  - `despike_decimado` scores 26–29;
+  - `gini` scores 20–23, because the band that the spikes capture lies above the ceiling;
+  - `infograma_ses` scores from 0 to 13.
+- **Chosen bands** (outer race, 25 kHz ceiling):
+  - `despike_decimado` returns at 4× to the full-rate band, 2.5–4.6 kHz, in 25/36.
+  - `gini` goes to 18.9–20.9 kHz at 4× (23/36). That is the capture.
+  - `infograma_ses`, already at full rate, picks 4.6–6.6 kHz (18/36) or 0.5–12.75 kHz (13/36), and
+    not the kurtogram's band (2.5–4.6 kHz).
 
-**Leitura pré-registrada:**
-- A remoção de picos **depois** de decimar recupera o acerto, e por isso a correção é realizável
-  no nó, sem a taxa cheia.
-- Nenhum seletor robusto recupera pelo critério. O Gini é capturado. O infograma SES fica
-  inconclusivo em 4×.
+**Pre-registered reading:**
+- Spike removal **after** decimating recovers the hits, and so the correction is realizable
+  on the node, without the full rate.
+- No robust selector recovers by the criterion. The Gini is captured. The SES infogram is
+  inconclusive at 4×.
 
-**Ainda não explicado, a conferir antes de entrar no artigo.** O infograma SES acerta só 7 de 36
-em taxa cheia, contra 27 do kurtograma.
-- A hipótese é a rotação variável do Ottawa: a negentropia do espectro do envelope em Hz supõe
-  frequência cíclica estacionária, e uma rampa espalha a raia de falha.
-- A outra possibilidade é erro de implementação, apesar dos testes contra os valores do artigo.
-- Um infograma no domínio de ordem não foi pré-registrado e seria exploratório.
+**Not yet explained, to be checked before it goes into the paper.** The SES infogram hits only 7
+of 36 at full rate, against 27 for the kurtogram.
+- The hypothesis is Ottawa's variable rotation: the negentropy of the envelope spectrum in Hz
+  assumes a stationary cyclic frequency, and a ramp smears the fault line.
+- The other possibility is an implementation error, despite the tests against the paper's values.
+- An order-domain infogram was not pre-registered and would be exploratory.
 
-### Revisão adversarial (`reviewer-2`, 2026-11-12): revisão maior
+### Adversarial review (`reviewer-2`, 2026-11-12): major revision
 
-O revisor recalculou de forma independente:
-- as 144 estimativas;
-- os pareamentos;
-- a proveniência: `run.py`, config, e o `source_sha256` 8491841f… sobre 32 arquivos;
-- as colunas `none` e `despike`, idênticas nas três rodadas.
+The reviewer independently recomputed:
+- the 144 estimates;
+- the pairings;
+- the provenance: `run.py`, config, and the `source_sha256` 8491841f… over 32 files;
+- the `none` and `despike` columns, identical across the three runs.
 
-O efeito pré-registrado é real, mas a leitura acima exagerava.
+The pre-registered effect is real, but the reading above overstated it.
 
-**Conferido por mim nos CSVs desta rodada:**
-- **Em 4×, a remoção depois de decimar empata com o teto de 12,5 kHz,** que também não exige a
-  taxa cheia.
-  - `despike_decimado` com teto de 25 kHz e `none` com teto de 12,5 kHz fazem 29/36 e 29/36 (régua
-    aninhada), com **0 pares discordantes**. Na régua local, 32/35 e 32/35, também com 0.
-  - Em 5×, o teto é melhor: 23 contra 29, −6/+0, p = 0,031; na régua local, p = 0,016.
-  - Em 6×, 25 contra 29 (p = 0,22).
-  - O teto só funciona porque a banda informativa (2,5–4,6 kHz) fica abaixo dele.
-- **Os dois seletores "robustos" falham já em taxa cheia:** infograma SES 7/36 e Gini 15/36, contra
-  27/36 do kurtograma. A rodada não decide se um seletor robusto evita o vale.
+**Checked by me in this run's CSVs:**
+- **At 4×, removal after decimating ties with the 12.5 kHz ceiling,** which also does not require
+  the full rate.
+  - `despike_decimado` with a 25 kHz ceiling and `none` with a 12.5 kHz ceiling score 29/36 and
+    29/36 (nested ruler), with **0 discordant pairs**. Under the local ruler, 32/35 and 32/35, also
+    with 0.
+  - At 5×, the ceiling is better: 23 against 29, −6/+0, p = 0.031; under the local ruler, p = 0.016.
+  - At 6×, 25 against 29 (p = 0.22).
+  - The ceiling only works because the informative band (2.5–4.6 kHz) lies below it.
+- **The two "robust" selectors already fail at full rate:** SES infogram 7/36 and Gini 15/36,
+  against 27/36 for the kurtogram. The run does not decide whether a robust selector avoids the
+  valley.
 
-**Calculado pelo revisor, sem script no repositório (exploratório até virar rodada):**
-- Uma **mediana de 3 no fluxo decimado** também dá 29/36 em 4×. O critério de "amostra isolada" não
-  é o que importa. Recortar a amplitude não recupera: 8/36 com 6 MAD e 5/36 com 10 MAD.
-- O efeito resiste à fase da decimação: os deslocamentos 0–3 dão 29, 29, 29 e 28, contra 6, 5, 5 e
-  4 do `none`.
-- Ao limiar: 5, 7 e 10 MAD dão 29/36, e 15, 20 e 30 MAD dão 23, 16 e 6.
-- **Na pista interna, o critério troca amostras dos impactos da falha,** e não picos de aquisição.
-  - As amostras trocadas ficam travadas em fase na ordem da falha: R ≈ 0,90, contra 0,18–0,39 no
-    95º percentil do nulo.
-  - A estimativa só muda em 0–2 segmentos.
-  - Em 6×, a proeminência da raia cai mais de 10 % em 7 de 36 segmentos.
-- **Na pista externa, as amostras trocadas são picos do registro bruto** (precisão mediana 1,0).
-  - O critério pega só parte dos picos que sobrevivem: 21,5 % em 4×, porque o MAD da segunda
-    diferença cresce 3,7×.
-  - Mesmo assim, o vale some.
-- **Infograma SES sem erro nas eq. 10–12,** mas com dois desvios não declarados: faltam a separação
-  determinística/aleatória (§4.4) e o pré-branqueamento (§4.5).
-  - Das 29 estimativas erradas em 1×, 17 param na ordem 2,0, que é `order_min`, e 11 em ~6.
-  - Calcular o SES em ordem sobe para 19/36, o que apoia em parte a hipótese da rotação variável.
-  - No CWRU 48k, com rotação constante, os quatro seletores fazem 33/33. Isso descarta erro
-    grosseiro, mas não discrimina.
-- **O Gini é capturado:** remover os picos o devolve à banda de taxa cheia.
-- **Novidade:**
-  - Não foi achada remoção de picos num fluxo de vibração decimado para proteger o seletor de banda.
-  - Há práticas vizinhas: *blanking* de pulsos depois do conversor em receptores, inclusive antes e
-    depois da decimação, e troca do pico pela média dos vizinhos em ressonância magnética.
-  - O mecanismo tem nome na teoria de amostragem: *noise folding* (Arias-Castro e Eldar, 2011).
-  - Como a mediana de 3 empata, não há método novo; há uma observação empírica.
+**Computed by the reviewer, with no script in the repository (exploratory until it becomes a run):**
+- A **median of 3 on the decimated stream** also gives 29/36 at 4×. The "isolated sample" criterion
+  is not what matters. Clipping the amplitude does not recover: 8/36 with 6 MAD and 5/36 with
+  10 MAD.
+- The effect withstands the decimation phase: offsets 0–3 give 29, 29, 29 and 28, against 6, 5, 5
+  and 4 for `none`.
+- By threshold: 5, 7 and 10 MAD give 29/36, and 15, 20 and 30 MAD give 23, 16 and 6.
+- **On the inner race, the criterion replaces samples of the fault impacts,** and not acquisition
+  spikes.
+  - The replaced samples are phase-locked to the fault order: R ≈ 0.90, against 0.18–0.39 at the
+    95th percentile of the null.
+  - The estimate only changes in 0–2 segments.
+  - At 6×, the line prominence drops by more than 10 % in 7 of 36 segments.
+- **On the outer race, the replaced samples are spikes of the raw record** (median precision 1.0).
+  - The criterion only catches part of the spikes that survive: 21.5 % at 4×, because the MAD of
+    the second difference grows 3.7×.
+  - Even so, the valley disappears.
+- **SES infogram without error in eqs. 10–12,** but with two undeclared deviations: the
+  deterministic/random separation (§4.4) and the pre-whitening (§4.5) are missing.
+  - Of the 29 wrong estimates at 1×, 17 stop at order 2.0, which is `order_min`, and 11 at ~6.
+  - Computing the SES in order raises it to 19/36, which partly supports the variable-rotation
+    hypothesis.
+  - On CWRU 48k, with constant rotation, the four selectors score 33/33. This rules out a gross
+    error, but does not discriminate.
+- **The Gini is captured:** removing the spikes returns it to the full-rate band.
+- **Novelty:**
+  - No spike removal on a decimated vibration stream to protect the band selector was found.
+  - There are neighbouring practices: pulse *blanking* after the converter in receivers, including
+    before and after decimation, and replacing the spike with the neighbours' mean in magnetic
+    resonance.
+  - The mechanism has a name in sampling theory: *noise folding* (Arias-Castro and Eldar, 2011).
+  - Since the median of 3 ties, there is no new method; there is an empirical observation.
 
-**O que o artigo pode afirmar:**
-- No Ottawa, em 4×, limpar o fluxo já decimado (picos isolados acima de 10 MAD) elevou o acerto da
-  pista externa de 6/36 para 29/36. Os 12 registros melhoraram (teste do sinal, p ≈ 5·10⁻⁴).
-- Uma mediana de 3 no fluxo decimado e o teto de busca de 12,5 kHz dão o mesmo acerto em 4×, e
-  nenhuma das três correções exige a taxa cheia. A mediana fica pendente da rodada de confirmação.
-- Na pista interna, o critério também troca amostras travadas em fase com a falha. A estimativa não
-  mudou, mas o critério não é seletivo para o artefato.
-- O Gini do envelope é capturado de 2× a 6×.
-- O infograma SES sem pré-branqueamento não é capturado, mas acerta 7/36 já em taxa cheia, e nenhum
-  dos dois decide se um seletor robusto evita o vale.
-- Tudo supõe amostrador ideal: decimação de um registro a 200 kS/s.
+**What the paper can claim:**
+- On Ottawa, at 4×, cleaning the already-decimated stream (isolated spikes above 10 MAD) raised
+  the outer-race hits from 6/36 to 29/36. All 12 records improved (sign test, p ≈ 5·10⁻⁴).
+- A median of 3 on the decimated stream and the 12.5 kHz search ceiling give the same hits at 4×,
+  and none of the three corrections requires the full rate. The median is pending the confirmation
+  run.
+- On the inner race, the criterion also replaces samples phase-locked to the fault. The estimate
+  did not change, but the criterion is not selective for the artefact.
+- The Gini of the envelope is captured from 2× to 6×.
+- The SES infogram without pre-whitening is not captured, but it hits 7/36 already at full rate,
+  and neither of the two decides whether a robust selector avoids the valley.
+- Everything assumes an ideal sampler: decimation of a record at 200 kS/s.
 
-**O que não pode:**
-- "correção realizável no nó";
-- "remove só os artefatos";
-- "os seletores robustos da literatura não resolvem a captura";
-- "o infograma é capturado";
-- "o infograma falha pela rotação variável", como fato;
-- "Gini robusto a impulsos";
-- "o vale some graças à remoção", em todos os fatores;
-- p por segmento como força da evidência; o teste por registro é o que vale;
-- "método novo" ou "primeira vez".
+**What it cannot claim:**
+- "correction realizable on the node";
+- "removes only the artefacts";
+- "the robust selectors from the literature do not solve the capture";
+- "the infogram is captured";
+- "the infogram fails because of the variable rotation", as fact;
+- "Gini robust to impulses";
+- "the valley disappears thanks to the removal", at every factor;
+- per-segment p as the strength of the evidence; the per-record test is what counts;
+- "new method" or "first time".
 
-## Mediana de 3 no fluxo decimado (rodada de confirmação, 2026-11-12)
+## Median of 3 on the decimated stream (confirmation run, 2026-11-12)
 
-Escrito antes de rodar, mas **não é cega**: o `reviewer-2` já calculou esse braço de forma
-exploratória, com 29/36 em 4×. A rodada serve para que o número que vai ao artigo saia de código
-commitado e de um `metrics.csv` no formato do E20.
+Written before running, but **it is not blind**: `reviewer-2` already computed this arm in
+exploratory form, with 29/36 at 4×. The run is there so that the number that goes into the paper
+comes from committed code and from a `metrics.csv` in the E20 format.
 
-- **Braços** (`config/post_median.yaml`): `none`, `despike_decimado` (repete) e o novo
-  `mediana3_decimado`, que aplica a mediana de 3 amostras ao fluxo já decimado.
-  - A mediana é a mesma do braço `median3` em taxa cheia (`apply_intervention`), aplicada depois de
+- **Arms** (`config/post_median.yaml`): `none`, `despike_decimado` (repeated) and the new
+  `mediana3_decimado` (median of 3 after decimation), which applies the 3-sample median to the
+  already-decimated stream.
+  - The median is the same as in the full-rate `median3` arm (`apply_intervention`), applied after
     `undersample`.
-- **Critério:** o mesmo da recuperação, em 4×, nas duas réguas.
-- **Comparação pareada, descritiva:** `mediana3_decimado` contra `despike_decimado`, e os dois contra
-  `none` com teto de 12,5 kHz, por McNemar bilateral e pelo teste do sinal por registro.
-- **Leitura que este README já assume:** se a mediana empatar, o critério de "amostra isolada" não
-  é necessário, e a correção é uma limpeza simples do fluxo decimado, sem método novo.
+- **Criterion:** the same as for the recovery, at 4×, under both rulers.
+- **Paired comparison, descriptive:** `mediana3_decimado` against `despike_decimado`, and both
+  against `none` with a 12.5 kHz ceiling, by two-sided McNemar and by the per-record sign test.
+- **Reading that this README already assumes:** if the median ties, the "isolated sample" criterion
+  is not necessary, and the correction is a simple cleaning of the decimated stream, with no new
+  method.
 
-### Resultado da mediana de 3 no fluxo decimado (2026-11-12)
+### Result of the median of 3 on the decimated stream (2026-11-12)
 
-- **Proveniência.** A rodada foi do checkout separado `~/snq/post2`, no commit `e5ceb4e`.
-  - Os hashes de `run.py` e config do manifest batem com o commit.
-  - O controle do E07 bate exatamente.
-- **Critério** (`results-post-median/recovery.csv`). `mediana3_decimado` em 4× **recupera** nas duas
-  réguas:
-  - régua aninhada: 29/36 contra 6/36, com +23/−0 (p = 2,4·10⁻⁷);
-  - régua local: 32/35 (p = 3·10⁻⁸);
-  - por registro: 12 a 0 (p = 0,0005).
-  - Confere com a reanálise do revisor.
-- **Nos outros fatores** (régua aninhada): 28, 29, 29, 29, 27, 28 e 27 de 1× a 8×. A mediana empata
-  com a remoção de picos isolados até 4× e fica melhor de 5× a 8×, onde aquela faz 23, 25 e 26.
-- **Leitura:** o critério de "amostra isolada" não é necessário. A correção é uma limpeza simples
-  do fluxo decimado, e não um método novo.
+- **Provenance.** The run was from the separate checkout `~/snq/post2`, at commit `e5ceb4e`.
+  - The hashes of `run.py` and of the config in the manifest match the commit.
+  - The E07 control matches exactly.
+- **Criterion** (`results-post-median/recovery.csv`). `mediana3_decimado` at 4× **recovers** under
+  both rulers:
+  - nested ruler: 29/36 against 6/36, with +23/−0 (p = 2.4·10⁻⁷);
+  - local ruler: 32/35 (p = 3·10⁻⁸);
+  - per record: 12 to 0 (p = 0.0005).
+  - It agrees with the reviewer's reanalysis.
+- **At the other factors** (nested ruler): 28, 29, 29, 29, 27, 28 and 27 from 1× to 8×. The median
+  ties with the removal of isolated spikes up to 4× and is better from 5× to 8×, where the latter
+  scores 23, 25 and 26.
+- **Reading:** the "isolated sample" criterion is not necessary. The correction is a simple cleaning
+  of the decimated stream, and not a new method.
 
 
-## O trem de picos (exploratório, 2026-11-13)
+## The spike train (exploratory, 2026-11-13)
 
-Pedido pela revisão adversarial do manuscrito, que mediu isto no scratchpad. Reproduzido com código
-commitado: `exploratory/spike_train.py` → `results-post-despike/exploratory/spike_train.csv`, nos 36
-registros inteiros e pelo mesmo critério do braço `despike`.
+Requested by the adversarial review of the manuscript, which measured this in the scratchpad.
+Reproduced with committed code: `exploratory/spike_train.py` →
+`results-post-despike/exploratory/spike_train.csv`, on the 36 whole records and by the same
+criterion as the `despike` arm.
 
-- **Taxa:** mediana de 1.336 picos/s nos saudáveis (956 a 1.377), 1.301/s na pista externa (1.270 a
-  1.339) e 315/s na interna (251 a 505). Desvio mediano de 18,7, 18,9 e 14,0 MAD. Mais de 95 % são
-  negativos em todos os registros.
-- **Periodicidade:** 32 a 41 % dos intervalos entre picos valem exatamente 40 amostras, e o espectro
-  dos instantes de pico tem a raia dominante em 10.001,2–10.001,3 Hz em todos os 36 registros, a
-  120 ppm de 10 kHz.
-- **Encoder:** a fração de picos a até 1 amostra de uma borda difere da de instantes sorteados em no
-  máximo 0,023. Com bordas tão densas, esse teste tem pouca resolução.
-- **Leitura:** um evento de 5 µs não é resposta de acelerômetro. É interferência na cadeia de
-  aquisição, com relógio próprio perto de 10 kHz. A fonte não foi identificada.
-- **Diferença com o texto anterior:** as contagens de 2.460/s (H-A-1) e 1.330/s (O-A-1), citadas
-  acima, não registram o critério usado e não batem com esta (H-A-1 fica perto de 1.300/s aqui). Os
-  números com código commitado são os desta seção.
+- **Rate:** median of 1336 spikes/s on the healthy records (956 to 1377), 1301/s on the outer race
+  (1270 to 1339) and 315/s on the inner race (251 to 505). Median deviation of 18.7, 18.9 and
+  14.0 MAD. More than 95 % are negative in every record.
+- **Periodicity:** 32 to 41 % of the inter-spike intervals are exactly 40 samples, and the spectrum
+  of the spike instants has its dominant line at 10 001.2–10 001.3 Hz in all 36 records,
+  120 ppm from 10 kHz.
+- **Encoder:** the fraction of spikes within 1 sample of an edge differs from that of random
+  instants by at most 0.023. With edges this dense, this test has little resolution.
+- **Reading:** a 5 µs event is not an accelerometer response. It is interference in the
+  acquisition chain, with its own clock near 10 kHz. The source was not identified.
+- **Difference from the earlier text:** the counts of 2460/s (H-A-1) and 1330/s (O-A-1), quoted
+  above, do not record the criterion used and do not match this one (H-A-1 is near 1300/s here).
+  The numbers with committed code are those of this section.
