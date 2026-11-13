@@ -1,0 +1,348 @@
+{
+  "integrity": {
+    "matches": 13176,
+    "max_abs_diff": 0.0
+  },
+  "summary": {
+    "antialias|banda_larga_regra|4x": {
+      "IR": 37.1,
+      "OR": 57.0,
+      "balanced": 47.0,
+      "specificity": 91.2
+    },
+    "antialias|banda_larga_regra|8x": {
+      "IR": 42.0,
+      "OR": 61.8,
+      "balanced": 51.9,
+      "specificity": 89.8
+    },
+    "antialias|banda_larga_regra|16x": {
+      "IR": 50.1,
+      "OR": 50.9,
+      "balanced": 50.5,
+      "specificity": 93.0
+    },
+    "antialias|banda_larga_regra|32x": {
+      "IR": 68.1,
+      "OR": 74.4,
+      "balanced": 71.2,
+      "specificity": 94.4
+    },
+    "antialias|guiado|4x": {
+      "IR": 50.1,
+      "OR": 68.9,
+      "balanced": 59.5,
+      "specificity": 90.6
+    },
+    "antialias|guiado|8x": {
+      "IR": 55.7,
+      "OR": 73.3,
+      "balanced": 64.5,
+      "specificity": 90.9
+    },
+    "antialias|guiado|16x": {
+      "IR": 45.9,
+      "OR": 62.3,
+      "balanced": 54.1,
+      "specificity": 91.2
+    },
+    "antialias|guiado|32x": {
+      "IR": 49.6,
+      "OR": 74.4,
+      "balanced": 62.0,
+      "specificity": 94.4
+    },
+    "antialias|kurtograma_regra|4x": {
+      "IR": 58.2,
+      "OR": 63.1,
+      "balanced": 60.7,
+      "specificity": 93.3
+    },
+    "antialias|kurtograma_regra|8x": {
+      "IR": 57.7,
+      "OR": 67.4,
+      "balanced": 62.6,
+      "specificity": 94.2
+    },
+    "antialias|kurtograma_regra|16x": {
+      "IR": 54.4,
+      "OR": 73.2,
+      "balanced": 63.8,
+      "specificity": 95.0
+    },
+    "antialias|kurtograma_regra|32x": {
+      "IR": 47.5,
+      "OR": 53.1,
+      "balanced": 50.3,
+      "specificity": 94.2
+    },
+    "pura|banda_larga_regra|4x": {
+      "IR": 29.9,
+      "OR": 47.6,
+      "balanced": 38.8,
+      "specificity": 93.3
+    },
+    "pura|banda_larga_regra|8x": {
+      "IR": 34.8,
+      "OR": 52.6,
+      "balanced": 43.7,
+      "specificity": 93.9
+    },
+    "pura|banda_larga_regra|16x": {
+      "IR": 36.4,
+      "OR": 46.7,
+      "balanced": 41.5,
+      "specificity": 94.2
+    },
+    "pura|banda_larga_regra|32x": {
+      "IR": 32.6,
+      "OR": 49.6,
+      "balanced": 41.1,
+      "specificity": 94.4
+    },
+    "pura|guiado|4x": {
+      "IR": 42.2,
+      "OR": 62.2,
+      "balanced": 52.2,
+      "specificity": 93.9
+    },
+    "pura|guiado|8x": {
+      "IR": 41.4,
+      "OR": 64.5,
+      "balanced": 53.0,
+      "specificity": 94.4
+    },
+    "pura|guiado|16x": {
+      "IR": 35.8,
+      "OR": 55.0,
+      "balanced": 45.4,
+      "specificity": 94.2
+    },
+    "pura|guiado|32x": {
+      "IR": 20.8,
+      "OR": 43.7,
+      "balanced": 32.2,
+      "specificity": 95.0
+    },
+    "pura|kurtograma_regra|4x": {
+      "IR": 30.0,
+      "OR": 31.8,
+      "balanced": 30.9,
+      "specificity": 92.1
+    },
+    "pura|kurtograma_regra|8x": {
+      "IR": 32.4,
+      "OR": 35.6,
+      "balanced": 34.0,
+      "specificity": 93.9
+    },
+    "pura|kurtograma_regra|16x": {
+      "IR": 27.0,
+      "OR": 39.2,
+      "balanced": 33.1,
+      "specificity": 93.6
+    },
+    "pura|kurtograma_regra|32x": {
+      "IR": 22.6,
+      "OR": 27.6,
+      "balanced": 25.1,
+      "specificity": 94.2
+    },
+    "zona1|banda_larga_regra|4x": {
+      "IR": 20.8,
+      "OR": 34.1,
+      "balanced": 27.5,
+      "specificity": 93.0
+    },
+    "zona1|banda_larga_regra|8x": {
+      "IR": 24.4,
+      "OR": 46.8,
+      "balanced": 35.6,
+      "specificity": 93.6
+    },
+    "zona2|banda_larga_regra|4x": {
+      "IR": 0.0,
+      "OR": 5.1,
+      "balanced": 2.5,
+      "specificity": 94.2
+    },
+    "zona2|banda_larga_regra|8x": {
+      "IR": 39.6,
+      "OR": 41.1,
+      "balanced": 40.4,
+      "specificity": 93.0
+    },
+    "zona3|banda_larga_regra|4x": {
+      "IR": 0.0,
+      "OR": 6.0,
+      "balanced": 3.0,
+      "specificity": 93.9
+    },
+    "zona3|banda_larga_regra|8x": {
+      "IR": 0.0,
+      "OR": 16.1,
+      "balanced": 8.1,
+      "specificity": 94.2
+    },
+    "zona4|banda_larga_regra|8x": {
+      "IR": 0.0,
+      "OR": 5.3,
+      "balanced": 2.6,
+      "specificity": 94.2
+    },
+    "zona5|banda_larga_regra|8x": {
+      "IR": 0.0,
+      "OR": 4.4,
+      "balanced": 2.2,
+      "specificity": 93.9
+    },
+    "zona6|banda_larga_regra|8x": {
+      "IR": 0.2,
+      "OR": 3.8,
+      "balanced": 2.0,
+      "specificity": 94.4
+    },
+    "zona7|banda_larga_regra|8x": {
+      "IR": 0.0,
+      "OR": 7.0,
+      "balanced": 3.5,
+      "specificity": 93.0
+    },
+    "zona_frota|banda_larga_regra|4x": {
+      "IR": 37.1,
+      "OR": 57.0,
+      "balanced": 47.0,
+      "specificity": 91.2
+    },
+    "zona_frota|banda_larga_regra|8x": {
+      "IR": 42.0,
+      "OR": 61.8,
+      "balanced": 51.9,
+      "specificity": 89.8
+    },
+    "zona_kurtograma|banda_larga_regra|4x": {
+      "IR": 15.8,
+      "OR": 13.5,
+      "balanced": 14.7,
+      "specificity": 94.2
+    },
+    "zona_kurtograma|banda_larga_regra|8x": {
+      "IR": 17.1,
+      "OR": 14.8,
+      "balanced": 16.0,
+      "specificity": 94.2
+    }
+  },
+  "tests": [
+    {
+      "hypothesis": "H5",
+      "arm": "pura|guiado",
+      "baseline": "antialias|guiado",
+      "factor": 4,
+      "diff_points": -7.25,
+      "bearings_differing": 16,
+      "bearings_up": 3,
+      "p_one_sided": 0.9993438720703125,
+      "p_holm": 1.0,
+      "passes": 0
+    },
+    {
+      "hypothesis": "H5",
+      "arm": "pura|guiado",
+      "baseline": "antialias|guiado",
+      "factor": 8,
+      "diff_points": -11.51,
+      "bearings_differing": 16,
+      "bearings_up": 3,
+      "p_one_sided": 0.9986572265625,
+      "p_holm": 1.0,
+      "passes": 0
+    },
+    {
+      "hypothesis": "H5",
+      "arm": "pura|guiado",
+      "baseline": "antialias|guiado",
+      "factor": 16,
+      "diff_points": -8.73,
+      "bearings_differing": 15,
+      "bearings_up": 4,
+      "p_one_sided": 0.9937744140625,
+      "p_holm": 1.0,
+      "passes": 0
+    },
+    {
+      "hypothesis": "H5",
+      "arm": "pura|guiado",
+      "baseline": "antialias|guiado",
+      "factor": 32,
+      "diff_points": -29.72,
+      "bearings_differing": 18,
+      "bearings_up": 2,
+      "p_one_sided": 0.999969482421875,
+      "p_holm": 1.0,
+      "passes": 0
+    },
+    {
+      "hypothesis": "H6",
+      "arm": "pura|guiado",
+      "baseline": "zona_frota|banda_larga_regra",
+      "factor": 4,
+      "diff_points": 5.14,
+      "bearings_differing": 17,
+      "bearings_up": 10,
+      "p_one_sided": 0.0436553955078125,
+      "p_holm": 0.0873,
+      "passes": 0
+    },
+    {
+      "hypothesis": "H6",
+      "arm": "pura|guiado",
+      "baseline": "zona_frota|banda_larga_regra",
+      "factor": 8,
+      "diff_points": 1.07,
+      "bearings_differing": 16,
+      "bearings_up": 11,
+      "p_one_sided": 0.3450469970703125,
+      "p_holm": 0.345,
+      "passes": 0
+    }
+  ],
+  "leakage_and_decoys": {
+    "4x": {
+      "detections_damaged": 691,
+      "share_peak_within_003_of_integer": 0.023,
+      "balanced_with_exclusion_003": 49.8,
+      "decoy_over_threshold_damaged": 0.146,
+      "decoy_over_threshold_healthy": 0.061,
+      "true_fault_over_threshold_damaged": 0.527
+    },
+    "8x": {
+      "detections_damaged": 713,
+      "share_peak_within_003_of_integer": 0.025,
+      "balanced_with_exclusion_003": 51.3,
+      "decoy_over_threshold_damaged": 0.154,
+      "decoy_over_threshold_healthy": 0.035,
+      "true_fault_over_threshold_damaged": 0.539
+    },
+    "16x": {
+      "detections_damaged": 621,
+      "share_peak_within_003_of_integer": 0.01,
+      "balanced_with_exclusion_003": 44.5,
+      "decoy_over_threshold_damaged": 0.098,
+      "decoy_over_threshold_healthy": 0.05,
+      "true_fault_over_threshold_damaged": 0.461
+    },
+    "32x": {
+      "detections_damaged": 461,
+      "share_peak_within_003_of_integer": 0.02,
+      "balanced_with_exclusion_003": 30.4,
+      "decoy_over_threshold_damaged": 0.076,
+      "decoy_over_threshold_healthy": 0.082,
+      "true_fault_over_threshold_damaged": 0.33
+    }
+  },
+  "verdict_factors_passed": {
+    "H5": [],
+    "H6": []
+  }
+}

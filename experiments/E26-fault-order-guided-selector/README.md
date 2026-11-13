@@ -446,3 +446,58 @@ Escrito e commitado antes de rodar, junto com `run_paderborn_acq.py`, `analyze_p
 - **Consequência:** a alegação do E26 passa a ser sobre a regra e só parcialmente sobre a banda. O
   E26c decide o que sobra para a decimação pura.
 
+### Resultado do E26c (2026-11-13): no Paderborn, o anti-alias ganha da decimação pura
+
+- **Rodada:** `results-paderborn-aquisicao/`, 55 998 linhas, sem recorte de fumaça. Os hashes batem
+  com `996e4ed`.
+- **Integridade:** 13 176 casamentos entre o `pura|guiado` e o guiado bruto do E26, com diferença
+  de 0,0.
+- **Acurácia balanceada (%), fluxo bruto, regra do E26.** Especificidade de 89,8 a 95,0 %:
+
+  | braço | 4× | 8× | 16× | 32× |
+  |---|---|---|---|---|
+  | `pura|guiado` | 52,2 | 53,0 | 45,4 | 32,2 |
+  | `antialias|guiado` | 59,5 | 64,5 | 54,1 | 62,0 |
+  | `pura|kurtograma_regra` | 30,9 | 34,0 | 33,1 | 25,1 |
+  | `antialias|kurtograma_regra` | 60,7 | 62,6 | 63,8 | 50,3 |
+  | `pura|banda_larga_regra` | 38,8 | 43,7 | 41,5 | 41,1 |
+  | `antialias|banda_larga_regra` | 47,0 | 51,9 | 50,5 | 71,2 |
+  | `zona_kurtograma|banda_larga_regra` | 14,7 | 16,0 | – | – |
+  | `zona_frota|banda_larga_regra` | 47,0 | 51,9 | – | – |
+
+- **Perfil por zona** (banda larga com a regra):
+  - **4×:** zona 0 (anti-alias) 47,0; zona 1 27,5; zona 2 2,5; zona 3 3,0.
+  - **8×:** zona 0 51,9; zona 1 35,6; zona 2 40,4; zona 3 8,1; zonas 4 a 7 de 2,0 a 3,5.
+  - A frota escolhe a zona 0 em todos os rolamentos. O passa-faixa pela frota é o anti-alias.
+- **H5 falha** (`pura|guiado` > `antialias|guiado`). A decimação pura fica abaixo:
+  - −7,3 em 4×, −11,5 em 8×, −8,7 em 16× e −29,7 em 32×;
+  - 2 a 4 rolamentos a favor, de 15 a 18;
+  - Holm de 1,0.
+- **H6 falha** (`pura|guiado` > `zona_frota`): +5,1 em 4× (Holm 0,087) e +1,1 em 8×.
+- **Vazamento** (ataque 6 da revisão):
+  - Entre as detecções nos danificados, só 1,0 a 2,5 % têm o pico da 1ª harmônica a até 0,03 de
+    uma ordem inteira.
+  - Com exclusão de ±0,03, o acerto fica em 49,8, 51,3, 44,5 e 30,4 %, contra 52,2, 53,0, 45,4 e
+    32,2 %.
+  - O vazamento das raias do eixo não explica as detecções.
+- **Iscas:**
+  - A maior isca passa do limiar em 7,6 a 15,4 % dos segmentos danificados e em 3,5 a 8,2 % dos
+    sãos. A falha verdadeira passa em 33,0 a 53,9 % dos danificados.
+  - A detecção é majoritariamente específica da falha. Há um excesso de conteúdo não específico
+    nos danificados, de cerca de 2× o nível dos sãos.
+- **Leitura:**
+  - **No Paderborn, a informação de diagnóstico está na banda base.**
+    - Os rolamentos com falha se identificam abaixo de FS/(2M).
+    - As zonas altas, a partir de 16 kHz em 4× e de 12 kHz em 8×, não trazem nada. Elas contêm o
+      conteúdo impulsivo que captura o kurtograma (E24).
+    - Decimar sem filtro dobra essas zonas sobre a banda útil e custa de 7 a 30 pontos em
+      qualquer escolha de banda.
+  - **Comissionar a zona pelo kurtograma em taxa cheia falha** (15 a 16 %), porque ele escolhe a
+    zona capturada.
+  - **No Ottawa é o contrário** (E20 e E23): a ressonância da falha está alta, e o anti-alias custa
+    27 pontos em 10× e 12×.
+  - **A vantagem da decimação pura depende de onde está a banda informativa** em relação à
+    interferência. Isso se mede por zona, antes de escolher a aquisição.
+  - **A melhor aquisição do Paderborn, na mesma taxa, é a clássica:** anti-alias, taxa baixa e
+    envelope com a regra das ordens de falha. Chega a 71,2 % em 32× (2 kS/s) com a banda larga.
+
