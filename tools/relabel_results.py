@@ -388,10 +388,22 @@ def write_gzip_like(path: Path, content: bytes) -> None:
 
 
 def tracked_results() -> list[str]:
-    out = subprocess.run(
-        ["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True
-    ).stdout
-    return sorted(p for p in out.splitlines() if RESULT_FILE.match(p))
+    """The result files tracked by git or, outside a checkout of this repository (the source
+    archive of a release, which has no .git), the result files on disk."""
+    try:
+        top = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"], cwd=ROOT, capture_output=True, text=True
+        )
+        in_checkout = top.returncode == 0 and Path(top.stdout.strip()).resolve() == ROOT
+    except OSError:  # git is not installed
+        in_checkout = False
+    if in_checkout:
+        files = subprocess.run(
+            ["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True
+        ).stdout.splitlines()
+    else:
+        files = [p.relative_to(ROOT).as_posix() for p in (ROOT / "experiments").rglob("*")]
+    return sorted(p for p in files if RESULT_FILE.match(p) and (ROOT / p).is_file())
 
 
 def original_path(path: str) -> str:
