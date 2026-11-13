@@ -401,3 +401,48 @@ Escrito e commitado antes de rodar, junto com `run_paderborn_acq.py`, `analyze_p
   - `x[::M]` dobra só o que passou pela cadeia analógica do banco, não a banda do track-and-hold
     de um amostrador real (revisão, ataque 9).
 
+### Resultado do E26b (2026-11-13): misto
+
+- **Rodada:** `results-paderborn-regra/`, 65 880 linhas, sem recorte de fumaça. Os hashes batem
+  com `14c68d9`.
+- **Integridade:** 1474 casamentos entre a banda sorteada e a banda guiada, com diferença máxima de
+  0,0. Os escores dos dois arquivos são o mesmo cálculo.
+- **Acurácia balanceada (%), regra fixa e limiar dos sãos.** Especificidade de 89,8 a 95,0 % em
+  todos os braços. O cego do E26 entra só para comparar.
+
+  | fluxo bruto | 1× | 4× | 8× | 16× | 32× |
+  |---|---|---|---|---|---|
+  | kurtograma cego (E26) | 7,7 | 16,1 | 18,6 | 19,2 | 13,0 |
+  | `kurtograma_regra` | 14,1 | 30,9 | 34,0 | 33,1 | 25,1 |
+  | `sorteada_regra` | 15,1 | 36,6 | 35,2 | 32,3 | 10,8 |
+  | `infograma_ses_regra` | 36,0 | 43,4 | 39,0 | 34,0 | 24,6 |
+  | `banda_larga_regra` | 32,2 | 38,8 | 43,7 | 41,5 | 41,1 |
+  | `guiado` | 36,2 | 52,2 | 53,0 | 45,4 | 32,2 |
+
+  | mediana de 3 | 1× | 4× | 8× | 16× | 32× |
+  |---|---|---|---|---|---|
+  | `kurtograma_regra` | 20,0 | 32,1 | 50,7 | 34,8 | 25,2 |
+  | `banda_larga_regra` | 51,8 | 45,1 | 46,8 | 47,0 | 32,7 |
+  | `guiado` | 38,3 | 49,0 | 50,9 | 45,2 | 25,2 |
+
+- **H3** (guiado contra `kurtograma_regra`; Holm sobre 8):
+  - **No bruto, passa em 4×, 8× e 16×:** +21,4, +19,0 e +12,3 pontos, com 18 de 20, 18 de 19 e 13
+    de 18 rolamentos a favor (Holm ≤ 0,003). Em 32× fica em +7,1, Holm 0,17.
+  - **Com a mediana, passa em 4× e 16×:** +16,9 e +10,4. Em 8× e 32× empata.
+- **H4** (guiado contra `banda_larga_regra`):
+  - **No bruto, passa em 4× e 8×:** +13,5, com 18 de 18 a favor, e +9,3. Em 16× fica em +3,8, sem
+    passar, e em 32× fica −8,9, com a banda larga à frente.
+  - **Com a mediana, passa só em 4×,** por +3,8.
+- **Leitura, pela chave do pré-registro: misto.**
+  - **A regra explica parte do ganho do E26.** Na mesma banda do kurtograma, ela leva o acerto de
+    16,1 para 30,9 % em 4× e de 13,0 para 25,1 % em 32×.
+  - **A banda guiada soma à regra contra a banda do kurtograma,** de +12 a +21 pontos de 4× a 16×
+    no bruto.
+  - **Contra o envelope de banda larga com a mesma regra, a banda guiada só ganha em 4× e 8×.**
+    Em 32× perde.
+  - **O envelope de banda larga com o prior e o limiar dos sãos é um baseline forte:** de 39 a
+    44 % de 4× a 32× no bruto, e 52 % em 1× com a mediana. A seleção de banda, guiada ou não, é o
+    componente menor.
+- **Consequência:** a alegação do E26 passa a ser sobre a regra e só parcialmente sobre a banda. O
+  E26c decide o que sobra para a decimação pura.
+
