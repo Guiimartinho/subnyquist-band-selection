@@ -1,10 +1,9 @@
-% Artigo unico do ADR 0006 (MSSP). Rascunho de 2026-11-13, revisado contra a revisao adversarial do
-% manuscrito inteiro (reviewer-2, mesmo dia): pre-registro por experimento, livro-razao das hipoteses
-% no apendice, manchete do Paderborn com IC e especificidades. Autores e link do codigo no texto;
-% faltam afiliacoes conferidas, e-mail, declaracoes e o repositorio publico. Compila com o TinyTeX
-% local: papers/shared/build_pdf.py. Referencias so do literature/refs.bib (campo verified).
+% Manuscript for Mechanical Systems and Signal Processing (MSSP). Build it with the repository-local
+% TinyTeX: papers/shared/build_pdf.py. References come only from literature/refs.bib, where every
+% entry carries a `verified` field.
 \PassOptionsToPackage{hyphens}{url}
-% referencias numeradas na ordem de citacao, o estilo da MSSP (elsarticle-num-names, que tambem da nome ao \citet)
+% references numbered in order of citation, the MSSP style (elsarticle-num-names, which also gives
+% names to \citet)
 \documentclass[preprint,12pt]{elsarticle}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
@@ -13,14 +12,14 @@
 \usepackage{siunitx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{hyperref}
-% caminhos e URLs longos: deixa o TeX esticar os espacos em vez de estourar a margem
+% long paths and URLs: let TeX stretch the spaces instead of overflowing the margin
 \setlength{\emergencystretch}{3em}
-% figuras altas cabem no alto da pagina ou numa pagina de floats, em vez de irem para o fim
+% tall figures fit at the top of a page or on a float page instead of drifting to the end
 \renewcommand{\topfraction}{0.9}
 \renewcommand{\bottomfraction}{0.8}
 \renewcommand{\textfraction}{0.1}
 \renewcommand{\floatpagefraction}{0.75}
-% espaco entre a legenda (acima) e o filete superior das tabelas
+% space between a caption (above) and the top rule of a table
 \setlength{\belowcaptionskip}{6pt}
 
 \journal{Mechanical Systems and Signal Processing}
@@ -99,9 +98,9 @@ under CC BY 4.0; the Paderborn bearing data \citep{lessmeier2016paderborn}, unde
 and the Case Western Reserve University bearing data \citep{smith2015cwru}. The code, the
 experiment configurations with their pre-registrations, the result files and the scripts that
 generate every number, table and figure of this paper are in the repository
-\url{https://github.com/Guiimartinho/research-project-sub-Nyquist}.
-\todo[inline]{The repository is private: make it public, or publish an archived snapshot with a
-DOI, before submission. Publisher PDFs in \texttt{literature/pdf} must leave the history first.}
+\url{https://github.com/Guiimartinho/subnyquist-band-selection}, released under the MIT licence,
+with the git history of every file it contains.
+\todo[inline]{Publish the repository and archive a release with a DOI (Zenodo) before submission.}
 \appendix
 \setcounter{table}{0}
 \setcounter{figure}{0}
