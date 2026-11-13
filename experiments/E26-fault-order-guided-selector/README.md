@@ -270,3 +270,79 @@ e `config/paderborn_rule.yaml`.
   resultado dele. Os escores das quatro estratégias novas ainda não foram calculados. O braço de
   referência fica fixo como saiu do E26.
 
+### Revisão adversarial (`reviewer-2`, 2026-11-13): revisão maior
+
+Os scripts da revisão estão em `exploratory/review_2026-11-13/`. Reproduzi a diferença em
+diferenças (`a2_did.py`) e a contagem por rolamento (`a10_bearinglevel.py`).
+
+- **O que sobreviveu:**
+  - **Reprodução.** A análise reproduz bit a bit a partir do CSV, e os hashes batem.
+  - **O prior não inventa detecções.** Dada uma detecção do `mediana_guiado`, a pista sai certa em
+    91 a 100 % de 1× a 16×, e em 84 a 92 % em 32×. O candidato errado passa do limiar nos
+    danificados em 0 a 7,7 % dos segmentos, o nível do alarme falso.
+  - **A régua do cego é justa.** Trocar a régua ou abrir a tolerância move o cego no máximo 4,3
+    pontos.
+  - **A H1 não depende de um rolamento.** Tirando qualquer um, o mínimo fica em +29,5, +29,0,
+    +22,5 e +8,9.
+  - **Por rolamento** (identificado se mais de 50 % dos segmentos saem certos): em 4× e 8×, o
+    guiado com mediana identifica 12 de 23 rolamentos e o cego, 4. São 8 só pelo guiado e 0 só
+    pelo cego (McNemar, p = 0,004). Nenhum são dá alarme.
+- **Ataques, do mais grave ao menos grave:**
+  1. **O ganho não vem da decimação.** Em 1× ele já é de +30,6 pontos, com 16 de 16 rolamentos a
+     favor. A diferença em diferenças por rolamento, ganho no fator menos ganho em 1×, fica em
+     +2,3 [−13,5; +17,5] (4×), +1,7 [−14,5; +17,5] (8×), −4,6 [−19,0; +9,0] (16×) e
+     −18,4 [−32,5; −4,5] (32×; p bilateral 0,012). O guiado "melhorar" de 1× para 4× é
+     artefato do limiar único, puxado pela janela da BPFO nos sãos.
+  2. **A banda e a regra estão confundidas, e o cego falha pela regra.**
+     - O argmax cego cai numa raia do banco na ordem 2,10 em 38,8 % dos segmentos danificados e
+       em 58,2 % dos sãos.
+     - Na mesma banda, a regra guiada ganha do argmax cego: de 69,4 contra 34,7 % em 8× a
+       60,4 contra 32,0 % em 32×.
+     - O E26b é o desenho certo, mas falta gravar a ordem do pico na janela.
+  3. **Faltam os baselines honestos.**
+     - O guiado com anti-alias na mesma taxa: é o controle decisivo para "decimação pura". O
+       E24b mostra que, no Paderborn, o cego com teto em 1× ganha da decimação pura.
+     - A amostragem passa-faixa clássica com envelope (`lu2018undersampled`).
+     - Ao menos um seletor dirigido publicado.
+  4. **A novidade se sobrepõe à literatura.** Seleção de banda pelas frequências de falha
+     conhecidas já existe: o log-cicligrama (Smith et al., MSSP 2019), o IFBIgram (Schmidt et
+     al., MSSP 2020) e `mauricio2020iesfogram`. Harmônicas de falha em vibração subamostrada:
+     Tang et al. (Sensors 2015) e `lu2018undersampled`.
+  5. **A mediana não contribui.** Comparada ao guiado sem limpeza, ela muda de +2,1 a −7,1
+     pontos, e o −7,1 em 32× vai contra ela (p = 0,044).
+  6. **A exclusão das ordens inteiras (±0,015) é menor que o lóbulo da janela de Hann.**
+     Vazamento da raia do eixo pode gerar proeminência sem falha. Pedido: gravar a ordem do
+     pico, testar ±0,03 e usar janelas-isca.
+  7. **A especificidade é estimativa pontual com 6 sãos.**
+     - O IC vai de 88,6 a 99,7 % em 4×.
+     - Por rolamento são, ela cai até 75,4 %.
+     - O limiar exige dados de estado são do mesmo banco.
+  8. **Heterogeneidade.**
+     - Em 4×, 8 rolamentos ficam acima de 80 % e 8 abaixo de 10 %.
+     - A pista interna artificial (KI03, KI05, KI07 e KI08) e os reais de nível 1 nunca são
+       identificados.
+     - Em 32× não há diferença por rolamento (4 contra 3).
+  9. **Parede física.** `x[::M]` dobra só o que passou pela cadeia analógica do Paderborn, não a
+     banda do track-and-hold de um amostrador real.
+  10. **Proveniência.** Os hashes são calculados no fim da rodada, e o manifest não grava o commit
+      nem se a árvore estava suja.
+- **Frase aceita pelo revisor:**
+  > On Paderborn (23 damaged, 6 healthy bearings, 1500 rpm), a fault-order-targeted rule with a
+  > healthy-calibrated threshold identified the faulty race in 49–53 % of segments (12 of 23
+  > bearings) at 1/4 and 1/8 of the original rate by plain decimation, against 16–19 % (4 of 23)
+  > for the blind kurtogram with an unrestricted envelope peak, at about 94 % against 100 %
+  > specificity. The advantage was of the same size at full rate (+30.6 points) and shrank at
+  > 1/32, so it is not attributable to decimation.
+- **Não aceita:**
+  - que o seletor guiado com mediana melhore a identificação sob decimação;
+  - que ele evite a captura sob decimação;
+  - atribuir o ganho à escolha de banda antes do E26b;
+  - que a mediana contribua;
+  - "aquisição sub-Nyquist" no sentido de hardware.
+- **Consequência:**
+  - O E26 vira um efeito de prior e de regra, presente em todas as taxas.
+  - O que ainda pode ser contribuição: o quanto desse efeito sobrevive à decimação pura,
+    comparado ao anti-alias na mesma taxa.
+  - Isso pede o E26b, mais uma rodada com o anti-alias, a ordem do pico e a exclusão de ±0,03,
+    e o baseline passa-faixa.
+
