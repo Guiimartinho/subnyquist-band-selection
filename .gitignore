@@ -47,6 +47,8 @@ firmware/**/build/
 *.tdo
 # PDF do paper: gerado por papers/shared/build_pdf.py a partir das fontes versionadas
 papers/*/main*.pdf
+# pacote de submissão: gerado por papers/shared/pack_submission.py
+papers/*/submission/
 
 # so
 .DS_Store
