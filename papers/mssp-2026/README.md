@@ -3,7 +3,8 @@
 LaTeX sources of the manuscript *Blind band selection under pure decimation of bearing vibration:
 aliased impulses, fault-order decisions and a power check for learned sampling*. The appendix
 (`sections/appendix_ledger.tex`) lists the 35 pre-registered hypotheses, with the verdict and with
-whether or not each one was committed before running.
+whether or not each one was committed before running, and gives the location in this repository of
+the result files and exploratory scripts behind each section of the results.
 
 The source archive of each release, which is what its Zenodo record keeps, leaves out the
 manuscript text (`main.tex`, `sections/`, `highlights.txt` and this file). It keeps the generated

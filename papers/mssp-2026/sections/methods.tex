@@ -1,20 +1,17 @@
 \section{Data and methods}
 \label{sec:methods}
 
-Each experiment is named by its identifier in the repository (E07 to E26). Hypotheses,
-decision rules and tests were written before each run, and
-\ref{app:ledger} lists every one of them with its verdict. They were also committed to
-the repository before the run for the Paderborn experiments, both power gates, both learned-mask
-runs and the later Ottawa runs on robust selectors and on cleaning after decimation; the commit
-history records the order. The confirmatory Paderborn run of the fault-order rule came first, and
-the two runs that vary its band and its acquisition were designed after it, on the same records.
-The first Ottawa and CWRU runs were committed only after they had run. The spike-removal and
-median arms on Ottawa were added after an exploratory analysis of the same records had shown their
-effect, the CWRU endpoint was moved to the highest dose after a smoke run on two records, the
-evaluability rule of the learned masks was fixed after the training diagnostics of a first
-attempt, and the Ottawa power gate was run after the learned-mask run that it assesses. Values
-given here are those of the experiment configurations, and the repository listed under Data and
-code availability holds them.
+Hypotheses, decision rules and tests were written before each run, and \ref{app:ledger} lists every
+one of them with its verdict, whether it was also committed to the repository before the run, and
+where its results lie in the repository. Five departures from this protocol bear on the evidence,
+and Table~\ref{tab:ledger} marks each of them. The first runs on Ottawa and CWRU were committed only
+after they had run. The spike-removal and median arms on Ottawa were added after an exploratory
+analysis of the same records had shown their effect. The CWRU endpoint was moved to the highest
+dose after a pilot run on two records. The evaluability rule of the learned masks was fixed after
+the training diagnostics of a first attempt, and the Ottawa power gate (Section~\ref{sec:stats})
+was run after the learned-mask run that it assesses. Numbers from analyses that were not
+pre-registered are marked as exploratory. Parameter values are those of the experiment
+configurations in the repository listed under Data and code availability.
 
 \subsection{Datasets}
 \label{sec:data}
@@ -85,16 +82,15 @@ $g \times 64$ samples per revolution remain, with $g = 2$ for Ottawa and $g = 1$
 \label{sec:truth}
 
 The fault order is known from geometry only up to slip and manufacturing spread, so the truth is
-calibrated from the full-rate data, never from the arm under test.
-\begin{itemize}
-  \item \emph{Local ruler}: the order of the full-rate line in the same segment, refined around
-  the geometric order by harmonic-energy score and taken at the centre of the score plateau. The
-  search spans $\pm12\%$ for Ottawa and $\pm1\%$ for Paderborn. For Paderborn the line must also
-  stand out: its peak must reach at least five times the median of the order spectrum within
-  $\pm7\%$ of the geometric order. A segment without a valid line has no local truth.
-  \item \emph{Nested ruler}: the median of the valid calibrations of other records of the same
-  race, outside the test set. In E24, which has no training, the bearing under test is left out.
-\end{itemize}
+calibrated from the full-rate data, never from the arm under test, with two rulers. The local ruler
+is the order of the full-rate line in the same segment, refined around the geometric order by a
+harmonic-energy score and taken at the centre of the score plateau. The search spans $\pm12\%$ for
+Ottawa and $\pm1\%$ for Paderborn, where the line must also stand out: its peak must reach at least
+five times the median of the order spectrum within $\pm7\%$ of the geometric order. A segment
+without a valid line has no local truth. The nested ruler is the median of the valid calibrations
+of other records of the same race, outside the test set; in the evaluations without training, such
+as the replication of the classical pipeline on Paderborn, the bearing under test is left out.
+
 An estimate is a hit when it falls within 0.06 order of the truth for Ottawa and 0.025 order for
 Paderborn. The tighter tolerance is forced by geometry: the Paderborn BPFO and BPFI lie 0.054 order
 from the third and fifth shaft harmonics, and a looser tolerance would score a line locked on the
@@ -121,12 +117,12 @@ microsecond-scale event as an isolated sample at full amplitude.
 At $4\times$ on Ottawa the effective Nyquist frequency is 25~kHz, equal to the search ceiling. The
 upper half of the search range at the first kurtogram level, $[12.75, 25]$~kHz, then receives the
 folded content of three zones of the original frequency axis: $Z_1 = [25, 37.25]$,
-$Z_2 = [62.75, 75]$ and $Z_3 = [75, 87.25]$~kHz. To attribute the loss to zones, an aim later
-withdrawn (Section~\ref{sec:res-valley}), each zone, and their
-union, is rejected at full rate before decimation by an ideal zero-phase FFT mask. An ideal
-anti-alias filter, which zeroes everything above the effective Nyquist frequency, and a
-three-point running median complete the interventions. None of these masks is realizable; their
-purpose is causal attribution.
+$Z_2 = [62.75, 75]$ and $Z_3 = [75, 87.25]$~kHz. Each zone, and their union, is rejected at full
+rate before decimation by an ideal zero-phase FFT mask. The pre-registered aim of this rejection was
+to attribute the loss to individual zones; Section~\ref{sec:res-valley} explains why it was
+withdrawn. An ideal anti-alias filter, which zeroes everything above the effective Nyquist
+frequency, and a three-point running median complete the interventions. None of these masks is
+realizable; their purpose is causal attribution.
 
 \subsection{Robust band selectors}
 
@@ -147,73 +143,62 @@ time-domain and 0.4228 for the spectral negentropy). The spectral Gini index
 \label{sec:met-rule}
 
 On Paderborn we also replace the blind order estimate by a rule that looks only at the fault
-orders of the bearing geometry, as in band selectors that target known cyclic frequencies
-\citep{smith2019demodband,mauricio2020iesfogram,schmidt2020ifbigram}.
-\begin{itemize}
-  \item \emph{Score.} For each candidate fault (BPFO or BPFI) and band, the score is the
-  prominence of the envelope order spectrum, its peak divided by its median, in a window of
-  $\pm2\%$ around the first and the second harmonic of the geometric order, averaged over the two.
-  Orders within $\pm0.015$ of an integer are excluded from the windows, because on Paderborn the
-  fault orders lie 0.054 from the third and the fifth shaft harmonic.
-  \item \emph{Decision.} The fault with the larger score is reported if that score exceeds the 95th
-  percentile of the larger score on the healthy bearings (K001 to K006) at the same factor;
-  otherwise the segment is declared healthy. A healthy bearing is evaluated with the threshold of
-  the other five.
-  \item \emph{Band.} The rule is applied to the band chosen by the kurtogram, to the whole band
-  from 500~Hz to the effective Nyquist frequency, or to the band of the kurtogram partition
-  (levels 1 to 3) that maximizes the score, which we call the guided band.
-\end{itemize}
-Accuracy is balanced over the two races on the damaged bearings, and specificity is the fraction
-of healthy segments declared healthy.
+orders of the bearing geometry, as do band selectors that target known cyclic frequencies
+\citep{smith2019demodband,mauricio2020iesfogram,schmidt2020ifbigram}. For each candidate fault
+(BPFO or BPFI) and band, the score is the prominence of the envelope order spectrum, its peak
+divided by its median, in a window of $\pm2\%$ around the first and the second harmonic of the
+geometric order, averaged over the two. Orders within $\pm0.015$ of an integer are excluded from the
+windows, because on Paderborn the fault orders lie 0.054 from the third and the fifth shaft
+harmonic. The fault with the larger score is reported if that score exceeds the 95th percentile of
+the larger score on the healthy bearings (K001 to K006) at the same factor; otherwise the segment is
+declared healthy, and a healthy bearing is evaluated with the threshold of the other five. The rule
+is applied to three bands: the band chosen by the kurtogram, the whole band from 500~Hz to the
+effective Nyquist frequency, and the band of the kurtogram partition (levels 1 to 3) that maximizes
+the score, which we call the guided band. Accuracy is balanced over the two races on the damaged
+bearings, and specificity is the fraction of healthy segments declared healthy.
 
-The acquisition is varied at the same rate $f_s/M$:
-\begin{itemize}
-  \item pure decimation, $x_M[n] = x[nM]$;
-  \item an ideal anti-alias filter at $f_s/(2M)$ before decimation;
-  \item an ideal band-pass filter on one Nyquist zone, $[k, k+1] \cdot f_s/(2M)$, before
-  decimation, which is classical band-pass sampling \citep{vaughan1991,lu2018undersampled}. The
-  zone is chosen either on the other bearings or from the full-rate kurtogram of a commissioning
-  record.
-\end{itemize}
+The acquisition is varied at the same rate $f_s/M$. Besides pure decimation, $x_M[n] = x[nM]$, two
+filters are placed before decimation: an ideal anti-alias filter at $f_s/(2M)$, and an ideal
+band-pass filter on one Nyquist zone, $[k, k+1] \cdot f_s/(2M)$, which is classical band-pass
+sampling \citep{vaughan1991,lu2018undersampled}. The zone is chosen either on the other bearings or
+from the full-rate kurtogram of a commissioning record.
+
 The confirmation run, the run with the rule fixed and the band varied, and the acquisition run
-were each pre-registered before they ran; the last two were designed after the first. The rule
-looks only at two candidate orders and takes its threshold from healthy bearings, while the blind
-pipeline estimates any order from 2 to 32, so the two operate at different specificities, and both
-are reported. A pilot of the same rule on Ottawa was exploratory and was revised twice after seeing
-the data; it enters only as a failure case (Section~\ref{sec:res-fail}).
+were each pre-registered before they ran; the last two were designed after the first, on the same
+records. The rule looks only at two candidate orders and takes its threshold from healthy bearings,
+while the blind pipeline estimates any order from 2 to 32, so the two operate at different
+specificities, and both are reported. An exploratory pilot of the same rule on Ottawa, revised
+twice after seeing the data, enters only as a failure case (Section~\ref{sec:res-fail}).
 
 \subsection{Statistical protocol}
 \label{sec:stats}
 
 The independent unit is the bearing on Paderborn, the condition-by-scenario cluster on Ottawa (four
 per race) and the fault cluster on CWRU (four). Three tests are used, each named where it is
-reported.
-\begin{itemize}
-  \item \emph{Cluster bootstrap} (learned masks, spike removal on Paderborn, CWRU). Units are
-  resampled with replacement within each race, together with the cross-validation folds when there
-  are any, and the one-sided p-value is $(1 + \#\{\Delta^* \le 0\})/(1 + B)$ with $B = 4000$, so a
-  zero difference counts against the hypothesis. With few clusters this bootstrap is
-  anticonservative.
-  \item \emph{Exact sign-flip test} (fault-order rule, search ceiling, robustness checks on
-  Paderborn). The statistic is the difference in balanced accuracy, the mean over races of the
-  per-bearing differences. Its null distribution flips the sign of each bearing's difference
-  independently: exactly, over all assignments, when at most 18 bearings differ, and with $10^6$
-  random assignments otherwise. The test is one-sided unless stated, and 95\% intervals are
-  obtained by inverting it.
-  \item \emph{Exact McNemar test} (paired hits, two-sided), on segments, on records or on bearings
-  identified by majority of segments.
-\end{itemize}
+reported. The cluster bootstrap is used for the learned masks, for spike removal on Paderborn and
+on CWRU. It resamples units with replacement within each race, together with the cross-validation
+folds when there are any, and its one-sided p-value is $(1 + \#\{\Delta^* \le 0\})/(1 + B)$ with
+$B = 4000$, so a zero difference counts against the hypothesis; with few clusters this bootstrap is
+anticonservative. The exact sign-flip test is used for the fault-order rule, the search ceiling
+and the robustness checks on Paderborn. Its statistic is the difference in balanced accuracy, the
+mean over races of the per-bearing differences, and its null distribution flips the sign of each
+bearing's difference independently: exactly, over all assignments, when at most 18 bearings
+differ, and with $10^6$ random assignments otherwise. The test is one-sided unless stated, and
+95\% intervals are obtained by inverting it. The exact McNemar test compares paired hits, two-sided,
+on segments, on records or on bearings identified by majority of segments.
+
 Holm's correction is applied within each family of tests. On Ottawa and CWRU no comparison can be
 significant at the level of the independent unit: with four clusters, the smallest one-sided p-value
 of a sign-flip test is $1/16$. The Ottawa effects are therefore reported by segment and by record,
 which treats these as independent and overstates the evidence.
 
 \paragraph{Power gate}
-We asked whether a benchmark can detect an improvement at all: on Paderborn before training, on
-Ottawa after the learned-mask run. A planted arm is derived from the classical baseline by turning
-each of its misses into a hit with probability $q$, using the same draw for both rulers, with $q$
-chosen for gains of +5 and +10 points or for a perfect arm. The pre-registered decision rule is then
-applied with all other comparisons assumed significant, which is deliberately optimistic, so that a
+We asked whether a benchmark can detect an improvement at all, with a statistical power analysis of
+the pre-registered decision rule that we call a power gate: on Paderborn before training, on Ottawa
+after the learned-mask run. A planted arm is derived from the classical baseline by turning each of
+its misses into a hit with probability $q$, using the same draw for both rulers, with $q$ chosen for
+gains of +5 and +10 points or for a perfect arm. The pre-registered decision rule is then applied
+with all other comparisons assumed significant, which is deliberately optimistic, so that a
 negative answer is conclusive. A benchmark passes if the power at +5 points reaches 0.80 in some
 admissible design. Because the classical baseline is deterministic, the gate measures power only
 against it; it says nothing about comparisons between learned arms, whose variance across seeds it
@@ -227,30 +212,22 @@ $L = 4b$ ticks, with a minimum gap of two ticks between them. This is the class 
 nonuniform patterns that a timer-triggered converter can schedule. Masks are learned by a top-$K$
 Gumbel relaxation with a straight-through estimator and an annealed temperature. The mask is
 trained jointly with an unrolled decoder \citep{monga2021unrolling} that mirrors the classical
-pipeline:
-\begin{itemize}
-  \item a learnable complex filter bank;
-  \item the squared envelope;
-  \item angular resampling;
-  \item order-spectrum logits.
-\end{itemize}
-The decoder has no learned term per order bin, so it cannot place a peak where the data have none.
-Early stopping and checkpoint selection start only after the annealing ends. A budget is evaluable
-only if the masks left the Gumbel noise, that is, if the margin between the $K$-th and
-$(K{+}1)$-th logits exceeds the noise standard deviation, in at least half of the splits.
+pipeline, with a learnable complex filter bank, the squared envelope, angular resampling and
+order-spectrum logits. The decoder has no learned term per order bin, so it cannot place a peak
+where the data have none. Early stopping and checkpoint selection start only after the annealing
+ends. A budget is evaluable only if the masks left the Gumbel noise, that is, if the margin between
+the $K$-th and $(K{+}1)$-th logits exceeds the noise standard deviation, in at least half of the
+splits.
 
-Two hypotheses were pre-registered. H1: the learned mask outperforms each of the three
-references below in at least two of the four budgets, under both rulers. H2: the learned
-constrained mask outperforms the mask learned without the constraint and projected onto it
-afterwards, the projection gap. The learned masks are compared with:
-\begin{itemize}
-  \item the best uniform rate at or below the budget, chosen on training data;
-  \item the same decoder with that uniform mask;
-  \item a fixed random feasible mask;
-  \item multicoset designs, including that of \citet{venkataramani2001optimal};
-  \item a mask learned without the constraint and projected onto it afterwards
-  \citep{huijben2020dps,weiss2021pilot}.
-\end{itemize}
+Two hypotheses were pre-registered. H1 states that the learned mask outperforms each of three
+references in at least two of the four budgets, under both rulers: the best uniform rate at or
+below the budget, chosen on training data, which is the classical pipeline; the same decoder with
+that uniform mask, which we call trained uniform decimation; and a fixed random feasible mask. H2
+states that the learned constrained mask outperforms the mask learned without the constraint and
+projected onto it afterwards \citep{huijben2020dps,weiss2021pilot}, a difference that we call the
+projection gap. Multicoset designs, including that of \citet{venkataramani2001optimal}, were also
+run as descriptive comparisons, without correction; they decide no hypothesis, and their results
+are in the repository.
 
 On Paderborn, cross-validation is by bearing, in four folds stratified by race, with three seeds
 per fold. Training labels come from the nested ruler, because the local ruler exists for only 7 of

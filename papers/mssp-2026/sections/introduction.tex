@@ -41,8 +41,8 @@ forward-citation tracking of \citet{smith2016emi} and \citet{vaerenberg2025cycli
 on band selection under decimation or folding (Section~\ref{sec:related}).
 
 This paper studies that interaction on three public benchmarks and its consequence for learned
-acquisition. Its findings are narrow, and \ref{app:ledger} lists every pre-registered
-test behind them, failures included.
+acquisition, and \ref{app:ledger} lists every pre-registered test behind its findings, including
+those that failed. The findings are the following.
 \begin{enumerate}
   \item On the Ottawa benchmark, a quasi-periodic train of single-sample spikes, present in every
   record including the healthy ones, captures kurtogram band selection on the outer-race records
@@ -56,7 +56,8 @@ test behind them, failures included.
   the capture, while a phase-randomized surrogate with the same folded spectrum does not, so the
   capture needs impulsiveness and not only folded power.
   \item On the Paderborn benchmark, whose drive is fed by a 16~kHz PWM inverter, the kurtogram is
-  already captured at full rate, decimation produces no valley, and spike removal changes little.
+  already captured at full rate, although the source of the capture was not established;
+  decimation produces no valley, and spike removal changes little.
   The replication shows what happens when the precondition of the Ottawa mechanism, a selector that
   is right at full rate, is absent.
   \item On Paderborn, a decision restricted to the fault orders of the bearing geometry, with a
@@ -66,16 +67,18 @@ test behind them, failures included.
   At the same rate, an anti-alias filter is 7 to 30 points better than pure decimation, and a
   profile of accuracy by Nyquist zone shows where the identifying content lies before the
   acquisition is chosen.
-  \item A power gate shows that our pre-registered decision rule could not have detected even a
-  perfect learned method on Ottawa, while on Paderborn it could detect a gain of 5 points over the
-  classical pipeline. We suggest such a gate before the training of learned acquisition on
-  condition-monitoring data.
+  \item A statistical power analysis of the planned test, which we call a power gate, shows that our
+  pre-registered decision rule could not have detected even a perfect learned method on Ottawa,
+  while on Paderborn it could detect a gain of 5 points over the classical pipeline. We suggest such
+  a gate before the training of learned acquisition on condition-monitoring data.
   \item Learned sampling masks under a timer-schedulable constraint did not outperform uniform
   decimation trained on the same records, or a random mask, at any budget from 1/4 to 1/32 on
   either benchmark, although on Paderborn the intervals do not exclude a gain of 5 points. The
   margin of all decoder arms over the classical pipeline is confined to the bearings where the
   kurtogram is captured.
 \end{enumerate}
-None of these is a new method. The noise folding of sub-Nyquist acquisition, envelope analysis at
-the fault frequencies and selectors that target them are all established; what this paper adds is
-how they interact when a blind band selector meets pure decimation.
+Rather than proposing a new selector or sampling scheme, the paper builds on established elements,
+namely the noise folding of sub-Nyquist acquisition, envelope analysis at the fault frequencies and
+the selectors that target them. It characterizes how they interact when a blind band selector meets
+pure decimation, and what that interaction implies for the evaluation of learned acquisition on
+bearing benchmarks.

@@ -2,13 +2,20 @@
 \label{app:ledger}
 
 Table~\ref{tab:ledger} lists every hypothesis that was written before its run in the experiments
-behind this paper, with the verdict recorded in the experiment's notes in the repository. The last
-column says whether the hypothesis was also committed to the repository before the run; where it
-was not, the run is exploratory in the strict sense, even if the hypothesis was written first. Two
-pilots that were never pre-registered, co-prime sampling and the fault-order rule on Ottawa, are
-reported in Section~\ref{sec:res-fail}. Abbreviations: BA, balanced accuracy; TAT, the
-rate-admissibility test of Section~\ref{sec:res-injected}; FLIP, exact sign-flip test; Holm over
-$n$, Holm's correction over $n$ tests.
+behind this paper, with the verdict recorded in the experiment's notes in the repository. The first
+column names the run by its experiment, which is also the name of its directory in the repository:
+E07 and E20 hold the Ottawa experiments, E23 the injection on CWRU, E24 and its follow-up E24b the
+replication on Paderborn, E26 and its follow-ups E26b and E26c the fault-order rule and the
+acquisition variants, and E15 the power gates and the learned masks. E21 holds the set-aside
+MAFAULDA benchmark, and E22 the equal-rate baselines, whose comparison with random compressive
+sampling was dropped. The last column (Comm.) says whether the hypothesis was also committed to the
+repository before the run; where it was not, the run is exploratory in the strict sense, even if
+the hypothesis was written first. Two pilots that were never pre-registered, co-prime sampling and
+the fault-order rule on Ottawa, are reported in Section~\ref{sec:res-fail}. Table~\ref{tab:locations}
+gives the location of the result files and of the exploratory scripts behind each section.
+Abbreviations: BA, balanced accuracy; TAT, the rate-admissibility test of
+Section~\ref{sec:res-injected}; FLIP, exact sign-flip test; Holm over $n$, Holm's correction over
+$n$ tests.
 
 {\footnotesize
 % ragged right: justified text in columns this narrow stretches the spaces between words
@@ -55,7 +62,7 @@ E22 & Random compressive sampling never beats uniform sampling with a lowered ce
 E22 & The rate chosen by the TAT is within 5 points of the best rate & Refuted: $-8.3$ to $-18.7$
   & no \\
 E23 & At the highest dose, at least 80\% of the predicted cells lose at least 20 points & 85.4\%
-  $[47.9, 89.6]$; 60\% without the smoke-run records; endpoint moved after the smoke run & no \\
+  $[47.9, 89.6]$; 60\% without the pilot-run records; endpoint moved after the pilot run & no \\
 E23 & At most 20\% of the cells with folding but no predicted capture lose & Supported (0 of 7),
   but true by construction & no \\
 E23 & At the dose P*, the surrogate loses less than half of what the bursts lose & Supported:
@@ -100,3 +107,49 @@ E15 Pad. & The projection gap is positive & Not evaluable: the free mask converg
   of the runs & yes \\
 \end{longtable}
 }
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Location of the results behind each section. Each run is a directory
+  \nolinkurl{experiments/<run>-<name>/} of the repository, and the locations are relative to it;
+  the follow-ups E24b, E26b and E26c lie in the directories of E24 and E26.}
+  \label{tab:locations}
+  \footnotesize
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.09\textwidth}%
+    >{\raggedright\arraybackslash}p{0.35\textwidth}%
+    >{\raggedright\arraybackslash}p{0.09\textwidth}%
+    >{\raggedright\arraybackslash}p{0.37\textwidth}@{}}
+    \toprule
+    Section & Result & Run & Location \\
+    \midrule
+    \ref{sec:res-valley} & Valley, interventions and zones on Ottawa & E20 & \nolinkurl{results/} \\
+    \ref{sec:res-valley} & Spike train (exploratory) & E20 & \nolinkurl{exploratory/spike_train.py} \\
+    \ref{sec:res-injected} & Injected interference on CWRU & E23 &
+      \nolinkurl{results/paper_numbers.json} \\
+    \ref{sec:res-mitig} & Cleaning and median after decimation & E20 &
+      \nolinkurl{results-post-despike/}, \nolinkurl{results-post-median/} \\
+    \ref{sec:res-mitig} & Phase locking on the inner race (exploratory) & E20 &
+      \nolinkurl{exploratory/phaselock_inner.py} \\
+    \ref{sec:res-mitig} & Robust selectors & E20 & \nolinkurl{results-selectors/} \\
+    \ref{sec:res-paderborn} & Replication on Paderborn & E24 &
+      \nolinkurl{results/}, \nolinkurl{results-post-despike/} \\
+    \ref{sec:res-paderborn} & Robustness checks and inverter lines (exploratory) & E24 &
+      \nolinkurl{exploratory/} \\
+    \ref{sec:res-paderborn} & Search ceiling and notch & E24b & \nolinkurl{results-ceiling-notch/} \\
+    \ref{sec:res-rule} & Fault-order rule, band and acquisition & E26, E26b, E26c &
+      \nolinkurl{results-paderborn/}, \nolinkurl{results-paderborn-rule/},
+      \nolinkurl{results-paderborn-acquisition/} \\
+    \ref{sec:res-rule} & Intervals and bearing-level counts computed after the confirmation & E26 &
+      \nolinkurl{exploratory/review_2026-11-13/} \\
+    \ref{sec:res-power} & Power gates & E15 &
+      \nolinkurl{results/power_gate/}, \nolinkurl{results-paderborn-gate/} \\
+    \ref{sec:res-masks} & Learned masks & E15 & \nolinkurl{results/}, \nolinkurl{results-paderborn/} \\
+    \ref{sec:res-masks} & Decoder margin by visibility of the fault line (exploratory) & E15 &
+      \nolinkurl{explore_line_split.py} \\
+    \ref{sec:res-fail} & Extended sweep on Ottawa & E07 & \nolinkurl{results/extended/} \\
+    \ref{sec:res-fail} & Fault-order rule on Ottawa (exploratory pilot) & E26 &
+      \nolinkurl{results-pilot/} and its two revisions \\
+    \ref{sec:res-fail} & Co-prime sampling (exploratory pilot) & E25 & \nolinkurl{results-pilot/} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
