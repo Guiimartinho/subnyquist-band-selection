@@ -49,6 +49,8 @@ firmware/**/build/
 papers/*/main*.pdf
 # pacote de submissão: gerado por papers/shared/pack_submission.py
 papers/*/submission/
+# declaração de conflito de interesses gerada na ferramenta da Elsevier: vai só para a submissão
+papers/*/declarationStatement*.docx
 
 # so
 .DS_Store
