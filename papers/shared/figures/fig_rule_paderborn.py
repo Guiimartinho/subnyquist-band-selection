@@ -4,11 +4,11 @@ Project rule: the figure comes from metrics.csv, never from a transcribed number
 
 - **Panels:**
   - (a) decision and band under pure decimation, on the raw stream: blind estimation (E26
-    `kurtogram`), kurtogram band and wide band with the rule (E26b), and guided band with the
+    `kurtogram`), kurtogram band and whole band with the rule (E26b), and guided band with the
     rule (E26 `guided`);
   - (b) acquisition at the same rate (E26c): pure decimation against the ideal anti-alias filter,
-    for the guided band and the wide band with the rule;
-  - (c) profile by Nyquist zone (E26c): wide band with the rule after the ideal band-pass of each
+    for the guided band and the whole band with the rule;
+  - (c) profile by Nyquist zone (E26c): whole band with the rule after the ideal band-pass of each
     zone, at 4× and 8×; zone 0 is the anti-alias filter.
 - **Metric:** that of the E26 analyses. The threshold is the 95th percentile of the highest score
   on the healthy bearings (leave-one-healthy-out to evaluate a healthy one). The accuracy is per
@@ -239,7 +239,7 @@ def main() -> None:
                 check(balanced_ci(pb)[0], s_acq, f"{acqn}|{strat}|{f}x")
             acq_cells[(acqn, strat)] = cells
 
-    # (c) per-zone profile, wide band with the rule
+    # (c) per-zone profile, whole band with the rule
     zones: dict[int, list[tuple[int, tuple[float, float, float]]]] = {}
     for m in (4, 8):
         prof = []

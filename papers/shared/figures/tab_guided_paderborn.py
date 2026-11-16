@@ -36,7 +36,7 @@ def main() -> None:
     rows = [
         ("pure decimation", "kurtogram band, blind order estimate", e26, "kurtogram|{f}x"),
         ("", "kurtogram band, fault-order rule", e26b, "kurtogram_rule|raw|{f}x"),
-        ("", "wide band, fault-order rule", e26b, "wideband_rule|raw|{f}x"),
+        ("", "whole band, fault-order rule", e26b, "wideband_rule|raw|{f}x"),
         ("", "guided band, fault-order rule", e26b, "guided|raw|{f}x"),
         (
             "anti-alias filter",
@@ -44,7 +44,7 @@ def main() -> None:
             e26c,
             "antialias|kurtogram_rule|{f}x",
         ),
-        ("", "wide band, fault-order rule", e26c, "antialias|wideband_rule|{f}x"),
+        ("", "whole band, fault-order rule", e26c, "antialias|wideband_rule|{f}x"),
         ("", "guided band, fault-order rule", e26c, "antialias|guided|{f}x"),
     ]
     cols = " & ".join(f"{f}$\\times$" for f in FACTORS)

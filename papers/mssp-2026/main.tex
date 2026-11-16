@@ -8,6 +8,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{array}
 \usepackage{longtable}
 \usepackage{siunitx}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -46,25 +47,26 @@ state={RS}, country={Brazil}}
 \begin{abstract}
 A node that lowers its sampling rate behind a front end fixed for the highest rate cannot band-pass
 filter an unknown fault resonance. Pure decimation is the limiting case: everything outside the band
-folds with it. We study how the folded content affects blind band selection in three bearing
-benchmarks. On Ottawa, a quasi-periodic train of single-sample spikes, present in every record
-including healthy ones, captures the kurtogram on outer-race records from $3\times$ to $6\times$,
-and order-estimation accuracy falls non-monotonically with the factor. An anti-alias filter at the
-reduced rate avoids the capture at no cost, and three steps that need no full-rate access do the
-same at $4\times$. Injected bursts reproduce the capture on CWRU, while a phase-randomized surrogate
-with the same folded spectrum does not. On Paderborn, where the kurtogram is captured at full rate,
-a decision restricted to the fault orders of the bearing geometry, with a threshold from six
-healthy bearings, identified the faulty race in 49--51\% of segments at $4\times$ and $8\times$,
-against 16--19\% for blind order estimation (+33 points, 95\% interval +16 to +50), at 94\% against
-100\% specificity. The advantage was as large at full rate, and an anti-alias filter beat pure
-decimation by 7 to 30 points. A power gate showed that our pre-registered test could not detect even
-a perfect learned method on Ottawa, unlike on Paderborn. Learned sampling masks did not outperform
-trained uniform decimation or random masks, but the intervals do not exclude a gain of 5 points.
+folds with it. We study how the folded content affects blind band selection on three bearing
+benchmarks: Ottawa, CWRU and Paderborn. On Ottawa, a quasi-periodic train of single-sample spikes,
+present in every record including healthy ones, captures the kurtogram on outer-race records from
+$3\times$ to $6\times$, and order-estimation accuracy falls non-monotonically. An
+anti-alias filter at the reduced rate avoids the capture at no cost, and three steps that need no
+full-rate access do the same at $4\times$. Injected bursts reproduce the capture on CWRU, whereas a
+phase-randomized surrogate with the same folded spectrum does not. On Paderborn, where the
+kurtogram is captured at full rate, a decision restricted to the geometric fault orders,
+thresholded on six healthy bearings, identified the faulty race in 49--51\% of segments at $4\times$
+and $8\times$, against 16--19\% for blind order estimation (+33 points, 95\% interval +16 to +50),
+at 94\% against 100\% specificity. The advantage was as large at full rate, and an anti-alias
+filter beat pure decimation by 7 to 30 points. A power analysis showed that our pre-registered test
+could not detect even a perfect learned method on Ottawa, unlike on Paderborn. Learned sampling
+masks did not outperform trained uniform decimation or random masks, but the intervals do not
+exclude a gain of 5 points.
 \end{abstract}
 
 \begin{keyword}
-bandpass sampling \sep aliasing \sep spectral kurtosis \sep kurtogram \sep impulsive noise
-\sep learned sampling \sep rolling element bearings
+bandpass sampling \sep aliasing \sep kurtogram \sep impulsive noise \sep learned sampling
+\sep rolling element bearings
 \end{keyword}
 
 \end{frontmatter}
@@ -99,7 +101,8 @@ and the Case Western Reserve University bearing data \citep{smith2015cwru}. The 
 experiment configurations with their pre-registrations, the result files and the scripts that
 generate every number, table and figure of this paper are in the repository
 \url{https://github.com/Guiimartinho/subnyquist-band-selection}, released under the MIT licence,
-with the git history of every file it contains. The version used in this paper, v1.0.0, is
+with the git history of every file it contains; \ref{app:ledger} gives the location of the result
+files and scripts behind each section. The version used in this paper, v1.0.0, is
 archived at Zenodo with the DOI
 \href{https://doi.org/10.5281/zenodo.24206560}{10.5281/zenodo.24206560} \citep{ito2026code}.
 \appendix

@@ -2,22 +2,19 @@
 \label{sec:conclusion}
 
 Sampling bearing vibration below the Nyquist rate by pure decimation brings the fault resonance into
-a narrow band, and with it whatever impulsive content lies in the folded zones.
-\begin{itemize}
-  \item On Ottawa, impulsive content in the folded zones, a train of single-sample spikes present in
-  healthy records too, decided whether blind band selection survived the rate reduction, and
-  injected impulses did the same on CWRU, where a surrogate with the same folded spectrum did not.
-  An anti-alias filter at the reduced rate avoided the capture at no cost on Ottawa; removing
-  isolated outliers in the decimated stream, a three-point median or a lower search ceiling avoided
-  it at $4\times$ without access to the full rate.
-  \item On Paderborn the selector was captured before any decimation. A decision restricted to the
-  fault orders, with a threshold from healthy bearings, recovered much of what the blind pipeline
-  missed at every rate up to 1/16, though only 12 points at 1/32, and the advantage was already
-  present at full rate. An anti-alias filter before decimation did better than pure decimation.
-  \item Learned sampling masks did not outperform trained uniform decimation or random masks, but
-  the intervals on Paderborn do not exclude a gain of 5 points. The decoders that the masks shared
-  gained over the classical pipeline only on the bearings where the kurtogram was captured.
-\end{itemize}
+a narrow band, and with it whatever impulsive content lies in the folded zones. On Ottawa, such
+content, a train of single-sample spikes present in healthy records too, decided whether blind band
+selection survived the rate reduction, and injected impulses did the same on CWRU, where a surrogate
+with the same folded spectrum did not. An anti-alias filter at the reduced rate avoided the capture
+at no cost on Ottawa, while removing isolated outliers in the decimated stream, a three-point median
+or a lower search ceiling avoided it at $4\times$ without access to the full rate. On Paderborn the
+selector was captured before any decimation. There, a decision restricted to the fault orders, with
+a threshold from healthy bearings, recovered much of what the blind pipeline missed at every rate up
+to 1/16, though only 12 points at 1/32, and the advantage was already present at full rate; an
+anti-alias filter before decimation did better than pure decimation. Learned sampling masks did not
+outperform trained uniform decimation or random masks, although the intervals on Paderborn do not
+exclude a gain of 5 points, and the decoders that the masks shared gained over the classical
+pipeline only on the bearings where the kurtogram was captured.
 
 Each benchmark suggests one check for a node that samples below the Nyquist rate. Before choosing
 between pure decimation and filtering, measure the accuracy by Nyquist zone on records with known
